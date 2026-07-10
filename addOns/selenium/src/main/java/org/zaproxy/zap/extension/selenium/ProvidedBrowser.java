@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import javax.swing.Icon;
+
 /**
  * A provided browser, either by Selenium add-on or other add-ons.
  *
@@ -48,6 +50,18 @@ public interface ProvidedBrowser {
      * @return the name of the browser.
      */
     String getName();
+
+    /**
+     * The icon of the browser.
+     *
+     * <p>The icon will be shown in UI components.
+     *
+     * @return the icon, or {@code null} if none.
+     * @since 15.52.0
+     */
+    default Icon getIcon() {
+        return null;
+    }
 
     /**
      * Returns true if the browser is headless

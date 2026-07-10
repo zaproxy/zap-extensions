@@ -42,7 +42,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("selenium") {
-                            version.set("15.*")
+                            version.set(">= 15.52.0")
                         }
                     }
                 }
