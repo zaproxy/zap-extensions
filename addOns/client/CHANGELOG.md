@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Client Spider option to cache static resources (e.g. stylesheets, scripts, images) during a crawl, serving repeated requests from the cache instead of sending them to the server again (Issue 9386).
+
 ### Changed
 - Maintenance changes.
 

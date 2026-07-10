@@ -166,6 +166,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(
                 job.getParameters().getActionWaitTime(),
                 is(ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME));
+        assertThat(job.getParameters().getCacheStaticResources(), is(true));
     }
 
     @Test
@@ -189,6 +190,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
                   shutdownTime:     14
                   logoutAvoidance: false
                   actionWaitTime:  3
+                  cacheStaticResources: false
                 """;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -213,6 +215,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getShutdownTime(), is(equalTo(14)));
         assertThat(job.getParameters().getLogoutAvoidance(), is(equalTo(false)));
         assertThat(job.getParameters().getActionWaitTime(), is(equalTo(3)));
+        assertThat(job.getParameters().getCacheStaticResources(), is(equalTo(false)));
     }
 
     @ParameterizedTest
@@ -255,6 +258,20 @@ public class ClientSpiderJobUnitTest extends TestUtils {
 
         // Then
         assertThat(options.isLogoutAvoidance(), is(value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldApplyCacheStaticResourcesToOptions(boolean value) {
+        // Given
+        ClientSpiderJob job = new ClientSpiderJob();
+        job.getParameters().setCacheStaticResources(value);
+
+        // When
+        ClientSpiderOptions options = job.paramsToOptions();
+
+        // Then
+        assertThat(options.isCacheStaticResources(), is(value));
     }
 
     @Test
