@@ -23,9 +23,11 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.parosproxy.paros.Constant;
@@ -77,11 +79,29 @@ public class ClientMapGraphPanel extends AbstractPanel {
         visualGraph.setCellsResizable(false);
         visualGraph.setAllowDanglingEdges(false);
 
-        graphComponent = new mxGraphComponent(visualGraph);
+        graphComponent =
+                new mxGraphComponent(visualGraph) {
+                    @Override
+                    public boolean isPanningEvent(MouseEvent event) {
+                        return SwingUtilities.isLeftMouseButton(event);
+                    }
+                };
         graphComponent.setConnectable(false);
         graphComponent.setToolTips(true);
         graphComponent.setAutoExtend(true);
         graphComponent.setAutoScroll(true);
+
+        graphComponent
+                .getGraphControl()
+                .addMouseWheelListener(
+                        e -> {
+                            if (e.getPreciseWheelRotation() < 0) {
+                                graphComponent.zoomIn();
+                            } else {
+                                graphComponent.zoomOut();
+                            }
+                            e.consume();
+                        });
 
         add(graphComponent, BorderLayout.CENTER);
     }
