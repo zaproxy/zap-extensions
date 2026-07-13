@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [14] - 2026-07-13
 ### Added
 - Stats for event and event streams.
 
@@ -86,6 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[14]: https://github.com/zaproxy/zap-extensions/releases/sse-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/sse-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/sse-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/sse-v11

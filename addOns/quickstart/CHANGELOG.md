@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [59] - 2026-07-13
 ### Added
 - Allow to choose and open the browser directly from the tool bar.
 
@@ -315,6 +315,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[59]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v59
 [58]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v56
