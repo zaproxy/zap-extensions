@@ -23,67 +23,50 @@ import dev.langchain4j.model.chat.listener.ChatModelErrorContext;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.model.chat.listener.ChatModelRequestContext;
 import dev.langchain4j.model.chat.listener.ChatModelResponseContext;
+import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.view.OutputPanel;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.commonlib.ui.TabbedOutputPanel;
+import org.zaproxy.addon.llm.ui.LlmChatTabPanel;
 
-public class LlmResponseHandler implements ChatModelListener {
+public class LlmGuiResponseHandler implements ChatModelListener {
 
-    private static final Logger LOGGER = LogManager.getLogger(LlmResponseHandler.class);
+    private static final Logger LOGGER = LogManager.getLogger(LlmGuiResponseHandler.class);
 
-    private OutputPanel outputPanel;
-    private String outputTabName;
+    private LlmChatTabPanel chatPanel;
 
-    public LlmResponseHandler(String outputTabName) {
-        this.outputTabName = outputTabName;
-        if (View.isInitialised()) {
-            outputPanel = View.getSingleton().getOutputPanel();
-        }
+    public LlmGuiResponseHandler(LlmChatTabPanel commsPanel) {
+        this.chatPanel = commsPanel;
     }
 
     @Override
     public void onRequest(ChatModelRequestContext requestContext) {
-        output(
-                Constant.messages.getString("llm.output.prefix.request"),
+        if (chatPanel == null) return;
+        chatPanel.appendToOutput(
+                LlmChatTabPanel.USER_LABEL,
                 requestContext.chatRequest().messages().get(0).toString());
+        SwingUtilities.invokeLater(
+                () -> {
+                    chatPanel.showTab();
+                    chatPanel.setProcessing(true);
+                });
     }
 
     @Override
     public void onResponse(ChatModelResponseContext responseContext) {
         LOGGER.info("Token usage = {} ", responseContext.chatResponse().tokenUsage());
-        output(
-                Constant.messages.getString("llm.output.prefix.response"),
-                responseContext.chatResponse().aiMessage().text());
+        if (chatPanel == null) return;
+        chatPanel.appendToOutput(
+                LlmChatTabPanel.ASSISTANT_LABEL, responseContext.chatResponse().aiMessage().text());
     }
 
     @Override
     public void onError(ChatModelErrorContext errorContext) {
         LOGGER.error("LLM Error : {} ", errorContext.error().getMessage());
-        output(
-                Constant.messages.getString("llm.output.prefix.error"),
-                errorContext.error().getMessage());
-
-        setFocus();
-
+        if (chatPanel != null) {
+            chatPanel.appendToOutput(
+                    LlmChatTabPanel.ERROR_LABEL, errorContext.error().getMessage());
+        }
         throw new RuntimeException(
                 String.format("LLM Error : %s", errorContext.error().getMessage()));
-    }
-
-    public void setFocus() {
-        if (outputPanel != null) {
-            outputPanel.setTabFocus();
-            if (outputPanel instanceof TabbedOutputPanel tabbedOutputPanel) {
-                tabbedOutputPanel.setSelectedOutputTab(outputTabName);
-            }
-        }
-    }
-
-    private void output(String prefix, String msg) {
-        if (outputPanel != null) {
-            outputPanel.appendAsync("\n" + prefix + "\n" + msg, outputTabName);
-        }
     }
 }
