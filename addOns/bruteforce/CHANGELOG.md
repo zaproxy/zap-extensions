@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [21] - 2026-07-13
 ### Changed
 - Maintenance changes.
 
@@ -132,6 +132,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[21]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v18
