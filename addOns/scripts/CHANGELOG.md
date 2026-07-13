@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [45.20.0] - 2026-07-13
 ### Added
 - GUI support for Zest script chains and failure level in the Automation Framework Script job dialog (via the Use Script Chain checkbox, and Chains tab).
