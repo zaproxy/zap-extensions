@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update dependency.
+- Include the Zest statement index in the authentication diagnostics' steps.
 
 ## [0.40.0] - 2026-06-12
 ### Added
