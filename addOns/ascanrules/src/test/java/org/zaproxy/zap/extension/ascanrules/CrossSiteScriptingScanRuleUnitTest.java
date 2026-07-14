@@ -1085,7 +1085,8 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                         String response;
                         if (q != null) {
                             q = htmlEscape(q);
-                            if (!q.equals("button onclick='alert(1)'/") && !q.equals("0W45pz4p")) {
+                            if (!q.equals("button onclick='alert(1)'/")
+                                    && !q.equals(Constant.getEyeCatcher())) {
                                 q = "";
                             }
                             response =
@@ -1148,6 +1149,47 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
+    void shouldReportXssInAttributeScriptTagWhenTargetContextIsNullAtLowThreshold()
+            throws IOException {
+        // Given
+        String test = "/xss/attr-script-no-angle/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String color = getFirstParamValue(session, "color");
+                        String response;
+                        if (color != null) {
+                            // Strip out < and >
+                            color = color.replaceAll("<", "").replaceAll(">", "");
+                            response =
+                                    getHtml(
+                                            "InputInAttributeScriptTag.html",
+                                            new String[][] {{"color", color}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?color=red");
+
+        // targetContext is always effectively null at low threshold
+        this.rule.setAlertThreshold(AlertThreshold.LOW);
+        this.rule.init(msg, this.parent);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(";alert(1)"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("color"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo(";alert(1)"));
+    }
+
+    @Test
     void shouldReportXssInFrameSrcTag() throws NullPointerException, IOException {
         String test = "/shouldReportXssInFrameSrcTag/";
 
@@ -1198,7 +1240,8 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                         String name = getFirstParamValue(session, "name");
                         String response;
                         if (name != null
-                                && ("0W45pz4p".equals(name) || name.startsWith("javascript:"))) {
+                                && (Constant.getEyeCatcher().equals(name)
+                                        || name.startsWith("javascript:"))) {
                             name =
                                     name.replace("<", "").replace(">", "").replace("\"", "")
                                             + extraModification;
@@ -2148,8 +2191,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     void shouldReportXssWeaknessInJsonResponseWithFilteredScript()
             throws NullPointerException, IOException {
         // Given
-        String test = "/shouldReportXssWeaknessInJsonResponseWithFilteredScript/";
-
+        String test = "/api/json-onerror-filtered/";
         this.nano.addHandler(
                 new NanoServerHandler(test) {
                     @Override
@@ -2170,11 +2212,13 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                 });
 
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
-        // When
         this.rule.setConfig(new ZapXmlConfiguration());
+
+        // When
         this.rule.setAlertThreshold(AlertThreshold.LOW);
         this.rule.init(msg, this.parent);
         this.rule.scan();
+
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getName(), containsString("JSON"));
@@ -2182,6 +2226,42 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.get(0).getAttack(), equalTo("<img src=x onerror=prompt()>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
+    }
+
+    @Test
+    void shouldNotReportXssWeaknessInJsonResponseWithFilteredScriptAtMediumThreshold()
+            throws IOException {
+        // Given
+        String test = "/api/json-onerror-filtered/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out 'script' ignoring the case
+                            name = name.replaceAll("(?i)script", "");
+                            response = getHtml("example.json", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("example.json");
+                        }
+                        Response resp = newFixedLengthResponse(response);
+                        resp.setMimeType("application/json");
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.setConfig(new ZapXmlConfiguration());
+
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
@@ -2524,7 +2604,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                     @Override
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
-                        if (!Strings.CI.contains(name, "0W45pz4p")
+                        if (!Strings.CI.contains(name, Constant.getEyeCatcher())
                                 && !name.equals("%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E")) {
                             name = "something else";
                         }
@@ -2543,6 +2623,210 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         this.rule.scan();
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldReportXssViaDirectAttackWhenEyeCatcherNotReflectedAtMediumThreshold()
+            throws IOException {
+        // Given
+        String test = "/xss/direct-no-eyecatcher/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        if (name == null) {
+                            return newFixedLengthResponse(getHtml("NoInput.html"));
+                        }
+
+                        // Ensure the initial discovery phase finds no HtmlContexts (no eye-catcher
+                        // in body), but allow subsequent direct-attack payloads to be reflected.
+                        String eyeCatcher = Constant.getEyeCatcher();
+                        if (eyeCatcher.equals(name) || name.contains(eyeCatcher)) {
+                            return newFixedLengthResponse(getHtml("NoInput.html"));
+                        }
+
+                        return newFixedLengthResponse(
+                                getHtml("InputInParagraph.html", new String[][] {{"name", name}}));
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldReportXssOutsideTagsWhenInitialReflectionIsOutsideTagsAtMediumThreshold()
+            throws IOException {
+        // Given
+        String test = "/xss/outside-tags-first/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        if (name == null) {
+                            return newFixedLengthResponse(getHtml("NoInput.html"));
+                        }
+
+                        // Make the initial eye-catcher reflection be outside of any tags (no DOM
+                        // element),
+                        // so the rule takes the performOutsideTagsAttack path.
+                        String eyeCatcher = Constant.getEyeCatcher();
+                        if (name.contains(eyeCatcher)) {
+                            return newFixedLengthResponse("prefix " + eyeCatcher + " suffix");
+                        }
+
+                        // For the actual outside-tags payload attempts, reflect the payload inside
+                        // HTML
+                        // so that the returned HtmlContext(s) have a parent tag (required by
+                        // processContexts).
+                        return newFixedLengthResponse(
+                                getHtml("InputInParagraph.html", new String[][] {{"name", name}}));
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldReportXssViaHeaderSplittingWhenEyeCatcherReflectedInHeaderAtMediumThreshold()
+            throws IOException {
+        // Given
+        String test = "/xss/header-crlf-inject/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        if (name == null) {
+                            return newFixedLengthResponse(getHtml("NoInput.html"));
+                        }
+
+                        Response resp;
+                        String eyeCatcher = Constant.getEyeCatcher();
+                        if (name.contains(eyeCatcher)) {
+                            // Trigger attackHeader() by reflecting the eye-catcher in a response
+                            // header,
+                            // without reflecting it in the body (to avoid other attack paths).
+                            resp = newFixedLengthResponse(getHtml("NoInput.html"));
+                            resp.addHeader("X-Reflected", name);
+                            return resp;
+                        }
+
+                        // Avoid triggering other attacks (like performDirectAttack) by only
+                        // reflecting
+                        // values that include CR/LF (header splitting payloads).
+                        if (name.indexOf('\r') == -1 && name.indexOf('\n') == -1) {
+                            return newFixedLengthResponse(getHtml("NoInput.html"));
+                        }
+
+                        // Ensure deterministic behavior: only reflect the first header splitting
+                        // payload
+                        // (GENERIC_SCRIPT_ALERT) so the alert is raised with that exact attack
+                        // string.
+                        if (!name.equals(
+                                "test\n\r\n\r" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT)) {
+                            return newFixedLengthResponse(getHtml("NoInput.html"));
+                        }
+
+                        // For header-splitting attacks, reflect the (decoded) value in HTML so the
+                        // evidence
+                        // can be found by HtmlContextAnalyser and the alert is raised.
+                        resp =
+                                newFixedLengthResponse(
+                                        getHtml(
+                                                "InputInParagraph.html",
+                                                new String[][] {{"name", name}}));
+                        resp.addHeader("X-Reflected", name);
+                        return resp;
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("test\n\r\n\r" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldNotAttemptHeaderSplittingWhenEyeCatcherNotReflectedInHeaderAtMediumThreshold()
+            throws IOException {
+        // Given
+        String test = "/xss/eyecatcher-body-only/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        if (name == null) {
+                            return newFixedLengthResponse(getHtml("NoInput.html"));
+                        }
+
+                        // Reflect the eye-catcher in the body only (never in headers) so
+                        // attackHeader() is not triggered. Also avoid reflecting any
+                        // other payloads to reduce noise.
+                        if (name.contains(Constant.getEyeCatcher())) {
+                            return newFixedLengthResponse(
+                                    getHtml(
+                                            "InputInParagraph.html",
+                                            new String[][] {{"name", Constant.getEyeCatcher()}}));
+                        }
+
+                        return newFixedLengthResponse(getHtml("NoInput.html"));
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        // When
+        this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        // Then
+        String headerSplittingEncoded = "%0A%0D%0A%0D";
+        boolean containsHeaderSplitting =
+                httpMessagesSent.stream()
+                        .anyMatch(
+                                m ->
+                                        m.getRequestHeader()
+                                                        .getURI()
+                                                        .toString()
+                                                        .contains(headerSplittingEncoded)
+                                                || m.getRequestBody()
+                                                        .toString()
+                                                        .contains(headerSplittingEncoded));
+        assertThat(containsHeaderSplitting, is(false));
     }
 
     @Test
