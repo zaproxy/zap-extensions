@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Option to support client certificates programmatically.
 
+### Changed
+- Update dependencies.
+
 ## [0.28.0] - 2026-05-21
 ### Changed
 - Update dependencies (Issue 9337).
