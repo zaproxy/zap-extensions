@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import dev.langchain4j.service.tool.ToolProvider;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -158,6 +159,55 @@ public class ExtensionLlmUnitTest extends TestUtils {
 
         // Then
         assertThat(comms1, is(nullValue()));
+    }
+
+    @Test
+    void shouldClearCachedServicesWhenToolProviderAdded() {
+        // Given
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "default",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost",
+                                        List.of("model1"))));
+        ext.getOptions().setDefaultProviderName("default");
+        LlmCommunicationService before = ext.getCommunicationService("MCP_KEY1", null);
+        ToolProvider provider = mock(ToolProvider.class);
+
+        // When
+        ext.addToolProvider(provider);
+        LlmCommunicationService after = ext.getCommunicationService("MCP_KEY1", null);
+
+        // Then
+        assertThat(before, is(not(equalTo(after))));
+    }
+
+    @Test
+    void shouldClearCachedServicesWhenToolProviderRemoved() {
+        // Given
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "default",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost",
+                                        List.of("model1"))));
+        ext.getOptions().setDefaultProviderName("default");
+        ToolProvider provider = mock(ToolProvider.class);
+        ext.addToolProvider(provider);
+        LlmCommunicationService before = ext.getCommunicationService("MCP_KEY2", null);
+
+        // When
+        ext.removeToolProvider(provider);
+        LlmCommunicationService after = ext.getCommunicationService("MCP_KEY2", null);
+
+        // Then
+        assertThat(before, is(not(equalTo(after))));
     }
 
     @Test

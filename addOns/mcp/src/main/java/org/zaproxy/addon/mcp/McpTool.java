@@ -19,6 +19,11 @@
  */
 package org.zaproxy.addon.mcp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.zaproxy.addon.automation.AutomationPlan;
@@ -100,6 +105,42 @@ public interface McpTool {
      * @param lists the list-valued arguments
      */
     record ToolArguments(Map<String, String> strings, Map<String, List<String>> lists) {
+
+        private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+        /**
+         * Parses a JSON string into {@code ToolArguments}. If the parsed value is a JSON object,
+         * array values become list arguments and all other values become string arguments. Returns
+         * empty arguments for a {@code null}, blank, or non-object input.
+         *
+         * @throws JsonProcessingException if the input is not valid JSON
+         */
+        public static ToolArguments fromJson(String json) throws JsonProcessingException {
+            if (json == null || json.isBlank()) {
+                return new ToolArguments(Map.of(), Map.of());
+            }
+            return fromJsonNode(OBJECT_MAPPER.readTree(json));
+        }
+
+        static ToolArguments fromJsonNode(JsonNode node) {
+            Map<String, String> strings = new LinkedHashMap<>();
+            Map<String, List<String>> lists = new LinkedHashMap<>();
+            if (node != null && node.isObject()) {
+                node.properties()
+                        .forEach(
+                                e -> {
+                                    JsonNode v = e.getValue();
+                                    if (v.isArray()) {
+                                        List<String> list = new ArrayList<>();
+                                        v.forEach(item -> list.add(item.asText()));
+                                        lists.put(e.getKey(), list);
+                                    } else {
+                                        strings.put(e.getKey(), v.asText());
+                                    }
+                                });
+            }
+            return new ToolArguments(strings, lists);
+        }
 
         /** Returns the string value for {@code key}, or {@code null} if absent. */
         public String getString(String key) {

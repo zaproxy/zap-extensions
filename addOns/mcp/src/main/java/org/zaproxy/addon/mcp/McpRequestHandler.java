@@ -23,10 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -193,7 +190,7 @@ class McpRequestHandler {
         }
 
         JsonNode argumentsNode = params.has("arguments") ? params.get("arguments") : null;
-        ToolArguments arguments = toToolArguments(argumentsNode);
+        ToolArguments arguments = ToolArguments.fromJsonNode(argumentsNode);
 
         McpToolResult toolResult;
         try {
@@ -344,26 +341,6 @@ class McpRequestHandler {
         }
         response.set("result", result);
         return response.toString();
-    }
-
-    private static ToolArguments toToolArguments(JsonNode node) {
-        Map<String, String> strings = new LinkedHashMap<>();
-        Map<String, List<String>> lists = new LinkedHashMap<>();
-        if (node != null && node.isObject()) {
-            node.properties()
-                    .forEach(
-                            e -> {
-                                JsonNode v = e.getValue();
-                                if (v.isArray()) {
-                                    List<String> list = new ArrayList<>();
-                                    v.forEach(item -> list.add(item.asText()));
-                                    lists.put(e.getKey(), list);
-                                } else {
-                                    strings.put(e.getKey(), v.asText());
-                                }
-                            });
-        }
-        return new ToolArguments(strings, lists);
     }
 
     private static ObjectNode toSchemaNode(InputSchema schema) {
