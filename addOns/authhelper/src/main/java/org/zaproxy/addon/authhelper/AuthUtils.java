@@ -112,6 +112,9 @@ import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class AuthUtils {
 
+    public static final String AUTH_AI_SUCCEEDED_STATS = "stats.auth.ai.succeeded";
+    public static final String AUTH_AI_FAILED_STATS = "stats.auth.ai.failed";
+
     public static final String AUTH_NO_USER_FIELD_STATS = "stats.auth.browser.nouserfield";
     public static final String AUTH_NO_PASSWORD_FIELD_STATS = "stats.auth.browser.nopasswordfield";
     public static final String AUTH_FOUND_FIELDS_STATS = "stats.auth.browser.foundfields";

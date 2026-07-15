@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- AI Assisted Authentication
+
 ### Changed
+- The Authentication Tester dialog now remembers the last authentication method used and selects it by default next time it's opened.
 - Tag diagnostic HTTP messages with an internal ID, to make it easier to cross reference them.
 
 ## [0.41.0] - 2026-08-07
