@@ -27,6 +27,7 @@ public enum LlmProvider {
     OPENROUTER("llm.provider.openrouter"),
     AZURE_OPENAI("llm.provider.azure.openai"),
     GOOGLE_GEMINI("llm.provider.google.gemini"),
+    CLAUDE("llm.provider.claude"),
     ;
 
     private final String messageKey;
@@ -41,11 +42,15 @@ public enum LlmProvider {
     }
 
     public boolean supportsEndpoint() {
-        return this != NONE && this != GOOGLE_GEMINI;
+        return this != NONE && this != GOOGLE_GEMINI && this != CLAUDE;
     }
 
     public boolean isEndpointRequired() {
         return this == OLLAMA || this == AZURE_OPENAI;
+    }
+
+    public boolean isModelRequired() {
+        return this != NONE;
     }
 
     public String getDefaultEndpoint() {

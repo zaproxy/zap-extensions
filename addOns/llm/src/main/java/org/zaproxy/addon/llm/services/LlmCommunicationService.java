@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.anthropic.AnthropicChatModel;
 import dev.langchain4j.model.azure.AzureOpenAiChatModel;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
@@ -130,6 +131,15 @@ public class LlmCommunicationService {
             }
             case GOOGLE_GEMINI ->
                     GoogleAiGeminiChatModel.builder()
+                            .apiKey(pconf.getApiKey())
+                            .modelName(modelName)
+                            .temperature(0.3)
+                            .listeners(listener != null ? List.of(listener) : List.of())
+                            .logRequests(true)
+                            .logResponses(true)
+                            .build();
+            case CLAUDE ->
+                    AnthropicChatModel.builder()
                             .apiKey(pconf.getApiKey())
                             .modelName(modelName)
                             .temperature(0.3)

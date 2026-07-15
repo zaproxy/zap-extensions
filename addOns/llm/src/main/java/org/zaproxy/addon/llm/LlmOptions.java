@@ -131,8 +131,14 @@ public class LlmOptions extends VersionedAbstractParam {
         if (config == null || LlmProvider.NONE.equals(config.getProvider())) {
             return false;
         }
-        return !config.getProvider().isEndpointRequired()
-                || !StringUtils.isBlank(config.getEndpoint());
+        if (config.getProvider().isEndpointRequired()
+                && StringUtils.isBlank(config.getEndpoint())) {
+            return false;
+        }
+        if (config.getProvider().isModelRequired() && config.getModels().isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     public String getCommsIssue() {
@@ -146,6 +152,9 @@ public class LlmOptions extends VersionedAbstractParam {
         if (config.getProvider().isEndpointRequired()
                 && StringUtils.isBlank(config.getEndpoint())) {
             return Constant.messages.getString("llm.error.endpoint");
+        }
+        if (config.getProvider().isModelRequired() && config.getModels().isEmpty()) {
+            return Constant.messages.getString("llm.error.model");
         }
         return null;
     }
