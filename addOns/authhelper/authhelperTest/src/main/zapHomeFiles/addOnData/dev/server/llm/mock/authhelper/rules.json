@@ -1,0 +1,48 @@
+[
+  {
+    "match": "\"url\"\\s*:\\s*\"[^\"]*/auth/multi-step-auth/home",
+    "reply": {
+      "state": "SUCCESS",
+      "reasoning": "The browser is on the home page, which is only shown after login.",
+      "actions": [],
+      "successIndicator": {"type": "URL_PATTERN", "value": "multi-step-auth/home"}
+    }
+  },
+  {
+    "match": "\"url\"\\s*:\\s*\"[^\"]*/auth/multi-step-auth/password",
+    "reply": {
+      "state": "IN_PROGRESS",
+      "reasoning": "Step 3 asks for the password, so I will enter it and sign in.",
+      "actions": [
+        {"type": "SEND_KEYS", "selectors": ["#password", "[name='password']"], "value": "{{password}}"},
+        {"type": "CLICK", "selectors": ["#signin", "button"], "value": null}
+      ],
+      "successIndicator": null
+    }
+  },
+  {
+    "match": "\"url\"\\s*:\\s*\"[^\"]*/auth/multi-step-auth/step2",
+    "reply": {
+      "state": "IN_PROGRESS",
+      "reasoning": "Step 2 asks for a department, so I will pick one and continue.",
+      "actions": [
+        {"type": "SELECT", "selectors": ["#department", "[name='department']"], "value": "Engineering"},
+        {"type": "CLICK", "selectors": ["#next", "button"], "value": null}
+      ],
+      "successIndicator": null
+    }
+  },
+  {
+    "match": "\"url\"\\s*:\\s*\"[^\"]*/auth/multi-step-auth/(index\\.html)?[?#\"]",
+    "reply": {
+      "state": "IN_PROGRESS",
+      "reasoning": "Step 1 asks for the username and domain, so I will enter the username, select Project1 and continue.",
+      "actions": [
+        {"type": "SEND_KEYS", "selectors": ["#user", "[name='user']"], "value": "{{username}}"},
+        {"type": "SELECT", "selectors": ["#domain", "[name='domain']"], "value": "Project1"},
+        {"type": "CLICK", "selectors": ["#next", "button"], "value": null}
+      ],
+      "successIndicator": null
+    }
+  }
+]
