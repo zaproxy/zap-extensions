@@ -41,6 +41,8 @@ public class AuthhelperParam extends AbstractParam {
     private static final String STEP_KEY = AUTO_KEY + ".steps.step";
     private static final String STEP_DELAY_KEY = AUTO_KEY + ".stepDelay";
     private static final String AUTH_REPORT_DIR_KEY = AUTO_KEY + ".authReportDir";
+    private static final String HINT_KEY = AUTO_KEY + ".ai.hint";
+    private static final String METHOD_KEY = AUTO_KEY + ".method";
 
     private String loginUrl;
     private String username;
@@ -52,6 +54,8 @@ public class AuthhelperParam extends AbstractParam {
     private List<AuthenticationStep> steps = List.of();
 
     private String authReportDir = "";
+    private String hint = "";
+    private String method = "";
 
     public AuthhelperParam() {}
 
@@ -64,6 +68,7 @@ public class AuthhelperParam extends AbstractParam {
         this.wait = getInteger(WAIT_KEY, DEFAULT_WAIT);
         this.stepDelay = getInteger(STEP_DELAY_KEY, 0);
         this.recordDiagnostics = getBoolean(RECORD_DIAGNOSTICS_KEY, false);
+        this.method = getString(METHOD_KEY, "");
 
         steps =
                 getConfig().getList(STEP_KEY).stream()
@@ -77,6 +82,7 @@ public class AuthhelperParam extends AbstractParam {
         }
 
         authReportDir = getString(AUTH_REPORT_DIR_KEY, "");
+        hint = getString(HINT_KEY, "");
     }
 
     public String getLoginUrl() {
@@ -162,5 +168,23 @@ public class AuthhelperParam extends AbstractParam {
     public void setAuthReportDir(String authReportDir) {
         this.authReportDir = authReportDir == null ? "" : authReportDir;
         getConfig().setProperty(AUTH_REPORT_DIR_KEY, this.authReportDir);
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint == null ? "" : hint;
+        getConfig().setProperty(HINT_KEY, this.hint);
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method == null ? "" : method;
+        getConfig().setProperty(METHOD_KEY, this.method);
     }
 }
