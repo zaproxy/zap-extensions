@@ -29,9 +29,11 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Stats;
 
 public class Requestor {
 
@@ -73,6 +75,7 @@ public class Requestor {
 
                     sender.sendAndReceive(httpRequest, requestConfig);
                 } catch (IOException e) {
+                    Stats.incCounter(ExtensionOpenApi.CONNECTION_FAILURE_STATS);
                     errors.add(
                             Constant.messages.getString(
                                     "openapi.import.error",
@@ -83,6 +86,7 @@ public class Requestor {
                 }
             }
         } catch (IOException e) {
+            Stats.incCounter(ExtensionOpenApi.CONNECTION_FAILURE_STATS);
             errors.add(e.getMessage());
             LOGGER.error(e.getMessage(), e);
         }
@@ -120,6 +124,7 @@ public class Requestor {
 
         @Override
         public void notifyMessageReceived(HttpMessage message) {
+            Stats.incCounter(ExtensionOpenApi.CONNECTION_SUCCESS_STATS);
             for (RequesterListener listener : listeners) {
                 try {
                     listener.handleMessage(message, initiator);

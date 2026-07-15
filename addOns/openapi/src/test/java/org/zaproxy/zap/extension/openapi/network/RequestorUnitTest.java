@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -36,16 +37,34 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
+import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.NanoServerHandler;
+import org.zaproxy.zap.utils.Stats;
 
 /** Unit test for {@link Requestor}. */
 class RequestorUnitTest extends AbstractServerTest {
+
+    private InMemoryStats stats;
+
+    @BeforeEach
+    void setupStats() {
+        stats = new InMemoryStats();
+        Stats.addListener(stats);
+    }
+
+    @AfterEach
+    void teardownStats() {
+        Stats.removeListener(stats);
+    }
 
     static Stream<Arguments> requestMethods() {
         return Stream.of(
@@ -82,6 +101,24 @@ class RequestorUnitTest extends AbstractServerTest {
         assertThat(errors, is(empty()));
         assertThat(requestedMethods, hasSize(1));
         assertThat(requestedMethods.get(0), is(equalTo(expectedMethod)));
+        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_SUCCESS_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_FAILURE_STATS), is(nullValue()));
+    }
+
+    @Test
+    void shouldCountConnectionFailureWhenHostUnreachable() {
+        // Given
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        // When
+        List<String> errors =
+                requestor.run(
+                        Arrays.asList(
+                                requestModel(
+                                        RequestMethod.GET, "http://localhost:1/does-not-exist")));
+        // Then
+        assertThat(errors, hasSize(1));
+        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_SUCCESS_STATS), is(nullValue()));
+        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_FAILURE_STATS), is(equalTo(1L)));
     }
 
     @Test
@@ -127,6 +164,7 @@ class RequestorUnitTest extends AbstractServerTest {
         assertThat(messages.get(1), is(equalTo("GET /a A")));
         assertThat(messages.get(2), is(equalTo("GET /b B")));
         assertThat(messages.get(3), is(equalTo("GET /final Final")));
+        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_SUCCESS_STATS), is(equalTo(4L)));
     }
 
     private static RequestModel requestModel(RequestMethod method, String url) {

@@ -215,12 +215,47 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
         return Constant.messages.getString("authhelper.authreport.name");
     }
 
+    private static final String CONNECTION_SUCCESS_STATS = "stats.import.connection.success";
+    private static final String CONNECTION_FAILURE_STATS = "stats.import.connection.failure";
+
     private static void addSummaryItem(AuthReportData ard, String key, boolean pass) {
         ard.addSummaryItem(
                 pass,
                 "auth.summary." + key,
                 Constant.messages.getString(
                         "authhelper.authreport.summary." + key + (pass ? ".pass" : ".fail")));
+    }
+
+    private static boolean isSectionEnabled(ReportData reportData, String section) {
+        return reportData.getSections().isEmpty() || reportData.isIncludeSection(section);
+    }
+
+    private static void addConnectionSummaryItems(AuthReportData ard) {
+        InMemoryStats inMemoryStats =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionStats.class)
+                        .getInMemoryStats();
+        long successes = 0;
+        long failures = 0;
+        if (inMemoryStats != null) {
+            Long successStat = inMemoryStats.getStat(CONNECTION_SUCCESS_STATS);
+            Long failureStat = inMemoryStats.getStat(CONNECTION_FAILURE_STATS);
+            if (successStat != null) {
+                successes = successStat;
+            }
+            if (failureStat != null) {
+                failures = failureStat;
+            }
+        }
+        ard.addSummaryItem(
+                "auth.summary.connection_successes",
+                successes,
+                Constant.messages.getString("authhelper.authreport.summary.connection_successes"));
+        ard.addSummaryItem(
+                "auth.summary.connection_failures",
+                failures,
+                Constant.messages.getString("authhelper.authreport.summary.connection_failures"));
     }
 
     private static Context getFirstAuthConfiguredContext(ReportData reportData) {
@@ -255,6 +290,10 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
 
             Context authContext = getFirstAuthConfiguredContext(reportData);
             if (authContext == null) {
+                if (isSectionEnabled(reportData, "summary")) {
+                    ard.setValidReport(true);
+                    addConnectionSummaryItems(ard);
+                }
                 return;
             }
             ard.setValidReport(true);

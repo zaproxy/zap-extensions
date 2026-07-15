@@ -139,7 +139,24 @@
 			<td>true</td>
 			<td>Verification URL identified</td>
 		</tr>
+		<tr>
+			<td>auth.summary.connection_successes</td>
+			<td>n/a (uses value)</td>
+			<td>Responses received</td>
+		</tr>
+		<tr>
+			<td>auth.summary.connection_failures</td>
+			<td>n/a (uses value)</td>
+			<td>Communication or network failures</td>
+		</tr>
 	</table>
+	<p>
+	When no authentication method is configured (for example API import diagnostics), the summary
+	uses the connection success and failure items with a numeric <code>value</code> instead of
+	<code>passed</code>. The success count is the number of responses received and may exceed the
+	number of imported operations when redirects occur. Failures include network or communication
+	problems and failures to parse a definition.
+	</p>
 
 	<H4>Failure Details</H4>
 	The following failure detail items are used:
