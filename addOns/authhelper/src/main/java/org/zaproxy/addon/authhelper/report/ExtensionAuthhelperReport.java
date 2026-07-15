@@ -255,18 +255,29 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
 
             Context authContext = getFirstAuthConfiguredContext(reportData);
             if (authContext == null) {
+                if ((isSectionEnabled(reportData, "diagnostics")
+                                || isSectionEnabled(reportData, "diagnosticsmessages"))
+                        && !ard.getDiagnostics().isEmpty()) {
+                    ard.setValidReport(true);
+                    setSiteFromDiagnostics(ard);
+                }
                 return;
             }
             ard.setValidReport(true);
 
-            boolean sessionPassed =
-                    !(authContext.getSessionManagementMethod()
-                            instanceof
-                            AutoDetectSessionManagementMethodType
-                                    .AutoDetectSessionManagementMethod);
-            boolean verificationUrlIdentified =
-                    !(AuthCheckingStrategy.AUTO_DETECT.equals(
-                            authContext.getAuthenticationMethod().getAuthCheckingStrategy()));
+            boolean includeSummary = isSectionEnabled(reportData, "summary");
+            boolean sessionPassed = false;
+            boolean verificationUrlIdentified = false;
+            if (includeSummary) {
+                sessionPassed =
+                        !(authContext.getSessionManagementMethod()
+                                instanceof
+                                AutoDetectSessionManagementMethodType
+                                        .AutoDetectSessionManagementMethod);
+                verificationUrlIdentified =
+                        !(AuthCheckingStrategy.AUTO_DETECT.equals(
+                                authContext.getAuthenticationMethod().getAuthCheckingStrategy()));
+            }
 
             List<String> incRegexes = authContext.getIncludeInContextRegexs();
 
@@ -310,7 +321,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                     inMemoryStats.getStats("").forEach((k, v) -> ard.addStatsItem(k, "global", v));
                     addSiteStats(ard, inMemoryStats, hostname);
 
-                    if (authBBA || authClient) {
+                    if (includeSummary && (authBBA || authClient)) {
 
                         AutomationProgress afProg =
                                 (AutomationProgress)
@@ -395,7 +406,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                             addSummaryItem(ard, "username", noUserCount == null);
                             addSummaryItem(ard, "password", noPwdCount == null);
                         }
-                    } else {
+                    } else if (includeSummary) {
                         addSummaryItem(
                                 ard,
                                 "auth",
@@ -411,12 +422,18 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                     LOGGER.warn(e.getMessage(), e);
                 }
 
-            } else {
+            } else if (includeSummary) {
                 addSummaryItem(ard, "stats", false);
             }
 
-            addSummaryItem(ard, "session", sessionPassed);
-            addSummaryItem(ard, "verif", verificationUrlIdentified);
+            if (includeSummary) {
+                addSummaryItem(ard, "session", sessionPassed);
+                addSummaryItem(ard, "verif", verificationUrlIdentified);
+            }
+
+            if (StringUtils.isEmpty(ard.getSite())) {
+                setSiteFromDiagnostics(ard);
+            }
 
             AutomationProgress progress = new AutomationProgress();
             AutomationEnvironment env = new AutomationEnvironment(progress);
@@ -426,6 +443,26 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                 ard.setAfEnv(plan.toYaml());
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
+            }
+        }
+
+        private static boolean isSectionEnabled(ReportData reportData, String section) {
+            return reportData.getSections().isEmpty() || reportData.isIncludeSection(section);
+        }
+
+        private static void setSiteFromDiagnostics(AuthReportData ard) {
+            for (Diagnostic diagnostic : ard.getDiagnostics()) {
+                for (var step : diagnostic.getSteps()) {
+                    if (StringUtils.isEmpty(step.getUrl())) {
+                        continue;
+                    }
+                    try {
+                        ard.setSite(getHostName(step.getUrl()));
+                        return;
+                    } catch (Exception e) {
+                        LOGGER.debug("Failed to derive hostname from URL:", e);
+                    }
+                }
             }
         }
 
