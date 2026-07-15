@@ -53,6 +53,18 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.authhelper.automation.ExtensionAuthhelperAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.authhelper.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.60.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
