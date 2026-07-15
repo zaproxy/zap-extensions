@@ -19,7 +19,11 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -31,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -38,6 +43,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -113,6 +120,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private static final String DIAGNOSTICS_LABEL = "authhelper.auth.test.dialog.label.diag";
     private static final String DOMAINS_LABEL = "authhelper.auth.test.dialog.label.domains";
     private static final String COPY_LABEL = "authhelper.auth.test.dialog.label.copy";
+    private static final String HINT_LABEL = "authhelper.auth.test.dialog.label.hint";
 
     private static final String FOUND_STR =
             Constant.messages.getString("authhelper.auth.test.dialog.results.found");
@@ -120,6 +128,13 @@ public class AuthTestDialog extends StandardFieldsDialog {
             Constant.messages.getString("authhelper.auth.test.dialog.label.method.browser");
     private static final String METHOD_SCRIPT_STR =
             Constant.messages.getString("authhelper.auth.test.dialog.label.method.script");
+    private static final String METHOD_AI_STR =
+            Constant.messages.getString("authhelper.auth.test.dialog.label.method.ai");
+
+    // Locale-independent identifiers used to persist the selected method (see AuthhelperParam).
+    private static final String METHOD_BROWSER_ID = "browser";
+    private static final String METHOD_SCRIPT_ID = "script";
+    private static final String METHOD_AI_ID = "ai";
 
     private static final ImageIcon GREY_BALL =
             DisplayUtils.getScaledIcon(ZAP.class.getResource("/resource/icon/16/159.png"));
@@ -151,6 +166,9 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private Boolean passwordFieldFound;
 
     private BrowsersComboBoxModel browserComboModel;
+    private JPanel hintPanel;
+    private JTextArea hintArea;
+    private JLabel bottomPadding;
 
     private ExtensionAuthhelper ext;
     private ExtensionScript extensionScript;
@@ -159,7 +177,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
         super(
                 owner,
                 "authhelper.auth.test.dialog.title",
-                DisplayUtils.getScaledDimension(600, 550),
+                DisplayUtils.getScaledDimension(600, 600),
                 new String[] {
                     "authhelper.auth.test.dialog.tab.test",
                     "authhelper.auth.test.dialog.tab.domains",
@@ -179,12 +197,16 @@ public class AuthTestDialog extends StandardFieldsDialog {
         extensionScript =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
 
-        if (isClientScriptSupported()) {
-            this.addComboField(
-                    0,
-                    METHOD_LABEL,
-                    new String[] {METHOD_BROWSER_STR, METHOD_SCRIPT_STR},
-                    METHOD_BROWSER_STR);
+        boolean clientScriptSupported = isClientScriptSupported();
+        boolean aiAssistedSupported = isAiAssistedSupported();
+        String savedMethod =
+                methodIdToLabel(params.getMethod(), clientScriptSupported, aiAssistedSupported);
+        if (clientScriptSupported || aiAssistedSupported) {
+            java.util.List<String> methods = new java.util.ArrayList<>();
+            methods.add(METHOD_BROWSER_STR);
+            if (clientScriptSupported) methods.add(METHOD_SCRIPT_STR);
+            if (aiAssistedSupported) methods.add(METHOD_AI_STR);
+            this.addComboField(0, METHOD_LABEL, methods.toArray(new String[0]), savedMethod);
             this.addFieldListener(METHOD_LABEL, e -> setMethodState());
         } else {
             this.addComboField(
@@ -246,9 +268,24 @@ public class AuthTestDialog extends StandardFieldsDialog {
         this.addPasswordField(0, PASSWORD_LABEL, "");
         this.addNumberField(0, LOGIN_WAIT_LABEL, 0, Integer.MAX_VALUE, params.getWait());
         this.addNumberField(0, STEP_DELAY_LABEL, 0, Integer.MAX_VALUE, params.getStepDelay());
+
+        hintArea = new JTextArea(8, 40);
+        hintArea.setLineWrap(true);
+        hintArea.setWrapStyleWord(true);
+        hintArea.setText(params.getHint());
+        JScrollPane hintScroll = new JScrollPane(hintArea);
+        hintPanel = new JPanel(new BorderLayout());
+        hintPanel.add(hintScroll, BorderLayout.CENTER);
+        hintPanel.setVisible(false);
+        this.addCustomComponent(0, HINT_LABEL, hintPanel, 1.0d);
+
         this.addCheckBoxField(0, RECORD_DIAGNOSTICS_LABEL, params.isRecordDiagnostics());
         this.addCustomComponent(0, getResultsPanel());
-        this.addPadding(0);
+
+        // Same effect as addPadding(0), but its weighty is relaxed while the Hints field is
+        // visible, so that field gets all of the extra space when the dialog is resized.
+        bottomPadding = new JLabel("");
+        this.addCustomComponent(0, bottomPadding);
 
         int tab = 1;
 
@@ -337,12 +374,48 @@ public class AuthTestDialog extends StandardFieldsDialog {
 
     private void setMethodState() {
         boolean isBrowserAuth = isBrowserAuth();
+        boolean isAiAuth = isAiAssistedAuth();
 
-        scriptField.setEnabled(!isBrowserAuth);
-        recordButton.setEnabled(!isBrowserAuth);
-        this.getField(PASSWORD_LABEL).setEnabled(isBrowserAuth);
-        this.getField(USERNAME_LABEL).setEnabled(isBrowserAuth);
+        scriptField.setEnabled(!isBrowserAuth && !isAiAuth);
+        recordButton.setEnabled(!isBrowserAuth && !isAiAuth);
+        this.getField(PASSWORD_LABEL).setEnabled(isBrowserAuth || isAiAuth);
+        this.getField(USERNAME_LABEL).setEnabled(isBrowserAuth || isAiAuth);
         this.getField(STEP_DELAY_LABEL).setEnabled(isBrowserAuth);
+        // Step delay is only used by the browser-based method, hide it (and its label) for AI
+        // Assisted, since it's not used there.
+        setFieldRowVisible(this.getField(STEP_DELAY_LABEL), !isAiAuth);
+        if (hintPanel != null) {
+            setFieldRowVisible(hintPanel, isAiAuth);
+        }
+        if (bottomPadding != null) {
+            Container parent = bottomPadding.getParent();
+            if (parent != null && parent.getLayout() instanceof GridBagLayout gbl) {
+                GridBagConstraints gbc = gbl.getConstraints(bottomPadding);
+                gbc.weighty = isAiAuth ? 0.0d : 1.0d;
+                gbl.setConstraints(bottomPadding, gbc);
+                parent.revalidate();
+            }
+        }
+    }
+
+    /**
+     * Shows/hides a field and its associated label (the label is found as the component sharing the
+     * field's row in the parent's {@link GridBagLayout}).
+     */
+    private static void setFieldRowVisible(Component field, boolean visible) {
+        field.setVisible(visible);
+        Container parent = field.getParent();
+        if (parent == null || !(parent.getLayout() instanceof GridBagLayout gbl)) {
+            return;
+        }
+        int fieldRow = gbl.getConstraints(field).gridy;
+        for (Component sibling : parent.getComponents()) {
+            if (sibling != field && gbl.getConstraints(sibling).gridy == fieldRow) {
+                sibling.setVisible(visible);
+            }
+        }
+        parent.revalidate();
+        parent.repaint();
     }
 
     @Override
@@ -410,8 +483,98 @@ public class AuthTestDialog extends StandardFieldsDialog {
         verifIdLabel.setIcon(GREY_BALL);
     }
 
+    /**
+     * Polls for session/verification/username/password detection signals, updating the results
+     * panel as they're found, until the score reaches 4, {@code earlyExit} returns true, or there's
+     * nothing left to scan.
+     *
+     * @return the final score (0-4)
+     */
+    private int pollForAuthResult(
+            Context context, ExtensionPassiveScan2 extPscan, BooleanSupplier earlyExit) {
+        int count = 0;
+        int score = 0;
+
+        do {
+            count += 1;
+            if (count > 20) {
+                break;
+            }
+            if (!(context.getSessionManagementMethod()
+                    instanceof AutoDetectSessionManagementMethod)) {
+                sessionIdLabel.setText(FOUND_STR);
+                sessionIdLabel.setIcon(GREEN_BALL);
+                score++;
+            }
+            if (StringUtils.isNotBlank(context.getAuthenticationMethod().getPollUrl())) {
+                verifIdLabel.setText(FOUND_STR);
+                verifIdLabel.setIcon(GREEN_BALL);
+                score++;
+            }
+            if (StringUtils.isBlank(usernameFieldLabel.getText())
+                    && Boolean.TRUE.equals(usernameFieldFound)) {
+                usernameFieldLabel.setText(FOUND_STR);
+                usernameFieldLabel.setIcon(GREEN_BALL);
+                score++;
+            }
+            if (StringUtils.isBlank(passwordFieldLabel.getText())
+                    && Boolean.TRUE.equals(passwordFieldFound)) {
+                passwordFieldLabel.setText(FOUND_STR);
+                passwordFieldLabel.setIcon(GREEN_BALL);
+                score++;
+            }
+
+            if (score >= 4 || earlyExit.getAsBoolean()) {
+                break;
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                // Ignore
+            }
+        } while (extPscan.getRecordsToScan() > 0);
+        return score;
+    }
+
+    private void setAuthResultStatus(boolean passed) {
+        if (passed) {
+            statusLabel.setText(
+                    Constant.messages.getString("authhelper.auth.test.dialog.status.passed"));
+            statusLabel.setIcon(GREEN_BALL);
+        } else {
+            statusLabel.setText(
+                    Constant.messages.getString("authhelper.auth.test.dialog.status.failed"));
+            statusLabel.setIcon(RED_BALL);
+        }
+    }
+
+    static String methodIdToLabel(
+            String methodId, boolean clientScriptSupported, boolean aiAssistedSupported) {
+        if (METHOD_SCRIPT_ID.equals(methodId) && clientScriptSupported) {
+            return METHOD_SCRIPT_STR;
+        }
+        if (METHOD_AI_ID.equals(methodId) && aiAssistedSupported) {
+            return METHOD_AI_STR;
+        }
+        return METHOD_BROWSER_STR;
+    }
+
+    static String methodLabelToId(String methodLabel) {
+        if (METHOD_SCRIPT_STR.equals(methodLabel)) {
+            return METHOD_SCRIPT_ID;
+        }
+        if (METHOD_AI_STR.equals(methodLabel)) {
+            return METHOD_AI_ID;
+        }
+        return METHOD_BROWSER_ID;
+    }
+
     private boolean isBrowserAuth() {
         return this.getStringValue(METHOD_LABEL).equals(METHOD_BROWSER_STR);
+    }
+
+    private boolean isAiAssistedAuth() {
+        return this.getStringValue(METHOD_LABEL).equals(METHOD_AI_STR);
     }
 
     private boolean isClientScriptSupported() {
@@ -420,6 +583,25 @@ public class AuthTestDialog extends StandardFieldsDialog {
                         .getExtensionLoader()
                         .getExtension(ExtensionAuthentication.class);
         return extAuth.getAuthenticationMethodTypeForIdentifier(8) != null;
+    }
+
+    private boolean isAiAssistedSupported() {
+        ExtensionAuthentication extAuth =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionAuthentication.class);
+        return extAuth.getAuthenticationMethodTypeForIdentifier(
+                        AiAssistedAuthTesterSupport.METHOD_IDENTIFIER)
+                != null;
+    }
+
+    private AuthenticationMethodType getAiAuthMethodType() {
+        ExtensionAuthentication extAuth =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionAuthentication.class);
+        return extAuth.getAuthenticationMethodTypeForIdentifier(
+                AiAssistedAuthTesterSupport.METHOD_IDENTIFIER);
     }
 
     private ClientScriptBasedAuthenticationMethod getClientAuthMethod() {
@@ -496,6 +678,24 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 setTotp(stepsPanel.getSteps(), upCreds);
                 user.setAuthenticationCredentials(upCreds);
 
+            } else if (isAiAssistedAuth()) {
+                AuthenticationMethodType aiType = getAiAuthMethodType();
+                am = aiType.createAuthenticationMethod(context.getId());
+                if (am instanceof AiAssistedAuthTesterSupport aiSupport) {
+                    aiSupport.setLoginPageUrl(loginUrl);
+                    aiSupport.setBrowserId(browserId);
+                    aiSupport.setLoginPageWait(this.getIntValue(LOGIN_WAIT_LABEL));
+                    aiSupport.setHint(hintArea.getText());
+                }
+                reloadAuthenticationMethod(am);
+                context.setAuthenticationMethod(am);
+
+                user = new User(context.getId(), username);
+                UsernamePasswordAuthenticationCredentials upCreds =
+                        TotpSupport.createUsernamePasswordAuthenticationCredentials(
+                                am, username, password);
+                user.setAuthenticationCredentials(upCreds);
+
             } else {
                 ClientScriptBasedAuthenticationMethod csam = getClientAuthMethod();
 
@@ -566,117 +766,96 @@ public class AuthTestDialog extends StandardFieldsDialog {
             statusLabel.setText(
                     Constant.messages.getString("authhelper.auth.test.dialog.status.launching"));
             statusLabel.setIcon(YELLOW_BALL);
-            ExtensionSelenium extSel =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionSelenium.class);
 
-            // Assume they will work as we only gets stats on failure
-            usernameFieldFound = true;
-            passwordFieldFound = true;
-
-            statsListener =
-                    new DefaultStatsListener() {
-
-                        @Override
-                        public void counterInc(String site, String key) {
-                            if (AuthUtils.AUTH_NO_USER_FIELD_STATS.equals(key)) {
-                                usernameFieldFound = false;
+            if (isAiAssistedAuth()) {
+                // AI Assisted: authenticate() handles the browser internally; listen for stats.
+                boolean[] aiSucceeded = {false};
+                statsListener =
+                        new DefaultStatsListener() {
+                            @Override
+                            public void counterInc(String site, String key) {
+                                if (AuthUtils.AUTH_AI_SUCCEEDED_STATS.equals(key)) {
+                                    aiSucceeded[0] = true;
+                                }
                             }
-                            if (AuthUtils.AUTH_NO_PASSWORD_FIELD_STATS.equals(key)) {
-                                passwordFieldFound = false;
-                            }
-                            if (AuthUtils.AUTH_FOUND_FIELDS_STATS.equals(key)) {
-                                usernameFieldFound = true;
-                                passwordFieldFound = true;
-                            }
-                        }
-                    };
-            Stats.addListener(statsListener);
+                        };
+                Stats.addListener(statsListener);
 
-            WebDriver wd = null;
-            BrowserHook clientBrowserHook = null;
-            try {
-                try {
-                    if (isBrowserAuth()) {
-                        AuthUtils.enableBrowserAuthentication(context, username);
-                    } else {
-                        clientBrowserHook = new AuthenticationBrowserHook(context, user);
-                        AuthUtils.getExtension(ExtensionSelenium.class)
-                                .registerBrowserHook(clientBrowserHook);
-                    }
-                } catch (Exception e) {
-                    // Must be already set, not a real problem
-                }
-                wd = extSel.getProxiedBrowser(browserId);
-            } finally {
-                if (isBrowserAuth()) {
-                    AuthUtils.disableBrowserAuthentication();
-                } else if (clientBrowserHook != null) {
-                    AuthUtils.getExtension(ExtensionSelenium.class)
-                            .deregisterBrowserHook(clientBrowserHook);
+                am.authenticate(sm, user.getAuthenticationCredentials(), user);
+
+                if (aiSucceeded[0]) {
+                    usernameFieldFound = true;
+                    passwordFieldFound = true;
                 }
 
-                if (wd != null) {
-                    wd.quit();
-                }
-            }
-            context = session.getContext(contextName);
-            ExtensionPassiveScan2 extPscan =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionPassiveScan2.class);
+                context = session.getContext(contextName);
+                ExtensionPassiveScan2 extPscan =
+                        AuthUtils.getExtension(ExtensionPassiveScan2.class);
 
-            int count = 0;
-            int score = 0;
-
-            do {
-                count += 1;
-                if (count > 20) {
-                    break;
-                }
-                if (!(context.getSessionManagementMethod()
-                        instanceof AutoDetectSessionManagementMethod)) {
-                    sessionIdLabel.setText(FOUND_STR);
-                    sessionIdLabel.setIcon(GREEN_BALL);
-                    score++;
-                }
-                if (StringUtils.isNotBlank(context.getAuthenticationMethod().getPollUrl())) {
-                    verifIdLabel.setText(FOUND_STR);
-                    verifIdLabel.setIcon(GREEN_BALL);
-                    score++;
-                }
-                if (StringUtils.isBlank(usernameFieldLabel.getText())
-                        && Boolean.TRUE.equals(usernameFieldFound)) {
-                    usernameFieldLabel.setText(FOUND_STR);
-                    usernameFieldLabel.setIcon(GREEN_BALL);
-                    score++;
-                }
-                if (StringUtils.isBlank(passwordFieldLabel.getText())
-                        && Boolean.TRUE.equals(passwordFieldFound)) {
-                    passwordFieldLabel.setText(FOUND_STR);
-                    passwordFieldLabel.setIcon(GREEN_BALL);
-                    score++;
-                }
-
-                if (score >= 4) {
-                    break;
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    // Ignore
-                }
-            } while (extPscan.getRecordsToScan() > 0);
-
-            if (score >= 4) {
-                statusLabel.setText(
-                        Constant.messages.getString("authhelper.auth.test.dialog.status.passed"));
-                statusLabel.setIcon(GREEN_BALL);
+                pollForAuthResult(context, extPscan, () -> aiSucceeded[0]);
+                setAuthResultStatus(aiSucceeded[0]);
             } else {
-                statusLabel.setText(
-                        Constant.messages.getString("authhelper.auth.test.dialog.status.failed"));
-                statusLabel.setIcon(RED_BALL);
+                ExtensionSelenium extSel =
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionSelenium.class);
+
+                // Assume they will work as we only get stats on failure
+                usernameFieldFound = true;
+                passwordFieldFound = true;
+
+                statsListener =
+                        new DefaultStatsListener() {
+
+                            @Override
+                            public void counterInc(String site, String key) {
+                                if (AuthUtils.AUTH_NO_USER_FIELD_STATS.equals(key)) {
+                                    usernameFieldFound = false;
+                                }
+                                if (AuthUtils.AUTH_NO_PASSWORD_FIELD_STATS.equals(key)) {
+                                    passwordFieldFound = false;
+                                }
+                                if (AuthUtils.AUTH_FOUND_FIELDS_STATS.equals(key)) {
+                                    usernameFieldFound = true;
+                                    passwordFieldFound = true;
+                                }
+                            }
+                        };
+                Stats.addListener(statsListener);
+
+                WebDriver wd = null;
+                BrowserHook clientBrowserHook = null;
+                try {
+                    try {
+                        if (isBrowserAuth()) {
+                            AuthUtils.enableBrowserAuthentication(context, username);
+                        } else {
+                            clientBrowserHook = new AuthenticationBrowserHook(context, user);
+                            AuthUtils.getExtension(ExtensionSelenium.class)
+                                    .registerBrowserHook(clientBrowserHook);
+                        }
+                    } catch (Exception e) {
+                        // Must be already set, not a real problem
+                    }
+                    wd = extSel.getProxiedBrowser(browserId);
+                } finally {
+                    if (isBrowserAuth()) {
+                        AuthUtils.disableBrowserAuthentication();
+                    } else if (clientBrowserHook != null) {
+                        AuthUtils.getExtension(ExtensionSelenium.class)
+                                .deregisterBrowserHook(clientBrowserHook);
+                    }
+
+                    if (wd != null) {
+                        wd.quit();
+                    }
+                }
+                context = session.getContext(contextName);
+                ExtensionPassiveScan2 extPscan =
+                        AuthUtils.getExtension(ExtensionPassiveScan2.class);
+
+                int score = pollForAuthResult(context, extPscan, () -> false);
+                setAuthResultStatus(score >= 4);
             }
 
         } catch (Exception e) {
@@ -765,6 +944,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
                         setFieldValue(STEP_DELAY_LABEL, 0);
                         browserComboModel.setSelectedBrowser(AuthhelperParam.DEFAULT_BROWSER);
                         setFieldValue(RECORD_DIAGNOSTICS_LABEL, false);
+                        hintArea.setText("");
                         stepsPanel.getSteps().forEach(step -> step.setEnabled(false));
 
                         resetResultsPanel();
@@ -798,6 +978,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
         params.setStepDelay(this.getIntValue(STEP_DELAY_LABEL));
         params.setRecordDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
         params.setSteps(stepsPanel.getSteps());
+        params.setHint(hintArea.getText());
+        params.setMethod(methodLabelToId(this.getStringValue(METHOD_LABEL)));
     }
 
     @Override
@@ -812,12 +994,23 @@ public class AuthTestDialog extends StandardFieldsDialog {
         if (this.getStringValue(CONTEXT_LABEL).isBlank()) {
             return Constant.messages.getString("authhelper.auth.test.dialog.error.nocontext");
         }
-        if (this.isBrowserAuth()) {
+        if (this.isBrowserAuth() || this.isAiAssistedAuth()) {
             if (this.getStringValue(USERNAME_LABEL).isBlank()) {
                 return Constant.messages.getString("authhelper.auth.test.dialog.error.nouser");
             }
             if (this.getStringValue(PASSWORD_LABEL).isBlank()) {
                 return Constant.messages.getString("authhelper.auth.test.dialog.error.nopassword");
+            }
+        }
+        if (this.isAiAssistedAuth()) {
+            AuthenticationMethodType aiType = getAiAuthMethodType();
+            if (aiType != null
+                    && aiType.createAuthenticationMethod(0)
+                            instanceof AiAssistedAuthTesterSupport aiSupport) {
+                String issue = aiSupport.checkPrerequisites();
+                if (issue != null) {
+                    return issue;
+                }
             }
         }
         for (String dom : this.getDomains()) {
