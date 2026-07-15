@@ -688,8 +688,25 @@ return getSelector(arguments[0], document)
         diagnosticDataProviders.remove(provider);
     }
 
+    private static FlushRunnable flushHook;
+
+    public static void setFlushHook(FlushRunnable hook) {
+        flushHook = hook;
+    }
+
+    public static void callFlushHook() {
+        if (flushHook != null) {
+            flushHook.flush();
+        }
+    }
+
     public interface DiagnosticDataProvider {
 
         void addDiagnostics(Diagnostic diagnostic);
+    }
+
+    public interface FlushRunnable {
+
+        void flush();
     }
 }

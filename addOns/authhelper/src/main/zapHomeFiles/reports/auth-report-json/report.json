@@ -7,7 +7,7 @@
 	,"summaryItems": [[#th:block th:each="sumItem, sumState: ${rptData.getSummaryItems()}"][#th:block th:if="${! sumState.first}"],[/th:block]
 		{
 			"description": [[${sumItem.description}]],
-			"passed": [[${sumItem.passed}]],
+			[#th:block th:if="${sumItem.value != null}"]"value": [[${sumItem.value}]][/th:block][#th:block th:unless="${sumItem.value != null}"]"passed": [[${sumItem.passed}]][/th:block],
 			"key": [[${sumItem.key}]]
 		}[/th:block]
 	]

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -223,6 +224,26 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                         "authhelper.authreport.summary." + key + (pass ? ".pass" : ".fail")));
     }
 
+    private static void addConnectionSummaryItems(AuthReportData ard) {
+        InMemoryStats inMemoryStats = getInMemoryStats();
+        if (inMemoryStats == null) {
+            addSummaryItem(ard, "stats", false);
+            return;
+        }
+        long successes =
+                Objects.requireNonNullElse(inMemoryStats.getStat("stats.network.send.success"), 0L);
+        long failures =
+                Objects.requireNonNullElse(inMemoryStats.getStat("stats.network.send.failure"), 0L);
+        ard.addSummaryItem(
+                "auth.summary.connection_successes",
+                successes,
+                Constant.messages.getString("authhelper.authreport.summary.connection_successes"));
+        ard.addSummaryItem(
+                "auth.summary.connection_failures",
+                failures,
+                Constant.messages.getString("authhelper.authreport.summary.connection_failures"));
+    }
+
     private static Context getFirstAuthConfiguredContext(ReportData reportData) {
         List<Context> contexts = reportData.getContexts();
         for (Context c : contexts) {
@@ -237,6 +258,29 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
         return SessionStructure.getHostName(new URI(regexStr.replace(".*", ""), false));
     }
 
+    private static InMemoryStats getInMemoryStats() {
+        ExtensionStats extStats =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
+        if (extStats != null) {
+            return extStats.getInMemoryStats();
+        }
+        return null;
+    }
+
+    private static String setSiteFromIncludeInContextRegexes(
+            AuthReportData ard, List<String> incRegexes) {
+        if (!incRegexes.isEmpty()) {
+            try {
+                String hostname = getHostName(incRegexes.get(0));
+                ard.setSite(hostname);
+                return hostname;
+            } catch (Exception e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
+        }
+        return null;
+    }
+
     protected static class AuthReportDataHandler implements ExtensionReports.ReportDataHandler {
 
         @Override
@@ -245,6 +289,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             if (!reportData.getTemplateName().startsWith("auth-report-")) {
                 return;
             }
+            AuthenticationDiagnostics.callFlushHook();
             AuthReportData ard = new AuthReportData();
             reportData.addReportObjects("authdata", ard);
 
@@ -255,6 +300,16 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
 
             Context authContext = getFirstAuthConfiguredContext(reportData);
             if (authContext == null) {
+                if (reportData.getSections().isEmpty() || reportData.isIncludeSection("summary")) {
+                    ard.setValidReport(true);
+                    addConnectionSummaryItems(ard);
+                }
+                List<Context> contexts = reportData.getContexts();
+                if (!contexts.isEmpty()) {
+                    Context context = contexts.get(0);
+                    setSiteFromIncludeInContextRegexes(ard, context.getIncludeInContextRegexs());
+                    setAfEnvFromContext(ard, context);
+                }
                 return;
             }
             ard.setValidReport(true);
@@ -270,17 +325,12 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
 
             List<String> incRegexes = authContext.getIncludeInContextRegexs();
 
-            InMemoryStats inMemoryStats =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionStats.class)
-                            .getInMemoryStats();
+            InMemoryStats inMemoryStats = getInMemoryStats();
 
             if (!incRegexes.isEmpty() && inMemoryStats != null) {
                 String hostname;
                 try {
-                    hostname = getHostName(incRegexes.get(0));
-                    ard.setSite(hostname);
+                    hostname = setSiteFromIncludeInContextRegexes(ard, incRegexes);
 
                     AuthenticationMethod authMethod = authContext.getAuthenticationMethod();
 
@@ -418,9 +468,13 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             addSummaryItem(ard, "session", sessionPassed);
             addSummaryItem(ard, "verif", verificationUrlIdentified);
 
+            setAfEnvFromContext(ard, authContext);
+        }
+
+        private static void setAfEnvFromContext(AuthReportData ard, Context context) {
             AutomationProgress progress = new AutomationProgress();
             AutomationEnvironment env = new AutomationEnvironment(progress);
-            env.addContext(authContext);
+            env.addContext(context);
             AutomationPlan plan = new AutomationPlan(env, new ArrayList<>(), progress);
             try {
                 ard.setAfEnv(plan.toYaml());
