@@ -20,6 +20,7 @@
     </p>
     <ul>
         <li>Azure OpenAI
+        <li>Claude (Anthropic)
         <li>Google Gemini
         <li>Ollama
         <li>OpenRouter
@@ -32,6 +33,12 @@ The details you will need can be found in the "Keys and Endpoint" section when e
 For the API key you can use either KEY1 or KEY2.
 <p>
 You can also find the endpoint via the "Deployments" page in the Azure AI Foundry portal. An example endpoint is: <code>https://docs-test-001.openai.azure.com/</code>.
+
+<h3>Claude (Anthropic)</h3>
+
+The API key can be obtained from the <a href="https://console.anthropic.com">Anthropic Console</a> under <strong>API Keys</strong>.
+<p>
+The endpoint base URL is built-in and does not need to be specified.
 
 <h3>Google Gemini</h3>
 
@@ -50,8 +57,6 @@ If you have Ollama installed on the same machine as ZAP then by default the endp
 Use your OpenRouter API key.
 <p>
 The default endpoint is: <code>https://openrouter.ai/api/v1</code>.
-<p>
-You must specify at least one OpenRouter model name (in the <strong>Models</strong> field) from <a href="https://openrouter.ai/models">https://openrouter.ai/models</a>.
 
 <section>
     <h2>Provider Fields</h2>
@@ -60,10 +65,10 @@ You must specify at least one OpenRouter model name (in the <strong>Models</stro
     </p>
     <ul>
         <li><strong>Name</strong>: A unique name for the provider entry.
-        <li><strong>Provider</strong>: The type of model provider (Azure OpenAI, Google Gemini, Ollama, or OpenRouter).
+        <li><strong>Provider</strong>: The type of model provider.
         <li><strong>API Key</strong>: The API key, if required by the provider.
-        <li><strong>Endpoint Base URL</strong>: The base URL for API requests (not required for Google Gemini).
-        <li><strong>Models</strong>: One or more model/deployment names, one per line.
+        <li><strong>Endpoint Base URL</strong>: The base URL for API requests, if supported by the provider.
+        <li><strong>Models</strong>: One or more model/deployment names, one per line. At least one model must be specified for all providers.
     </ul>
 </section>
 

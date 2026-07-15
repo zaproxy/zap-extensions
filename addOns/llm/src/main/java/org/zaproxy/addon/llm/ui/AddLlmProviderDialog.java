@@ -222,6 +222,13 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                                     "llm.options.providers.error.endpoint.empty"));
             return false;
         }
+        if (provider.isModelRequired() && parseModels().isEmpty()) {
+            View.getSingleton()
+                    .showWarningDialog(
+                            this,
+                            Constant.messages.getString("llm.options.providers.error.model.empty"));
+            return false;
+        }
         if (provider.supportsEndpoint() && !endpoint.isEmpty() && !isEndpointReachable(endpoint)) {
             View.getSingleton()
                     .showWarningDialog(
