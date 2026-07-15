@@ -27,12 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.apache.commons.configuration.Configuration;
@@ -51,9 +48,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
@@ -94,7 +89,6 @@ import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
-import org.zaproxy.zap.view.NodeSelectDialog;
 
 public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodType {
 
@@ -781,88 +775,15 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         public BrowserBasedAuthenticationMethodOptionsPanel(Context context) {
             this.setLayout(new GridBagLayout());
 
-            this.loginUrlField = new ZapTextField();
+            ExtensionSelenium extSel = AuthUtils.getExtension(ExtensionSelenium.class);
+            AuthMethodOptionsPanelUtils.LoginUrlBrowserWaitFields fields =
+                    AuthMethodOptionsPanelUtils.addLoginUrlBrowserWaitFields(
+                            this, extSel, DEFAULT_PAGE_WAIT);
+            this.loginUrlField = fields.loginUrlField();
+            this.browserCombo = fields.browserCombo();
+            this.loginUrlWait = fields.loginUrlWait();
 
-            JButton selectButton = new JButton(Constant.messages.getString("all.button.select"));
-            selectButton.setIcon(
-                    new ImageIcon(View.class.getResource("/resource/icon/16/094.png"))); // Globe
-
-            // Add behaviour for Node Select dialog
-            selectButton.addActionListener(
-                    e -> {
-                        NodeSelectDialog nsd =
-                                new NodeSelectDialog(View.getSingleton().getMainFrame());
-                        // Try to pre-select the node according to what has been inserted in the
-                        // fields
-                        SiteNode node = null;
-                        if (!loginUrlField.getText().trim().isEmpty())
-                            try {
-                                node =
-                                        Model.getSingleton()
-                                                .getSession()
-                                                .getSiteTree()
-                                                .findNode(new URI(loginUrlField.getText(), false));
-                            } catch (Exception e2) {
-                                // Ignore. It means we could not properly get a node for the
-                                // existing value and does not have any harmful effects
-                            }
-
-                        // Show the dialog and wait for input
-                        node = nsd.showDialog(node);
-                        if (node != null && node.getHistoryReference() != null) {
-                            try {
-                                LOGGER.debug(
-                                        "Selected Browser Based Auth Login URL via dialog: {}",
-                                        node.getHistoryReference().getURI());
-
-                                loginUrlField.setText(
-                                        node.getHistoryReference().getURI().toString());
-                            } catch (Exception e1) {
-                                LOGGER.error(e1.getMessage(), e1);
-                            }
-                        }
-                    });
-
-            JLabel urlSelectLabel =
-                    new JLabel(
-                            Constant.messages.getString(
-                                    "authhelper.auth.method.browser.label.loginUrl"));
-            urlSelectLabel.setLabelFor(loginUrlField);
-            this.add(urlSelectLabel, LayoutHelper.getGBC(0, 0, 2, 1.0d, 0.0d));
-
-            JPanel urlSelectPanel = new JPanel(new GridBagLayout());
-            urlSelectPanel.add(this.loginUrlField, LayoutHelper.getGBC(0, 0, 1, 1.0D));
-            urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
-
-            this.add(urlSelectPanel, LayoutHelper.getGBC(0, 1, 2, 1.0d, 0.0d));
-
-            ExtensionSelenium extSel =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionSelenium.class);
-
-            browserCombo = new JComboBox<>(extSel.createBrowsersComboBoxModel());
-
-            JLabel browserSelectLabel =
-                    new JLabel(
-                            Constant.messages.getString(
-                                    "authhelper.auth.method.browser.label.browser"));
-            browserSelectLabel.setLabelFor(browserCombo);
-
-            this.add(browserSelectLabel, LayoutHelper.getGBC(0, 2, 1, 1.0d, 0.0d));
-            this.add(browserCombo, LayoutHelper.getGBC(1, 2, 1, 1.0d, 0.0d));
-
-            int y = 3;
-            loginUrlWait = new ZapNumberSpinner(0, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
-            JLabel loginWaitLabel =
-                    new JLabel(
-                            Constant.messages.getString(
-                                    "authhelper.auth.method.browser.label.loginWait"));
-            loginWaitLabel.setLabelFor(loginUrlWait);
-            this.add(loginWaitLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
-            this.add(loginUrlWait, LayoutHelper.getGBC(1, y, 1, 1.0d, 0.0d));
-            y++;
-
+            int y = 4;
             stepDelay = new ZapNumberSpinner(0, DEFAULT_STEP_DELAY, Integer.MAX_VALUE);
             JLabel stepDelayLabel =
                     new JLabel(
