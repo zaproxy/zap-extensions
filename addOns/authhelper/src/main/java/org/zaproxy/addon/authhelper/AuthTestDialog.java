@@ -284,9 +284,9 @@ public class AuthTestDialog extends StandardFieldsDialog {
         ZapTextField text = (ZapTextField) this.getField(LOGIN_URL_LABEL);
         text.setText(params.getLoginUrl());
         setMethodState();
-
         this.setHideOnSave(false);
-        // this.pack();
+        this.pack();
+        this.setMinimumSize(this.getPreferredSize());
     }
 
     private String getScriptName(String urlStr) {
