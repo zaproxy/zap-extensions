@@ -1522,6 +1522,46 @@
       },
       {
         "atOrAbove": "0",
+        "below": "5.10.10",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using through data-mce- prefixed src, href, style attributes",
+          "githubID": "GHSA-q742-qvgc-gc2f",
+          "CVE": [
+            "CVE-2026-47759"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-q742-qvgc-gc2f",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "5.10.10",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using media plugin `data-mce-object` injection",
+          "githubID": "GHSA-vg35-5wq7-3x7w",
+          "CVE": [
+            "CVE-2026-47761"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-vg35-5wq7-3x7w",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "0",
         "below": "5.11.0",
         "cwe": [
           "CWE-79"
@@ -1581,26 +1621,6 @@
           "CWE-79"
         ],
         "identifiers": {
-          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using through data-mce- prefixed src, href, style attributes",
-          "githubID": "GHSA-q742-qvgc-gc2f",
-          "CVE": [
-            "CVE-2026-47759"
-          ]
-        },
-        "info": [
-          "https://github.com/tinymce/tinymce/security/advisories/GHSA-q742-qvgc-gc2f",
-          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
-          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
-        ]
-      },
-      {
-        "atOrAbove": "0",
-        "below": "5.11.1",
-        "severity": "high",
-        "cwe": [
-          "CWE-79"
-        ],
-        "identifiers": {
           "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability through `mce:protected` comments",
           "githubID": "GHSA-v98h-vmpc-fpqv",
           "CVE": [
@@ -1609,26 +1629,6 @@
         },
         "info": [
           "https://github.com/tinymce/tinymce/security/advisories/GHSA-v98h-vmpc-fpqv",
-          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
-          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
-        ]
-      },
-      {
-        "atOrAbove": "0",
-        "below": "5.11.1",
-        "severity": "high",
-        "cwe": [
-          "CWE-79"
-        ],
-        "identifiers": {
-          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using media plugin `data-mce-object` injection",
-          "githubID": "GHSA-vg35-5wq7-3x7w",
-          "CVE": [
-            "CVE-2026-47761"
-          ]
-        },
-        "info": [
-          "https://github.com/tinymce/tinymce/security/advisories/GHSA-vg35-5wq7-3x7w",
           "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
           "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
         ]
@@ -8106,6 +8106,7 @@
         "below": "0.32.0",
         "severity": "high",
         "cwe": [
+          "CWE-289",
           "CWE-918"
         ],
         "identifiers": {
@@ -8682,24 +8683,6 @@
         ]
       },
       {
-        "atOrAbove": "1.0.0",
-        "below": "1.16.0",
-        "severity": "high",
-        "cwe": [
-          "CWE-918"
-        ],
-        "identifiers": {
-          "summary": "The shouldBypassProxy function introduced in Axios 1.15.0 does not normalize IPv4-mapped IPv6 addresses, allowing bypass of NO_PROXY exclusions when requests use IPv4-mapped IPv6 notation to target excluded IPv4 addresses.",
-          "githubID": "GHSA-pjwm-pj3p-43mv",
-          "CVE": [
-            "CVE-2026-44492"
-          ]
-        },
-        "info": [
-          "https://github.com/axios/axios/security/advisories/GHSA-pjwm-pj3p-43mv"
-        ]
-      },
-      {
         "atOrAbove": "1.7.0",
         "below": "1.16.0",
         "severity": "high",
@@ -8718,6 +8701,25 @@
           "https://github.com/axios/axios/pull/10795",
           "https://github.com/axios/axios/pull/10796",
           "https://github.com/axios/axios/releases/tag/v1.16.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.15.0",
+        "below": "1.16.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-289",
+          "CWE-918"
+        ],
+        "identifiers": {
+          "summary": "The shouldBypassProxy function introduced in Axios 1.15.0 does not normalize IPv4-mapped IPv6 addresses, allowing bypass of NO_PROXY exclusions when requests use IPv4-mapped IPv6 notation to target excluded IPv4 addresses.",
+          "githubID": "GHSA-pjwm-pj3p-43mv",
+          "CVE": [
+            "CVE-2026-44492"
+          ]
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-pjwm-pj3p-43mv"
         ]
       },
       {
@@ -12547,7 +12549,8 @@
         "identifiers": {
           "summary": "Command Injection in lodash",
           "CVE": [
-            "CVE-2021-23337"
+            "CVE-2021-23337",
+            "CVE-2026-4800"
           ],
           "githubID": "GHSA-35jh-r3h4-6jhm"
         },
@@ -12620,7 +12623,8 @@
           "summary": "Lodash versions 4.0.0 through 4.17.22 are vulnerable to prototype pollution via the _.unset and _.omit functions. An attacker can pass crafted paths to delete methods from global prototypes such as Object.prototype, though the issue only permits deletion and not overwriting of properties.",
           "githubID": "GHSA-xxjr-mmjv-4gpg",
           "CVE": [
-            "CVE-2025-13465"
+            "CVE-2025-13465",
+            "CVE-2026-2950"
           ]
         },
         "info": [
@@ -12639,6 +12643,7 @@
           "summary": "Lodash 4.17.23 and earlier are vulnerable to a prototype pollution bypass in _.unset and _.omit. The fix for CVE-2025-13465 only guards against string key members, so attackers can bypass it by passing array-wrapped path segments to delete properties from built-in prototypes including Object.prototype, Number.prototype, and String.prototype.",
           "githubID": "GHSA-f23m-r3pf-42rh",
           "CVE": [
+            "CVE-2025-13465",
             "CVE-2026-2950"
           ]
         },
@@ -12658,6 +12663,7 @@
           "summary": "Lodash _.template is vulnerable to code injection via unsanitized options.imports key names. Untrusted key names are passed to the Function() constructor sink without validation, and the use of assignInWith (which enumerates inherited properties) also means that pre-existing prototype pollution on Object.prototype can flow into the Function() sink and execute arbitrary code at template compilation time.",
           "githubID": "GHSA-r5fr-rjxr-66jc",
           "CVE": [
+            "CVE-2021-23337",
             "CVE-2026-4800"
           ]
         },
@@ -13540,7 +13546,31 @@
     }
   },
   "echarts": {
-    "vulnerabilities": [],
+    "vulnerabilities": [
+      {
+        "atOrAbove": "0",
+        "below": "6.1.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "Apache ECharts has a cross-site scripting (XSS) vulnerability",
+          "githubID": "GHSA-fgmj-fm8m-jvvx",
+          "CVE": [
+            "CVE-2026-45249"
+          ]
+        },
+        "info": [
+          "https://github.com/apache/echarts/pull/21608",
+          "https://github.com/apache/echarts/commit/1e39b00eedda0e4a0b048e099c0e13ce7149d90f",
+          "https://echarts.apache.org/en/option.html#series-lines",
+          "https://echarts.apache.org/handbook/en/best-practices/security/#passing_raw_html_safely",
+          "https://lists.apache.org/thread/1g6xk7gd9vg1c6zyqqt2lnko10zomc3o",
+          "http://www.openwall.com/lists/oss-security/2026/05/23/4"
+        ]
+      }
+    ],
     "extractors": {
       "uri": [
         "/echarts[@/](§§version§§)/"
