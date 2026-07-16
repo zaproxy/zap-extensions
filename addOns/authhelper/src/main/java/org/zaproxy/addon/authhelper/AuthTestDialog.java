@@ -286,7 +286,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
         setMethodState();
 
         this.setHideOnSave(false);
-        this.pack();
+        // this.pack();
     }
 
     private String getScriptName(String urlStr) {
