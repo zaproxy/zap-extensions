@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        Bank Identification Number (BIN) List
+    </title>
+</head>
+<body>
+<h1>Bank Identification Number (BIN) List</h1>
+
+The Common Library add-on includes a BIN list used by scan rules to enrich
+alerts for suspected credit card numbers.
+
+<p>
+When a scan rule finds a potential credit card number it is looked up against this third party BIN list,
+which might not be accurate. If a match is found the alert is raised at High confidence and additional
+details are added to the 'Other Information' field in the alert, otherwise the alerts will have Medium
+confidence.
+
+<p>
+Data source: <a href="https://github.com/venelinkochev/bin-list-data/">bin-list-data</a>.
+
+</body>
+</html>
