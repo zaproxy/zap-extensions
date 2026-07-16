@@ -95,6 +95,17 @@ class ImporterOptionsUnitTest extends TestUtils {
         assertThat(options.getType(), is(equalTo(HarImporterType.ID)));
         assertThat(options.getInputFile(), is(equalTo(inputFile)));
         assertThat(options.getMessageHandler(), is(equalTo(messageHandler)));
+        assertThat(options.isSendRequests(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldSetSendRequests() {
+        // Given
+        ImporterOptions.Builder builder = builderWithInputFileAndMessageHandler();
+        // When
+        ImporterOptions options = builder.setSendRequests(true).build();
+        // Then
+        assertThat(options.isSendRequests(), is(equalTo(true)));
     }
 
     @Test

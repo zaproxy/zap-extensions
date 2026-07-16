@@ -22,6 +22,7 @@ package org.zaproxy.addon.exim.har;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -29,8 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
@@ -39,6 +43,7 @@ import de.sstoehr.harreader.HarReaderException;
 import de.sstoehr.harreader.model.HarEntry;
 import de.sstoehr.harreader.model.HarLog;
 import de.sstoehr.harreader.model.HarLog.HarLogBuilder;
+import fi.iki.elonen.NanoHTTPD;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -47,6 +52,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
@@ -69,14 +75,17 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordHistory;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.db.TableHistory;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.extension.option.OptionsParamView;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.network.HttpHeader;
@@ -85,6 +94,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.StatsListener;
@@ -124,6 +134,14 @@ class HarImporterUnitTest extends TestUtils {
         sessionId = 1234;
         given(session.getSessionId()).willReturn(sessionId);
 
+        OptionsParam optionsParam =
+                mock(OptionsParam.class, withSettings().strictness(Strictness.LENIENT));
+        OptionsParamView viewParam =
+                mock(OptionsParamView.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getOptionsParam()).willReturn(optionsParam);
+        given(optionsParam.getViewParam()).willReturn(viewParam);
+        given(viewParam.getMode()).willReturn(Mode.standard.name());
+
         extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         extHistory = mock(ExtensionHistory.class);
@@ -138,6 +156,7 @@ class HarImporterUnitTest extends TestUtils {
     void beforeEach() {
         statsListener = mock();
         Stats.addListener(statsListener);
+        given(session.isInScope(anyString())).willReturn(true);
 
         logMessages = new ArrayList<>();
         LoggerConfig rootLogger = LoggerContext.getContext().getConfiguration().getRootLogger();
@@ -155,6 +174,8 @@ class HarImporterUnitTest extends TestUtils {
     @AfterEach
     void reset() throws URISyntaxException {
         Stats.removeListener(statsListener);
+        stopServer();
+        Control.getSingleton().setMode(Mode.standard);
 
         Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
     }
@@ -261,6 +282,106 @@ class HarImporterUnitTest extends TestUtils {
         assertThat(importer.isSuccess(), equalTo(true));
         verify(statsListener).counterInc("stats.exim.import.har.string");
         verify(statsListener).counterInc("stats.exim.import.har.string.message");
+    }
+
+    @Test
+    void shouldSendRequestsWhenSendRequestsEnabled() throws Exception {
+        // Given
+        startServer();
+        AtomicBoolean hit = new AtomicBoolean();
+        nano.addHandler(hitHandler(hit));
+        ProgressPaneListener listener = mock(ProgressPaneListener.class);
+        // When
+        HarImporter importer =
+                new HarImporter(createHarLog(createLiveMessage("/")), listener, true);
+        // Then
+        assertThat(importer.isSuccess(), equalTo(true));
+        assertThat(hit.get(), equalTo(true));
+        verify(listener).completed();
+        verify(statsListener).counterInc("stats.exim.import.har.file.message");
+    }
+
+    @Test
+    void shouldNotSendRequestsInSafeMode() throws Exception {
+        // Given
+        Control.getSingleton().setMode(Mode.safe);
+        startServer();
+        AtomicBoolean hit = new AtomicBoolean();
+        nano.addHandler(hitHandler(hit));
+        // When
+        HarImporter importer = new HarImporter(createHarLog(createLiveMessage("/")), null, true);
+        // Then
+        assertThat(importer.isSuccess(), equalTo(true));
+        assertThat(hit.get(), equalTo(false));
+        verify(statsListener, never()).counterInc("stats.exim.import.har.file.message");
+    }
+
+    @Test
+    void shouldNotSendOutOfScopeRequestsInProtectMode() throws Exception {
+        // Given
+        Control.getSingleton().setMode(Mode.protect);
+        given(session.isInScope(anyString())).willReturn(false);
+        startServer();
+        AtomicBoolean hit = new AtomicBoolean();
+        nano.addHandler(hitHandler(hit));
+        // When
+        HarImporter importer = new HarImporter(createHarLog(createLiveMessage("/")), null, true);
+        // Then
+        assertThat(importer.isSuccess(), equalTo(true));
+        assertThat(hit.get(), equalTo(false));
+        verify(statsListener, never()).counterInc("stats.exim.import.har.file.message");
+    }
+
+    @Test
+    void shouldNotFollowOutOfScopeRedirectInProtectMode() throws Exception {
+        // Given
+        Control.getSingleton().setMode(Mode.protect);
+        startServer();
+        String localUrl = "http://127.0.0.1:" + nano.getListeningPort() + "/";
+        given(session.isInScope(localUrl)).willReturn(true);
+        given(session.isInScope(argThat((String u) -> u != null && u.contains("example.org"))))
+                .willReturn(false);
+        AtomicBoolean redirected = new AtomicBoolean();
+        nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        if ("/final".equals(session.getUri())) {
+                            redirected.set(true);
+                            return NanoHTTPD.newFixedLengthResponse("final");
+                        }
+                        NanoHTTPD.Response response =
+                                NanoHTTPD.newFixedLengthResponse(
+                                        NanoHTTPD.Response.Status.REDIRECT,
+                                        NanoHTTPD.MIME_PLAINTEXT,
+                                        "");
+                        response.addHeader("Location", "http://example.org/out");
+                        return response;
+                    }
+                });
+        // When
+        HarImporter importer = new HarImporter(createHarLog(createLiveMessage("/")), null, true);
+        // Then
+        assertThat(importer.isSuccess(), equalTo(true));
+        assertThat(redirected.get(), equalTo(false));
+    }
+
+    @Test
+    void shouldSkipMalformedRequestWhenSendRequestsEnabled() throws Exception {
+        // Given
+        String har =
+                Files.readString(getResourcePath("noresponse.har"))
+                        .replace("\"url\": \"http://example.com/\"", "\"url\": \"\"");
+        // When
+        HarImporter importer = new HarImporter(har, true);
+        // Then
+        assertThat(importer.isSuccess(), equalTo(true));
+        verify(statsListener, never()).counterInc("stats.exim.import.har.string.message");
+        assertThat(
+                logMessages.stream().map(String::trim).toList(),
+                hasItem(
+                        equalTo(
+                                "Failed to send HAR request: Failed to find pattern (\\w+) +([^\\r\\n]+) +(HTTP/\\d+(?:\\.\\d+)?) in: GET  HTTP/1.1")));
     }
 
     @Test
@@ -409,6 +530,25 @@ class HarImporterUnitTest extends TestUtils {
         // Then
         assertThat(messages, hasSize(1));
         assertThat(messages.get(0).getResponseBody().toString(), is(equalTo("Not base 64")));
+    }
+
+    private HttpMessage createLiveMessage(String path) throws HttpMalformedHeaderException {
+        String url = "http://127.0.0.1:" + nano.getListeningPort() + path;
+        return new HttpMessage(
+                "GET " + url + " HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n",
+                EMPTY_BODY,
+                "HTTP/1.1 200 OK\r\n\r\n",
+                "recorded".getBytes(StandardCharsets.US_ASCII));
+    }
+
+    private static NanoServerHandler hitHandler(AtomicBoolean hit) {
+        return new NanoServerHandler("/") {
+            @Override
+            protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                hit.set(true);
+                return NanoHTTPD.newFixedLengthResponse("live-body");
+            }
+        };
     }
 
     private HarLog getHarLog(String path, String replacement) throws HarReaderException {

@@ -26,9 +26,12 @@ import de.sstoehr.harreader.model.HarEntry;
 import de.sstoehr.harreader.model.HarEntry.HarEntryBuilder;
 import de.sstoehr.harreader.model.HarLog;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,8 +43,11 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.zap.network.HttpRedirectionValidator;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -103,21 +109,33 @@ public class HarImporter {
     private static ExtensionHistory extHistory;
 
     private final DataSource dataSource;
+    private final boolean sendRequests;
     private ProgressPaneListener progressListener;
+    private SendContext sendContext;
     private boolean success;
 
     public HarImporter(String data) {
+        this(data, false);
+    }
+
+    public HarImporter(String data, boolean sendRequests) {
         this.dataSource = DataSource.STRING;
+        this.sendRequests = sendRequests;
         importData(reader -> reader.readFromString(data));
     }
 
     public HarImporter(File file) {
-        this(file, null);
+        this(file, null, false);
     }
 
     public HarImporter(File file, ProgressPaneListener listener) {
+        this(file, listener, false);
+    }
+
+    public HarImporter(File file, ProgressPaneListener listener, boolean sendRequests) {
         dataSource = DataSource.FILE;
         this.progressListener = listener;
+        this.sendRequests = sendRequests;
         importData(reader -> reader.readFromFile(file));
     }
 
@@ -135,8 +153,13 @@ public class HarImporter {
     }
 
     public HarImporter(HarLog harLog, ProgressPaneListener listener) {
+        this(harLog, listener, false);
+    }
+
+    public HarImporter(HarLog harLog, ProgressPaneListener listener, boolean sendRequests) {
         dataSource = DataSource.FILE;
         this.progressListener = listener;
+        this.sendRequests = sendRequests;
         importHarLog(harLog);
         completed();
     }
@@ -147,24 +170,22 @@ public class HarImporter {
         success = true;
     }
 
+    private SendContext getSendContext() {
+        if (sendContext == null) {
+            sendContext = SendContext.create();
+        }
+        return sendContext;
+    }
+
     private void processMessages(HarLog log) {
         if (log == null) {
             return;
         }
 
-        List<HttpMessage> messages = null;
-
-        try {
-            messages = getHttpMessages(log);
-        } catch (HttpMalformedHeaderException e) {
-            LOGGER.warn("Failed to process HAR entries. {}", e.getMessage());
-            LOGGER.debug(e, e);
-            dataSource.error();
-            completed();
-            return;
-        }
+        List<HarEntry> entries = preProcessHarEntries(log, sendRequests);
         int count = 0;
-        for (HttpMessage msg : messages) {
+        for (HarEntry entry : entries) {
+            HttpMessage msg = sendRequests ? getSendContext().send(entry) : getHttpMessage(entry);
             if (msg == null) {
                 updateProgress(
                         ++count, Constant.messages.getString("exim.progress.invalidmessage"));
@@ -175,17 +196,79 @@ public class HarImporter {
         }
     }
 
-    private static List<HarEntry> preProcessHarEntries(HarLog log) {
+    private static HttpRequestConfig createRequestConfig(AtomicBoolean requestValid) {
+        return HttpRequestConfig.builder()
+                .setRedirectionValidator(
+                        new HttpRedirectionValidator() {
+                            @Override
+                            public void notifyMessageReceived(HttpMessage msg) {}
+
+                            @Override
+                            public boolean isValid(URI redirection) {
+                                requestValid.set(isValidForCurrentMode(redirection));
+                                return requestValid.get();
+                            }
+                        })
+                .build();
+    }
+
+    record SendContext(HttpSender sender, HttpRequestConfig config, AtomicBoolean requestValid) {
+
+        static SendContext create() {
+            AtomicBoolean requestValid = new AtomicBoolean(true);
+            return new SendContext(
+                    new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR),
+                    createRequestConfig(requestValid),
+                    requestValid);
+        }
+
+        HttpMessage send(HarEntry entry) {
+            try {
+                HttpMessage message = HarUtils.createHttpMessage(entry.request());
+                URI uri = message.getRequestHeader().getURI();
+                if (!isValidForCurrentMode(uri)) {
+                    return null;
+                }
+                requestValid.set(true);
+                sender.sendAndReceive(message, config);
+                if (!requestValid.get()) {
+                    return null;
+                }
+                return message;
+            } catch (IOException e) {
+                LOGGER.warn("Failed to send HAR request: {}", e.getMessage());
+                LOGGER.debug(e, e);
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Tells whether or not the given {@code uri} is valid for the current {@link Control.Mode}.
+     *
+     * <p>Not valid in {@code safe} mode, or in {@code protect} mode when out of scope.
+     */
+    private static boolean isValidForCurrentMode(URI uri) {
+        return switch (Control.getSingleton().getMode()) {
+            case safe -> false;
+            case protect -> Model.getSingleton().getSession().isInScope(uri.toString());
+            default -> true;
+        };
+    }
+
+    private static List<HarEntry> preProcessHarEntries(HarLog log, boolean sendRequests) {
         return log.entries().stream()
                 .filter(HarImporter::entryIsNotLocalPrivate)
                 .map(HarImporter::correctHttpVersions)
-                .filter(HarImporter::entryHasUsableHttpVersion)
+                .filter(entry -> entryHasUsableHttpVersion(entry, sendRequests))
                 .toList();
     }
 
-    private static boolean entryHasUsableHttpVersion(HarEntry entry) {
+    private static boolean entryHasUsableHttpVersion(HarEntry entry, boolean sendRequests) {
         if (!containsIgnoreCase(ACCEPTED_VERSIONS, entry.request().httpVersion())
-                || !containsIgnoreCase(ACCEPTED_VERSIONS, entry.response().httpVersion())) {
+                || (!sendRequests
+                        && !containsIgnoreCase(
+                                ACCEPTED_VERSIONS, entry.response().httpVersion()))) {
             LOGGER.warn(
                     "Message with unsupported HTTP version (Req version: {}, Resp version: {}) will be dropped: {}",
                     entry.request().httpVersion(),
@@ -207,17 +290,15 @@ public class HarImporter {
         return true;
     }
 
-    protected static List<HttpMessage> getHttpMessages(HarLog log)
-            throws HttpMalformedHeaderException {
+    protected static List<HttpMessage> getHttpMessages(HarLog log) {
         List<HttpMessage> result = new ArrayList<>();
-        for (HarEntry entry : preProcessHarEntries(log)) {
+        for (HarEntry entry : preProcessHarEntries(log, false)) {
             result.add(getHttpMessage(entry));
         }
         return result;
     }
 
-    private static HttpMessage getHttpMessage(HarEntry harEntry)
-            throws HttpMalformedHeaderException {
+    private static HttpMessage getHttpMessage(HarEntry harEntry) {
         try {
             return HarUtils.createHttpMessage(harEntry);
         } catch (HttpMalformedHeaderException headerEx) {

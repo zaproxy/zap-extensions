@@ -36,13 +36,19 @@ public class ImporterOptions {
     private final String type;
     private final Path inputFile;
     private final MessageHandler messageHandler;
+    private final boolean sendRequests;
 
     private ImporterOptions(
-            Context context, String type, Path inputFile, MessageHandler messageHandler) {
+            Context context,
+            String type,
+            Path inputFile,
+            MessageHandler messageHandler,
+            boolean sendRequests) {
         this.context = context;
         this.type = type;
         this.inputFile = inputFile;
         this.messageHandler = messageHandler;
+        this.sendRequests = sendRequests;
     }
 
     public Context getContext() {
@@ -59,6 +65,15 @@ public class ImporterOptions {
 
     public MessageHandler getMessageHandler() {
         return messageHandler;
+    }
+
+    /**
+     * Tells whether or not the requests should be sent instead of importing recorded responses.
+     *
+     * @return {@code true} if the requests should be sent, {@code false} otherwise.
+     */
+    public boolean isSendRequests() {
+        return sendRequests;
     }
 
     /**
@@ -81,6 +96,7 @@ public class ImporterOptions {
         private String type;
         private Path inputFile;
         private MessageHandler messageHandler;
+        private boolean sendRequests;
 
         private Builder() {
             type = HarImporterType.ID;
@@ -143,6 +159,19 @@ public class ImporterOptions {
         }
 
         /**
+         * Sets whether or not the requests should be sent instead of importing recorded responses.
+         *
+         * <p>Default value: {@code false}.
+         *
+         * @param sendRequests {@code true} to send the requests, {@code false} otherwise.
+         * @return the builder for chaining.
+         */
+        public Builder setSendRequests(boolean sendRequests) {
+            this.sendRequests = sendRequests;
+            return this;
+        }
+
+        /**
          * Builds the options from the specified data.
          *
          * @return the options with specified data.
@@ -156,7 +185,7 @@ public class ImporterOptions {
             if (messageHandler == null) {
                 throw new IllegalStateException("The messageHandler must be set.");
             }
-            return new ImporterOptions(context, type, inputFile, messageHandler);
+            return new ImporterOptions(context, type, inputFile, messageHandler, sendRequests);
         }
     }
 

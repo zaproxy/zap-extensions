@@ -75,6 +75,7 @@ public class ImportExportApi extends ApiImplementor {
     private static final String PARAM_FILE_PATH = "filePath";
     private static final String PARAM_FOLLOW_REDIRECTS = "followRedirects";
     private static final String PARAM_IDS = "ids";
+    private static final String PARAM_SEND_REQUESTS = "sendRequests";
     private static final String PARAM_REQUEST = "request";
     private static final String PARAM_START = "start";
 
@@ -94,7 +95,10 @@ public class ImportExportApi extends ApiImplementor {
     public ImportExportApi() {
         super();
         this.addApiAction(
-                new ApiAction(ACTION_IMPORT_HAR, List.of(), List.of(PARAM_FILE_PATH, PARAM_DATA)));
+                new ApiAction(
+                        ACTION_IMPORT_HAR,
+                        List.of(),
+                        List.of(PARAM_FILE_PATH, PARAM_DATA, PARAM_SEND_REQUESTS)));
         this.addApiAction(new ApiAction(ACTION_IMPORT_URLS, new String[] {PARAM_FILE_PATH}));
         this.addApiAction(new ApiAction(ACTION_IMPORT_ZAP_LOGS, new String[] {PARAM_FILE_PATH}));
         this.addApiAction(
@@ -130,6 +134,7 @@ public class ImportExportApi extends ApiImplementor {
             case ACTION_IMPORT_HAR:
                 String data = ApiUtils.getOptionalStringParam(params, PARAM_DATA);
                 String filePath = ApiUtils.getOptionalStringParam(params, PARAM_FILE_PATH);
+                boolean sendRequests = getParam(params, PARAM_SEND_REQUESTS, false);
 
                 if (Strings.isNotBlank(data)) {
                     if (Strings.isNotBlank(filePath)) {
@@ -138,7 +143,7 @@ public class ImportExportApi extends ApiImplementor {
                                 "Only one of the parameters should be provided at the same time.");
                     }
 
-                    if (new HarImporter(data).isSuccess()) {
+                    if (new HarImporter(data, sendRequests).isSuccess()) {
                         return ApiResponseElement.OK;
                     }
                     throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_DATA);
@@ -149,7 +154,7 @@ public class ImportExportApi extends ApiImplementor {
                 }
 
                 file = new File(filePath);
-                HarImporter harImporter = new HarImporter(file);
+                HarImporter harImporter = new HarImporter(file, null, sendRequests);
                 return handleFileImportResponse(harImporter.isSuccess(), file);
             case ACTION_IMPORT_URLS:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));

@@ -59,6 +59,7 @@ public class ImportJob extends AutomationJob {
 
     private static final String PARAM_TYPE = "type";
     private static final String PARAM_FILE_NAME = "fileName";
+    private static final String PARAM_SEND_REQUESTS = "sendRequests";
 
     /** Import type ID for ModSecurity2 logs. */
     static final String MODSEC2_TYPE = "modsec2";
@@ -104,6 +105,7 @@ public class ImportJob extends AutomationJob {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_TYPE, "");
         map.put(PARAM_FILE_NAME, "");
+        map.put(PARAM_SEND_REQUESTS, "false");
         return map;
     }
 
@@ -112,6 +114,7 @@ public class ImportJob extends AutomationJob {
 
         String type = this.getParameters().getType();
         String fileName = this.getParameters().getFileName();
+        boolean sendRequests = Boolean.TRUE.equals(this.getParameters().getSendRequests());
 
         if (!StringUtils.isEmpty(fileName)) {
             File file = JobUtils.getFile(fileName, getPlan());
@@ -125,6 +128,7 @@ public class ImportJob extends AutomationJob {
                                             ImporterOptions.builder()
                                                     .setType(type)
                                                     .setInputFile(file.toPath())
+                                                    .setSendRequests(sendRequests)
                                                     .setMessageHandler(
                                                             msg -> persistMessage(progress, msg))
                                                     .build());
@@ -295,5 +299,6 @@ public class ImportJob extends AutomationJob {
     public static class Parameters extends AutomationData {
         private String type;
         private String fileName;
+        private Boolean sendRequests = false;
     }
 }

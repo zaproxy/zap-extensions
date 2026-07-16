@@ -89,9 +89,10 @@ class ImportJobUnitTest extends TestUtils {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(2)));
+        assertThat(params.size(), is(equalTo(3)));
         assertThat(params.get("type"), is(equalTo("")));
         assertThat(params.get("fileName"), is(equalTo("")));
+        assertThat(params.get("sendRequests"), is(equalTo("false")));
     }
 
     @Test
@@ -100,7 +101,15 @@ class ImportJobUnitTest extends TestUtils {
         AutomationProgress progress = new AutomationProgress();
         String type = HarImporterType.ID;
         String fileName = "C:\\Users\\ZAPBot\\Documents\\test file.har";
-        String yamlStr = "parameters:\n" + "  type: " + type + "\n" + "  fileName: " + fileName;
+        String yamlStr =
+                "parameters:\n"
+                        + "  type: "
+                        + type
+                        + "\n"
+                        + "  fileName: "
+                        + fileName
+                        + "\n"
+                        + "  sendRequests: true";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
@@ -114,6 +123,7 @@ class ImportJobUnitTest extends TestUtils {
         // Then
         assertThat(job.getParameters().getType(), is(equalTo(type)));
         assertThat(job.getParameters().getFileName(), is(equalTo(fileName)));
+        assertThat(job.getParameters().getSendRequests(), is(equalTo(true)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }

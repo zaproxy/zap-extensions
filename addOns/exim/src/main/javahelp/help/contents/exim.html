@@ -31,6 +31,7 @@ Provides a context menu to save content of HTTP messages as XML.
 
 <H3>Import HAR (HTTP Archive File)</H3>
 An option to import messages from a HTTP Archive (HAR), available via the 'Import' menu.
+Optionally select <em>Send Requests</em> to send the requests (following redirects) instead of importing the recorded responses. The Mode is enforced when sending the requests (and following redirections).
 
 <strong>Note</strong>: The following modifications may be made when importing a HAR (HTTP Archive File):
 <ul>
@@ -81,7 +82,7 @@ This add-on also exposes various ZAP API endpoints to facilitate programmatic us
 <H3>Actions</H3>
 <ul>
   <li><code>exportSitesTree (filePath* )</code> Exports the Sites Tree in the Sites Tree YAML format.</li>
-  <li><code>importHar (filePath data )</code> Imports a HAR from a file or the given data.</li>
+  <li><code>importHar (filePath data sendRequests )</code> Imports a HAR from a file or the given data. If sendRequests is true the requests are sent (following redirects) instead of importing the recorded responses. The Mode is enforced when sending the requests (and following redirections).</li>
   <li><code>importModsec2Logs (filePath* )</code> Imports ModSecurity2 logs from the file with the given file system path.</li>
   <li><code>importUrls (filePath* )</code> Imports URLs (one per line) from the file with the given file system path.</li>
   <li><code>importZapLogs (filePath* )</code> Imports previously exported ZAP messages from the file with the given file system path.</li>
