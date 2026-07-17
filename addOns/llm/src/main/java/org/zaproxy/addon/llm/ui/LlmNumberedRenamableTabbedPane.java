@@ -150,6 +150,14 @@ public class LlmNumberedRenamableTabbedPane extends JTabbedPane {
 
     protected void unregisterTag(String tag) {
         this.taggedTabs.remove(tag);
+        extension.removeCommunicationService(tag);
+    }
+
+    /** Refresh provider/model choices on all tabs, preserving each tab's current selection. */
+    public void refreshProviders() {
+        for (LlmChatTabPanel panel : taggedTabs.values()) {
+            panel.initTabProvider();
+        }
     }
 
     public LlmChatTabPanel getSelectedChatPanel() {

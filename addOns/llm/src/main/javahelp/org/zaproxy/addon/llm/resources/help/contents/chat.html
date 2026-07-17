@@ -7,13 +7,13 @@
 <BODY>
 <H1>LLM Chat</H1>
 
-The LLM Chat panel provides an interactive chat interface that allows you to communicate directly with the configured Large Language Model (LLM). This feature enables you to ask questions, get explanations, and receive assistance from the LLM in real-time.
+The LLM Chat panel provides an interactive chat interface that allows you to communicate directly with a configured Large Language Model (LLM). This feature enables you to ask questions, get explanations, and receive assistance from the LLM in real-time.
 
 <H2>Accessing the Chat Panel</H2>
 The LLM Chat panel appears as a tab in the ZAP Workspace window. You can access it by clicking on the "LLM Chat" tab.
 
 <H2>Multiple Tabs</H2>
-The LLM Chat panel supports multiple sub-tabs, allowing you to run several conversations in parallel. Each tab maintains its own conversation history, so you can keep different topics or contexts separate.
+The LLM Chat panel supports multiple sub-tabs, allowing you to run several conversations in parallel. Each tab maintains its own conversation history and its own LLM provider selection, so you can keep different topics, contexts, or models separate.
 <p>
 Click the plus (+) tab to create a new chat tab. Tabs are initially numbered; double-click a tab to rename it. Click the close button on a tab to remove it — you will be asked to confirm before the tab and its history are discarded.
 </p>
@@ -21,9 +21,28 @@ Click the plus (+) tab to create a new chat tab. Tabs are initially numbered; do
 A green activity indicator appears on a tab when new output has been written to it while another tab is selected. It clears automatically when you switch to that tab.
 </p>
 
+<H2>Chat Toolbar</H2>
+Each chat tab has a toolbar at the top containing the following controls:
+
+<ul>
+    <li><b>Provider dropdown:</b> Shows the LLM provider and model currently active for this tab, for example <i>My Claude - claude-opus-4-5</i>. Click the dropdown to select a different provider or model from those you have configured. Each tab has its own independent provider selection — changing one tab's provider does not affect other tabs, and changing the global default (via the main ZAP toolbar button) does not alter providers already chosen in open tabs.</li>
+    <li><b>Token counter:</b> Displays the cumulative number of tokens used in conversations with the current provider on this tab. The counter resets to zero when you select a different provider or model. Note that not all providers report token usage; if a provider does not, the counter will remain at zero.</li>
+    <li><b>Options button (gear icon):</b> Opens the <a href="options.html">LLM Options</a> panel directly, where you can add, modify, or remove model providers.</li>
+</ul>
+
+<H3>Switching Providers Mid-Conversation</H3>
+You can change the provider at any point during a conversation using the provider dropdown. When you do:
+<ul>
+    <li>A system message is written to the chat area confirming which provider and model is now active.</li>
+    <li>The token counter resets to zero for the new provider.</li>
+    <li>Subsequent messages are sent to the newly selected provider.</li>
+</ul>
+Note that the conversation history shown in the chat area is for display only — switching providers does not carry the message history across to the new model.
+
 <H2>Using the Chat Interface</H2>
 The chat interface consists of:
 <ul>
+    <li><b>Toolbar:</b> Shows the active provider, token usage, and an options button. See above.</li>
     <li><b>Message Area:</b> Displays the conversation history between you and the LLM assistant. Messages are shown with labels indicating who sent them ("You" for your messages, "Assistant" for LLM responses). Located in the top portion of the panel.</li>
     <li><b>Input Area:</b> A multi-line text area at the bottom of the panel where you type your questions or messages.</li>
     <li><b>Send Button:</b> Click to send your message to the LLM.</li>
@@ -33,6 +52,7 @@ The chat interface consists of:
 <H2>Sending Messages</H2>
 To send a message to the LLM:
 <ol>
+    <li>Select a provider in the toolbar dropdown if one is not already shown.</li>
     <li>Type your question or message in the input area at the bottom of the panel. The input area supports multi-line text, so you can type longer messages or format your questions.</li>
     <li>Click the "Send" button or press Ctrl+Enter to send your message. (Note: Pressing Enter alone will create a new line in the multi-line input area.)</li>
     <li>Your message will appear in the message area, and the LLM will process it in the background.</li>
@@ -40,13 +60,15 @@ To send a message to the LLM:
 </ol>
 
 <H2>Requirements</H2>
-Before using the LLM Chat feature, you must have configured the LLM provider via the <a href="options.html">Options</a> panel.<br>
-If the LLM is not configured, you will see an error message when attempting to send a message.
+Before using the LLM Chat feature, you must have configured at least one LLM provider via the <a href="options.html">Options</a> panel. When a chat tab is opened, it picks up the currently configured default provider automatically. If no default is set, the first available configured provider is used instead.
+<p>
+If no providers have been configured, the provider dropdown will be empty and you will see an error message when attempting to send a message.
+</p>
 
 <H2>Error Handling</H2>
 The chat panel handles various error conditions:
 <ul>
-    <li><b>Not Configured:</b> If the LLM is not configured, you will see an error message prompting you to configure it in the Options panel.</li>
+    <li><b>Not Configured:</b> If no LLM provider is selected for the tab, you will see an error message prompting you to configure one in the Options panel.</li>
     <li><b>Service Error:</b> If there is an issue initializing the LLM service, an appropriate error message will be displayed.</li>
     <li><b>Send Error:</b> If there is an error sending a message to the LLM, the error details will be shown in the message area.</li>
 </ul>
@@ -82,7 +104,7 @@ To append HTTP request/response data to the chat:
         <ul>
             <li><b>Append Request to LLM Chat:</b> Adds only the HTTP request (headers and body).</li>
             <li><b>Append Response to LLM Chat:</b> Adds only the HTTP response (headers and body).</li>
-            <li><b>Append Request & Response to LLM Chat:</b> Adds both the request and response.</li>
+            <li><b>Append Request &amp; Response to LLM Chat:</b> Adds both the request and response.</li>
         </ul>
     </li>
     <li>The HTTP message data will be formatted and added to the input area.</li>
@@ -91,8 +113,9 @@ To append HTTP request/response data to the chat:
 
 <H2>Tips</H2>
 <ul>
-    <li>Use multiple tabs to organize different conversations or topics; each tab keeps its own history.</li>
-    <li>The chat maintains conversation context, allowing for follow-up questions and multi-turn conversations.</li>
+    <li>Use multiple tabs to organize different conversations — each tab keeps its own provider selection, message history, and token count independently.</li>
+    <li>If you want to compare responses from different models, open two tabs and set each to a different provider.</li>
+    <li>The token counter gives you a rough indication of how much of your context window or quota you are using in this conversation with a given model.</li>
     <li>You can ask questions about security testing, web application vulnerabilities, ZAP usage, or any other topic the LLM can help with.</li>
     <li>The input area is disabled while a message is being processed to prevent sending duplicate messages.</li>
     <li>Messages automatically scroll to show the latest conversation.</li>
@@ -103,4 +126,3 @@ To append HTTP request/response data to the chat:
 
 </BODY>
 </HTML>
-

@@ -92,4 +92,8 @@ public class LlmChatPanel extends AbstractPanel {
     public LlmNumberedRenamableTabbedPane getTabbedPane() {
         return tabbedPane;
     }
+
+    public void refreshProviders() {
+        tabbedPane.refreshProviders();
+    }
 }

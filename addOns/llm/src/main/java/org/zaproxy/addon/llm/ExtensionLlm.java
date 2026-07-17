@@ -19,14 +19,17 @@
  */
 package org.zaproxy.addon.llm;
 
+import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.service.tool.ToolProvider;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,6 +65,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
     private LlmOptions prevOptions;
     private Map<String, LlmCommunicationService> commsServices = new ConcurrentHashMap<>();
     private final List<ToolProvider> toolProviders = new CopyOnWriteArrayList<>();
+    private final AtomicInteger toolProvidersVersion = new AtomicInteger();
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
 
@@ -104,6 +108,9 @@ public class ExtensionLlm extends ExtensionAdaptor {
                     public void optionsChanged(OptionsParam optionsParam) {
                         if (options.hasCommsChanged(prevOptions)) {
                             optionsReset();
+                            if (llmChatPanel != null) {
+                                SwingUtilities.invokeLater(llmChatPanel::refreshProviders);
+                            }
                         }
                     }
                 });
@@ -200,6 +207,9 @@ public class ExtensionLlm extends ExtensionAdaptor {
     @Override
     public void optionsLoaded() {
         this.prevOptions = this.options.clone();
+        if (llmChatPanel != null) {
+            SwingUtilities.invokeLater(llmChatPanel::refreshProviders);
+        }
     }
 
     private void optionsReset() {
@@ -209,33 +219,93 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
     public void addToolProvider(ToolProvider provider) {
         toolProviders.add(provider);
+        toolProvidersVersion.incrementAndGet();
         commsServices.clear();
     }
 
     public void removeToolProvider(ToolProvider provider) {
         toolProviders.remove(provider);
+        toolProvidersVersion.incrementAndGet();
         commsServices.clear();
+    }
+
+    public int getToolProvidersVersion() {
+        return toolProvidersVersion.get();
     }
 
     public LlmCommunicationService getCommunicationService(String commsKey, String outputTabName) {
         if (!isConfigured()) {
             return null;
         }
-        if (this.hasView() && outputTabName != null) {
-            return new LlmCommunicationService(
-                    options.getDefaultProviderConfig(),
-                    options.getDefaultModelName(),
-                    new LlmGuiResponseHandler(getChatTab(commsKey, outputTabName)),
-                    List.copyOf(toolProviders));
-        }
         return commsServices.computeIfAbsent(
                 commsKey,
-                k ->
-                        new LlmCommunicationService(
-                                options.getDefaultProviderConfig(),
-                                options.getDefaultModelName(),
-                                hasView() ? null : new LlmLogResponseHandler(commsKey),
-                                List.copyOf(toolProviders)));
+                k -> {
+                    ChatModelListener listener = null;
+                    if (hasView() && outputTabName != null) {
+                        listener = new LlmGuiResponseHandler(getChatTab(commsKey, outputTabName));
+                    } else {
+                        listener = new LlmLogResponseHandler(commsKey);
+                    }
+                    return new LlmCommunicationService(
+                            options.getDefaultProviderConfig(),
+                            options.getDefaultModelName(),
+                            listener,
+                            List.copyOf(toolProviders));
+                });
+    }
+
+    /**
+     * Caches a tab's communication service under the tab tag so it can be discarded when the tab is
+     * closed.
+     */
+    public void cacheTabCommunicationService(String tag, LlmCommunicationService service) {
+        if (tag != null && service != null) {
+            commsServices.put(tag, service);
+        }
+    }
+
+    /**
+     * Removes the cached communication service for the given key, discarding its conversation
+     * history.
+     */
+    public void removeCommunicationService(String commsKey) {
+        if (commsKey != null) {
+            commsServices.remove(commsKey);
+        }
+    }
+
+    public List<LlmProviderConfig> getProviderConfigs() {
+        return options != null ? options.getProviderConfigs() : List.of();
+    }
+
+    public LlmProviderConfig getDefaultProviderConfig() {
+        return options != null ? options.getDefaultProviderConfig() : null;
+    }
+
+    public String getDefaultModelName() {
+        return options != null ? options.getDefaultModelName() : "";
+    }
+
+    /**
+     * Builds a {@link LlmCommunicationService} using the given provider config, bypassing the
+     * global default. Used by individual chat tabs that maintain their own provider selection.
+     */
+    public LlmCommunicationService buildCommunicationService(
+            LlmProviderConfig providerConfig, String modelName, ChatModelListener listener) {
+        if (providerConfig == null || LlmProvider.NONE.equals(providerConfig.getProvider())) {
+            return null;
+        }
+        if (providerConfig.getProvider().isEndpointRequired()
+                && (providerConfig.getEndpoint() == null
+                        || providerConfig.getEndpoint().isBlank())) {
+            return null;
+        }
+        if (providerConfig.getProvider().isModelRequired()
+                && providerConfig.getModels().isEmpty()) {
+            return null;
+        }
+        return new LlmCommunicationService(
+                providerConfig, modelName, listener, List.copyOf(toolProviders));
     }
 
     public void setDefaultProvider(String name, String modelName) {

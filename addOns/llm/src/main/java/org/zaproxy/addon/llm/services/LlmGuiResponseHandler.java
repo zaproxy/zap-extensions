@@ -55,6 +55,7 @@ public class LlmGuiResponseHandler implements ChatModelListener {
     public void onResponse(ChatModelResponseContext responseContext) {
         LOGGER.info("Token usage = {} ", responseContext.chatResponse().tokenUsage());
         if (chatPanel == null) return;
+        chatPanel.addTokenUsage(responseContext.chatResponse().tokenUsage());
         chatPanel.appendToOutput(
                 LlmChatTabPanel.ASSISTANT_LABEL, responseContext.chatResponse().aiMessage().text());
     }
