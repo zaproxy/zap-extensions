@@ -124,6 +124,7 @@ public class ClientSpider implements GenericScanner2 {
 
     private final ValueProvider valueProvider;
     private ClientSpiderOptions options;
+    private final StaticResourceCache staticResourceCache;
     private int scanId;
     private String displayName;
 
@@ -211,6 +212,8 @@ public class ClientSpider implements GenericScanner2 {
         URI targetUri = createUri(targetUrl);
         targetHost = new String(targetUri.getRawHost());
         this.options = options;
+        this.staticResourceCache =
+                options.isCacheStaticResources() ? new StaticResourceCache() : null;
         this.scanId = id;
         this.tasksTotalCount = new AtomicInteger();
         this.valueProvider = valueProvider;
@@ -1198,8 +1201,11 @@ public class ClientSpider implements GenericScanner2 {
             if (!ctx.isFromClient()) {
                 handleRedirection(httpMessage);
 
-                notifyMessage(
-                        httpMessage, scanOptions.getHrefType(), getResourceState(httpMessage));
+                ResourceState responseState = getResourceState(httpMessage);
+                notifyMessage(httpMessage, scanOptions.getHrefType(), responseState);
+                if (staticResourceCache != null && responseState == ResourceState.ALLOWED) {
+                    staticResourceCache.handleResponse(httpMessage);
+                }
                 return;
             }
 
@@ -1213,6 +1219,13 @@ public class ClientSpider implements GenericScanner2 {
             if (state != ResourceState.ALLOWED && state != ResourceState.THIRD_PARTY) {
                 setOutOfScopeResponse(httpMessage);
                 notifyMessage(httpMessage, scanOptions.getTmpHrefType(), state);
+                ctx.overridden();
+                return;
+            }
+
+            if (staticResourceCache != null && staticResourceCache.handleRequest(httpMessage)) {
+                // The response is not proxied, complete the request here.
+                waitStrategy.onRequestCompleted(uri);
                 ctx.overridden();
                 return;
             }

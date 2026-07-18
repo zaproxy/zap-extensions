@@ -192,6 +192,9 @@ public class ClientSpiderJob extends AutomationJob {
         if (parameters.getActionWaitTime() != null) {
             options.setActionWaitTimeInSecs(parameters.getActionWaitTime());
         }
+        if (parameters.getCacheStaticResources() != null) {
+            options.setCacheStaticResources(parameters.getCacheStaticResources());
+        }
         if (!StringUtils.isBlank(parameters.getScopeCheck())) {
             options.setScopeCheck(parameters.getScopeCheck());
         }
@@ -302,6 +305,7 @@ public class ClientSpiderJob extends AutomationJob {
         private String scopeCheck = ScopeCheck.getDefault().toString();
         private Boolean logoutAvoidance = ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE;
         private Integer actionWaitTime = ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME;
+        private Boolean cacheStaticResources = ClientSpiderOptions.DEFAULT_CACHE_STATIC_RESOURCES;
 
         public Parameters() {}
     }
