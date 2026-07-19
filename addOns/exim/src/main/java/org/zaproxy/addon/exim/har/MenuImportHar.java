@@ -33,7 +33,6 @@ import org.zaproxy.addon.commonlib.ui.ProgressPane;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
 import org.zaproxy.addon.exim.ExtensionExim;
-import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class MenuImportHar extends ZapMenuItem {
@@ -73,9 +72,7 @@ public class MenuImportHar extends ZapMenuItem {
                                                     "Failed to read HAR file: {}\n{}",
                                                     file.getAbsolutePath(),
                                                     e.getMessage());
-                                            Stats.incCounter(
-                                                    ExtensionExim.STATS_PREFIX
-                                                            + HarImporter.STATS_HAR_FILE_ERROR);
+                                            HarImporter.DataSource.FILE.error();
                                             return;
                                         }
                                         ProgressPane currentImportPane =

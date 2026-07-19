@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockSettings;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -163,6 +164,17 @@ class UsernameEnumerationScanRuleUnitTest extends ActiveScannerTest<UsernameEnum
         // Then
         assertThat(httpMessagesSent, hasSize(greaterThan(0)));
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(1));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
     }
 
     private Context contextWithLoginUrl(String path) throws HttpMalformedHeaderException {

@@ -90,6 +90,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     private AttackThread attackThread = null;
     private TraditionalSpider traditionalSpider;
     private PlugableSpider plugableSpider;
+    private ModernSpiderPanel modernSpiderPanel;
     private PlugableHud hudProvider;
     private QuickStartParam quickStartParam;
     private HttpSender httpSender;
@@ -138,6 +139,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         extensionHook.addOptionsParamSet(getQuickStartParam());
 
         if (hasView()) {
+            modernSpiderPanel = new ModernSpiderPanel(this);
+            modernSpiderPanel.setBrowserSelector(new SeleniumBrowserSelector());
             extensionHook.getHookView().addWorkPanel(getQuickStartPanel());
 
             ExtensionHelp.enableHelpKey(getQuickStartPanel(), "quickstart");
@@ -165,6 +168,9 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         super.optionsLoaded();
         if (View.isInitialised()) {
             getQuickStartPanel().optionsLoaded(this.getQuickStartParam());
+            if (modernSpiderPanel != null) {
+                modernSpiderPanel.optionsLoaded(this.getQuickStartParam());
+            }
         }
     }
 
@@ -279,7 +285,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     }
 
     public void removePlugableSpider(PlugableSpider pe) {
-        this.plugableSpider = pe;
+        this.plugableSpider = null;
         if (quickStartPanel != null) {
             quickStartPanel.removePlugableSpider(pe);
         }
@@ -312,6 +318,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     }
 
     public void attack(URL url, boolean useStdSpider) {
+        attack(url, useStdSpider, null);
+    }
+
+    public void attack(URL url, boolean useStdSpider, String policyName) {
         if (attackThread != null && attackThread.isAlive()) {
             return;
         }
@@ -319,6 +329,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         attackThread.setURL(url);
         attackThread.setTraditionalSpider(traditionalSpider);
         attackThread.setPlugableSpider(plugableSpider);
+        attackThread.setScanPolicyName(policyName);
         attackThread.start();
     }
 
@@ -419,7 +430,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             case notstarted:
             case started:
             case spider:
-            case ajaxspider:
+            case modernspider:
             case ascan:
                 this.runningFromCmdLine = true;
                 break;
@@ -723,10 +734,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         public boolean attack(String url) {
             URL targetURL;
             try {
-                targetURL = new URL(url);
+                targetURL = new java.net.URI(url).toURL();
                 // Validate the actual request-uri of the HTTP message accessed.
                 new URI(url, true);
-            } catch (MalformedURLException | URIException e) {
+            } catch (MalformedURLException | URIException | java.net.URISyntaxException e) {
                 reportError(
                         Constant.messages.getString(
                                 "quickstart.cmdline.quickurl.error.invalidUrl"));
@@ -776,6 +787,35 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     public void backToMainPanel() {
         this.getQuickStartPanel().backToMainPanel();
+    }
+
+    public void addModernSpiderOption(ModernSpiderOption option) {
+        if (modernSpiderPanel == null) {
+            return;
+        }
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> addModernSpiderOption(option));
+            return;
+        }
+        boolean wasEmpty = modernSpiderPanel.getOptionCount() == 0;
+        modernSpiderPanel.addOption(option);
+        if (wasEmpty) {
+            addPlugableSpider(modernSpiderPanel);
+        }
+    }
+
+    public void removeModernSpiderOption(ModernSpiderOption option) {
+        if (modernSpiderPanel == null) {
+            return;
+        }
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> removeModernSpiderOption(option));
+            return;
+        }
+        modernSpiderPanel.removeOption(option);
+        if (modernSpiderPanel.getOptionCount() == 0) {
+            removePlugableSpider(modernSpiderPanel);
+        }
     }
 
     public void setHudProvider(PlugableHud hp) {

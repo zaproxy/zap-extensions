@@ -91,12 +91,13 @@ class OpenApiJobUnitTest extends TestUtils {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(5)));
+        assertThat(params.size(), is(equalTo(6)));
         assertThat(params.get("apiFile"), is(equalTo("")));
         assertThat(params.get("apiUrl"), is(equalTo("")));
         assertThat(params.get("targetUrl"), is(equalTo("")));
         assertThat(params.get("context"), is(equalTo("")));
         assertThat(params.get("user"), is(equalTo("")));
+        assertThat(params.get("maxMessages"), is(equalTo("0")));
     }
 
     @Test
@@ -108,6 +109,7 @@ class OpenApiJobUnitTest extends TestUtils {
         String targetUrl = "https://example.com/endpoint/";
         String context = "My Context";
         String user = "My User";
+        int maxMessages = 1;
         String yamlStr =
                 "parameters:\n"
                         + "  apiUrl: "
@@ -123,7 +125,10 @@ class OpenApiJobUnitTest extends TestUtils {
                         + context
                         + "\n"
                         + "  user: "
-                        + user;
+                        + user
+                        + "\n"
+                        + "  maxMessages: "
+                        + maxMessages;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
@@ -144,14 +149,37 @@ class OpenApiJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getTargetUrl(), is(equalTo(targetUrl)));
         assertThat(job.getParameters().getContext(), is(equalTo(context)));
         assertThat(job.getParameters().getUser(), is(equalTo(user)));
+        assertThat(job.getParameters().getMaxMessages(), is(equalTo(maxMessages)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test
+    void shouldWarnIfNegativeMaxMessages() {
+        // Given
+        mockMessages(new ExtensionOpenApi());
+        AutomationProgress progress = new AutomationProgress();
+        String yamlStr = "parameters:\n" + "  maxMessages: -1";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        OpenApiJob job = new OpenApiJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("Job openapi maxMessages must be zero or greater, was: -1")));
+    }
+
+    @Test
     void shouldFailIfInvalidUrl() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
+        mockMessages(new ExtensionOpenApi());
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class), env);
@@ -170,7 +198,11 @@ class OpenApiJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!openapi.automation.error.url!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(
+                        equalTo(
+                                "Job openapi target URL: null failed to import: null. Due to: URI-Reference required")));
     }
 
     @Test

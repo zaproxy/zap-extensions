@@ -18,29 +18,31 @@ spiderAjaxジョブにより、AJAXスパイダーを実行できます。これ
 このジョブはモニターテストをサポートしています。
 
 <pre>
-  - type: spiderAjax                   # ajaxスパイダー - 従来のスパイダーよりも遅いが、最新のアプリをうまく処理する
+  - type: spiderAjax                   # The ajax spider - slower than the spider but handles modern apps well
     parameters:
-      context:                         # 文字列: スパイダーを行うコンテキストの名前、デフォルト: 最初のコンテキスト
-      user:                            # 文字列: 認証に使用するオプションのユーザー、環境変数で定義されている必要があります
-      url:                             # 文字列: スパイダーを開始するURL、デフォルト: 最初のコンテキストのURL
-      maxDuration:                     # Int: ajaxスパイダーが実行を許可される最大時間 (分)、デフォルト: 0 (無制限)
-      maxCrawlDepth:                   # Int: クローラーが到達できる最大深度、デフォルト: 10、0は無制限
-      numberOfBrowsers:                # Int: スパイダーが使用するブラウザの数。増やすと高速化されるが、より多くのメモリを使用する、デフォルト: CPUコア数
-      runOnlyIfModern:                 # Boolean: trueの場合、"モダンなアプリ"のアラートが発生した場合にのみスパイダーが実行される、デフォルト: false
-      inScopeOnly:                     # Boolean: trueの場合、スコープ外でリクエストされたURLはすべて無視される、デフォルト: true
-      browserId:                       # 文字列: 使用するブラウザID、デフォルト: firefox-headless
-      clickDefaultElems:               # Bool: 有効な場合、デフォルトの要素 'a'、'button'、'input' のみをクリックする、デフォルト: true
-      clickElemsOnce:                  # Bool: 有効な場合、各要素を一度だけクリックする、デフォルト: true
-      eventWait:                       # Int: クライアント側イベントが発生した後に待機する時間（ミリ秒）、デフォルト: 1000
-      maxCrawlStates:                  # Int: クローラーがクロールすべき最大クロールステート数、デフォルト: 0 (無制限)
-      randomInputs:                    # Bool: 有効な場合、input 要素にランダムな値が入力される、デフォルト: true
-      reloadWait:                      # Int: URLがロードされた後に待機する時間 (ミリ秒)、デフォルト: 1000
-      scopeCheck:                      # 文字列: スコープチェック、Flexible または Strict、デフォルト: Strict
-      elements:                        # クリックするHTML要素のリスト - clickDefaultElems が false でない限り適用されません
+      context:                         # String: Name of the context to spider, default: first context
+      user:                            # String: An optional user to use for authentication, must be defined in the env
+      url:                             # String: Url to start spidering from, default: first context URL
+      maxDuration:                     # Int: The max time in minutes the ajax spider will be allowed to run for, default: 0 unlimited
+      maxCrawlDepth:                   # Int: The max depth that the crawler can reach, default: 10, 0 is unlimited
+      numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: number of cores
+      runOnlyIfModern:                 # Boolean: If true then the spider will only run if a "modern app" alert is raised, default: false
+      inScopeOnly:                     # Boolean: If true then any URLs requested which are out of scope will be ignored, default: true
+      enableExtensions:                # Bool: When enabled then will use any browser extensions added by other add-ons, default: false
+      browserId:                       # String: Browser Id to use, default: firefox-headless
+      clickDefaultElems:               # Bool: When enabled only click the default element: 'a', 'button' and 'input', default: true
+      clickElemsOnce:                  # Bool: When enabled only click each element once, default: true
+      eventWait:                       # Int: The time in milliseconds to wait after a client side event is fired, default: 1000
+      maxCrawlStates:                  # Int: The maximum number of crawl states the crawler should crawl, default: 0 unlimited
+      randomInputs:                    # Bool: When enabled random values will be entered into input element, default: true
+      reloadWait:                      # Int: The time in milliseconds to wait after the URL is loaded, default: 1000
+      scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Strict
+      logoutAvoidance:                 # Bool: When enabled, the spider will avoid clicking common logout elements, default: false
+      elements:                        # A list of HTML elements to click - will be ignored unless clickDefaultElems is false
       - "a"
       - "button"
       - "input"
-      excludedElements:                 # クリックから除外するHTML要素のリスト
+      excludedElements:                 # A list of HTML elements to exclude from click.
         - description: "Logout Button"  # 文字列: 除外の説明
           element: "button"             # 文字列: 要素の名前
           xpath:                        # 文字列: 要素のXPath、オプション

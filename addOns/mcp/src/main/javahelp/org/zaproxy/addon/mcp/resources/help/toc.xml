@@ -7,6 +7,10 @@
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="MCP Integration" target="addon.mcp">
+				<tocitem text="Automation" target="addon.mcp.automation">
+					<tocitem text="mcp-config Job" target="addon.mcp.automation.config"/>
+					<tocitem text="mcp-import Job" target="addon.mcp.automation.import"/>
+				</tocitem>
 				<tocitem text="Options" target="addon.mcp.options"/>
 				<tocitem text="Tools" target="addon.mcp.tools"/>
 				<tocitem text="Prompts" target="addon.mcp.prompts"/>

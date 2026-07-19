@@ -32,6 +32,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.DatabaseException;
@@ -70,6 +71,7 @@ public class ImportExportApi extends ApiImplementor {
 
     private static final String PARAM_BASE_URL = "baseurl";
     private static final String PARAM_COUNT = "count";
+    private static final String PARAM_DATA = "data";
     private static final String PARAM_FILE_PATH = "filePath";
     private static final String PARAM_FOLLOW_REDIRECTS = "followRedirects";
     private static final String PARAM_IDS = "ids";
@@ -91,7 +93,8 @@ public class ImportExportApi extends ApiImplementor {
 
     public ImportExportApi() {
         super();
-        this.addApiAction(new ApiAction(ACTION_IMPORT_HAR, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(
+                new ApiAction(ACTION_IMPORT_HAR, List.of(), List.of(PARAM_FILE_PATH, PARAM_DATA)));
         this.addApiAction(new ApiAction(ACTION_IMPORT_URLS, new String[] {PARAM_FILE_PATH}));
         this.addApiAction(new ApiAction(ACTION_IMPORT_ZAP_LOGS, new String[] {PARAM_FILE_PATH}));
         this.addApiAction(
@@ -125,7 +128,27 @@ public class ImportExportApi extends ApiImplementor {
         File file;
         switch (name) {
             case ACTION_IMPORT_HAR:
-                file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
+                String data = ApiUtils.getOptionalStringParam(params, PARAM_DATA);
+                String filePath = ApiUtils.getOptionalStringParam(params, PARAM_FILE_PATH);
+
+                if (Strings.isNotBlank(data)) {
+                    if (Strings.isNotBlank(filePath)) {
+                        throw new ApiException(
+                                Type.ILLEGAL_PARAMETER,
+                                "Only one of the parameters should be provided at the same time.");
+                    }
+
+                    if (new HarImporter(data).isSuccess()) {
+                        return ApiResponseElement.OK;
+                    }
+                    throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_DATA);
+                }
+
+                if (Strings.isBlank(filePath)) {
+                    throw new ApiException(Type.MISSING_PARAMETER);
+                }
+
+                file = new File(filePath);
                 HarImporter harImporter = new HarImporter(file);
                 return handleFileImportResponse(harImporter.isSuccess(), file);
             case ACTION_IMPORT_URLS:

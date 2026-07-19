@@ -28,6 +28,7 @@ This job supports monitor tests.
       numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: number of cores
       runOnlyIfModern:                 # Boolean: If true then the spider will only run if a "modern app" alert is raised, default: false
       inScopeOnly:                     # Boolean: If true then any URLs requested which are out of scope will be ignored, default: true
+      enableExtensions:                # Bool: When enabled then will use any browser extensions added by other add-ons, default: false
       browserId:                       # String: Browser Id to use, default: firefox-headless
       clickDefaultElems:               # Bool: When enabled only click the default element: 'a', 'button' and 'input', default: true
       clickElemsOnce:                  # Bool: When enabled only click each element once, default: true
@@ -36,6 +37,7 @@ This job supports monitor tests.
       randomInputs:                    # Bool: When enabled random values will be entered into input element, default: true
       reloadWait:                      # Int: The time in milliseconds to wait after the URL is loaded, default: 1000
       scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Strict
+      logoutAvoidance:                 # Bool: When enabled, the spider will avoid clicking common logout elements, default: false
       elements:                        # A list of HTML elements to click - will be ignored unless clickDefaultElems is false
       - "a"
       - "button"

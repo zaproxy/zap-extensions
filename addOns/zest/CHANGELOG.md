@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [48.14.0] - 2026-07-06
+### Added
+- Browser screenshots are now automatically captured on Zest client step failures, and script print output is included in the diagnostics report. For chain runs, each output is clearly attributed to the specific script that produced it.
+
+### Changed
+- Update minimum `scripts` add-on version to 45.19.0.
+- Chained scripts now have provenance information preserved for troubleshooting purposes.
+- Update Zest library to 0.36.0:
+  - Update dependencies.
+  - Restore JSON deserialization behaviour.
+  - Handle text (and similar) input elements which only become visible when interacted with.
+- Maintenance changes.
+
+### Fixed
+- Fix exception when adding/editing Zest non-standalone type scripts through the GUI.
+- Prevent exception with scripts when their engine isn't installed or present, which may be encountered when the zest add-on is uninstalled/updated.
+
 ## [48.13.0] - 2026-03-31
 ### Added
 - Internal support for creating a single runnable chain script from multiple Zest scripts.
@@ -466,6 +483,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[48.14.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.14.0
 [48.13.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.13.0
 [48.12.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.12.0
 [48.11.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.11.0

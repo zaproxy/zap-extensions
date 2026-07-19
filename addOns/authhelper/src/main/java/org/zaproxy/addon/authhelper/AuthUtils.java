@@ -202,6 +202,8 @@ public class AuthUtils {
 
     private static ExecutorService executorService;
 
+    private static final int MAX_LENGTH_RESPONSE_BODY = 2_000_000;
+
     private static long timeToWaitMs = TimeUnit.SECONDS.toMillis(5);
 
     @Setter
@@ -375,7 +377,39 @@ public class AuthUtils {
     }
 
     private static Stream<WebElement> displayed(List<WebElement> elements) {
-        return elements.stream().filter(WebElement::isDisplayed);
+        // Some frameworks (like Ionic) only make input elements visible when they are clicked on
+        return elements.stream().filter(AuthUtils::isDisplayedAfterRevealAttempt);
+    }
+
+    private static boolean isDisplayedAfterRevealAttempt(WebElement element) {
+        try {
+            if (!element.isDisplayed()) {
+                tryRevealNonDisplayedInput(element);
+            }
+            return element.isDisplayed();
+        } catch (WebDriverException e) {
+            LOGGER.debug("Failed to check if element is displayed: {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    private static void tryRevealNonDisplayedInput(WebElement element) throws WebDriverException {
+        if (!INPUT_TAG.equalsIgnoreCase(element.getTagName())) {
+            return;
+        }
+        String type = getInputType(element);
+        if (!("text".equals(type) || "email".equals(type) || "password".equals(type))) {
+            return;
+        }
+        element.click();
+    }
+
+    private static String getInputType(WebElement element) {
+        String type = getAttribute(element, "type");
+        if (type == null || type.isEmpty()) {
+            return "text";
+        }
+        return type.toLowerCase(Locale.ROOT);
     }
 
     static boolean attributeContains(WebElement we, String attribute, List<String> strings) {
@@ -1006,27 +1040,15 @@ public class AuthUtils {
                 && StringUtils.isNotBlank(responseData)
                 && !extractJsonString(map, responseData)) {
             Map<String, SessionToken> tokens = new HashMap<>();
-            try {
-                try {
-                    AuthUtils.extractJsonTokens(JSONObject.fromObject(responseData), "", tokens);
-                } catch (JSONException e) {
-                    AuthUtils.extractJsonTokens(JSONArray.fromObject(responseData), "", tokens);
-                }
-                for (SessionToken token : tokens.values()) {
-                    String tokenLc = token.getKey().toLowerCase(Locale.ROOT);
-                    for (String id : JSON_IDS) {
-                        if (tokenLc.equals(id) || tokenLc.endsWith("." + id)) {
-                            addToMap(map, token);
-                            break;
-                        }
+            addResponseBodyTokens(msg, tokens);
+            for (SessionToken token : tokens.values()) {
+                String tokenLc = token.getKey().toLowerCase(Locale.ROOT);
+                for (String id : JSON_IDS) {
+                    if (tokenLc.equals(id) || tokenLc.endsWith("." + id)) {
+                        addToMap(map, token);
+                        break;
                     }
                 }
-            } catch (JSONException | ClassCastException e) {
-                LOGGER.debug(
-                        "Unable to parse authentication response body from {} as JSON: {} ",
-                        msg.getRequestHeader().getURI(),
-                        responseData,
-                        e);
             }
         }
         if (!map.isEmpty()) {
@@ -1099,24 +1121,7 @@ public class AuthUtils {
 
     public static Map<String, SessionToken> getAllTokens(HttpMessage msg, boolean incReqCookies) {
         Map<String, SessionToken> tokens = new HashMap<>();
-        String responseData = msg.getResponseBody().toString();
-        if (msg.getResponseHeader().isJson()
-                && StringUtils.isNotBlank(responseData)
-                && !extractJsonString(tokens, responseData)) {
-            // Extract json response data
-            try {
-                try {
-                    AuthUtils.extractJsonTokens(JSONObject.fromObject(responseData), "", tokens);
-                } catch (JSONException e) {
-                    AuthUtils.extractJsonTokens(JSONArray.fromObject(responseData), "", tokens);
-                }
-            } catch (JSONException e) {
-                LOGGER.debug(
-                        "Unable to parse authentication response body from {} as JSON: {}",
-                        msg.getRequestHeader().getURI(),
-                        responseData);
-            }
-        }
+        addResponseBodyTokens(msg, tokens);
         // Add response headers
         msg.getResponseHeader()
                 .getHeaders()
@@ -1164,6 +1169,37 @@ public class AuthUtils {
                                                 c.getValue())));
 
         return tokens;
+    }
+
+    private static void addResponseBodyTokens(HttpMessage msg, Map<String, SessionToken> tokens) {
+        if (msg.getResponseBody().length() > MAX_LENGTH_RESPONSE_BODY) {
+            LOGGER.debug(
+                    "Skipping extraction of session tokens in {} Response body deemed too big {} > {}",
+                    msg.getRequestHeader().getURI(),
+                    msg.getResponseBody().length(),
+                    MAX_LENGTH_RESPONSE_BODY);
+            return;
+        }
+
+        String responseData = msg.getResponseBody().toString();
+        if (msg.getResponseHeader().isJson()
+                && StringUtils.isNotBlank(responseData)
+                && !extractJsonString(tokens, responseData)) {
+            // Extract json response data
+            try {
+                try {
+                    AuthUtils.extractJsonTokens(JSONObject.fromObject(responseData), "", tokens);
+                } catch (JSONException e) {
+                    AuthUtils.extractJsonTokens(JSONArray.fromObject(responseData), "", tokens);
+                }
+            } catch (JSONException e) {
+                LOGGER.debug(
+                        "Unable to parse authentication response body from {} as JSON: {}",
+                        msg.getRequestHeader().getURI(),
+                        responseData,
+                        e);
+            }
+        }
     }
 
     /**

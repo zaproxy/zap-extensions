@@ -24,9 +24,10 @@ import com.google.gson.JsonParser;
 import com.natpryce.snodge.JsonMutator;
 import java.util.Iterator;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class JsonPayloadGenerator implements StringPayloadGenerator {
+public class JsonPayloadGenerator implements PayloadGenerator {
     private final String json;
     private final int numberOfPayloads;
     private final JsonElement originalJson;
@@ -54,12 +55,12 @@ public class JsonPayloadGenerator implements StringPayloadGenerator {
     }
 
     @Override
-    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
+    public ResettableAutoCloseableIterator<Payload> iterator() {
         return new JsonPayloadIterator(numberOfPayloads, originalJson);
     }
 
     @Override
-    public PayloadGenerator<DefaultPayload> copy() {
+    public PayloadGenerator copy() {
         return new JsonPayloadGenerator(json, numberOfPayloads);
     }
 
@@ -67,8 +68,7 @@ public class JsonPayloadGenerator implements StringPayloadGenerator {
         return this.json;
     }
 
-    private static class JsonPayloadIterator
-            implements ResettableAutoCloseableIterator<DefaultPayload> {
+    private static class JsonPayloadIterator implements ResettableAutoCloseableIterator<Payload> {
         private final int numberOfPayloads;
         private final JsonElement originalJson;
         private Iterator<JsonElement> mutant;
@@ -96,7 +96,7 @@ public class JsonPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public DefaultPayload next() {
+        public Payload next() {
             this.count++;
             JsonElement jsonElement = this.mutant.next();
             return new DefaultPayload(jsonElement.toString());

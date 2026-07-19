@@ -878,6 +878,16 @@
     ],
     "website": "https://web4realty.com"
   },
+  "WebAdministrator CMS": {
+    "cats": [
+      1
+    ],
+    "html": [
+      "<!-- [\\d\\.]+ / WebAdministrator \\(\\d{2}.\\d{2}\\.\\d{4} \\d{2}:\\d{2}\\) //-->"
+    ],
+    "description": "WebAdministrator CMS is a content management system used heavily by Polish public institutions.",
+    "website": "https://www.jskinternet.pl/jsk/oferta/webadministrator-cms/"
+  },
   "Webareal": {
     "cats": [
       6
@@ -2882,6 +2892,24 @@
     "icon": "WindowsServer.png",
     "website": "https://microsoft.com/windowsserver"
   },
+  "Windsurf": {
+    "cats": [
+      112
+    ],
+    "description": "Windsurf (formerly Codeium) is an AI-powered code editor (IDE) that uses large language models for code generation, completion, and agentic workflows. The windsurf-verification TXT record confirms domain ownership for Windsurf services.",
+    "dns": {
+      "TXT": [
+        "windsurf-verification="
+      ]
+    },
+    "icon": "Windsurf.svg",
+    "pricing": [
+      "payg",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://windsurf.com"
+  },
   "WINEAROUND": {
     "cats": [
       93
@@ -3583,8 +3611,9 @@
       "WordPress"
     ],
     "scriptSrc": [
-      "woocommerce",
-      "/woocommerce(?:\\.min)?\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
+      "^(?!.*?/wp-content/plugins/[^/]+/js/integrations/woocommerce\\.js(?:\\?ver=[\\d.]+)?$).*woocommerce",
+      "^(?!.*?/wp-content/plugins/[^/]+/js/integrations/woocommerce\\.js(?:\\?ver=[\\d.]+)?$).*/woocommerce(?:\\.min)?\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
+
     ],
     "website": "https://woocommerce.com"
   },
@@ -4259,6 +4288,20 @@
       "\\.worketc\\.com"
     ],
     "website": "https://www.worketc.com"
+  },
+  "Workplace by Meta": {
+    "cats": [
+      19
+    ],
+    "description": "Workplace was an enterprise collaboration and communication platform developed by Meta (formerly Facebook), used for messaging, news feeds, and groups within organisations.",
+    "dns": {
+      "TXT": [
+        "workplace-domain-verification="
+      ]
+    },
+    "icon": "Workplace.svg",
+    "saas": true,
+    "website": "https://www.workplace.com"
   },
   "Workstand": {
     "cats": [

@@ -20,23 +20,21 @@
 package org.zaproxy.addon.client.spider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,10 +44,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -59,48 +59,74 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
 import org.mockito.verification.VerificationMode;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Options;
-import org.openqa.selenium.WebDriver.Timeouts;
+import org.openqa.selenium.WebElement;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.extension.option.OptionsParamView;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
-import org.zaproxy.addon.client.ClientOptions;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
+import org.zaproxy.addon.client.internal.ClientMapListener;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
+import org.zaproxy.addon.client.internal.ElementLocator;
+import org.zaproxy.addon.client.internal.InteractableState;
+import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
-import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.extension.selenium.DriverConfiguration;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ClientSpiderUnitTest extends TestUtils {
 
-    private ExtensionSelenium extSel;
-    private ExtensionHistory history;
-    private ExtensionClientIntegration extClient;
-    private ClientOptions clientOptions;
+    private static final int PROXY_PORT = 8080;
+
+    private List<String> logEvents;
+
+    private ClientSpiderOptions clientOptions;
+    private ClientMapListener mapListener;
     private ClientMap map;
+    private String seedUrl;
+    private CountDownLatch proxyCdl;
     private WebDriver wd;
+    private ExtensionSelenium extSel;
+    private ExtensionClientIntegration extClient;
+    private Session session;
+    private ExtensionNetwork network;
+    private Server serverMock;
+
+    private ClientSpider spider;
 
     @BeforeAll
     static void setUpAll() {
@@ -108,83 +134,246 @@ class ClientSpiderUnitTest extends TestUtils {
     }
 
     @BeforeEach
-    void setUp() {
-        Model model = mock(Model.class);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+    void setUp() throws Exception {
+        logEvents = registerLogEvents(Level.ERROR);
+
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(model, extensionLoader);
-        extClient = mock(ExtensionClientIntegration.class);
+
+        OptionsParam optionsParam =
+                mock(OptionsParam.class, withSettings().strictness(Strictness.LENIENT));
+        OptionsParamView viewParam =
+                mock(OptionsParamView.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getOptionsParam()).willReturn(optionsParam);
+        given(optionsParam.getViewParam()).willReturn(viewParam);
+        given(viewParam.getMode()).willReturn(Control.Mode.standard.name());
+
+        extClient =
+                mock(
+                        ExtensionClientIntegration.class,
+                        withSettings().strictness(Strictness.LENIENT));
         extSel = mock(ExtensionSelenium.class, withSettings().strictness(Strictness.LENIENT));
-        history = mock(ExtensionHistory.class);
+        ExtensionHistory history =
+                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
         when(extensionLoader.getExtension(ExtensionHistory.class)).thenReturn(history);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
-        ExtensionNetwork network =
-                mock(ExtensionNetwork.class, withSettings().strictness(Strictness.LENIENT));
+        network = mock(ExtensionNetwork.class, withSettings().strictness(Strictness.LENIENT));
         when(extensionLoader.getExtension(ExtensionNetwork.class)).thenReturn(network);
-        given(network.createHttpServer(any(HttpServerConfig.class))).willReturn(mock(Server.class));
-        wd = mock(WebDriver.class);
-        when(extSel.getWebDriver(anyInt(), any(String.class), any(String.class), anyInt()))
-                .thenReturn(wd);
+        serverMock = mock(Server.class, withSettings().strictness(Strictness.LENIENT));
+        proxyCdl = new CountDownLatch(1);
+        given(serverMock.start(anyInt())).willReturn(PROXY_PORT);
+        given(network.createHttpServer(any(HttpServerConfig.class))).willReturn(serverMock);
+
+        wd = mock(withSettings().strictness(Strictness.LENIENT));
+        WebElement wdElement =
+                mock(WebElement.class, withSettings().strictness(Strictness.LENIENT));
+        given(wdElement.isDisplayed()).willReturn(true);
+        given(wdElement.isEnabled()).willReturn(true);
+        given(wd.findElement(any())).willReturn(wdElement);
+        Options options = mock(withSettings().strictness(Strictness.LENIENT));
+        doAnswer(
+                        answer -> {
+                            proxyCdl.countDown();
+                            return null;
+                        })
+                .when(wd)
+                .get(any());
+        when(wd.manage()).thenReturn(options);
+        when(options.timeouts())
+                .thenReturn(
+                        mock(
+                                withSettings()
+                                        .defaultAnswer(CALLS_REAL_METHODS)
+                                        .strictness(Strictness.LENIENT)));
+
+        when(extSel.getWebDriver(any(String.class), any(DriverConfiguration.class))).thenReturn(wd);
         given(extClient.getModel()).willReturn(model);
-        Session session = mock(Session.class);
+        session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
-        map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), session));
-        clientOptions = new ClientOptions();
+        map = mock(withSettings().strictness(Strictness.LENIENT));
+        when(map.getGraph()).thenReturn(new DirectedMultigraph<>(DefaultEdge.class));
+        clientOptions = new ClientSpiderOptions();
         clientOptions.load(new ZapXmlConfiguration());
         clientOptions.setThreadCount(1);
+        clientOptions.setShutdownTimeInSecs(10);
+        clientOptions.setPageLoadTimeInSecs(1);
+
+        seedUrl = "https://www.example.com/";
+        spider =
+                new ClientSpider(
+                        extClient,
+                        map,
+                        "",
+                        seedUrl,
+                        clientOptions,
+                        ScanOptions.builder().setExternalControl(true).build(),
+                        mock(ValueProvider.class),
+                        1);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        ZAP.getEventBus().unregisterPublisher(map);
+        assertThat(logEvents, is(empty()));
+
         Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
+    }
+
+    @Test
+    void shouldAddListenerToClientMapOnCreation() {
+        verify(map).addListener(any(ClientMapListener.class));
+    }
+
+    @Test
+    void shouldRemoveListenerFromClientMapWhenFinished() {
+        // Given
+        clientMapListener();
+
+        // When
+        spider.run();
+        spider.stopScan();
+
+        // Then
+        verify(map, timeout(5000)).removeListener(clientMapListener());
+    }
+
+    private ClientMapListener clientMapListener() {
+        if (mapListener == null) {
+            ArgumentCaptor<ClientMapListener> captor = ArgumentCaptor.captor();
+            verify(map, atLeastOnce()).addListener(captor.capture());
+            mapListener = captor.getAllValues().get(0);
+        }
+        return mapListener;
     }
 
     @Test
     void shouldRequestInScopeUrls() {
         // Given
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
-        Options options = mock(Options.class);
-        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        when(wd.manage()).thenReturn(options);
-        when(options.timeouts()).thenReturn(timeouts);
+        spider.run();
+        waitForProxy();
+
+        // When
+        clientMapListener().nodeAdded("https://www.example.com/test", 0, 0, PROXY_PORT);
+        // Note the ".org" - this should not be requested
+        clientMapListener().nodeAdded("https://www.example.org/test", 0, 0, PROXY_PORT);
+        sleep();
+
+        // Then
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(wd, atLeastOnce()).get(argument.capture());
+
+        assertThat(
+                argument.getAllValues(),
+                contains("https://www.example.com/", "https://www.example.com/test"));
+    }
+
+    @Test
+    void shouldOnlyRequestSessionScopeUrlsInProtectMode() throws Exception {
+        // Given
+        Control.getSingleton().setMode(Control.Mode.protect);
+        given(session.isInScope(seedUrl)).willReturn(true);
+        given(session.isInScope("https://www.example.com/inscope")).willReturn(true);
+        given(session.isInScope("https://www.example.com/outofscope")).willReturn(false);
+        given(session.isInScope("https://www.example.org/offsite")).willReturn(false);
+
+        proxyCdl = new CountDownLatch(1);
+        ClientSpider protectSpider =
+                new ClientSpider(
+                        extClient,
+                        map,
+                        "",
+                        seedUrl,
+                        clientOptions,
+                        2,
+                        null,
+                        null,
+                        false,
+                        mock(ValueProvider.class));
+
+        protectSpider.run();
+        waitForProxy();
+
+        ArgumentCaptor<ClientMapListener> listenerCaptor = ArgumentCaptor.captor();
+        verify(map, atLeastOnce()).addListener(listenerCaptor.capture());
+        ClientMapListener protectListener = listenerCaptor.getAllValues().get(1);
+
+        // When
+        protectListener.nodeAdded("https://www.example.com/inscope", 0, 0, PROXY_PORT);
+        protectListener.nodeAdded("https://www.example.com/outofscope", 0, 0, PROXY_PORT);
+        protectListener.nodeAdded("https://www.example.org/offsite", 0, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(wd, atLeastOnce()).get(argument.capture());
+        assertThat(argument.getAllValues(), contains(seedUrl, "https://www.example.com/inscope"));
+    }
+
+    @Test
+    void shouldRequestInScopeUrlFoundDuringBrowserStartup() throws Exception {
+        // Given
+        clientMapListener();
+        String urlFoundDuringStartup = "https://www.example.com/post-auth-page";
+        CountDownLatch getWebDriverCdl = new CountDownLatch(1);
+        when(extSel.getWebDriver(any(String.class), any(DriverConfiguration.class)))
+                .thenAnswer(
+                        invocation -> {
+                            mapListener.nodeAdded(urlFoundDuringStartup, 0, 0, PROXY_PORT);
+                            getWebDriverCdl.countDown();
+                            return wd;
+                        });
 
         // When
         spider.run();
-        map.getOrAddNode("https://www.example.com/test#1", false, false);
-        // Note the ".org" - this should not be requested
-        map.getOrAddNode("https://www.example.org/test#2", false, false);
-        map.getOrAddNode("https://www.example.com/test#3", false, false);
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            // Ignore
-        }
-        spider.stopScan();
+        getWebDriverCdl.await(2, TimeUnit.SECONDS);
+        sleep();
 
         // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
         verify(wd, atLeastOnce()).get(argument.capture());
 
-        List<String> values = argument.getAllValues();
-        assertThat(
-                values,
-                contains(
-                        "https://www.example.com/",
-                        "https://www.example.com/test#1",
-                        "https://www.example.com/test#3"));
+        assertThat(argument.getAllValues(), contains(seedUrl, urlFoundDuringStartup));
+    }
+
+    @Test
+    void shouldDeferUrlsFoundDuringCrawlUntilTasksComplete() throws Exception {
+        // Given
+        String deferredUrl = "https://www.example.com/deferred";
+        CountDownLatch seedTaskRunningLatch = new CountDownLatch(1);
+        CountDownLatch releaseTaskLatch = new CountDownLatch(1);
+
+        doAnswer(
+                        invocation -> {
+                            proxyCdl.countDown();
+                            if (seedUrl.equals(invocation.getArgument(0))) {
+                                seedTaskRunningLatch.countDown();
+                                releaseTaskLatch.await(2, TimeUnit.SECONDS);
+                            }
+                            return null;
+                        })
+                .when(wd)
+                .get(any());
+
+        // When / Then
+        spider.run();
+        seedTaskRunningLatch.await(2, TimeUnit.SECONDS);
+        clientMapListener().nodeAdded(deferredUrl, 0, 0, PROXY_PORT);
+
+        verify(wd, never()).get(deferredUrl);
+
+        releaseTaskLatch.countDown();
+        sleep();
+
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(wd, atLeastOnce()).get(argument.capture());
+        assertThat(argument.getAllValues(), contains(seedUrl, deferredUrl));
     }
 
     @Test
     void shouldIgnoreRequestAfterStopped() throws Exception {
         // Given
         CountDownLatch cdl = new CountDownLatch(1);
-        String seedUrl = "https://www.example.com/";
-        ClientSpider spider = new ClientSpider(extClient, "", seedUrl, clientOptions, 1);
-        Options options = mock(Options.class);
-        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        when(wd.manage()).thenReturn(options);
-        when(options.timeouts()).thenReturn(timeouts);
         String urlAfterStop = "https://www.example.com/test#1";
         doAnswer(
                         invocation -> {
@@ -209,8 +398,6 @@ class ClientSpiderUnitTest extends TestUtils {
     @Test
     void shouldStartPauseResumeStopSpider() {
         // Given
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com", clientOptions, 1);
         SpiderStatus statusPostStart;
         SpiderStatus statusPostPause;
         SpiderStatus statusPostResume;
@@ -224,6 +411,7 @@ class ClientSpiderUnitTest extends TestUtils {
         spider.resumeScan();
         statusPostResume = new SpiderStatus(spider);
         spider.stopScan();
+        sleep();
         statusPostStop = new SpiderStatus(spider);
 
         // Then
@@ -245,183 +433,201 @@ class ClientSpiderUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldIgnoreUrlsNotFromProxy() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        // When
+        clientMapListener().nodeAdded("https://www.example.com/notfromproxy", 0, 0, 1234);
+        sleep();
+
+        // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(wd, atLeastOnce()).get(argument.capture());
+
+        assertThat(argument.getAllValues(), contains(seedUrl));
+    }
+
+    @Test
     void shouldIgnoreUrlsTooDeep() {
         // Given
         clientOptions.setMaxDepth(5);
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
-        Options options = mock(Options.class);
-        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        when(wd.manage()).thenReturn(options);
-        when(options.timeouts()).thenReturn(timeouts);
-        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        spider.run();
+        waitForProxy();
 
         // When
-        spider.run();
-        map.getOrAddNode("https://www.example.com/l1", false, false);
-        map.getOrAddNode("https://www.example.com/l1/l2", false, false);
-        map.getOrAddNode("https://www.example.com/l1/l2/l3", false, false);
-        map.getOrAddNode("https://www.example.com/l1/l2/l3/l4", false, false);
-        map.getOrAddNode("https://www.example.com/l1/l2/l3/l4/l5", false, false);
-        map.getOrAddNode("https://www.example.com/l1/l2/l3/l4/l5/l6", false, false);
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            // Ignore
-        }
-        spider.stopScan();
-        ClientNode l6Node = map.getNode("https://www.example.com/l1/l2/l3/l4/l5/l6", false, false);
+        clientMapListener().nodeAdded("https://www.example.com/l1", 2, 0, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l1/l2", 3, 0, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l1/l2/l3", 4, 0, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l1/l2/l3/l4", 5, 0, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l1/l2/l3/l4/l5", 6, 0, PROXY_PORT);
+        clientMapListener()
+                .nodeAdded("https://www.example.com/l1/l2/l3/l4/l5/l6", 7, 0, PROXY_PORT);
+        sleep();
 
         // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
         verify(wd, atLeastOnce()).get(argument.capture());
 
-        List<String> values = argument.getAllValues();
         assertThat(
-                values,
-                allOf(
-                        hasItems(
-                                "https://www.example.com/",
-                                "https://www.example.com/l1",
-                                "https://www.example.com/l1/l2",
-                                "https://www.example.com/l1/l2/l3",
-                                "https://www.example.com/l1/l2/l3/l4"),
-                        not(hasItem("https://www.example.com/l1/l2/l3/l4/l5")),
-                        not(hasItem("https://www.example.com/l1/l2/l3/l4/l5/l6"))));
-
-        assertThat(l6Node, is(notNullValue()));
+                argument.getAllValues(),
+                contains(
+                        seedUrl,
+                        "https://www.example.com/l1",
+                        "https://www.example.com/l1/l2",
+                        "https://www.example.com/l1/l2/l3",
+                        "https://www.example.com/l1/l2/l3/l4"));
     }
 
     @Test
     void shouldIgnoreUrlsTooWide() {
         // Given
         clientOptions.setMaxChildren(4);
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
-        Options options = mock(Options.class);
-        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        when(wd.manage()).thenReturn(options);
-        when(options.timeouts()).thenReturn(timeouts);
-        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        spider.run();
+        waitForProxy();
 
         // When
-        spider.run();
-        map.getOrAddNode("https://www.example.com/l1", false, false);
-        map.getOrAddNode("https://www.example.com/l2", false, false);
-        map.getOrAddNode("https://www.example.com/l3", false, false);
-        map.getOrAddNode("https://www.example.com/l4", false, false);
-        map.getOrAddNode("https://www.example.com/l5", false, false);
-        map.getOrAddNode("https://www.example.com/l6", false, false);
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            // Ignore
-        }
-        spider.stopScan();
-        ClientNode l6Node = map.getNode("https://www.example.com/l6", false, false);
+        clientMapListener().nodeAdded("https://www.example.com/l1", 0, 1, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l2", 0, 2, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l3", 0, 3, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l4", 0, 4, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l5", 0, 5, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l6", 0, 6, PROXY_PORT);
+        sleep();
 
         // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
         verify(wd, atLeastOnce()).get(argument.capture());
 
-        List<String> values = argument.getAllValues();
         assertThat(
-                values,
+                argument.getAllValues(),
                 contains(
-                        "https://www.example.com/",
+                        seedUrl,
                         "https://www.example.com/l1",
                         "https://www.example.com/l2",
                         "https://www.example.com/l3",
                         "https://www.example.com/l4"));
-        assertThat(l6Node, is(notNullValue()));
     }
 
     @Test
     void shouldVisitKnownUnvisitedUrls() {
         // Given
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
-        Options options = mock(Options.class);
-        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        when(wd.manage()).thenReturn(options);
-        when(options.timeouts()).thenReturn(timeouts);
-        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        ClientNode seedNode = mockClientNode(seedUrl, false, false, false);
+        given(map.getNode(seedUrl, false, false)).willReturn(seedNode);
 
-        ClientNode exampleTopNode = getClientNode("https://www.example.com", false);
-        ClientNode exampleSlashNode = getClientNode("https://www.example.com/", false);
-        ClientNode exampleTest1Node = getClientNode("https://www.example.com/test#1", false);
-        ClientNode exampleTest2Node = getClientNode("https://www.example.com/test#2", false);
-        ClientNode exampleVisitedNode = getClientNode("https://www.example.com/visited", true);
-        exampleTopNode.add(exampleSlashNode);
-        exampleTopNode.add(exampleTest1Node);
-        exampleTopNode.add(exampleTest2Node);
-        exampleTopNode.add(exampleVisitedNode);
-        when(extClient.getClientNode("https://www.example.com/", false, false))
-                .thenReturn(exampleSlashNode);
+        ClientNode mainNode = mockClientNode("https://www.example.com", false, false, false);
+        given(seedNode.getParent()).willReturn(mainNode);
+        int childCount = -1;
+        mockChild(mainNode, ++childCount, seedNode);
+        mockChild(
+                mainNode,
+                ++childCount,
+                mockClientNode("https://www.example.com/test", false, false, false));
+        mockChild(
+                mainNode,
+                ++childCount,
+                mockClientNode("https://www.example.com/test#", false, false, false));
+        mockChild(
+                mainNode,
+                ++childCount,
+                mockClientNode("https://www.example.com/test#1", false, false, false));
+        mockChild(
+                mainNode,
+                ++childCount,
+                mockClientNode("https://www.example.com/test#2", false, false, false));
+        mockChild(
+                mainNode,
+                ++childCount,
+                mockClientNode("https://www.example.com/visited", false, true, false));
+        mockChild(
+                mainNode,
+                ++childCount,
+                mockClientNode("https://www.example.com/loaded", false, false, true));
+        mockChild(
+                mainNode,
+                ++childCount,
+                mockClientNode("https://www.example.com/storage", true, false, false));
+        mockChild(
+                mainNode,
+                ++childCount,
+                mockClientNode("https://www.example.org/outofscope", false, false, false));
+        given(mainNode.getChildCount()).willReturn(childCount + 1);
 
         // When
         spider.run();
-
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            // Ignore
-        }
-        spider.stopScan();
+        sleep();
 
         // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
         verify(wd, atLeastOnce()).get(argument.capture());
 
-        List<String> values = argument.getAllValues();
         assertThat(
-                values,
+                argument.getAllValues(),
                 contains(
-                        "https://www.example.com/",
+                        seedUrl,
                         "https://www.example.com",
                         "https://www.example.com/",
+                        "https://www.example.com/test",
+                        "https://www.example.com/test#",
                         "https://www.example.com/test#1",
                         "https://www.example.com/test#2"));
     }
 
     @Test
+    void shouldHandleComponentAdded() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        // When
+        ClientSideComponent component = linkComponent(seedUrl, "A", "Click");
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'Click')]"));
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd).findElement(By.xpath("//A[contains(text(), 'Click')]"));
+    }
+
+    @Test
+    void shouldNotHandleComponentAddedIfNotFromProxy() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        // When
+        ClientSideComponent component = linkComponent(seedUrl, "A", "Click");
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'Click')]"));
+        clientMapListener().componentAdded(component, 1, 0, 1234);
+        sleep();
+
+        // Then
+        verify(wd, never()).findElement(any());
+    }
+
+    @Test
     void shouldHandleComponentHrefWithoutHostname() {
         // Given
-        List<String> logEvents = registerLogEvents(Level.ERROR);
-        ClientSpider spider =
-                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
-        Options options = mock(Options.class);
-        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        when(wd.manage()).thenReturn(options);
-        when(options.timeouts()).thenReturn(timeouts);
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 
         spider.run();
+        waitForProxy();
         String url = "https://www.example.com/new";
-        ClientNode node = map.getOrAddNode(url, false, false);
+        clientMapListener().nodeAdded(url, 0, 1, PROXY_PORT);
+
         // When
-        map.addComponentToNode(
-                node,
+        ClientSideComponent component =
                 new ClientSideComponent(
-                        Map.of(ClientMap.URL_KEY, url, "tagName", "area", "href", "#"),
-                        "area",
-                        null,
-                        url,
-                        "#",
-                        null,
-                        ClientSideComponent.Type.LINK,
-                        null,
-                        -1));
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            // Ignore
-        }
-        spider.stopScan();
+                        Map.of(), "area", "", url, "#", "", ClientSideComponent.Type.LINK, "", -1);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
 
         // Then
         verify(wd, atLeastOnce()).get(argument.capture());
 
         List<String> values = argument.getAllValues();
-        assertThat(values, contains("https://www.example.com/", "https://www.example.com/new"));
-        assertThat(logEvents, is(empty()));
+        assertThat(values, contains(seedUrl, "https://www.example.com/new"));
     }
 
     static Stream<Arguments> logoutAvoidanceArgs() {
@@ -436,50 +642,314 @@ class ClientSpiderUnitTest extends TestUtils {
         String logoutText = "logout";
         clientOptions.setLogoutAvoidance(logoutAvoidance);
         String url = "https://www.example.com/";
-        ClientSpider spider =
-                new ClientSpider(
-                        extClient,
-                        "",
-                        url,
-                        clientOptions,
-                        1,
-                        null,
-                        null,
-                        false,
-                        mock(ValueProvider.class));
-        Options options = mock(Options.class);
-        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        when(wd.manage()).thenReturn(options);
-        when(options.timeouts()).thenReturn(timeouts);
+
+        spider.run();
+        waitForProxy();
 
         // When
-        spider.run();
-        ClientNode node = map.getOrAddNode(url, false, false);
-        map.addComponentToNode(
-                node,
-                new ClientSideComponent(
-                        Map.of(ClientMap.URL_KEY, url, "tagName", "A", "text", logoutText),
-                        "A",
-                        null,
-                        url,
-                        null,
-                        logoutText,
-                        ClientSideComponent.Type.LINK,
-                        null,
-                        -1));
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            // Ignore
-        }
-        spider.stopScan();
+        ClientSideComponent component = linkComponent(url, "A", logoutText);
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'logout')]"));
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
 
         // Then
         verify(wd, mode).findElement(By.xpath("//A[contains(text(), 'logout')]"));
     }
 
-    private static ClientNode getClientNode(String url, boolean visited) {
-        return new ClientNode(new ClientSideDetails(url, url, visited, false), false);
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "http://www.example.com/a",
+                "https://www.example.com/b",
+                "HTTP://www.example.com/c",
+                "HTTPS://www.example.com/d"
+            })
+    void shouldNotSkipClickForLinkComponentWithHref(String href) {
+        // Given
+        given(map.getNode(href, false, false)).willReturn(null);
+
+        spider.run();
+        waitForProxy();
+
+        ClientSideComponent component = linkAComponent(seedUrl, href, "Unknown Link");
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd).findElement(any());
+    }
+
+    @Test
+    void shouldSkipClickForLinkComponentForSamePage() {
+        // Given
+        spider.run();
+        waitForProxy();
+        ClientSideComponent component = linkAComponent(seedUrl, seedUrl, "Same Page Link");
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, never()).findElement(any());
+    }
+
+    @Test
+    void shouldSkipClickForLinkComponentWithAlreadyHandledHref() {
+        // Given
+        String href = "https://www.example.com/queued-once";
+        given(map.getNode(href, false, false)).willReturn(null);
+        ClientSideComponent component = linkAComponent(seedUrl, href, "Same Link");
+
+        spider.run();
+        waitForProxy();
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd).findElement(any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"#fragment", "relative-path", "http-page", "https-page"})
+    void shouldNotSkipClickForLinkComponentWithNonHttpHref(String href) {
+        // Given
+        spider.run();
+        waitForProxy();
+        ClientSideComponent component = linkAComponent(seedUrl, href, "Some Link");
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, times(2)).findElement(any());
+    }
+
+    @Test
+    void shouldHandleComponentAddedWhenEnabledAndVisible() {
+        // Given
+        spider.run();
+        waitForProxy();
+        ClientSideComponent component =
+                linkComponentWithInteractable(
+                        seedUrl, "A", "Click", new InteractableState(true, true, false));
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd).findElement(any());
+    }
+
+    @Test
+    void shouldHandleComponentAddedWhenInteractableIsNull() {
+        // Given
+        spider.run();
+        waitForProxy();
+        ClientSideComponent component = linkComponent(seedUrl, "A", "Click");
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'Click')]"));
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd).findElement(any());
+    }
+
+    static Stream<Arguments> notInteractableStates() {
+        return Stream.of(
+                arguments(new InteractableState(false, true, false)),
+                arguments(new InteractableState(true, false, false)),
+                arguments(new InteractableState(false, false, false)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("notInteractableStates")
+    void shouldIgnoreComponentAddedWhenNotInteractable(InteractableState interactable) {
+        // Given
+        spider.run();
+        waitForProxy();
+        ClientSideComponent component =
+                linkComponentWithInteractable(seedUrl, "A", "Click", interactable);
+
+        // When
+        clientMapListener().componentAdded(component, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, never()).findElement(any());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.org/new-path, https://www.example.org/new-path",
+        "/relative-path, https://www.example.com/relative-path",
+        "/path with spaces, https://www.example.com/path%20with%20spaces",
+        "  /path-trim-spaces  , https://www.example.com/path-trim-spaces"
+    })
+    void shouldTrackRedirectsAtNetworkLevel(String location, String expectedRedirectUrl)
+            throws Exception {
+        // Given
+        HttpMessageHandlerSetup setup = setUpRedirect(location);
+
+        // When
+        setup.handler().handleMessage(setup.ctx(), setup.redirectMessage());
+
+        // Then
+        verify(map).getOrAddNode("https://www.example.com/original", true, false);
+        verify(map).getOrAddNode(expectedRedirectUrl, false, false);
+        verify(map).setRedirect("https://www.example.com/original", expectedRedirectUrl);
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"  ", ""})
+    void shouldIgnoreInvalidRedirectsAtNetworkLevel(String location) throws Exception {
+        // Given
+        HttpMessageHandlerSetup setup = setUpRedirect(location);
+
+        // When
+        setup.handler().handleMessage(setup.ctx(), setup.redirectMessage());
+
+        // Then
+        verify(map, never()).setRedirect(anyString(), anyString());
+    }
+
+    private HttpMessageHandlerSetup setUpRedirect(String location) throws Exception {
+        HttpMessage redirectMessage = new HttpMessage();
+        redirectMessage
+                .getRequestHeader()
+                .setURI(new URI("https://www.example.com/original", true));
+        redirectMessage.setResponseHeader("HTTP/1.1 302 Found");
+        redirectMessage.getResponseHeader().setHeader(HttpFieldsNames.LOCATION, location);
+
+        ArgumentCaptor<HttpServerConfig> configCaptor = ArgumentCaptor.captor();
+        given(network.createHttpServer(configCaptor.capture())).willReturn(serverMock);
+        spider.run();
+        waitForProxy();
+
+        HttpMessageHandler handler = configCaptor.getValue().getHttpMessageHandler();
+        HttpMessageHandlerContext ctx = mock(HttpMessageHandlerContext.class);
+        given(ctx.isFromClient()).willReturn(false);
+
+        return new HttpMessageHandlerSetup(handler, ctx, redirectMessage);
+    }
+
+    private record HttpMessageHandlerSetup(
+            HttpMessageHandler handler,
+            HttpMessageHandlerContext ctx,
+            HttpMessage redirectMessage) {}
+
+    @Test
+    void shouldFinishImmediatelyWhenExistingOnlyAndMapIsEmpty() {
+        // Given
+        ClientNode root = mockRootNode();
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+
+        // When
+        spider.run();
+
+        // Then - spider completes without hanging
+        verify(wd, timeout(5000).times(0)).get(anyString());
+        assertThat(spider.isStopped(), is(true));
+    }
+
+    @Test
+    void shouldVisitVisitedAndContentLoadedNodesWhenExistingOnly() {
+        // Given
+        String visitedUrl = "https://www.example.com/visited";
+        String loadedUrl = "https://www.example.com/loaded";
+        String unvisitedUrl = "https://www.example.com/unvisited";
+
+        ClientNode root =
+                mockRootNode(
+                        mockClientNode(visitedUrl, false, true, false),
+                        mockClientNode(loadedUrl, false, false, true),
+                        mockClientNode(unvisitedUrl, false, false, false));
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+
+        // When
+        spider.run();
+        sleep();
+
+        // Then
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(wd, atLeastOnce()).get(argument.capture());
+        assertThat(argument.getAllValues(), contains(visitedUrl, loadedUrl));
+    }
+
+    @Test
+    void shouldNotFollowNewUrlsDiscoveredDuringExistingOnlyScan() {
+        // Given
+        String existingUrl = "https://www.example.com/existing";
+        String newUrl = "https://www.example.com/new";
+
+        ClientNode root = mockRootNode(mockClientNode(existingUrl, false, true, false));
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+        spider.run();
+        waitForProxy();
+
+        // When
+        clientMapListener().nodeAdded(newUrl, 0, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, never()).get(newUrl);
+    }
+
+    @Test
+    void shouldNotProcessComponentsDiscoveredDuringExistingOnlyScan() {
+        // Given
+        String existingUrl = "https://www.example.com/existing";
+
+        ClientNode root = mockRootNode(mockClientNode(existingUrl, false, true, false));
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+        spider.run();
+        waitForProxy();
+
+        // When
+        clientMapListener()
+                .componentAdded(
+                        linkAComponent(seedUrl, existingUrl, "Some Link"), 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        verify(wd, never()).findElement(any());
+    }
+
+    @Test
+    void shouldSubmitKnownFormComponentsWhenExistingOnly() {
+        // Given
+        String pageUrl = "https://www.example.com/form-page";
+
+        ClientNode pageNode = mockClientNode(pageUrl, false, true, false);
+        ClientSideComponent form = mockFormComponent(0);
+        ClientSideDetails pageDetails = pageNode.getUserObject();
+        given(pageDetails.getComponents()).willReturn(Set.of(form));
+
+        ClientNode root = mockRootNode(pageNode);
+        given(map.getRoot()).willReturn(root);
+        useExistingOnlySpider();
+
+        // When
+        spider.run();
+        sleep();
+
+        // Then - FollowGraph navigates to the page, then SubmitForm finds and submits the form
+        verify(wd).findElement(By.xpath("//FORM[1]"));
     }
 
     class SpiderStatus {
@@ -503,6 +973,334 @@ class ClientSpiderUnitTest extends TestUtils {
 
         public boolean isStopped() {
             return stopped;
+        }
+    }
+
+    private ClientSideComponent linkAComponent(String parentUrl, String href, String text) {
+        ClientSideComponent component =
+                new ClientSideComponent(
+                        Map.of(),
+                        "A",
+                        "",
+                        parentUrl,
+                        href,
+                        text,
+                        ClientSideComponent.Type.LINK,
+                        "",
+                        -1);
+        component.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), 'logout')]"));
+        return component;
+    }
+
+    @Test
+    void shouldNotAddStateVertexToGraphWhenComponentIsNotActionable() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        ClientSideComponent trigger = buttonComponent(seedUrl, "trigger");
+        ClientSideComponent nonActionable =
+                new ClientSideComponent(
+                        Map.of(),
+                        "SPAN",
+                        "span1",
+                        seedUrl,
+                        null,
+                        "text",
+                        ClientSideComponent.Type.UNKNOWN,
+                        "",
+                        -1);
+        nonActionable.setInteractable(new InteractableState(true, true, false));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(trigger.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener()
+                                    .componentStateChanged(nonActionable, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(trigger, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(nonActionable, nonActionable.getInteractable());
+        assertThat(map.getGraph().containsVertex(stateVertex), is(false));
+    }
+
+    @Test
+    void shouldNotAddHrefEdgeFromStateVertexToUrlVertex() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        ClientSideComponent trigger = buttonComponent(seedUrl, "trigger");
+        ClientSideComponent changedWithHref =
+                new ClientSideComponent(
+                        Map.of(),
+                        "BUTTON",
+                        "btn-href",
+                        seedUrl,
+                        "https://www.example.com/page",
+                        "Go",
+                        ClientSideComponent.Type.BUTTON,
+                        "",
+                        -1);
+        changedWithHref.setInteractable(new InteractableState(true, true, false));
+        changedWithHref.setElementLocator(new ElementLocator("id", "btn-href"));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isEnabled()).willReturn(true);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(trigger.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener()
+                                    .componentStateChanged(changedWithHref, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(trigger, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(changedWithHref, changedWithHref.getInteractable());
+        ClientGraphVertex hrefVertex = new ClientGraphVertex.Url("https://www.example.com/page");
+
+        Graph<ClientGraphVertex, DefaultEdge> graph = map.getGraph();
+        assertThat(graph.containsVertex(stateVertex), is(true));
+        assertThat(graph.containsVertex(hrefVertex), is(false));
+    }
+
+    @Test
+    void shouldAddFromVertexToGraphWhenNotPreviouslyPresent() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        Graph<ClientGraphVertex, DefaultEdge> graph = map.getGraph();
+        ClientGraphVertex urlVertex = new ClientGraphVertex.Url(seedUrl);
+        graph.addVertex(urlVertex);
+
+        ClientSideComponent button = buttonComponent(seedUrl, "btn1");
+        ClientSideComponent changed = buttonComponent(seedUrl, "btn2");
+        changed.setInteractable(new InteractableState(true, true, false));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isEnabled()).willReturn(true);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(button.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener().componentStateChanged(changed, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(button, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex fromVertex = new ClientGraphVertex.Component(button);
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(changed, changed.getInteractable());
+        assertThat(graph.containsVertex(fromVertex), is(true));
+        assertThat(graph.containsVertex(stateVertex), is(true));
+        assertThat(graph.containsEdge(urlVertex, fromVertex), is(true));
+        assertThat(graph.containsEdge(fromVertex, stateVertex), is(true));
+    }
+
+    @Test
+    void shouldNotAddParentEdgeForFromVertexWhenParentUrlNotInGraph() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        ClientSideComponent button = buttonComponent(seedUrl, "btn1");
+        ClientSideComponent changed = buttonComponent(seedUrl, "btn2");
+        changed.setInteractable(new InteractableState(true, true, false));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isEnabled()).willReturn(true);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(button.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener().componentStateChanged(changed, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(button, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex fromVertex = new ClientGraphVertex.Component(button);
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(changed, changed.getInteractable());
+        ClientGraphVertex urlVertex = new ClientGraphVertex.Url(seedUrl);
+        Graph<ClientGraphVertex, DefaultEdge> graph = map.getGraph();
+        assertThat(graph.containsVertex(fromVertex), is(true));
+        assertThat(graph.containsVertex(stateVertex), is(true));
+        assertThat(graph.containsEdge(fromVertex, stateVertex), is(true));
+        assertThat(graph.containsEdge(urlVertex, fromVertex), is(false));
+    }
+
+    @Test
+    void shouldNotDuplicateFromVertexWhenAlreadyInGraph() {
+        // Given
+        spider.run();
+        waitForProxy();
+
+        Graph<ClientGraphVertex, DefaultEdge> graph = map.getGraph();
+        ClientSideComponent button = buttonComponent(seedUrl, "btn1");
+        ClientGraphVertex fromVertex = new ClientGraphVertex.Component(button);
+        ClientGraphVertex urlVertex = new ClientGraphVertex.Url(seedUrl);
+        graph.addVertex(urlVertex);
+        graph.addVertex(fromVertex);
+        graph.addEdge(urlVertex, fromVertex);
+
+        ClientSideComponent changed = buttonComponent(seedUrl, "btn2");
+        changed.setInteractable(new InteractableState(true, true, false));
+
+        WebElement element = mock(withSettings().strictness(Strictness.LENIENT));
+        given(element.isEnabled()).willReturn(true);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(button.getBy())).willReturn(element);
+        doAnswer(
+                        inv -> {
+                            clientMapListener().componentStateChanged(changed, 1, 0, PROXY_PORT);
+                            return null;
+                        })
+                .when(element)
+                .click();
+
+        // When
+        clientMapListener().componentAdded(button, 1, 0, PROXY_PORT);
+        sleep();
+
+        // Then
+        ClientGraphVertex stateVertex =
+                new ClientGraphVertex.Component(changed, changed.getInteractable());
+        long fromCount = graph.vertexSet().stream().filter(v -> v.equals(fromVertex)).count();
+        assertThat(fromCount, is(1L));
+        assertThat(graph.containsEdge(urlVertex, fromVertex), is(true));
+        assertThat(graph.containsEdge(fromVertex, stateVertex), is(true));
+    }
+
+    private static ClientSideComponent buttonComponent(String url, String id) {
+        ClientSideComponent c =
+                new ClientSideComponent(
+                        Map.of(),
+                        "BUTTON",
+                        id,
+                        url,
+                        null,
+                        "Button",
+                        ClientSideComponent.Type.BUTTON,
+                        "",
+                        -1);
+        c.setElementLocator(new ElementLocator("id", id));
+        return c;
+    }
+
+    private static ClientSideComponent linkComponent(String url, String tagName, String text) {
+        return new ClientSideComponent(
+                Map.of(), tagName, "", url, null, text, ClientSideComponent.Type.LINK, "", -1);
+    }
+
+    private static ClientSideComponent linkComponentWithInteractable(
+            String url, String tagName, String text, InteractableState interactable) {
+        ClientSideComponent c = linkComponent(url, tagName, text);
+        c.setInteractable(interactable);
+        c.setElementLocator(new ElementLocator("xpath", "//A[contains(text(), '" + text + "')]"));
+        return c;
+    }
+
+    private static ClientNode mockClientNode(
+            String url, boolean storage, boolean visited, boolean contentLoaded) {
+        ClientNode node = mock(withSettings().strictness(Strictness.LENIENT));
+        given(node.isStorage()).willReturn(storage);
+
+        ClientSideDetails details = mock(withSettings().strictness(Strictness.LENIENT));
+        given(node.getUserObject()).willReturn(details);
+
+        given(details.getUrl()).willReturn(url);
+        given(details.isStorage()).willReturn(storage);
+        given(details.isVisited()).willReturn(visited);
+        given(details.isContentLoaded()).willReturn(contentLoaded);
+
+        return node;
+    }
+
+    private static void mockChild(ClientNode parent, int index, ClientNode child) {
+        given(parent.getChildAt(index)).willReturn(child);
+    }
+
+    private void useExistingOnlySpider() {
+        clearInvocations(map);
+        mapListener = null;
+        spider =
+                new ClientSpider(
+                        extClient,
+                        map,
+                        "",
+                        seedUrl,
+                        clientOptions,
+                        ScanOptions.builder()
+                                .setExistingOnly(true)
+                                .setExternalControl(true)
+                                .build(),
+                        mock(ValueProvider.class),
+                        1);
+    }
+
+    private static ClientNode mockRootNode(ClientNode... children) {
+        ClientNode root = mock(withSettings().strictness(Strictness.LENIENT));
+        given(root.isRoot()).willReturn(true);
+        given(root.getChildCount()).willReturn(children.length);
+        for (int i = 0; i < children.length; i++) {
+            given(root.getChildAt(i)).willReturn(children[i]);
+        }
+        return root;
+    }
+
+    private static ClientSideComponent mockFormComponent(int formId) {
+        ClientSideComponent component = mock(withSettings().strictness(Strictness.LENIENT));
+        given(component.getBy()).willReturn(By.xpath("//FORM[" + (formId + 1) + "]"));
+        given(component.getTagName()).willReturn("FORM");
+        return component;
+    }
+
+    private static void sleep() {
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+    }
+
+    private void waitForProxy() {
+        try {
+            if (!proxyCdl.await(1, TimeUnit.SECONDS)) {
+                throw new RuntimeException("Proxy not started in time.");
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

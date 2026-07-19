@@ -323,6 +323,21 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         return getBrowserComboBox().getSelectedItem().toString();
     }
 
+    public ProvidedBrowsersComboBoxModel getActiveBrowserModel() {
+        return (ProvidedBrowsersComboBoxModel) getBrowserComboBox().getModel();
+    }
+
+    public void selectBrowser(String browserName) {
+        ProvidedBrowsersComboBoxModel model = getActiveBrowserModel();
+        for (int i = 0; i < model.getSize(); i++) {
+            ProvidedBrowserUI browser = model.getElementAt(i);
+            if (browser.getName().equals(browserName)) {
+                model.setSelectedItem(browser);
+                break;
+            }
+        }
+    }
+
     private String getUrlValue() {
         String item = (String) getUrlField().getSelectedItem();
         if (item != null && !SCHEME_PREDICATE.test(item)) {

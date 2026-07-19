@@ -9,10 +9,20 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/token-generator/")
+
+        dependencies {
+            addOns {
+                register("params") {
+                    version.set(">= 0.1.0 & < 1.0.0")
+                }
+            }
+        }
     }
 }
 
 dependencies {
+    zapAddOn("params")
+
     testImplementation(project(":testutils"))
 }
 

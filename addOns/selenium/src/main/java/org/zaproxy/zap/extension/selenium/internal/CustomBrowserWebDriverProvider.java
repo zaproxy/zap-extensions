@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.selenium.internal;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -26,6 +28,7 @@ import org.zaproxy.zap.extension.selenium.DriverConfiguration;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowser;
 import org.zaproxy.zap.extension.selenium.SingleWebDriverProvider;
+import org.zaproxy.zap.utils.DisplayUtils;
 
 /**
  * A {@link SingleWebDriverProvider} for custom browsers.
@@ -111,6 +114,9 @@ public class CustomBrowserWebDriverProvider implements SingleWebDriverProvider {
 
     private class ProvidedBrowserImpl implements ProvidedBrowser {
 
+        private ImageIcon icon;
+        private boolean iconInitialized;
+
         @Override
         public String getProviderId() {
             return getId();
@@ -140,6 +146,25 @@ public class CustomBrowserWebDriverProvider implements SingleWebDriverProvider {
         @Override
         public boolean isConfigured() {
             return CustomBrowserWebDriverProvider.this.isConfigured();
+        }
+
+        @Override
+        public Icon getIcon() {
+            if (!iconInitialized) {
+                iconInitialized = true;
+                String iconName =
+                        switch (customBrowser.getBrowserType()) {
+                            case FIREFOX -> "firefox.png";
+                            default -> "chromium.png";
+                        };
+                icon =
+                        DisplayUtils.getScaledIcon(
+                                getClass()
+                                        .getResource(
+                                                "/org/zaproxy/zap/extension/selenium/resources/"
+                                                        + iconName));
+            }
+            return icon;
         }
     }
 }

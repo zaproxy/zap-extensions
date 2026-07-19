@@ -25,14 +25,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.Base64EncodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractCharsetProcessorUIPanel.AbstractCharsetProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.Base64EncodeProcessorUIHandler.Base64EncodeProcessorUI;
 
-public class Base64EncodeProcessorUIHandler
-        implements PayloadProcessorUIHandler<
-                DefaultPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
+public class Base64EncodeProcessorUIHandler implements PayloadProcessorUIHandler {
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.base64Encode.name");
@@ -57,8 +54,7 @@ public class Base64EncodeProcessorUIHandler
         return new Base64EncodeProcessorUIPanel();
     }
 
-    public static class Base64EncodeProcessorUI
-            extends AbstractCharsetProcessorUI<DefaultPayload, Base64EncodeProcessor> {
+    public static class Base64EncodeProcessorUI extends AbstractCharsetProcessorUI {
 
         private final boolean breakLines;
 
@@ -70,11 +66,6 @@ public class Base64EncodeProcessorUIHandler
 
         public boolean isBreakLines() {
             return breakLines;
-        }
-
-        @Override
-        public Class<Base64EncodeProcessor> getPayloadProcessorClass() {
-            return Base64EncodeProcessor.class;
         }
 
         @Override
@@ -112,9 +103,7 @@ public class Base64EncodeProcessorUIHandler
         }
     }
 
-    public static class Base64EncodeProcessorUIPanel
-            extends AbstractCharsetProcessorUIPanel<
-                    DefaultPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
+    public static class Base64EncodeProcessorUIPanel extends AbstractCharsetProcessorUIPanel {
 
         private static final String BREAK_LINES_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payload.processor.base64Encode.breakLines.label");
@@ -187,9 +176,14 @@ public class Base64EncodeProcessorUIHandler
         }
 
         @Override
-        public void setPayloadProcessorUI(Base64EncodeProcessorUI payloadProcessorUI) {
+        public void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI) {
             super.setPayloadProcessorUI(payloadProcessorUI);
-            getBreakLinesCheckBox().setSelected(payloadProcessorUI.isBreakLines());
+            if (!(payloadProcessorUI instanceof Base64EncodeProcessorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected Base64EncodeProcessorUI but got: "
+                                + payloadProcessorUI.getClass());
+            }
+            getBreakLinesCheckBox().setSelected(ui.isBreakLines());
         }
 
         @Override

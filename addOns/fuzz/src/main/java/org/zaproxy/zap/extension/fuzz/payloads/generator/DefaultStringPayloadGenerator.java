@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadCollectionIterator;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
@@ -30,15 +31,15 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  * A {@code PayloadGenerator} that returns {@code DefaultPayload} created from a {@code List} of
  * {@code String}s.
  */
-public class DefaultStringPayloadGenerator implements StringPayloadGenerator {
+public class DefaultStringPayloadGenerator implements PayloadGenerator {
 
-    private final List<DefaultPayload> payloads;
+    private final List<Payload> payloads;
 
     public DefaultStringPayloadGenerator(String value) {
         if (value == null) {
             throw new IllegalArgumentException("Parameter value must not be null.");
         }
-        List<DefaultPayload> tempPayloads = new ArrayList<>(1);
+        List<Payload> tempPayloads = new ArrayList<>(1);
         tempPayloads.add(new DefaultPayload(value));
 
         payloads = tempPayloads;
@@ -48,7 +49,7 @@ public class DefaultStringPayloadGenerator implements StringPayloadGenerator {
         if (values == null || values.isEmpty()) {
             throw new IllegalArgumentException("Parameter values must not be null nor empty.");
         }
-        List<DefaultPayload> tempPayloads = new ArrayList<>(values.size());
+        List<Payload> tempPayloads = new ArrayList<>(values.size());
         for (String value : values) {
             tempPayloads.add(new DefaultPayload(value));
         }
@@ -56,9 +57,9 @@ public class DefaultStringPayloadGenerator implements StringPayloadGenerator {
         payloads = tempPayloads;
     }
 
-    private DefaultStringPayloadGenerator(Collection<DefaultPayload> payloads) {
-        List<DefaultPayload> tempPayloads = new ArrayList<>(payloads.size());
-        for (DefaultPayload payload : payloads) {
+    private DefaultStringPayloadGenerator(Collection<Payload> payloads) {
+        List<Payload> tempPayloads = new ArrayList<>(payloads.size());
+        for (Payload payload : payloads) {
             tempPayloads.add(payload);
         }
         this.payloads = tempPayloads;
@@ -70,8 +71,8 @@ public class DefaultStringPayloadGenerator implements StringPayloadGenerator {
     }
 
     @Override
-    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
-        return new PayloadCollectionIterator<>(payloads);
+    public ResettableAutoCloseableIterator<Payload> iterator() {
+        return new PayloadCollectionIterator(payloads);
     }
 
     @Override

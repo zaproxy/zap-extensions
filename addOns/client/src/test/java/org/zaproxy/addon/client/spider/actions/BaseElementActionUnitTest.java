@@ -19,14 +19,23 @@
  */
 package org.zaproxy.addon.client.spider.actions;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
@@ -37,6 +46,13 @@ import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.zaproxy.addon.client.internal.ClientMap;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.spider.ActionWaitStrategy;
+import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
+import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.addon.commonlib.ValueProvider;
 
 /** Unit test for {@link BaseElementAction}. */
@@ -50,13 +66,15 @@ class BaseElementActionUnitTest {
     void setupEach() throws IOException {
         valueProvider = mock(ValueProvider.class);
         uri = new URI("http://localhost:1234/test", true);
+        ClientSideComponent component = mock();
 
         action =
-                new BaseElementAction(valueProvider, uri) {
+                new BaseElementAction(uri, component) {
 
                     @Override
-                    protected void run(WebDriver wd, WebElement element, String statsPrefix) {
-                        // Nothing to do.
+                    protected boolean run(
+                            TaskContext context, WebElement element, String statsPrefix) {
+                        return true;
                     }
 
                     @Override
@@ -65,8 +83,8 @@ class BaseElementActionUnitTest {
                     }
 
                     @Override
-                    protected By getElementBy() {
-                        return null;
+                    protected ExpectedCondition<WebElement> getExpectedCondition(By by) {
+                        return ExpectedConditions.presenceOfElementLocated(by);
                     }
                 };
     }
@@ -84,11 +102,11 @@ class BaseElementActionUnitTest {
         // Given
         String name = "input-name";
         String value = "input-value";
-        List<WebElement> inputElements = List.of(new TestWebElement("input", type, name, value));
+        TaskContext context = context(List.of(new TestWebElement("input", type, name, value)));
         String formAction = "formaction";
 
         // When
-        action.fillInputs(inputElements, formAction, "statsprefix");
+        action.fillComponents(context, formAction, "statsprefix");
 
         // Then
         verify(valueProvider)
@@ -100,6 +118,277 @@ class BaseElementActionUnitTest {
                         List.of(),
                         Map.of(),
                         Map.of("Control Type", controlType, "type", type));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"textarea-name, textarea-value"})
+    void shouldCallValueProviderWithExpectedValuesForTextArea(String name, String value) {
+        // Given
+        TaskContext context = context(List.of(new TestWebElement("textarea", null, name, value)));
+        String formAction = "formaction";
+
+        // When
+        action.fillComponents(context, formAction, "statsprefix");
+
+        // Then
+        verify(valueProvider)
+                .getValue(
+                        uri,
+                        formAction,
+                        name,
+                        value,
+                        List.of(),
+                        Map.of(),
+                        Map.of("Control Type", "text", "type", "textarea"));
+    }
+
+    @Test
+    void shouldWaitAfterAction() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String url = "http://localhost:1234/test";
+        TaskContext context = runContext(waitStrategy, url, url, true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(true)));
+        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy, never()).waitAfterPageLoad(url);
+    }
+
+    @Test
+    void shouldWaitAfterPageLoadWhenUrlChanges() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        given(waitStrategy.waitAfterPageLoad("http://localhost:1234/other")).willReturn(true);
+        TaskContext context =
+                runContext(
+                        waitStrategy,
+                        "http://localhost:1234/test",
+                        "http://localhost:1234/other",
+                        true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(true)));
+        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy).waitAfterPageLoad("http://localhost:1234/other");
+    }
+
+    @Test
+    void shouldNotWaitAfterPageLoadWhenUrlUnchanged() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String url = "http://localhost:1234/test";
+        TaskContext context = runContext(waitStrategy, url, url, true);
+
+        // When
+        action.run(context);
+
+        // Then
+        verify(waitStrategy, never()).waitAfterPageLoad(url);
+    }
+
+    @Test
+    void shouldNotWaitWhenActionReturnsFalse() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        TaskContext context =
+                runContext(
+                        waitStrategy,
+                        "http://localhost:1234/test",
+                        "http://localhost:1234/test",
+                        false);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+        verify(waitStrategy, never()).waitAfterAction();
+        verify(waitStrategy, never()).waitAfterPageLoad(any());
+    }
+
+    @Test
+    void shouldReturnFalseWhenWaitAfterActionInterrupted() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(false);
+        String url = "http://localhost:1234/test";
+        TaskContext context = runContext(waitStrategy, url, url, true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy, never()).waitAfterPageLoad(url);
+    }
+
+    @Test
+    void shouldReturnFalseWhenStoppedAfterWaitAfterAction() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String url = "http://localhost:1234/test";
+        TaskContext context = runContext(waitStrategy, url, url, true, () -> true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+        verify(waitStrategy).waitAfterAction();
+        verify(waitStrategy, never()).waitAfterPageLoad(url);
+    }
+
+    @Test
+    void shouldReturnFalseWhenStoppedBeforeWaitAfterPageLoad() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String urlBefore = "http://localhost:1234/test";
+        String urlAfter = "http://localhost:1234/other";
+        TaskContext context = runContext(waitStrategy, urlBefore, urlAfter, true, () -> true);
+
+        // When
+        boolean result = action.run(context);
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+        verify(waitStrategy, never()).waitAfterPageLoad(urlAfter);
+    }
+
+    @Test
+    void shouldNotAddNavigationEdgeWhenUrlUnchanged() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        String url = "http://localhost:1234/test";
+        ClientMap clientMap = mock(ClientMap.class);
+        TaskContext context = runContext(waitStrategy, url, url, true, () -> false, clientMap);
+
+        // When
+        action.run(context);
+
+        // Then
+        verifyNoInteractions(clientMap);
+    }
+
+    @Test
+    void shouldAddNavigationEdgeWhenUrlChanges() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        given(waitStrategy.waitAfterAction()).willReturn(true);
+        given(waitStrategy.waitAfterPageLoad(any())).willReturn(true);
+        String urlBefore = "http://localhost:1234/test";
+        String urlAfter = "http://localhost:1234/other";
+        ClientMap clientMap = mock(ClientMap.class);
+        TaskContext context =
+                runContext(waitStrategy, urlBefore, urlAfter, true, () -> false, clientMap);
+
+        // When
+        action.run(context);
+
+        // Then
+        verify(clientMap).addNavigationEdge(urlBefore, action.component, urlAfter);
+    }
+
+    @Test
+    void shouldNotAddNavigationEdgeWhenActionReturnsFalse() throws IOException {
+        // Given
+        ActionWaitStrategy waitStrategy = mock();
+        String urlBefore = "http://localhost:1234/test";
+        String urlAfter = "http://localhost:1234/other";
+        ClientMap clientMap = mock(ClientMap.class);
+        TaskContext context =
+                runContext(waitStrategy, urlBefore, urlAfter, false, () -> false, clientMap);
+
+        // When
+        action.run(context);
+
+        // Then
+        verifyNoInteractions(clientMap);
+    }
+
+    private TaskContext runContext(
+            ActionWaitStrategy waitStrategy,
+            String urlBefore,
+            String urlAfter,
+            boolean actionResult)
+            throws IOException {
+        return runContext(waitStrategy, urlBefore, urlAfter, actionResult, () -> false);
+    }
+
+    private TaskContext runContext(
+            ActionWaitStrategy waitStrategy,
+            String urlBefore,
+            String urlAfter,
+            boolean actionResult,
+            BooleanSupplier stopped)
+            throws IOException {
+        return runContext(waitStrategy, urlBefore, urlAfter, actionResult, stopped, mock());
+    }
+
+    private TaskContext runContext(
+            ActionWaitStrategy waitStrategy,
+            String urlBefore,
+            String urlAfter,
+            boolean actionResult,
+            BooleanSupplier stopped,
+            ClientMap clientMap)
+            throws IOException {
+        URI actionUri = new URI("http://localhost:1234/test", true);
+        ClientSideComponent component = mock();
+        given(component.getBy()).willReturn(By.id("elem"));
+
+        BaseElementAction runAction =
+                new BaseElementAction(actionUri, component) {
+                    @Override
+                    protected boolean run(
+                            TaskContext context, WebElement element, String statsPrefix) {
+                        return actionResult;
+                    }
+
+                    @Override
+                    protected String getStatsPrefix() {
+                        return "run.prefix";
+                    }
+
+                    @Override
+                    protected ExpectedCondition<WebElement> getExpectedCondition(By by) {
+                        return ExpectedConditions.presenceOfElementLocated(by);
+                    }
+                };
+
+        WebDriverProcess wdp = mock(WebDriverProcess.class);
+        WebDriver wd = mock(WebDriver.class);
+        WebElement element = mock(WebElement.class);
+        given(element.isDisplayed()).willReturn(true);
+        given(wd.findElement(By.id("elem"))).willReturn(element);
+        given(wd.getCurrentUrl()).willReturn(urlBefore, urlAfter);
+        given(wdp.getWebDriver()).willReturn(wd);
+        given(wdp.getWaitStrategy()).willReturn(waitStrategy);
+
+        action = runAction;
+
+        return new TaskContext(stopped, wdp, valueProvider, clientMap);
+    }
+
+    private TaskContext context(List<WebElement> elements) {
+        WebDriverProcess wdp = mock(WebDriverProcess.class);
+        WebDriver wd = mock(WebDriver.class);
+        given(wd.findElements(By.xpath("//input | //textarea"))).willReturn(elements);
+        given(wdp.getWebDriver()).willReturn(wd);
+        return new TaskContext(() -> false, wdp, valueProvider, null);
     }
 
     class TestWebElement implements WebElement {

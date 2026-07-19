@@ -85,7 +85,7 @@ public class OptionsParamWebSocket extends AbstractParam {
      *   <li>stepping through to next request/response
      * </ul>
      *
-     * @return True if it should break also on ping & pong messages.
+     * @return True if it should break also on ping &amp; pong messages.
      */
     public boolean isBreakOnPingPong() {
         return isBreakOnPingPong;

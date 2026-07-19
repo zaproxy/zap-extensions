@@ -35,7 +35,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 class JsonPayloadGeneratorUnitTest {
@@ -66,7 +66,7 @@ class JsonPayloadGeneratorUnitTest {
         JsonPayloadGenerator generator = new JsonPayloadGenerator(originalJson, 2);
         List<String> payloads = new ArrayList<>();
         // When
-        Iterator<DefaultPayload> iterator = generator.iterator();
+        Iterator<Payload> iterator = generator.iterator();
         while (iterator.hasNext()) {
             payloads.add(iterator.next().getValue());
         }
@@ -78,7 +78,7 @@ class JsonPayloadGeneratorUnitTest {
     void shouldNotGenerateTooManyPayloads() {
         String originalJson = "{\"x\": \"hello\"}";
         JsonPayloadGenerator generator = new JsonPayloadGenerator(originalJson, 1);
-        ResettableAutoCloseableIterator<DefaultPayload> iterator = generator.iterator();
+        ResettableAutoCloseableIterator<Payload> iterator = generator.iterator();
         iterator.next();
         assertThat(iterator.hasNext(), is(false));
     }
@@ -87,7 +87,7 @@ class JsonPayloadGeneratorUnitTest {
     void shouldGenerateMultipleMutants() {
         String originalJson = "{\"x\": \"hello\"}";
         JsonPayloadGenerator generator = new JsonPayloadGenerator(originalJson, 20);
-        ResettableAutoCloseableIterator<DefaultPayload> iterator = generator.iterator();
+        ResettableAutoCloseableIterator<Payload> iterator = generator.iterator();
         Set<String> mutants = new HashSet<>();
         while (iterator.hasNext()) {
             mutants.add(iterator.next().toString());

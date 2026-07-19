@@ -4,9 +4,85 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Maintenance changes.
+
+## [0.30.0] - 2026-07-06
+### Changed
+- Wait always after component navigation while crawling.
+- Follow any navigation component while crawling.
+- Crawl component state changes.
+- Help to show that the Client Spider is now the recommended option for modern apps.
+
+### Fixed
+- Normalise behaviour of Delete context menu item.
+
+## [0.29.0] - 2026-06-30
+### Changed
+- Use new functionality from the browser extension for crawling.
+- Fill text areas while crawling.
+
+### Fixed
+- Spider should finish when existingOnly option used with an empty Client Map. 
+
+## [0.28.0] - 2026-06-26
+### Added
+- Client Spider existingOnly option, e.g. for scan rules.
+ 
+### Changed
+- Reduce duplicated accesses while crawling.
+- Use adaptive wait by default for page load and action waits while crawling.
+- Default threads to 1/2 number of cores, max 8.
+- Updated Chrome and Firefox extensions to v0.2.0.
+
+### Fixed
+- Prevent temporary GUI hang when stopping the Client Spider.
+
+## [0.27.0] - 2026-06-12
+### Added
+- Client Spider Options panel.
+- Support for ZAP modes in the Client Spider.
+- Show Client Spider icon in the Sites tree.
+- More option API endpoints.
+
+### Changed
+- Change the Client Spider to crawl through page components (e.g. links) to reduce full page reloads, improving support for SPAs.
+
+### Fixed
+- Change the Client Spider to track all redirects while crawling.
+
+## [0.26.0] - 2026-05-27
+### Added
+- More programmatic control of the spider.
+
+## [0.25.0] - 2026-05-22
+### Changed
+- Updated Chrome and Firefox extensions to v0.1.9.
+- Maintenance changes.
+
+### Fixed
+- Prevent interferences between the spiders and manual actions.
+- Prevent loops when acting on elements due appended input data.
+
+## [0.24.0] - 2026-05-07
+### Added
+- Client spider option "Action Wait Time".
+
+### Changed
+- Client map export to report the number of items exported.
+
+## Fixed
+- Client map export to export contexts defined with paths, e.g. like https://example.com/test/
+
+## [0.23.0] - 2026-05-06
+### Changed
+- Client spider to wait for all browsers to close before reporting it has finished.
+
+## [0.22.0] - 2026-04-14
 ### Added
 - Persist Client History entries in the session.
 - Add a button in the Client History tab to clear the history from both the GUI and session.
+- Support exporting the Client Map via the Automation Framework export job (requires the Import/Export add-on).
 
 ### Changed
 - Allow callback implementors to handle browsers closing.
@@ -195,6 +271,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.30.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.30.0
+[0.29.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.29.0
+[0.28.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.28.0
+[0.27.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.27.0
+[0.26.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.26.0
+[0.25.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.25.0
+[0.24.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.24.0
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.23.0
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.19.0

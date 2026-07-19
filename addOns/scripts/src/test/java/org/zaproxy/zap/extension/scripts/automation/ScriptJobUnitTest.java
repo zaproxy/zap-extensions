@@ -21,7 +21,9 @@ package org.zaproxy.zap.extension.scripts.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -83,6 +85,7 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.automation.actions.RunScriptAction;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.users.User;
@@ -229,7 +232,9 @@ class ScriptJobUnitTest extends TestUtils {
         assertThat(
                 progress.getErrors(),
                 contains(
-                        "!scripts.automation.error.scriptNameIsNull!",
+                        RunScriptAction.NAME.equalsIgnoreCase(action)
+                                ? "!scripts.automation.error.scriptNameOrChainRequired!"
+                                : "!scripts.automation.error.scriptNameIsNull!",
                         "!scripts.automation.error.scriptNameNotFound!"));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
@@ -258,7 +263,9 @@ class ScriptJobUnitTest extends TestUtils {
         assertThat(
                 progress.getErrors(),
                 contains(
-                        "!scripts.automation.error.scriptNameIsNull!",
+                        RunScriptAction.NAME.equalsIgnoreCase(action)
+                                ? "!scripts.automation.error.scriptNameOrChainRequired!"
+                                : "!scripts.automation.error.scriptNameIsNull!",
                         "!scripts.automation.error.scriptNameNotFound!"));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
@@ -1367,6 +1374,27 @@ class ScriptJobUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldErrorOnInvalidFailureLevelInYaml() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        setJobData(
+                job,
+                """
+                parameters:
+                  action: run
+                  failureLevel: critical
+                """);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(
+                progress.getErrors(),
+                hasItem(containsString("!automation.error.options.badenum!")));
+    }
+
+    @Test
     void shouldVerifyUserInVerifyParameters() {
         // Given
         ScriptJob job = createScriptJobWithUser("user1");
@@ -1479,7 +1507,7 @@ class ScriptJobUnitTest extends TestUtils {
         }
 
         TestScriptWrapper testWrapper = new TestScriptWrapper();
-        testWrapper.setEngineName("Mozilla Zest");
+        testWrapper.setEngineName(RunScriptAction.ZEST_ENGINE_NAME);
         testWrapper.setType(new ScriptType(ExtensionScript.TYPE_STANDALONE, null, null, false));
         ScriptWrapper scriptWrapper = testWrapper;
         lenient().when(extScript.getScript("myScript")).thenReturn(scriptWrapper);

@@ -239,7 +239,7 @@ public class Worker implements Runnable {
 
         // TODO move this option to the Adv options
         // if the response does not match the base case
-        boolean notFound = Strings.CI.contains("file not found", response);
+        boolean notFound = Strings.CI.contains(response, "file not found");
 
         // need to clean the base case of the item we are looking for
         String basecase =

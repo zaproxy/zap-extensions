@@ -36,6 +36,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -56,6 +59,7 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.internal.db.TableJdo;
 import org.zaproxy.zap.extension.scripts.scanrules.ActiveScriptSynchronizer;
 import org.zaproxy.zap.extension.scripts.scanrules.PassiveScriptSynchronizer;
 import org.zaproxy.zap.extension.stdmenus.PopupContextMenuItemFactory;
@@ -117,6 +121,8 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     private final Map<ScriptWrapper, ScriptOutputSource> outputSources = new HashMap<>();
 
+    private TableJdo tableJdo;
+
     // private ZapMenuItem menuEnableScripts = null;
 
     public ExtensionScriptsUI() {
@@ -131,6 +137,28 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         }
         activeScriptSynchronizer = new ActiveScriptSynchronizer();
         passiveScriptSynchronizer = new PassiveScriptSynchronizer();
+    }
+
+    @Override
+    public boolean supportsDb(String type) {
+        return true;
+    }
+
+    @Override
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+        try {
+            tableJdo = new TableJdo(db);
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (tableJdo != null) {
+            tableJdo.unload();
+            tableJdo = null;
+        }
     }
 
     public static ImageIcon getIcon() {

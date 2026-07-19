@@ -26,16 +26,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ExpandStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.ExpandStringProcessorUIHandler.ExpandStringProcessorUI;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
-public class ExpandStringProcessorUIHandler
-        implements PayloadProcessorUIHandler<
-                DefaultPayload, ExpandStringProcessor, ExpandStringProcessorUI> {
+public class ExpandStringProcessorUIHandler implements PayloadProcessorUIHandler {
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.expand.name");
@@ -60,8 +57,7 @@ public class ExpandStringProcessorUIHandler
         return new ExpandStringProcessorUIPanel();
     }
 
-    public static class ExpandStringProcessorUI
-            implements PayloadProcessorUI<DefaultPayload, ExpandStringProcessor> {
+    public static class ExpandStringProcessorUI implements PayloadProcessorUI {
 
         private final boolean begin;
         private final String value;
@@ -83,11 +79,6 @@ public class ExpandStringProcessorUIHandler
 
         public int getLength() {
             return length;
-        }
-
-        @Override
-        public Class<ExpandStringProcessor> getPayloadProcessorClass() {
-            return ExpandStringProcessor.class;
         }
 
         @Override
@@ -131,9 +122,7 @@ public class ExpandStringProcessorUIHandler
         }
     }
 
-    public static class ExpandStringProcessorUIPanel
-            implements PayloadProcessorUIPanel<
-                    DefaultPayload, ExpandStringProcessor, ExpandStringProcessorUI> {
+    public static class ExpandStringProcessorUIPanel implements PayloadProcessorUIPanel {
 
         private static final String POSITION_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payload.processor.expand.position.label");
@@ -266,14 +255,19 @@ public class ExpandStringProcessorUIHandler
         }
 
         @Override
-        public void setPayloadProcessorUI(ExpandStringProcessorUI payloadProcessorUI) {
-            if (payloadProcessorUI.isBegin()) {
+        public void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI) {
+            if (!(payloadProcessorUI instanceof ExpandStringProcessorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected ExpandStringProcessorUI but got: "
+                                + payloadProcessorUI.getClass());
+            }
+            if (ui.isBegin()) {
                 getBeginPositionRadioButton().setSelected(true);
             } else {
                 getEndPositionRadioButton().setSelected(true);
             }
-            getValueTextField().setText(payloadProcessorUI.getValue());
-            getLengthNumberSpinner().setValue(payloadProcessorUI.getLength());
+            getValueTextField().setText(ui.getValue());
+            getLengthNumberSpinner().setValue(ui.getLength());
         }
 
         @Override

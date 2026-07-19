@@ -23,15 +23,12 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.TrimStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.TrimStringProcessorUIHandler.TrimStringProcessorUI;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
-public class TrimStringProcessorUIHandler
-        implements PayloadProcessorUIHandler<
-                DefaultPayload, TrimStringProcessor, TrimStringProcessorUI> {
+public class TrimStringProcessorUIHandler implements PayloadProcessorUIHandler {
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.trim.name");
@@ -56,8 +53,7 @@ public class TrimStringProcessorUIHandler
         return new TrimStringProcessorUIPanel();
     }
 
-    public static class TrimStringProcessorUI
-            implements PayloadProcessorUI<DefaultPayload, TrimStringProcessor> {
+    public static class TrimStringProcessorUI implements PayloadProcessorUI {
 
         private final int length;
 
@@ -67,11 +63,6 @@ public class TrimStringProcessorUIHandler
 
         public int getLength() {
             return length;
-        }
-
-        @Override
-        public Class<TrimStringProcessor> getPayloadProcessorClass() {
-            return TrimStringProcessor.class;
         }
 
         @Override
@@ -101,9 +92,7 @@ public class TrimStringProcessorUIHandler
         }
     }
 
-    public static class TrimStringProcessorUIPanel
-            extends AbstractProcessorUIPanel<
-                    DefaultPayload, TrimStringProcessor, TrimStringProcessorUI> {
+    public static class TrimStringProcessorUIPanel extends AbstractProcessorUIPanel {
 
         private static final String LENGTH_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payload.processor.trim.length.label");
@@ -156,8 +145,12 @@ public class TrimStringProcessorUIHandler
         }
 
         @Override
-        public void setPayloadProcessorUI(TrimStringProcessorUI payloadProcessorUI) {
-            getLengthNumberSpinner().setValue(payloadProcessorUI.getLength());
+        public void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI) {
+            if (!(payloadProcessorUI instanceof TrimStringProcessorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected TrimStringProcessorUI but got: " + payloadProcessorUI.getClass());
+            }
+            getLengthNumberSpinner().setValue(ui.getLength());
         }
 
         @Override

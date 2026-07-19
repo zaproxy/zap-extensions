@@ -19,15 +19,12 @@
  */
 package org.zaproxy.addon.client.spider;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
 import org.zaproxy.zap.utils.Stats;
 
 public class ClientSpiderTask implements Runnable {
@@ -54,16 +51,14 @@ public class ClientSpiderTask implements Runnable {
     @Getter private String detailsString;
     private ClientSpider clientSpider;
     private List<SpiderAction> actions;
-    private int timeout;
     @Getter private Status status;
     @Getter private String error;
-    private WebDriverProcess wdp;
+    private TaskContext context;
 
     public ClientSpiderTask(
             int id,
             ClientSpider clientSpider,
             List<SpiderAction> actions,
-            int timeout,
             String displayName,
             String detailsString) {
         this.id = id;
@@ -71,7 +66,6 @@ public class ClientSpiderTask implements Runnable {
         this.detailsString = detailsString;
         this.clientSpider = clientSpider;
         this.actions = actions;
-        this.timeout = timeout;
         this.status = Status.QUEUED;
     }
 
@@ -85,11 +79,9 @@ public class ClientSpiderTask implements Runnable {
     }
 
     void cleanup() {
-        if (wdp != null) {
-            clientSpider.returnWebDriverProcess(wdp);
-            wdp = null;
-        }
-        clientSpider.postTaskExecution(this);
+        TaskContext ctx = this.context;
+        this.context = null;
+        clientSpider.postTaskExecution(this, ctx);
     }
 
     private void runImpl() {
@@ -112,11 +104,16 @@ public class ClientSpiderTask implements Runnable {
         this.status = Status.RUNNING;
         this.clientSpider.taskStateChange(this);
         try {
-            wdp = this.clientSpider.getWebDriverProcess();
-            WebDriver wd = wdp.getWebDriver();
+            context = this.clientSpider.createTaskContext();
             startTime = System.currentTimeMillis();
-            wd.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(this.timeout));
-            actions.forEach(e -> e.run(wd));
+            for (SpiderAction action : actions) {
+                if (clientSpider.isStopped()) {
+                    this.status = Status.STOPPED;
+                    this.clientSpider.taskStateChange(this);
+                    return;
+                }
+                action.run(context);
+            }
             ok = true;
             this.status = Status.FINISHED;
             this.clientSpider.taskStateChange(this);

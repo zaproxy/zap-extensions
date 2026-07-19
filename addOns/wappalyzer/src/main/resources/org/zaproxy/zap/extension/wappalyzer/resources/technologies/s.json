@@ -7866,6 +7866,19 @@
     "saas": true,
     "website": "https://sky-shop.pl"
   },
+  "SkyCMS by Netkoncept": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "skycms_LanguageId": "",
+      "skycms_PageCounter": ""
+    },
+    "description": "Polish SaaS content-management platform developed by NETKONCEPT, primarily used by public administration websites and Public Information Bulletin (BIP) portals.",
+    "icon": "SkyCMS_by_netkoncept.svg",
+    "saas": true,
+    "website": "https://www.netkoncept.com/86/63/technologia-skycms.html"
+  },
   "Skyflow": {
     "cats": [
       16

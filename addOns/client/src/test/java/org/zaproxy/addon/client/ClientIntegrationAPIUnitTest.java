@@ -24,9 +24,15 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import java.net.InetSocketAddress;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,17 +40,24 @@ import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link ClientIntegrationAPI}. */
 class ClientIntegrationAPIUnitTest extends TestUtils {
 
+    private ExtensionClientIntegration extension;
+    private ClientMap clientMap;
     private ClientIntegrationAPI api;
 
     @BeforeEach
     void setUp() {
-        api = new ClientIntegrationAPI(null);
+        extension = mock(ExtensionClientIntegration.class);
+        clientMap = mock(ClientMap.class);
+        given(extension.getClientParam()).willReturn(new ClientOptions());
+        api = new ClientIntegrationAPI(extension, clientMap);
     }
 
     @Test
@@ -96,12 +109,15 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
         // Given
         CallBackImp callback = new CallBackImp("test");
         api.registerClientCallBack(callback);
+        InetSocketAddress addr = new InetSocketAddress(9999);
 
         // When
-        String resp1 = api.handleCallBack(getMsg("GET", api.getCallbackUrl() + "/test"));
-        String resp2 = api.handleCallBack(getMsg("POST", api.getCallbackUrl() + "/test/1/2/3"));
+        String resp1 = api.handleCallBack(getMsg("GET", api.getCallbackUrl() + "/test", addr));
+        String resp2 =
+                api.handleCallBack(getMsg("POST", api.getCallbackUrl() + "/test/1/2/3", addr));
         String resp3 =
-                api.handleCallBack(getMsg("OPTIONS", api.getCallbackUrl() + "/test?querystring"));
+                api.handleCallBack(
+                        getMsg("OPTIONS", api.getCallbackUrl() + "/test?querystring", addr));
 
         // Then
         assertThat(callback.calls, is(3));
@@ -242,16 +258,150 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
         assertThat(callback.closingCcbu, is(nullValue()));
     }
 
+    @Test
+    void shouldDelegateReportObject() throws Exception {
+        // Given
+        String reportedObject = "ReportedObject";
+        JSONObject params = new JSONObject();
+        params.put("objectJson", reportedObject);
+
+        // When
+        api.handleApiAction("reportObject", params);
+
+        // Then
+        verify(clientMap).handleReportObject(reportedObject);
+    }
+
+    @Test
+    void shouldDelegateReportEvent() throws Exception {
+        // Given
+        String reportedEvent = "ReportedEvent";
+        JSONObject params = new JSONObject();
+        params.put("eventJson", reportedEvent);
+
+        // When
+        api.handleApiAction("reportEvent", params);
+
+        // Then
+        verify(clientMap).handleReportEvent(reportedEvent);
+    }
+
+    @Test
+    void shouldPassInitiatorToClientCallBackWhenPortRegistered() throws Exception {
+        // Given
+        int proxyPort = 5678;
+        InitiatorCallBackImp callback = new InitiatorCallBackImp("test");
+        api.registerClientCallBack(callback);
+        api.registerPortInitiator(proxyPort, HttpSender.CLIENT_SPIDER_INITIATOR);
+        HttpMessage msg =
+                getMsg("GET", api.getCallbackUrl() + "/test", new InetSocketAddress(proxyPort));
+
+        // When
+        api.handleCallBack(msg);
+
+        // Then
+        assertThat(callback.initiator, is(HttpSender.CLIENT_SPIDER_INITIATOR));
+    }
+
+    @Test
+    void shouldPassUnknownInitiatorWhenPortUnknown() throws Exception {
+        // Given
+        InitiatorCallBackImp callback = new InitiatorCallBackImp("test");
+        api.registerClientCallBack(callback);
+        HttpMessage msg =
+                getMsg("GET", api.getCallbackUrl() + "/test", new InetSocketAddress(9999));
+
+        // When
+        api.handleCallBack(msg);
+
+        // Then
+        assertThat(callback.initiator, is(-1));
+    }
+
+    @Test
+    void shouldRemoveInitiatorMappingOnUnregisterPortInitiator() throws Exception {
+        // Given
+        int proxyPort = 5678;
+        api.registerPortInitiator(proxyPort, HttpSender.CLIENT_SPIDER_INITIATOR);
+        InitiatorCallBackImp callback = new InitiatorCallBackImp("test");
+        api.registerClientCallBack(callback);
+
+        // When
+        api.unregisterPortInitiator(proxyPort);
+        HttpMessage msg =
+                getMsg("GET", api.getCallbackUrl() + "/test", new InetSocketAddress(proxyPort));
+        api.handleCallBack(msg);
+
+        // Then
+        assertThat(callback.initiator, is(-1));
+    }
+
+    @Test
+    void shouldDelegateReportObjectViaCallback() throws Exception {
+        // Given
+        String reportedObject = "ReportedObject";
+        int localPort = 1234;
+        HttpMessage msg =
+                getPostMsg(
+                        api.getCallbackUrl(),
+                        "objectJson=" + URLEncoder.encode(reportedObject, StandardCharsets.UTF_8),
+                        localPort);
+
+        // When
+        api.handleCallBack(msg);
+
+        // Then
+        verify(clientMap).handleReportObject(reportedObject, localPort);
+    }
+
+    @Test
+    void shouldDelegateReportEventViaCallback() throws Exception {
+        // Given
+        String reportedEvent = "ReportedEvent";
+        int localPort = 4321;
+        HttpMessage msg =
+                getPostMsg(
+                        api.getCallbackUrl(),
+                        "eventJson=" + URLEncoder.encode(reportedEvent, StandardCharsets.UTF_8),
+                        localPort);
+
+        // When
+        api.handleCallBack(msg);
+
+        // Then
+        verify(clientMap).handleReportEvent(reportedEvent, localPort);
+    }
+
     private static ClientCallBackUtils createClientCallBackUtils() {
+        return createClientCallBackUtils(8080, 0);
+    }
+
+    private static ClientCallBackUtils createClientCallBackUtils(int proxyPort, int requester) {
         WebDriver wd = mock(WebDriver.class);
-        SeleniumScriptUtils ssu = new SeleniumScriptUtils(wd, 0, "firefox", "localhost", 8080);
+        SeleniumScriptUtils ssu =
+                new SeleniumScriptUtils(wd, requester, "firefox", "localhost", proxyPort);
         return new ClientCallBackUtils(ssu, UUID.randomUUID());
     }
 
-    private HttpMessage getMsg(String method, String url) throws Exception {
+    private static HttpMessage getMsg(String method, String url) throws Exception {
+        return getMsg(method, url, null);
+    }
+
+    private static HttpMessage getMsg(String method, String url, InetSocketAddress localAddress)
+            throws Exception {
         HttpMessage msg = new HttpMessage();
         URI uri = new URI(url, true);
         msg.setRequestHeader(new HttpRequestHeader(method, uri, HttpHeader.HTTP11));
+        if (localAddress != null) {
+            msg.getRequestHeader().setLocalAddress(localAddress);
+        }
+        return msg;
+    }
+
+    private static HttpMessage getPostMsg(String url, String body, int localPort) throws Exception {
+        HttpMessage msg = getMsg(HttpRequestHeader.POST, url);
+        msg.getRequestHeader().setLocalAddress(new InetSocketAddress(localPort));
+        msg.setRequestBody(body);
         return msg;
     }
 
@@ -283,6 +433,33 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
         @Override
         public void browserClosing(ClientCallBackUtils ccbu) {
             this.closingCcbu = ccbu;
+        }
+    }
+
+    static class InitiatorCallBackImp implements ClientCallBackImplementor {
+
+        private final String name;
+        int initiator = -1;
+
+        InitiatorCallBackImp(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getImplementorName() {
+            return name;
+        }
+
+        @Override
+        public String handleCallBack(HttpMessage msg) {
+            return "";
+        }
+
+        @Override
+        public String handleCallBack(
+                HttpMessage msg, ClientCallBackImplementor.ClientCallBackContext context) {
+            this.initiator = context.initiator();
+            return "";
         }
     }
 

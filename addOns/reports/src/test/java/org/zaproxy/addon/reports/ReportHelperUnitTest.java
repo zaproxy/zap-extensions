@@ -26,7 +26,11 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.List;
+import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -195,6 +199,44 @@ class ReportHelperUnitTest {
         String string = ReportHelper.getStatisticsString(statsKey);
         // Then
         assertThat(string, is(equalTo(statsKey)));
+    }
+
+    @Test
+    void shouldCapWideScriptDiagnosticScreenshotWidthForPdf() throws Exception {
+        // Given
+        String wideScreenshot = pngBase64(2000, 100);
+
+        // When / Then
+        assertThat(
+                ReportHelper.getPdfScriptDiagnosticScreenshotWidth(wideScreenshot),
+                is(equalTo(523)));
+    }
+
+    @Test
+    void shouldNotEnlargeSmallScriptDiagnosticScreenshotWidthForPdf() throws Exception {
+        // Given
+        String smallScreenshot = pngBase64(100, 50);
+
+        // When / Then
+        assertThat(
+                ReportHelper.getPdfScriptDiagnosticScreenshotWidth(smallScreenshot),
+                is(equalTo(100)));
+    }
+
+    @Test
+    void shouldUseDefaultWidthForInvalidScriptDiagnosticScreenshot() {
+        // Given / When / Then
+        assertThat(
+                ReportHelper.getPdfScriptDiagnosticScreenshotWidth("abc64png"), is(equalTo(523)));
+        assertThat(ReportHelper.getPdfScriptDiagnosticScreenshotWidth(null), is(equalTo(523)));
+        assertThat(ReportHelper.getPdfScriptDiagnosticScreenshotWidth(""), is(equalTo(523)));
+    }
+
+    private static String pngBase64(int width, int height) throws Exception {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", baos);
+        return Base64.getEncoder().encodeToString(baos.toByteArray());
     }
 
     AlertNode newAlertNode(int risk, String name, String url) {

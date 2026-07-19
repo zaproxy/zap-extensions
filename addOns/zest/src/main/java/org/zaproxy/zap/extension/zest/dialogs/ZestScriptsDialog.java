@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -375,7 +375,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         scriptWrapper.setDebug(this.getBoolValue(FIELD_DEBUG));
 
         int stmtDelay = this.getIntValue(FIELD_STMT_DELAY);
-        if (scriptWrapper.getZestScript().getStatementDelay() != stmtDelay) {
+        if (ZestScript.Type.StandAlone.equals(this.type)
+                && scriptWrapper.getZestScript().getStatementDelay() != stmtDelay) {
             scriptWrapper
                     .getZestScript()
                     .setOptions(Map.of(ZestScript.STATEMENT_DELAY_MS, Integer.toString(stmtDelay)));
@@ -442,7 +443,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         }
         if (!this.isEmptyField(FIELD_PREFIX)) {
             try {
-                new URL(this.getStringValue(FIELD_PREFIX));
+                new URI(this.getStringValue(FIELD_PREFIX)).toURL();
             } catch (Exception e) {
                 return Constant.messages.getString("zest.dialog.script.error.prefix");
             }

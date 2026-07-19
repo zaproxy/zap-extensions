@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import difflib.ChangeDelta;
+import difflib.Chunk;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -656,58 +658,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                                                 Arrays.asList(
                                                         longestCommonSubstringB.split("\\n"))));
 
-                        int numberofDifferences = diffpatch.getDeltas().size();
-
-                        StringBuilder tempDiff = new StringBuilder(250);
-                        for (Delta<String> delta : diffpatch.getDeltas()) {
-                            String changeType = null;
-                            if (delta.getType() == Delta.TYPE.CHANGE) changeType = "Changed Text";
-                            else if (delta.getType() == Delta.TYPE.DELETE)
-                                changeType = "Deleted Text";
-                            else if (delta.getType() == Delta.TYPE.INSERT)
-                                changeType = "Inserted text";
-                            else changeType = "Unknown change type [" + delta.getType() + "]";
-
-                            tempDiff.append("\n(" + changeType + ")\n"); // blank line before
-                            tempDiff.append(
-                                    "Output for Valid Username  : "
-                                            + delta.getOriginal()
-                                            + "\n"); // no blank lines
-                            tempDiff.append(
-                                    "\nOutput for Invalid Username: "
-                                            + delta.getRevised()
-                                            + "\n"); // blank line before
-                        }
-                        String diffAB = tempDiff.toString();
-                        String extraInfo =
-                                Constant.messages.getString(
-                                        "ascanbeta.usernameenumeration.alert.extrainfo",
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName(),
-                                        currentHtmlParameter.getValue(), // original value
-                                        invalidUsername, // new value
-                                        diffAB, // the differences between the two sets of output
-                                        numberofDifferences);
-                        String attack =
-                                Constant.messages.getString(
-                                        "ascanbeta.usernameenumeration.alert.attack",
-                                        currentHtmlParameter.getType(),
-                                        currentHtmlParameter.getName());
-                        String vulnname =
-                                Constant.messages.getString("ascanbeta.usernameenumeration.name");
-                        String vulndesc =
-                                Constant.messages.getString("ascanbeta.usernameenumeration.desc");
-                        String vulnsoln =
-                                Constant.messages.getString("ascanbeta.usernameenumeration.soln");
-
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_LOW)
-                                .setName(vulnname)
-                                .setDescription(vulndesc)
-                                .setParam(currentHtmlParameter.getName())
-                                .setAttack(attack)
-                                .setOtherInfo(extraInfo)
-                                .setSolution(vulnsoln)
+                        buildAlert(currentHtmlParameter, invalidUsername, diffpatch.getDeltas())
                                 .setMessage(getBaseMsg())
                                 .raise();
 
@@ -769,5 +720,70 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    private AlertBuilder buildAlert(
+            HtmlParameter param, String invalidValue, List<Delta<String>> deltas) {
+        StringBuilder diffText = new StringBuilder(250);
+        for (Delta<String> delta : deltas) {
+            String changeType;
+            if (delta.getType() == Delta.TYPE.CHANGE) {
+                changeType =
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.diff.changetype.change");
+            } else if (delta.getType() == Delta.TYPE.DELETE) {
+                changeType =
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.diff.changetype.delete");
+            } else if (delta.getType() == Delta.TYPE.INSERT) {
+                changeType =
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.diff.changetype.insert");
+            } else {
+                changeType =
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.diff.changetype.unknown",
+                                delta.getType());
+            }
+
+            diffText.append(
+                    Constant.messages.getString(
+                            "ascanbeta.usernameenumeration.diff.output",
+                            changeType,
+                            delta.getOriginal(),
+                            delta.getRevised()));
+        }
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setParam(param.getName())
+                .setAttack(
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.alert.attack",
+                                param.getType(),
+                                param.getName()))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanbeta.usernameenumeration.alert.extrainfo",
+                                param.getType(),
+                                param.getName(),
+                                param.getValue(),
+                                invalidValue,
+                                diffText.toString(),
+                                deltas.size()));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                new HtmlParameter(HtmlParameter.Type.form, "username", "admin"),
+                                "invaliduser123",
+                                List.of(
+                                        new ChangeDelta<>(
+                                                new Chunk<>(0, List.of("Welcome, admin")),
+                                                new Chunk<>(
+                                                        0,
+                                                        List.of("Invalid username or password")))))
+                        .build());
     }
 }

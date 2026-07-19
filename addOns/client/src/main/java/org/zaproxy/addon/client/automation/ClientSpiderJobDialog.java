@@ -25,10 +25,9 @@ import java.util.List;
 import javax.swing.JTextField;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.automation.ClientSpiderJob.Parameters;
 import org.zaproxy.addon.client.internal.ScopeCheckComponent;
-import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -63,6 +62,8 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
             "client.automation.dialog.spider.shutdowntime";
     private static final String LOGOUT_AVOIDANCE_PARAM =
             "client.automation.dialog.spider.logoutavoidance";
+    private static final String ACTION_WAIT_TIME_PARAM =
+            "client.automation.dialog.spider.actionwaittime";
 
     private ClientSpiderJob job;
     private ScopeCheckComponent scopeCheckComponent;
@@ -72,7 +73,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
         super(
                 View.getSingleton().getMainFrame(),
                 TITLE,
-                DisplayUtils.getScaledDimension(450, 350),
+                DisplayUtils.getScaledDimension(450, 400),
                 TAB_LABELS);
         this.job = job;
         this.addTextField(0, NAME_PARAM, this.job.getName());
@@ -121,7 +122,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 getInt(
                         this.job.getParameters().getNumberOfBrowsers(),
-                        Constants.getDefaultThreadCount() / 2));
+                        ClientSpiderOptions.getDefaultThreadCount()));
 
         this.addNumberField(
                 1,
@@ -130,7 +131,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 getInt(
                         this.job.getParameters().getMaxCrawlDepth(),
-                        ClientOptions.DEFAULT_MAX_DEPTH));
+                        ClientSpiderOptions.DEFAULT_MAX_DEPTH));
 
         this.addNumberField(
                 1,
@@ -145,7 +146,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 getInt(
                         this.job.getParameters().getInitialLoadTime(),
-                        ClientOptions.DEFAULT_INITIAL_LOAD_TIME));
+                        ClientSpiderOptions.DEFAULT_INITIAL_LOAD_TIME));
         this.addNumberField(
                 1,
                 PAGE_LOADTIME_PARAM,
@@ -153,7 +154,15 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 getInt(
                         this.job.getParameters().getPageLoadTime(),
-                        ClientOptions.DEFAULT_PAGE_LOAD_TIME));
+                        ClientSpiderOptions.DEFAULT_PAGE_LOAD_TIME));
+        this.addNumberField(
+                1,
+                ACTION_WAIT_TIME_PARAM,
+                0,
+                Integer.MAX_VALUE,
+                getInt(
+                        this.job.getParameters().getActionWaitTime(),
+                        ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME));
         this.addNumberField(
                 1,
                 SHUTDOWN_TIME_PARAM,
@@ -161,7 +170,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 getInt(
                         this.job.getParameters().getShutdownTime(),
-                        ClientOptions.DEFAULT_SHUTDOWN_TIME));
+                        ClientSpiderOptions.DEFAULT_SHUTDOWN_TIME));
         this.addNumberField(
                 1,
                 MAX_DURATION_PARAM,
@@ -173,7 +182,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 LOGOUT_AVOIDANCE_PARAM,
                 getBoolean(
                         job.getParameters().getLogoutAvoidance(),
-                        ClientOptions.DEFAULT_LOGOUT_AVOIDANCE));
+                        ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE));
 
         this.addPadding(1);
 
@@ -203,7 +212,8 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 || params.getPageLoadTime() != null
                 || params.getShutdownTime() != null
                 || params.getMaxDuration() != null
-                || params.getLogoutAvoidance() != null;
+                || params.getLogoutAvoidance() != null
+                || params.getActionWaitTime() != null;
     }
 
     private void setAdvancedTabs(boolean visible) {
@@ -258,6 +268,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setPageLoadTime(this.getIntValue(PAGE_LOADTIME_PARAM));
             this.job.getParameters().setShutdownTime(this.getIntValue(SHUTDOWN_TIME_PARAM));
             this.job.getParameters().setMaxDuration(this.getIntValue(MAX_DURATION_PARAM));
+            this.job.getParameters().setActionWaitTime(this.getIntValue(ACTION_WAIT_TIME_PARAM));
             job.getParameters().setLogoutAvoidance(getBoolValue(LOGOUT_AVOIDANCE_PARAM));
         } else {
             this.job.getParameters().setNumberOfBrowsers(null);
@@ -267,6 +278,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setPageLoadTime(null);
             this.job.getParameters().setShutdownTime(null);
             this.job.getParameters().setMaxDuration(null);
+            this.job.getParameters().setActionWaitTime(null);
             job.getParameters().setLogoutAvoidance(null);
         }
         this.job.setChanged();

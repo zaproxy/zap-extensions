@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [59] - 2026-07-13
+### Added
+- Allow to choose and open the browser directly from the tool bar.
+
+### Changed
+- Depend on newer version of Selenium add-on.
+
+## [58] - 2026-07-06
+### Changed
+- Maintenance changes.
+- Default to Client Spider for modern apps.
+
+## [57] - 2026-06-26
+### Added
+- Option to select modern spider.
+
+## [56] - 2026-05-06
+### Added
+- Add Scan Policy option to the Automated Scan panel.
+
 ## [55] - 2026-03-09
 ### Fixed
 - Attacking domain level URLs with a trailing slash.
@@ -298,6 +318,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[59]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v59
+[58]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v58
+[57]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v57
+[56]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v53

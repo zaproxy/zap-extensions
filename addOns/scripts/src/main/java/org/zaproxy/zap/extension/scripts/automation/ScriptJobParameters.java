@@ -31,6 +31,7 @@ import org.zaproxy.addon.automation.AutomationData;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScriptJobParameters extends AutomationData {
+
     private String action;
     private String type;
     private String engine;
@@ -41,13 +42,33 @@ public class ScriptJobParameters extends AutomationData {
     private String context = "";
     private String user = "";
     private List<String> chain;
+    private FailureLevel failureLevel = FailureLevel.ERROR;
 
     public ScriptJobParameters(String action) {
         this.action = action;
     }
 
+    public FailureLevel getFailureLevel() {
+        return failureLevel != null ? failureLevel : FailureLevel.ERROR;
+    }
+
     // For backwards compatibility
     public void setFile(String file) {
         this.source = file;
+    }
+
+    /**
+     * Copies dialog field values from {@code other}; does not update {@code source}, {@code chain},
+     * or {@code failureLevel}.
+     */
+    public void copyFrom(ScriptJobParameters other) {
+        this.action = other.action;
+        this.type = other.type;
+        this.engine = other.engine;
+        this.name = other.name;
+        this.target = other.target;
+        this.inline = other.inline;
+        this.context = other.context;
+        this.user = other.user;
     }
 }

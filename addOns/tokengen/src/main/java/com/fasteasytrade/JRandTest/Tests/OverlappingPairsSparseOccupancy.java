@@ -139,7 +139,7 @@ public class OverlappingPairsSparseOccupancy extends Base
 					wd = get_w( rt );
 					l = wd & 31;
 					u = wd >>> 5;
-					wds[u] |= maskbit[l];
+					wds[u] |= (int) maskbit[l];
 				}
 
 				/*

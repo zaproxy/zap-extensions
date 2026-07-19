@@ -130,6 +130,10 @@
 
 	<th:block th:if="${reportData.isIncludeSection('insights') && reportData.reportObjects.get('insightsList') != null}">
 		<h3 th:text="#{report.insights.title}" class="left-header">Insights</h3>
+		<p class="insights-stopped"
+			th:if="${reportData.reportObjects.get('stoppingInsight') != null}"
+			th:with="stopping=${reportData.reportObjects.get('stoppingInsight')}"
+			th:text="#{report.insights.stoppedby(${stopping.description}, ${stopping.site}, ${stopping.statisticStr})}">Scan stopped by Insight</p>
 		<table class="summary100">
 			<tr>
 				<th th:text="#{report.insights.level}" height="24">Level</th>
@@ -160,6 +164,44 @@
 			</th:block>
 		</table>
 		<div class="spacer-lg"></div>
+	</th:block>
+
+	<th:block
+		th:if="${reportData.isIncludeSection('scriptdiagnostics') &amp;&amp; reportData.reportObjects.get('scriptDiagnostics') != null}">
+		<h3 th:text="#{report.scriptdiagnostics.title}" class="left-header">Script Diagnostics</h3>
+		<th:block
+			th:each="run, runState: ${reportData.reportObjects.get('scriptDiagnostics').runs}">
+			<h4 th:text="${run.created + ' (' + run.outcome + ')'}">Run</h4>
+			<p th:text="${run.summary}">Summary</p>
+			<th:block th:each="scr: ${run.scripts}">
+				<h5
+					th:text="${scr.order + '. ' + scr.scriptName + ' (' + scr.scriptType + ')'}">Script</h5>
+				<table class="results">
+					<tr>
+						<th width="10%" th:text="#{report.scriptdiagnostics.step}">Step</th>
+						<th width="25%" th:text="#{report.scriptdiagnostics.line}">Line</th>
+						<th width="15%" th:text="#{report.scriptdiagnostics.kind}">Kind</th>
+						<th width="50%" th:text="#{report.scriptdiagnostics.message}">Message</th>
+					</tr>
+					<th:block th:each="st: ${scr.steps}">
+						<tr th:each="out: ${st.outputs}">
+							<td width="10%" th:text="${st.sourceStepIndex}">Step</td>
+							<td width="25%" th:text="${st.line}">Line</td>
+							<td width="15%" th:text="${out.kind}">Kind</td>
+							<td width="50%" th:text="${out.message}">Message</td>
+						</tr>
+						<tr
+							th:if="${reportData.isIncludeSection('scriptdiagnosticsscreenshots') &amp;&amp; st.screenshot != null}">
+							<td colspan="4">
+								<img class="script-diagnostic-screenshot"
+									th:src="|data:image/png;base64,${st.screenshot}|" alt="" />
+							</td>
+						</tr>
+					</th:block>
+				</table>
+			</th:block>
+			<div class="spacer-lg"></div>
+		</th:block>
 	</th:block>
 
 	<th:block th:if="${reportData.isIncludeSection('sequencedetails')}">

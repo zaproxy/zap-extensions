@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.ScriptStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.ScriptStringPayloadGeneratorAdapter;
@@ -48,11 +48,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 
-public class ScriptStringPayloadGeneratorAdapterUIHandler
-        implements PayloadGeneratorUIHandler<
-                DefaultPayload,
-                ScriptStringPayloadGeneratorAdapter,
-                ScriptStringPayloadGeneratorAdapterUI> {
+public class ScriptStringPayloadGeneratorAdapterUIHandler implements PayloadGeneratorUIHandler {
 
     private static final Logger LOGGER =
             LogManager.getLogger(ScriptStringPayloadGeneratorAdapterUIHandler.class);
@@ -87,8 +83,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                 extensionScript.getScripts(ScriptStringPayloadGenerator.TYPE_NAME));
     }
 
-    public static class ScriptStringPayloadGeneratorAdapterUI
-            implements PayloadGeneratorUI<DefaultPayload, ScriptStringPayloadGeneratorAdapter> {
+    public static class ScriptStringPayloadGeneratorAdapterUI implements PayloadGeneratorUI {
 
         private final ScriptWrapper scriptWrapper;
         private ScriptStringPayloadGenerator scriptPayloadGenerator;
@@ -105,11 +100,6 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
 
         public ScriptStringPayloadGenerator getScriptStringPayloadGenerator() {
             return scriptPayloadGenerator;
-        }
-
-        @Override
-        public Class<ScriptStringPayloadGeneratorAdapter> getPayloadGeneratorClass() {
-            return ScriptStringPayloadGeneratorAdapter.class;
         }
 
         @Override
@@ -147,10 +137,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
     }
 
     public static class ScriptStringPayloadGeneratorAdapterUIPanel
-            extends AbstractPersistentPayloadGeneratorUIPanel<
-                    DefaultPayload,
-                    ScriptStringPayloadGeneratorAdapter,
-                    ScriptStringPayloadGeneratorAdapterUI> {
+            extends AbstractPersistentPayloadGeneratorUIPanel {
 
         private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 250;
 
@@ -256,7 +243,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
             }
             StringBuilder contents = new StringBuilder();
             try {
-                try (ResettableAutoCloseableIterator<DefaultPayload> itPayloads =
+                try (ResettableAutoCloseableIterator<Payload> itPayloads =
                         scriptPayloadGenerator.iterator()) {
                     for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && itPayloads.hasNext(); i++) {
                         if (contents.length() > 0) {
@@ -302,15 +289,18 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
         }
 
         @Override
-        public void setPayloadGeneratorUI(
-                ScriptStringPayloadGeneratorAdapterUI payloadGeneratorUI) {
+        public void setPayloadGeneratorUI(PayloadGeneratorUI payloadGeneratorUI) {
+            if (!(payloadGeneratorUI instanceof ScriptStringPayloadGeneratorAdapterUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected ScriptStringPayloadGeneratorAdapterUI but got: "
+                                + payloadGeneratorUI.getClass());
+            }
             scriptComboBox.setSelectedItem(
-                    new PayloadGeneratorScriptUIEntry(payloadGeneratorUI.getScriptWrapper()));
+                    new PayloadGeneratorScriptUIEntry(ui.getScriptWrapper()));
             PayloadGeneratorScriptUIEntry scriptUIEntry =
                     (PayloadGeneratorScriptUIEntry) scriptComboBox.getSelectedItem();
             if (scriptUIEntry != null) {
-                scriptUIEntry.setScriptPayloadGenerator(
-                        payloadGeneratorUI.getScriptStringPayloadGenerator());
+                scriptUIEntry.setScriptPayloadGenerator(ui.getScriptStringPayloadGenerator());
             }
             setPreviewAndSaveButtonsEnabled(true);
         }

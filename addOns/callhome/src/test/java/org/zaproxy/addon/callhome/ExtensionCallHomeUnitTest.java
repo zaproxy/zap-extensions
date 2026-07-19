@@ -105,6 +105,26 @@ class ExtensionCallHomeUnitTest {
     }
 
     @Test
+    void shouldExcludeAuthDetectSessionStatsFromGlobalStats() {
+        // Given
+        ExtensionCallHome ext = new ExtensionCallHome();
+        InMemoryStats stats = new InMemoryStats();
+        stats.counterInc("stats.auth.browser.passed", 1);
+        stats.counterInc("stats.auth.detect.auth.form", 2);
+        stats.counterInc("stats.auth.detect.session.sometoken", 3);
+        stats.counterInc("stats.auth.detect.session.some.other.token", 4);
+        JSONObject data = new JSONObject();
+
+        // When
+        ext.addStatistics(data, stats);
+
+        // Then
+        assertThat(data.size(), is(equalTo(2)));
+        assertThat(data.get("stats.auth.browser.passed"), is(equalTo(1)));
+        assertThat(data.get("stats.auth.detect.auth.form"), is(equalTo(2)));
+    }
+
+    @Test
     void shouldMergeFilteredSiteStats() {
         // Given
         ExtensionCallHome ext = new ExtensionCallHome();

@@ -45,7 +45,7 @@ public class ContextSiteTree extends SiteTree {
         for (SiteNode node : contextNodes) {
             HistoryReference ref = node.getHistoryReference();
             if (ref != null) {
-                this.addPath(context, ref.getURI(), ref.getMethod());
+                this.addPath(context, ref.getURI(), node.getNodeName());
             }
         }
     }

@@ -25,9 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -37,12 +34,12 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
@@ -239,12 +236,11 @@ public class ImportDialog extends AbstractDialog {
         boolean importedWithoutErrors = false;
 
         try {
-            new URL(collectionLocation).toURI();
-            new URI(collectionLocation, true);
+            UriUtils.isValid(collectionLocation);
             importedWithoutErrors =
                     parser.importFromUrl(
                             getCollectionField().getText(), getVariablesField().getText(), true);
-        } catch (URIException | MalformedURLException | URISyntaxException e1) {
+        } catch (ZapUriException e1) {
             // Not a valid URI, try to import as a file
             var file = new File(collectionLocation);
             if (!file.canRead()) {

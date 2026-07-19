@@ -29,19 +29,31 @@ ZAP will crawl from the URL specified but will remove a trailing slash from the 
 This is because https://example.com/test/ is treated as a leaf node internally, which would mean that ZAP would not attack
 URLs like https://example.com/test/1 etc.
 
+<H3>Scan Policy</H3>
+
+The scan policy to use when performing the active scan.
+Note that the policies will not be shown dynamically, any added/removed policies will be missing until a restart is done.
+
 <H3>Use traditional spider</H3>
 
 The traditional spider explores the application by finding links in HTML pages. 
 It is very fast but cannot handle applications which make heavy use of JavaScript. 
 
-<H3>Use ajax spider</H3>
+<H3>Use modern spider</H3>
 
-The ajax spider explores the application by launching the browser you have chosen and clicking on the links it finds. 
+The modern spider explores the application by launching the browser you have chosen and clicking on the links it finds.
 It is slower than the traditional spider but handles JavaScript well.<br>
-This option is only shown if the ajax spider add-on is installed. 
-If it is not available then you can download and install it for free from the ZAP Marketplace.
+This option is only shown if at least one modern spider add-on is installed.
 <br><br>
-The options available are:
+Two modern spiders are available:
+<ul>
+<li><b>Ajax Spider</b>: available if the Ajax Spider add-on is installed.
+<li><b>Client Spider</b>: available if the Client Side Integration add-on is installed.
+</ul>
+When both are installed, a drop-down lets you choose which one to use.
+ZAP will remember the last spider and browser you chose when you restart it.
+<br><br>
+The conditional options available are:
 <ul>
 <li>Never: you will then need to use the traditional spider
 <li>If Modern: will run if ZAP identifies the target as a modern app - for this you need to use the traditional spider

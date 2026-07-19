@@ -5,9 +5,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Updated help entries for the following scan rules, clarifying the data used to supplement their alerts for credit card related findings:
+  - Information Disclosure: Referrer
+  - PII Disclosure
+
+## [75] - 2026-07-06
+### Changed
+- Maintenance changes.
+- Modern scan rule to refer to the Client Spider.
+
+## [74] - 2026-06-26
+### Changed
+- Update dependency.
+- Updated a reference link for the Sub Resource Integrity Attribute Missing scan rule.
+- Remove reference link which is no longer available for the Script Served From Malicious Domain (polyfill) scan rule.
+- Remove OWASP Top 10 Security Misconfiguration tags from the Modern Web Application scan rule, it only informs about the likely type of the website.
+
+## [73] - 2026-04-14
+### Changed
 - The scan rules now have new tags for the OWASP Top 10 2025.
 - The Charset Mismatch scan rule also now has tags for the Top 10 2021 and 2017.
 - Depends on an updated version of the Common Library add-on.
+- Add alert references to Hash Disclosure scan rule alerts (Issue 9144).
 
 ## [72] - 2026-03-31
 ### Added
@@ -677,6 +696,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[75]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v75
+[74]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v74
+[73]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v73
 [72]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v72
 [71]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v71
 [70]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v70

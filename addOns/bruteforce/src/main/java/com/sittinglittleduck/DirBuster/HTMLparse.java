@@ -23,6 +23,7 @@ package com.sittinglittleduck.DirBuster;
 import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 import net.htmlparser.jericho.Attribute;
@@ -31,6 +32,8 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 
 /**
  * This class is to paser the returned html pages and extract other dirs and files from them
@@ -102,7 +105,8 @@ public class HTMLparse extends Thread {
                                 if (attr != null) {
                                     // creates a full qulaifed domian name, based on the page we
                                     // have just tested
-                                    URL tempURL = new URL(work.getWork(), attr.getValue());
+                                    URL tempURL =
+                                            work.getWork().toURI().resolve(attr.getValue()).toURL();
 
                                     String urlString = tempURL.getPath();
                                     // check it is not already there and the link is from the same
@@ -125,7 +129,9 @@ public class HTMLparse extends Thread {
                                     }
                                 }
 
-                            } catch (MalformedURLException e) {
+                            } catch (MalformedURLException
+                                    | URISyntaxException
+                                    | IllegalArgumentException e) {
                                 LOGGER.debug("Bad URL", e);
                             }
                         }
@@ -179,7 +185,7 @@ public class HTMLparse extends Thread {
                                         // ports
                                         WorkUnit workUnit =
                                                 new WorkUnit(
-                                                        new URL(
+                                                        UriUtils.buildUrl(
                                                                 work.getWork().getProtocol(),
                                                                 work.getWork().getHost(),
                                                                 work.getWork().getPort(),
@@ -198,7 +204,7 @@ public class HTMLparse extends Thread {
                                             // workUnit.getWork().toString() + " to the work
                                             // queue");
                                         }
-                                    } catch (MalformedURLException ex) {
+                                    } catch (ZapUriException ex) {
                                         LOGGER.debug("Bad URL", ex);
                                     } catch (InterruptedException ex) {
                                         LOGGER.debug(ex);
@@ -284,7 +290,7 @@ public class HTMLparse extends Thread {
 
             return GenBaseCase.genBaseCase(
                     manager, manager.getFirstPartOfURL() + baseItem, isDir, fileExtention);
-        } catch (MalformedURLException ex) {
+        } catch (URISyntaxException | MalformedURLException ex) {
             LOGGER.debug("Bad URL", ex);
         } catch (IOException | InterruptedException ex) {
             LOGGER.debug(ex);

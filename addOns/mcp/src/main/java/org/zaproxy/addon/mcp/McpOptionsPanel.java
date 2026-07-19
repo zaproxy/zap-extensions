@@ -40,12 +40,13 @@ public class McpOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private JCheckBox enabledCheckBox;
     private ZapNumberSpinner portSpinner;
     private JCheckBox securityKeyEnabledCheckBox;
     private JPasswordField securityKeyField;
     private JButton generateKeyButton;
-    private JCheckBox recordInHistoryCheckBox;
     private JCheckBox secureOnlyCheckBox;
+    private JCheckBox recordInHistoryCheckBox;
 
     public McpOptionsPanel() {
         super();
@@ -57,6 +58,12 @@ public class McpOptionsPanel extends AbstractParamPanel {
         panel.setBorder(new EmptyBorder(2, 2, 2, 2));
 
         int row = 0;
+
+        panel.add(
+                getEnabledCheckBox(),
+                LayoutHelper.getGBC(
+                        0, row, GridBagConstraints.REMAINDER, 1.0, new Insets(2, 2, 2, 2)));
+        row++;
 
         JLabel portLabel = new JLabel(Constant.messages.getString("mcp.optionspanel.port.label"));
         portLabel.setLabelFor(getPortSpinner());
@@ -111,6 +118,26 @@ public class McpOptionsPanel extends AbstractParamPanel {
         add(panel);
     }
 
+    private JCheckBox getEnabledCheckBox() {
+        if (enabledCheckBox == null) {
+            enabledCheckBox =
+                    new JCheckBox(Constant.messages.getString("mcp.optionspanel.enabled.label"));
+            enabledCheckBox.addItemListener(
+                    e -> {
+                        boolean enabled = enabledCheckBox.isSelected();
+                        getPortSpinner().setEnabled(enabled);
+                        getSecurityKeyField()
+                                .setEnabled(
+                                        enabled && getSecurityKeyEnabledCheckBox().isSelected());
+                        getSecurityKeyEnabledCheckBox().setEnabled(enabled);
+                        getGenerateKeyButton().setEnabled(enabled);
+                        getSecureOnlyCheckBox().setEnabled(enabled);
+                        getRecordInHistoryCheckBox().setEnabled(enabled);
+                    });
+        }
+        return enabledCheckBox;
+    }
+
     private ZapNumberSpinner getPortSpinner() {
         if (portSpinner == null) {
             portSpinner = new ZapNumberSpinner(1, McpParam.DEFAULT_PORT, 65535);
@@ -137,6 +164,14 @@ public class McpOptionsPanel extends AbstractParamPanel {
         return securityKeyField;
     }
 
+    private JCheckBox getSecureOnlyCheckBox() {
+        if (secureOnlyCheckBox == null) {
+            secureOnlyCheckBox =
+                    new JCheckBox(Constant.messages.getString("mcp.optionspanel.secureonly.label"));
+        }
+        return secureOnlyCheckBox;
+    }
+
     private JCheckBox getRecordInHistoryCheckBox() {
         if (recordInHistoryCheckBox == null) {
             recordInHistoryCheckBox =
@@ -144,14 +179,6 @@ public class McpOptionsPanel extends AbstractParamPanel {
                             Constant.messages.getString("mcp.optionspanel.recordinhistory.label"));
         }
         return recordInHistoryCheckBox;
-    }
-
-    private JCheckBox getSecureOnlyCheckBox() {
-        if (secureOnlyCheckBox == null) {
-            secureOnlyCheckBox =
-                    new JCheckBox(Constant.messages.getString("mcp.optionspanel.secureonly.label"));
-        }
-        return secureOnlyCheckBox;
     }
 
     private JButton getGenerateKeyButton() {
@@ -164,7 +191,7 @@ public class McpOptionsPanel extends AbstractParamPanel {
                     e -> {
                         getSecurityKeyField().setText(McpParam.generateRandomKey());
                         getSecurityKeyEnabledCheckBox().setSelected(true);
-                        getSecurityKeyField().setEnabled(true);
+                        getSecurityKeyField().setEnabled(getEnabledCheckBox().isSelected());
                     });
         }
         return generateKeyButton;
@@ -175,16 +202,26 @@ public class McpOptionsPanel extends AbstractParamPanel {
         OptionsParam options = (OptionsParam) obj;
         McpParam param = options.getParamSet(McpParam.class);
 
+        boolean enabled = param.isEnabled();
+        getEnabledCheckBox().setSelected(enabled);
         getPortSpinner().setValue(param.getPort());
+        getPortSpinner().setEnabled(enabled);
         getSecurityKeyEnabledCheckBox().setSelected(param.isSecurityKeyEnabled());
+        getSecurityKeyEnabledCheckBox().setEnabled(enabled);
         getSecurityKeyField().setText(param.getSecurityKey());
-        getSecurityKeyField().setEnabled(param.isSecurityKeyEnabled());
-        getRecordInHistoryCheckBox().setSelected(param.isRecordInHistory());
+        getSecurityKeyField().setEnabled(enabled && param.isSecurityKeyEnabled());
+        getGenerateKeyButton().setEnabled(enabled);
         getSecureOnlyCheckBox().setSelected(param.isSecureOnly());
+        getSecureOnlyCheckBox().setEnabled(enabled);
+        getRecordInHistoryCheckBox().setSelected(param.isRecordInHistory());
+        getRecordInHistoryCheckBox().setEnabled(enabled);
     }
 
     @Override
     public void validateParam(Object obj) throws Exception {
+        if (!getEnabledCheckBox().isSelected()) {
+            return;
+        }
         int port = getPortSpinner().getValue();
         if (port < 1 || port > 65535) {
             throw new IllegalStateException(
@@ -204,11 +241,12 @@ public class McpOptionsPanel extends AbstractParamPanel {
         OptionsParam options = (OptionsParam) obj;
         McpParam param = options.getParamSet(McpParam.class);
 
+        param.setEnabled(getEnabledCheckBox().isSelected());
         param.setPort(getPortSpinner().getValue());
         param.setSecurityKeyEnabled(getSecurityKeyEnabledCheckBox().isSelected());
         param.setSecurityKey(new String(getSecurityKeyField().getPassword()));
-        param.setRecordInHistory(getRecordInHistoryCheckBox().isSelected());
         param.setSecureOnly(getSecureOnlyCheckBox().isSelected());
+        param.setRecordInHistory(getRecordInHistoryCheckBox().isSelected());
     }
 
     @Override

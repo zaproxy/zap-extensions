@@ -21,17 +21,29 @@ package org.zaproxy.addon.client.internal;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
+import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientUtils;
+import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventPublisher;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 @SuppressWarnings("serial")
 public class ClientMap extends SortedTreeModel implements EventPublisher {
@@ -41,10 +53,15 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     public static final String DEPTH_KEY = "depth";
     public static final String SIBLINGS_KEY = "siblings";
     public static final String URL_KEY = "url";
+    public static final String MESSAGE_UUID_KEY = "client.message.uuid";
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(ClientMap.class);
     private ClientNode root;
+    private Consumer<ReportedObject> reportedObjectConsumer;
+    private final List<ClientMapListener> listeners = new CopyOnWriteArrayList<>();
+    private final Graph<ClientGraphVertex, DefaultEdge> graph =
+            new DirectedMultigraph<>(DefaultEdge.class);
 
     public ClientMap(ClientNode root) {
         super(root);
@@ -57,18 +74,40 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         return root;
     }
 
+    public Graph<ClientGraphVertex, DefaultEdge> getGraph() {
+        return graph;
+    }
+
+    public void addListener(ClientMapListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(ClientMapListener listener) {
+        listeners.remove(listener);
+    }
+
     public ClientNode getOrAddNode(String url, boolean visited, boolean storage) {
         LOGGER.debug("getOrAddNode {}", url);
-        return this.getNode(url, visited, storage, true, true);
+        return this.getNode(url, visited, storage, true, true, 0);
     }
 
     public ClientNode getNode(String url, boolean visited, boolean storage) {
         LOGGER.debug("getNode {}", url);
-        return this.getNode(url, visited, storage, false, false);
+        return this.getNode(url, visited, storage, false, false, 0);
     }
 
     private synchronized ClientNode getNode(
             String url, boolean visited, boolean storage, boolean add, boolean publishEvent) {
+        return getNode(url, visited, storage, add, publishEvent, 0);
+    }
+
+    private synchronized ClientNode getNode(
+            String url,
+            boolean visited,
+            boolean storage,
+            boolean add,
+            boolean publishEvent,
+            int source) {
         if (url == null) {
             throw new IllegalArgumentException("The url parameter should not be null");
         }
@@ -92,15 +131,18 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                     new ClientSideDetails(nodeName, url, visited, storage),
                                     storage);
                     if (!storage && publishEvent) {
+                        int depth = parent.getLevel() + 1;
+                        int siblings = parent.getChildCount() + 1;
                         Map<String, String> map = new HashMap<>();
                         map.put(URL_KEY, url);
                         // Note we haven't added the child to the parent yet
-                        map.put(DEPTH_KEY, Integer.toString(parent.getLevel() + 1));
-                        map.put(SIBLINGS_KEY, Integer.toString(parent.getChildCount() + 1));
+                        map.put(DEPTH_KEY, Integer.toString(depth));
+                        map.put(SIBLINGS_KEY, Integer.toString(siblings));
                         ZAP.getEventBus()
                                 .publishSyncEvent(
                                         this,
                                         new Event(this, MAP_NODE_ADDED_EVENT, new Target(), map));
+                        listeners.forEach(l -> l.nodeAdded(url, depth, siblings, source));
                     }
                 } else {
                     // Create intermediate node with a suitable URL
@@ -152,6 +194,9 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     public void clear() {
         root.removeAllChildren();
         this.nodeStructureChanged(root);
+        synchronized (graph) {
+            graph.removeAllVertices(new HashSet<>(graph.vertexSet()));
+        }
     }
 
     @Override
@@ -159,19 +204,48 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         return this.getClass().getCanonicalName();
     }
 
+    private void notifyNodeChanged(ClientNode node) {
+        if (!View.isInitialised()) {
+            return;
+        }
+        ThreadUtils.invokeAndWaitHandled(() -> nodeChanged(node));
+    }
+
+    public void addComponent(String url, ClientSideComponent component) {
+        addComponent(url, component, 0);
+    }
+
+    private void addComponent(String url, ClientSideComponent component, int source) {
+        ClientNode node = getNode(url, false, false, true, true, source);
+        addComponentToNode(node, component, source);
+        if (component.isStorageEvent()) {
+            String storageUrl = node.getSite() + component.getTypeForDisplay();
+            addComponentToNode(
+                    getNode(storageUrl, false, true, true, false, source), component, source);
+        }
+    }
+
     public boolean addComponentToNode(ClientNode node, ClientSideComponent component) {
+        return addComponentToNode(node, component, 0);
+    }
+
+    private boolean addComponentToNode(ClientNode node, ClientSideComponent component, int source) {
         ClientSideDetails details = node.getUserObject();
         boolean wasVisited = details.isVisited();
         boolean componentAdded = details.addComponent(component);
         if (!wasVisited || componentAdded) {
             details.setVisited(true);
 
+            int depth = node.getLevel();
+            int siblings = node.getChildCount();
             Map<String, String> map = new HashMap<>(component.getData());
-            map.put(DEPTH_KEY, Integer.toString(node.getLevel()));
-            map.put(SIBLINGS_KEY, Integer.toString(node.getChildCount()));
+            map.put(DEPTH_KEY, Integer.toString(depth));
+            map.put(SIBLINGS_KEY, Integer.toString(siblings));
             ZAP.getEventBus()
                     .publishSyncEvent(
                             this, new Event(this, MAP_COMPONENT_ADDED_EVENT, new Target(), map));
+            listeners.forEach(l -> l.componentAdded(component, depth, siblings, source));
+            notifyNodeChanged(node);
         }
         return componentAdded;
     }
@@ -193,6 +267,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                     ClientSideComponent.Type.REDIRECT,
                                     null,
                                     -1));
+            notifyNodeChanged(node);
             return node;
         }
         LOGGER.debug("setRedirect, no node for URL {}", originalUrl);
@@ -203,6 +278,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         ClientNode node = getNode(url, false, false);
         if (node != null && !node.getUserObject().isVisited()) {
             node.getUserObject().setVisited(true);
+            notifyNodeChanged(node);
             return node;
         }
         LOGGER.debug("setVisited, no node for URL or already visited {}", url);
@@ -228,8 +304,134 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                 ClientSideComponent.Type.CONTENT_LOADED,
                                 null,
                                 -1));
-
+        notifyNodeChanged(node);
         return node;
+    }
+
+    public void setReportedObjectConsumer(Consumer<ReportedObject> consumer) {
+        this.reportedObjectConsumer = consumer;
+    }
+
+    public void handleReportObject(String jsonStr) {
+        handleReportObject(jsonStr, 0);
+    }
+
+    public void handleReportObject(String jsonStr, int source) {
+        LOGGER.debug("Got object: {}", jsonStr);
+        JSONObject json = JSONObject.fromObject(jsonStr);
+        ReportedElement rnode = new ReportedElement(json);
+        notifyReportedObjectConsumer(rnode);
+        String url = rnode.getUrl();
+        String href = rnode.getHref();
+        boolean http = href != null && href.toLowerCase(Locale.ROOT).startsWith("http");
+        if (url != null) {
+            if (!isApiUrl(url)) {
+                ClientSideComponent component = new ClientSideComponent(json);
+                if (ClientSideComponent.Type.NODE_CHANGED == component.getType()) {
+                    handleNodeChanged(component, source);
+                    return;
+                }
+
+                addComponent(url, component, source);
+                if (http && isLinkComponent(component)) {
+                    addGraphEdge(url, href, component);
+                }
+            }
+        } else {
+            LOGGER.debug("Not got url:(: {}", url);
+        }
+        if (http) {
+            getNode(href, false, false, true, true, source);
+        }
+    }
+
+    private void handleNodeChanged(ClientSideComponent component, int source) {
+        ClientNode node = getNode(component.getParentUrl(), false, false);
+        if (node == null) {
+            return;
+        }
+
+        boolean changed =
+                node.getUserObject()
+                        .updateComponentInteractable(
+                                component.getId(),
+                                component.getTagName(),
+                                component.getInteractable());
+        if (changed) {
+            notifyNodeChanged(node);
+            int depth = node.getLevel();
+            int siblings = node.getChildCount();
+            ClientSideComponent updated =
+                    node.getUserObject().findComponent(component.getId(), component.getTagName());
+            if (updated != null) {
+                listeners.forEach(l -> l.componentStateChanged(updated, depth, siblings, source));
+            }
+        }
+    }
+
+    private static boolean isLinkComponent(ClientSideComponent component) {
+        return component.getType() == ClientSideComponent.Type.LINK
+                || "A".equals(component.getTagName());
+    }
+
+    public void addNavigationEdge(
+            String urlBefore, ClientSideComponent component, String urlAfter) {
+        ClientGraphVertex componentVertex = new ClientGraphVertex.Component(component);
+        synchronized (graph) {
+            if (graph.containsVertex(componentVertex)) {
+                return;
+            }
+            addGraphEdge(urlBefore, urlAfter, component);
+        }
+    }
+
+    private void addGraphEdge(String sourceUrl, String targetUrl, ClientSideComponent component) {
+        ClientGraphVertex source = new ClientGraphVertex.Url(sourceUrl);
+        ClientGraphVertex target = new ClientGraphVertex.Url(targetUrl);
+        ClientGraphVertex componentVertex = new ClientGraphVertex.Component(component);
+        synchronized (graph) {
+            if (graph.containsVertex(componentVertex)) {
+                return;
+            }
+
+            graph.addVertex(source);
+            graph.addVertex(target);
+            graph.addVertex(componentVertex);
+            graph.addEdge(source, componentVertex);
+            graph.addEdge(componentVertex, target);
+        }
+    }
+
+    public void handleReportEvent(String jsonStr) {
+        handleReportEvent(jsonStr, 0);
+    }
+
+    public void handleReportEvent(String jsonStr, int source) {
+        LOGGER.debug("Got event: {}", jsonStr);
+        JSONObject json = JSONObject.fromObject(jsonStr);
+        ReportedEvent event = new ReportedEvent(json);
+        notifyReportedObjectConsumer(event);
+        String url = event.getUrl();
+        if (url != null && !isApiUrl(url)) {
+            setVisited(url);
+            if (ClientSideComponent.Type.PAGE_LOAD.getTypeKey().equals(event.getType())) {
+                listeners.forEach(l -> l.pageLoaded(url, source));
+            }
+        }
+    }
+
+    private void notifyReportedObjectConsumer(ReportedObject reportObject) {
+        if (isApiUrl(reportObject.getUrl())) {
+            return;
+        }
+
+        if (reportedObjectConsumer != null) {
+            reportedObjectConsumer.accept(reportObject);
+        }
+    }
+
+    private static boolean isApiUrl(String url) {
+        return url != null && (url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S));
     }
 }
 

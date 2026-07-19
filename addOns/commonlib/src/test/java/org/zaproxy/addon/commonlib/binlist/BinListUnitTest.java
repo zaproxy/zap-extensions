@@ -26,6 +26,12 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.input.BOMInputStream;
 import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link BinList}. */
@@ -58,5 +64,22 @@ class BinListUnitTest {
         BinRecord record = BinList.getSingleton().get(candidate);
         // Then
         assertThat(record, is(nullValue()));
+    }
+
+    @Test
+    void shouldHaveSixDigitBins() throws Exception {
+        try (InputStream in = BinList.class.getResourceAsStream("binlist-data.csv");
+                BOMInputStream bomStream = BOMInputStream.builder().setInputStream(in).get();
+                InputStreamReader inStream =
+                        new InputStreamReader(bomStream, StandardCharsets.UTF_8)) {
+            for (CSVRecord rec :
+                    CSVFormat.Builder.create()
+                            .setHeader()
+                            .setSkipHeaderRecord(true)
+                            .get()
+                            .parse(inStream)) {
+                assertThat(rec.get("BIN").length(), is(equalTo(6)));
+            }
+        }
     }
 }

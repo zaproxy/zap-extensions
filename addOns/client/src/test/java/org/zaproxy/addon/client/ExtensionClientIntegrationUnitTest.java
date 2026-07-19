@@ -22,6 +22,8 @@ package org.zaproxy.addon.client;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -34,26 +36,73 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.quality.Strictness;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
-import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.extension.option.OptionsParamView;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions;
+import org.zaproxy.addon.client.spider.ScanOptions;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.internal.FirefoxProfileManager;
+import org.zaproxy.zap.model.StandardParameterParser;
 import org.zaproxy.zap.testutils.TestUtils;
-import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionClientIntegrationUnitTest extends TestUtils {
+
+    private ExtensionClientIntegration extClient;
+
+    @BeforeEach
+    void setUp() {
+        extClient = new ExtensionClientIntegration();
+        mockMessages(extClient);
+
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+
+        OptionsParam optionsParam =
+                mock(OptionsParam.class, withSettings().strictness(Strictness.LENIENT));
+        OptionsParamView viewParam =
+                mock(OptionsParamView.class, withSettings().strictness(Strictness.LENIENT));
+        lenient().when(model.getOptionsParam()).thenReturn(optionsParam);
+        lenient().when(optionsParam.getViewParam()).thenReturn(viewParam);
+        lenient().when(viewParam.getMode()).thenReturn(Control.Mode.standard.name());
+
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
+        lenient()
+                .when(session.getUrlParamParser(any(String.class)))
+                .thenReturn(new StandardParameterParser());
+        when(model.getSession()).thenReturn(session);
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionCommonlib extCommonlib =
+                mock(ExtensionCommonlib.class, withSettings().strictness(Strictness.LENIENT));
+        when(extCommonlib.getValueProvider()).thenReturn(mock(ValueProvider.class));
+        when(extensionLoader.getExtension(ExtensionCommonlib.class)).thenReturn(extCommonlib);
+        when(extensionLoader.getExtension(ExtensionPassiveScan2.class))
+                .thenReturn(mock(ExtensionPassiveScan2.class));
+
+        Control.initSingletonForTesting(model, extensionLoader);
+
+        extClient.init();
+        extClient.initModel(model);
+    }
+
+    @AfterEach
+    void tearDown() {
+        extClient.unload();
+    }
 
     @Test
     void shouldCreateFirefoxPrefFile() throws IOException {
@@ -70,8 +119,6 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
         Path path = Files.createTempDirectory("zap-browser-test");
         when(fpm.getOrCreateProfile(ExtensionClientIntegration.ZAP_FIREFOX_PROFILE_NAME))
                 .thenReturn(path);
-
-        ExtensionClientIntegration extClient = new ExtensionClientIntegration();
 
         // When
         extClient.postInit();
@@ -92,7 +139,6 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
                         "Path=" + Path.of("Profiles/abcd1234.zap-client-profile"));
         Path iniPath = Files.createTempFile("fx-profiles", ".ini");
         Files.write(iniPath, validProfiles, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-        ExtensionClientIntegration extClient = new ExtensionClientIntegration();
 
         // When
         extClient.checkFirefoxProfilesFile(iniPath, Path.of("ignored"));
@@ -125,7 +171,6 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
 
         Path iniPath = Files.createTempFile("fx-profiles", ".ini");
         Files.write(iniPath, validProfiles, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-        ExtensionClientIntegration extClient = new ExtensionClientIntegration();
 
         // When
         extClient.checkFirefoxProfilesFile(iniPath, zapProfilePath);
@@ -136,42 +181,82 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldStartSpider() throws IOException {
+    void shouldStartSpiderWithLegacyApi() throws Exception {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
-        ExtensionLoader extensionLoader =
-                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        Model model = mock(Model.class);
-        Session session = mock(Session.class);
-        when(model.getSession()).thenReturn(session);
-        Control.initSingletonForTesting(model, extensionLoader);
-        when(extensionLoader.getExtension(ExtensionHistory.class))
-                .thenReturn(mock(ExtensionHistory.class));
-        when(extensionLoader.getExtension(ExtensionSelenium.class))
-                .thenReturn(mock(ExtensionSelenium.class));
-        when(extensionLoader.getExtension(ExtensionCommonlib.class))
-                .thenReturn(mock(ExtensionCommonlib.class));
-        when(extensionLoader.getExtension(ExtensionPassiveScan2.class))
-                .thenReturn(mock(ExtensionPassiveScan2.class));
-        ExtensionClientIntegration extClient = new ExtensionClientIntegration();
-        extClient.initModel(model);
-        extClient.init();
-        ClientOptions options = new ClientOptions();
+        ClientSpiderOptions options = new ClientSpiderOptions();
         options.load(new ZapXmlConfiguration());
         options.setThreadCount(1);
 
-        try {
-            // When
-            int spiderId =
-                    extClient.startScan("https://www.example.com", options, null, null, false);
-            ClientSpider spider = extClient.getScan(spiderId);
-            boolean isRunning = spider.isRunning();
-            spider.stopScan();
+        // When
+        int spiderId = extClient.startScan("https://www.example.com", options, null, null, false);
+        ClientSpider spider = extClient.getScan(spiderId);
+        boolean isRunning = spider.isRunning();
+        spider.stopScan();
 
-            // Then
-            assertEquals(true, isRunning);
-        } finally {
-            extClient.unload();
-        }
+        // Then
+        assertEquals(true, isRunning);
+    }
+
+    @Test
+    void shouldStartSpiderWithScanOptions() throws Exception {
+        // Given
+        ClientSpiderOptions options = new ClientSpiderOptions();
+        options.load(new ZapXmlConfiguration());
+        options.setThreadCount(1);
+        ScanOptions scanOptions = ScanOptions.builder().setSubtreeOnly(true).build();
+
+        // When
+        int spiderId = extClient.startScan("https://www.example.com", options, scanOptions);
+        ClientSpider spider = extClient.getScan(spiderId);
+        boolean isRunning = spider.isRunning();
+        spider.stopScan();
+
+        // Then
+        assertEquals(true, isRunning);
+        assertEquals(true, scanOptions.isSubtreeOnly());
+    }
+
+    @Test
+    void shouldStartSpiderWithNewStartScanMethod() throws Exception {
+        // Given
+        ClientSpiderOptions options = new ClientSpiderOptions();
+        options.load(new ZapXmlConfiguration());
+        options.setThreadCount(1);
+        String url = "https://www.example.com";
+
+        // When
+        int spiderId =
+                extClient.startScan(
+                        "https://www.example.com",
+                        null,
+                        url,
+                        options,
+                        ScanOptions.builder().build());
+        ClientSpider spider = extClient.getScan(spiderId);
+        boolean isRunning = spider.isRunning();
+        spider.stopScan();
+
+        // Then
+        assertEquals(true, isRunning);
+        assertEquals(url, spider.getTargetUrl());
+    }
+
+    @Test
+    void shouldStartSpiderWithExternalControl() throws Exception {
+        // Given
+        ClientSpiderOptions options = new ClientSpiderOptions();
+        options.load(new ZapXmlConfiguration());
+        options.setThreadCount(1);
+        ScanOptions scanOptions = ScanOptions.builder().setExternalControl(true).build();
+
+        // When
+        int spiderId = extClient.startScan("https://www.example.com", options, scanOptions);
+        ClientSpider spider = extClient.getScan(spiderId);
+        boolean isRunning = spider.isRunning();
+        spider.stopScan();
+
+        // Then
+        assertEquals(true, isRunning);
+        assertEquals(true, spider.isExternalControl());
     }
 }

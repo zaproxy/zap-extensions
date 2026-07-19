@@ -29,13 +29,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.model.ScanController;
 import org.zaproxy.zap.model.ScanListenner2;
@@ -49,8 +46,6 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
     public static final String HTTP_MESSAGE_CONTAINER_NAME = "ClientSpiderHttpMessageContainer";
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger LOGGER = LogManager.getLogger(ClientSpiderPanel.class);
 
     private static final String ZERO_REQUESTS_LABEL_TEXT = "0";
 
@@ -77,12 +72,12 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
     private JScrollPane tasksTableScrollPane;
 
     private ExtensionClientIntegration extension;
-    private ClientOptions clientOptions;
+    private ClientSpiderOptions clientOptions;
 
     public ClientSpiderPanel(
             ExtensionClientIntegration extension,
             SpiderScanController controller,
-            ClientOptions clientOptions) {
+            ClientSpiderOptions clientOptions) {
         super("client.spider", ExtensionClientIntegration.getIcon(), controller);
         this.extension = extension;
         this.clientOptions = clientOptions;

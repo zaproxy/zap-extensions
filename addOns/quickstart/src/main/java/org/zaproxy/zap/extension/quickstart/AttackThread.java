@@ -29,6 +29,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.Stats;
@@ -39,7 +40,7 @@ public class AttackThread extends Thread {
         notstarted,
         started,
         spider,
-        ajaxspider,
+        modernspider,
         ascan,
         failed,
         complete,
@@ -52,6 +53,7 @@ public class AttackThread extends Thread {
     private PlugableSpider plugableSpider;
     private boolean stopAttack = false;
     private boolean useStdSpider;
+    private String scanPolicyName;
 
     private static final Logger LOGGER = LogManager.getLogger(AttackThread.class);
 
@@ -70,6 +72,10 @@ public class AttackThread extends Thread {
 
     public void setTraditionalSpider(TraditionalSpider traditionalSpider) {
         this.traditionalSpider = traditionalSpider;
+    }
+
+    public void setScanPolicyName(String scanPolicyName) {
+        this.scanPolicyName = scanPolicyName;
     }
 
     public void setPlugableSpider(PlugableSpider plugableSpider) {
@@ -145,20 +151,21 @@ public class AttackThread extends Thread {
                 return;
             }
 
-            // optionally invoke ajax spider here
+            // optionally invoke modern spider here
             if (plugableSpider != null && plugableSpider.isSelected()) {
                 plugableSpider.startScan(this.url.toURI());
                 sleep(1500);
 
                 try {
-                    // Wait for the ajax spider to complete
+                    // Wait for the modern spider to complete
                     while (plugableSpider.isRunning()) {
                         sleep(500);
                         if (this.stopAttack) {
                             plugableSpider.stopScan();
-                            break;
+                            extension.notifyProgress(Progress.stopped);
+                            return;
                         }
-                        extension.notifyProgress(Progress.ajaxspider);
+                        extension.notifyProgress(Progress.modernspider);
                     }
                 } catch (InterruptedException e) {
                     // Ignore
@@ -191,7 +198,18 @@ public class AttackThread extends Thread {
                 return;
             } else {
                 extension.notifyProgress(Progress.ascan);
-                scanId = extAscan.startScan(target);
+                ScanPolicy scanPolicy = null;
+                if (scanPolicyName != null && !scanPolicyName.isEmpty()) {
+                    try {
+                        scanPolicy = extAscan.getPolicyManager().getPolicy(scanPolicyName);
+                    } catch (Exception ex) {
+                        LOGGER.warn("Failed to load policy {}, using default", scanPolicyName);
+                    }
+                }
+                if (scanPolicy == null) {
+                    scanPolicy = extAscan.getPolicyManager().getDefaultScanPolicy();
+                }
+                scanId = extAscan.startScan(target, null, new Object[] {scanPolicy});
             }
 
             try {

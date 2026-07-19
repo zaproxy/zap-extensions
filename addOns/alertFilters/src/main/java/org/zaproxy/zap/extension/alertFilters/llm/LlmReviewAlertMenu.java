@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.alertFilters.llm;
 
 import java.awt.Component;
-import java.util.Set;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
@@ -38,7 +37,7 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     private LlmActionReviewAlert actionReviewAlert;
 
     public LlmReviewAlertMenu(ExtensionLlm extLlm, ExtensionAlert extAlert) {
-        super(Constant.messages.getString("alertFilters.llm.menu.review.title"), true);
+        super(Constant.messages.getString("alertFilters.llm.menu.review.title"), false);
         this.extLlm = extLlm;
         actionReviewAlert = new LlmActionReviewAlert(extLlm, extAlert);
     }
@@ -48,7 +47,7 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
         new Thread(
                         () -> {
                             try {
-                                actionReviewAlert.reviewAlert(alert);
+                                actionReviewAlert.reviewAlert(alert, true);
                             } catch (Exception e) {
                                 Stats.incCounter("stats.llm.alertreview.result.error");
                                 View.getSingleton()
@@ -59,13 +58,6 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
                         },
                         "ZAP-LLM-Alert-Review")
                 .start();
-    }
-
-    @Override
-    protected void performActions(Set<Alert> alerts) {
-        for (Alert alert : alerts) {
-            performAction(alert);
-        }
     }
 
     @Override

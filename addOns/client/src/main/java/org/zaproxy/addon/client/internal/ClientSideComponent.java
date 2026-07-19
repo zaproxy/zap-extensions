@@ -22,15 +22,15 @@ package org.zaproxy.addon.client.internal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.Setter;
 import net.sf.json.JSONObject;
+import org.openqa.selenium.By;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 
 @Getter
-@AllArgsConstructor
 public class ClientSideComponent implements Comparable<ClientSideComponent> {
 
     public static final String REDIRECT = "Redirect";
@@ -85,6 +85,11 @@ public class ClientSideComponent implements Comparable<ClientSideComponent> {
                 "Node Added",
                 Constant.messages.getString(ExtensionClientIntegration.PREFIX + ".type.nodeAdded"),
                 "nodeAdded"),
+        NODE_CHANGED(
+                "Node Changed",
+                Constant.messages.getString(
+                        ExtensionClientIntegration.PREFIX + ".type.nodeChanged"),
+                "nodeChanged"),
         DOM_MUTATION(
                 "DOM Mutation",
                 Constant.messages.getString(
@@ -142,9 +147,49 @@ public class ClientSideComponent implements Comparable<ClientSideComponent> {
     private String parentUrl;
     private String href;
     private String text;
-    @NonNull private Type type;
+    private Type type;
     private String tagType;
-    private int formId = -1;
+    private int formId;
+    @Setter private InteractableState interactable;
+    @Setter private ElementLocator elementLocator;
+
+    @Getter(AccessLevel.NONE)
+    private By cachedBy;
+
+    public ClientSideComponent(
+            Map<String, String> data,
+            String tagName,
+            String id,
+            String parentUrl,
+            String href,
+            String text,
+            Type type,
+            String tagType,
+            int formId) {
+        this.data = data;
+        this.tagName = tagName;
+        this.id = id;
+        this.parentUrl = parentUrl;
+        this.href = href;
+        this.text = text;
+        this.type = Objects.requireNonNull(type);
+        this.tagType = tagType;
+        this.formId = formId;
+    }
+
+    public By getBy() {
+        if (cachedBy == null && elementLocator != null) {
+            cachedBy =
+                    switch (elementLocator.type()) {
+                        case "id" -> By.id(elementLocator.element());
+                        case "className" -> By.className(elementLocator.element());
+                        case "cssSelector" -> By.cssSelector(elementLocator.element());
+                        case "xpath" -> By.xpath(elementLocator.element());
+                        default -> null;
+                    };
+        }
+        return cachedBy;
+    }
 
     public ClientSideComponent(JSONObject json) {
         data = new HashMap<>();
@@ -167,6 +212,17 @@ public class ClientSideComponent implements Comparable<ClientSideComponent> {
         }
         if (json.containsKey("formId")) {
             this.formId = json.getInt("formId");
+        }
+        if (json.containsKey("interactable") && !json.get("interactable").equals("null")) {
+            JSONObject s = json.getJSONObject("interactable");
+            this.interactable =
+                    new InteractableState(
+                            s.optBoolean("visible", false),
+                            s.optBoolean("enabled", false),
+                            s.optBoolean("pointer", false));
+        }
+        if (json.containsKey("elementLocator") && !json.get("elementLocator").equals("null")) {
+            this.elementLocator = ElementLocator.fromJson(json.getJSONObject("elementLocator"));
         }
     }
 

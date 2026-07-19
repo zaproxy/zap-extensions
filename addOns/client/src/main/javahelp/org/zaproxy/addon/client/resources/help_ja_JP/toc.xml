@@ -8,10 +8,11 @@
 				<tocitem text="記録" target="addon.client.record"/>
 				<tocitem text="スパイダー" target="addon.client.spider"/>
 				<tocitem text="スパイダーAPI" target="addon.client.spider.api"/>
-				<tocitem text="パッシブスキャン" target="addon.client.pscan"/>
-				<tocitem text="AJAXスパイダー機能強化" target="addon.client.ajaxscan"/>
-				<tocitem text="Firefox プロファイル" target="addon.client.fxprofile"/>
-				<tocitem text="内部構造" target="addon.client.internals"/>
+				<tocitem text="Spider Options" target="addon.client.spider.options"/>
+				<tocitem text="Passive Scanning" target="addon.client.pscan"/>
+				<tocitem text="AJAX Spider Enhancement" target="addon.client.ajaxscan"/>
+				<tocitem text="Firefox Profile" target="addon.client.fxprofile"/>
+				<tocitem text="Internals" target="addon.client.internals"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

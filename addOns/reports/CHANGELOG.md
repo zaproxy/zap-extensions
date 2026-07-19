@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [0.46.0] - 2026-07-06
+### Added
+- Added script diagnostics section to Traditional Reports.
+- Templates that include Insights now also identify the Insight that stopped the scan, if applicable.
+
+### Fixed
+- Invalid alerts, ones without a corresponding message, are now excluded from generated reports. Previously these could break templates that reference message fields (e.g. SARIF, modern, `*-plus`) (Issue 6880).
+
+### Changed
+- Help content related to the params add-on was updated (Issue 9210).
+
+## [0.45.0] - 2026-05-06
+### Fixed
+- The alert's systemic flag in JSON and XML reports now correctly reflects its state (Issue 9254).
+
+### Changed
+- Update dependency.
+- Formatted JavaScript files for consistency.
+
 ## [0.44.0] - 2026-03-19
 ### Added
 - "Other Info" to the modern HTML report
@@ -368,6 +387,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.46.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.46.0
+[0.45.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.45.0
 [0.44.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.44.0
 [0.43.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.43.0
 [0.42.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.42.0

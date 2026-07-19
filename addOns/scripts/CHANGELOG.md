@@ -4,8 +4,26 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [45.20.0] - 2026-07-13
+### Added
+- GUI support for Zest script chains and failure level in the Automation Framework Script job dialog (via the Use Script Chain checkbox, and Chains tab).
+
 ### Changed
 - Update dependency.
+
+## [45.19.0] - 2026-07-06
+### Added
+- Functionality to store script diagnostics and provides them to Reports. Depends on the database add-on.
+- The Script Job Run action now supports a `failureLevel` parameter (`info`, `warning`, `error`) to control the Automation Framework progress level used when a script or chain execution fails (defaults to `error`).
+
+### Changed
+- Update dependency.
+- Revised error handling for chained scripts, output is now more detailed/specific.
+- The Run Script action display for chains in the Automation panel has been updated to display the names of scripts in the chain instead of being blank.
+- Maintenance changes.
+- Formatted JavaScript files for consistency.
 
 ## [45.18.0] - 2026-03-31
 ### Changed
@@ -432,6 +450,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.20.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.20.0
+[45.19.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.19.0
 [45.18.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.18.0
 [45.17.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.17.0
 [45.16.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.16.0

@@ -19,13 +19,17 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +51,14 @@ public class ReportHelper {
     private static final Logger LOGGER = LogManager.getLogger(ReportHelper.class);
 
     private static final String STATS_RESOURCE_PREFIX = ExtensionReports.PREFIX + ".report.";
+
+    /**
+     * Maximum display width in CSS pixels for script diagnostic screenshots in PDF reports. Flying
+     * Saucer does not honour {@code max-width} on {@code img} elements; an explicit {@code width}
+     * attribute is required. This value matches the printable width of an A4 page with default
+     * margins (~523pt).
+     */
+    private static final int PDF_SCRIPT_DIAGNOSTIC_SCREENSHOT_MAX_WIDTH = 523;
 
     public static String getRiskString(int risk) {
         return Constant.messages.getString(ExtensionReports.PREFIX + ".report.risk." + risk);
@@ -195,23 +207,30 @@ public class ReportHelper {
     public static List<Alert> getAlertInstancesForSite(
             AlertNode rootNode, String site, String alertName, int alertRisk) {
         List<Alert> list = new ArrayList<>();
-
-        for (int alertIndex = 0; alertIndex < rootNode.getChildCount(); alertIndex++) {
-            AlertNode alertNode = rootNode.getChildAt(alertIndex);
-            // Only the instances have userObjects, not the top level nodes :/
-            if (alertNode.getChildAt(0) != null
-                    && alertNode.getRisk() == alertRisk
-                    && alertNode.getChildAt(0).getUserObject().getName().equals(alertName)) {
-                for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
-                    AlertNode instanceNode = alertNode.getChildAt(instIndex);
-                    if (instanceNode.getUserObject().getUri().startsWith(site)) {
-                        list.add(instanceNode.getUserObject());
-                    }
+        AlertNode alertNode = findAlertNode(rootNode, alertName, alertRisk);
+        if (alertNode != null) {
+            for (int instIndex = 0; instIndex < alertNode.getChildCount(); instIndex++) {
+                AlertNode instanceNode = alertNode.getChildAt(instIndex);
+                if (instanceNode.getUserObject().getUri().startsWith(site)) {
+                    list.add(instanceNode.getUserObject());
                 }
-                break;
             }
         }
         return list;
+    }
+
+    private static AlertNode findAlertNode(AlertNode rootNode, String alertName, int alertRisk) {
+        for (int i = 0; i < rootNode.getChildCount(); i++) {
+            AlertNode alertNode = rootNode.getChildAt(i);
+            // Only the instances have userObjects, not the top level nodes :/
+            AlertNode firstChild = alertNode.getChildAt(0);
+            if (firstChild != null
+                    && alertNode.getRisk() == alertRisk
+                    && firstChild.getUserObject().getName().equals(alertName)) {
+                return alertNode;
+            }
+        }
+        return null;
     }
 
     public static List<AlertNode> getChildren(AlertNode node, boolean incLeaves) {
@@ -328,14 +347,44 @@ public class ReportHelper {
     }
 
     /**
-     * Returns whether the alert node is systemic.
+     * Returns whether the alert is systemic, by locating the matching {@link AlertNode} in the
+     * alert tree and checking the instance count against the systemic threshold.
      *
-     * @since 0.42.0
+     * @since 0.45.0
      */
-    public static boolean isSystemic(Alert alert) {
-        if (alert == null) {
+    public static boolean isSystemic(AlertNode rootNode, String alertName, int alertRisk) {
+        if (rootNode == null) {
             return false;
         }
-        return alert.isSystemic();
+        return isSystemic(findAlertNode(rootNode, alertName, alertRisk));
+    }
+
+    /**
+     * Returns the display width in CSS pixels for a script diagnostic screenshot in a PDF report.
+     * Wide images are scaled down to fit the printable page width; smaller images are not enlarged.
+     */
+    public static int getPdfScriptDiagnosticScreenshotWidth(String base64Screenshot) {
+        int imageWidth = readPngWidth(base64Screenshot);
+        if (imageWidth <= 0) {
+            return PDF_SCRIPT_DIAGNOSTIC_SCREENSHOT_MAX_WIDTH;
+        }
+        return Math.min(imageWidth, PDF_SCRIPT_DIAGNOSTIC_SCREENSHOT_MAX_WIDTH);
+    }
+
+    private static int readPngWidth(String base64Screenshot) {
+        if (base64Screenshot == null || base64Screenshot.isBlank()) {
+            return -1;
+        }
+        try {
+            byte[] bytes = Base64.getDecoder().decode(base64Screenshot);
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+            if (image == null) {
+                return -1;
+            }
+            return image.getWidth();
+        } catch (Exception e) {
+            LOGGER.debug("Failed to read script diagnostic screenshot dimensions:", e);
+            return -1;
+        }
     }
 }

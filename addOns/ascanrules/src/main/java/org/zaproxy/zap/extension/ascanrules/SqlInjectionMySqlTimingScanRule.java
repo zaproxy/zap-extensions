@@ -304,9 +304,7 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
                         message.compareAndSet(null, msg);
 
                         String finalPayload =
-                                sleepPayload
-                                        .replace(ORIG_VALUE_TOKEN, originalParamValue)
-                                        .replace(SLEEP_TOKEN, Integer.toString((int) x));
+                                assembleTimingPayload(sleepPayload, originalParamValue, (int) x);
 
                         setParameter(msg, paramName, finalPayload);
                         LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
@@ -331,18 +329,13 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
                             paramName,
                             attack.get());
 
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                            .setParam(paramName)
-                            .setAttack(attack.get())
-                            .setOtherInfo(
-                                    Constant.messages.getString(
-                                            "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                            attack.get(),
-                                            message.get().getTimeElapsedMillis(),
-                                            originalParamValue,
-                                            getBaseMsg().getTimeElapsedMillis()))
+                    buildAlert(
+                                    getBaseMsg().getRequestHeader().getURI().toString(),
+                                    paramName,
+                                    originalParamValue,
+                                    attack.get(),
+                                    message.get().getTimeElapsedMillis(),
+                                    getBaseMsg().getTimeElapsedMillis())
                             .setMessage(message.get())
                             .raise();
                     break;
@@ -361,6 +354,49 @@ public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin
                         ex);
             }
         }
+    }
+
+    private static String assembleTimingPayload(
+            String template, String paramValue, int sleepSeconds) {
+        return template.replace(ORIG_VALUE_TOKEN, paramValue)
+                .replace(SLEEP_TOKEN, Integer.toString(sleepSeconds));
+    }
+
+    private AlertBuilder buildAlert(
+            String uri,
+            String paramName,
+            String paramValue,
+            String attackValue,
+            long attackElapsedMillis,
+            long originalElapsedMillis) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(uri)
+                .setParam(paramName)
+                .setAttack(attackValue)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                attackValue,
+                                attackElapsedMillis,
+                                paramValue,
+                                originalElapsedMillis));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com/?name=test",
+                                "name",
+                                "test",
+                                assembleTimingPayload(
+                                        SQL_MYSQL_TIME_REPLACEMENTS.get(1),
+                                        "test",
+                                        DEFAULT_SLEEP_TIME),
+                                TimeUnit.SECONDS.toMillis(DEFAULT_SLEEP_TIME),
+                                100L)
+                        .build());
     }
 
     public void setSleepInSeconds(int sleep) {

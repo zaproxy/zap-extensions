@@ -29,8 +29,12 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.TreeSet;
+import java.util.stream.StreamSupport;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 
 public final class ClientMapWriter {
@@ -39,6 +43,7 @@ public final class ClientMapWriter {
     private static final String COMPONENTS_KEY = "components";
     private static final String FORM_ID_KEY = "formId";
     private static final String HREF_KEY = "href";
+    private static final String URL_KEY = "url";
     private static final String ID_KEY = "id";
     private static final String NODE_TYPE_KEY = "nodeType";
     private static final String NODE_KEY = "node";
@@ -59,6 +64,87 @@ public final class ClientMapWriter {
         try (BufferedWriter bw = new BufferedWriter(fw)) {
             outputNode(bw, clientMap.getRoot(), 0);
         }
+    }
+
+    /**
+     * Exports the Client Map to the given writer, optionally filtering by context. Components are
+     * not included in this export.
+     *
+     * @param fw the writer to export to.
+     * @param clientMap the client map to export.
+     * @param context the context to filter by, or {@code null} to export all nodes.
+     * @throws IOException if an error occurs while exporting.
+     */
+    public static int exportClientMap(Writer fw, ClientMap clientMap, Context context)
+            throws IOException {
+        return outputNodeNoComponents(fw, clientMap.getRoot(), 0, context);
+    }
+
+    private static boolean isInScope(ClientNode node, Context context) {
+        if (context == null || node.isRoot()) {
+            return true;
+        }
+
+        return context.isInContext(node.getUserObject().getUrl());
+    }
+
+    private static boolean isAnyChildInScope(ClientNode node, Context context) {
+        if (context == null) {
+            return true;
+        }
+
+        return StreamSupport.stream(
+                        Spliterators.spliteratorUnknownSize(
+                                node.depthFirstEnumeration().asIterator(), Spliterator.ORDERED),
+                        false)
+                .map(ClientNode.class::cast)
+                .anyMatch(child -> isInScope(child, context));
+    }
+
+    private static int outputNodeNoComponents(
+            Writer fw, ClientNode node, int level, Context context) throws IOException {
+        if (node.isStorage()) {
+            return 0;
+        }
+        boolean isInScope = isInScope(node, context);
+        if (!isInScope && !isAnyChildInScope(node, context)) {
+            return 0;
+        }
+
+        String indent = " ".repeat(level * 2);
+
+        outputKV(
+                fw,
+                indent,
+                true,
+                NODE_KEY,
+                level == 0 ? ROOT_NODE_NAME : node.getUserObject().getName());
+
+        if (level > 0 && isInScope) {
+            outputKV(fw, indent, false, URL_KEY, node.getUserObject().getUrl());
+            if (node.getUserObject().isStorage()) {
+                outputKV(fw, indent, false, STORAGE_KEY, node.getUserObject().isStorage());
+            }
+            if (!node.getUserObject().isVisited()) {
+                outputKV(fw, indent, false, VISITED_KEY, node.getUserObject().isVisited());
+            }
+        }
+
+        Stats.incCounter(ExtensionClientIntegration.PREFIX + ".export.clientmap.node");
+
+        int count = 1;
+        if (node.getChildCount() > 0) {
+            fw.write(indent);
+            fw.write("  ");
+            fw.write(CHILDREN_KEY);
+            fw.write(":");
+            fw.write('\n');
+            var it = node.children().asIterator();
+            while (it.hasNext()) {
+                count += outputNodeNoComponents(fw, (ClientNode) it.next(), level + 1, context);
+            }
+        }
+        return count;
     }
 
     private static boolean outputKV(

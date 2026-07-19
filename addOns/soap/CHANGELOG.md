@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Maintenance changes.
+
+## [31] - 2026-06-12
+### Changed
+- Update dependency.
+
+### Fixed
+- Fix SOAP requests generated from some WSDLs being incomplete. Requests now correctly include all fields defined in the schema, and requests are no longer broken by certain characters in element or attribute names and values.
+
+## [30] - 2026-04-14
+### Changed
 - The scan rules now have new tags for the OWASP Top 10 2025, and API Top 10 2023.
 - Depends on an updated version of the Common Library add-on.
 
@@ -204,6 +215,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[31]: https://github.com/zaproxy/zap-extensions/releases/soap-v31
+[30]: https://github.com/zaproxy/zap-extensions/releases/soap-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/soap-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/soap-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/soap-v27

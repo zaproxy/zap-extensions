@@ -29,6 +29,7 @@ import io.netty.handler.ssl.ApplicationProtocolConfig.Protocol;
 import io.netty.handler.ssl.ApplicationProtocolConfig.SelectedListenerFailureBehavior;
 import io.netty.handler.ssl.ApplicationProtocolConfig.SelectorFailureBehavior;
 import io.netty.handler.ssl.ApplicationProtocolNegotiationHandler;
+import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
@@ -102,22 +103,28 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
     }
 
     private boolean upgrade(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        if (!SslHandler.isEncrypted(in)) {
+        if (!SslHandler.isEncrypted(in, false)) {
             return false;
         }
 
         Channel ch = ctx.channel();
         TlsConfig config = ch.attr(ChannelAttributes.TLS_CONFIG).get();
 
-        SslContext sslCtx =
+        SslContextBuilder sslCtxBuilder =
                 SslContextBuilder.forServer(
                                 new SniX509KeyManager(
                                         ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).get(),
                                         ch.attr(ChannelAttributes.LOCAL_ADDRESS).get().getAddress(),
                                         authority))
                         .protocols(config.getTlsProtocols())
-                        .applicationProtocolConfig(createApplicationProtocolConfig(config))
-                        .build();
+                        .applicationProtocolConfig(createApplicationProtocolConfig(config));
+
+        ClientAuth clientAuthMode = config.getClientAuthMode();
+        if (clientAuthMode != null && clientAuthMode != ClientAuth.NONE) {
+            sslCtxBuilder.clientAuth(clientAuthMode).trustManager(config.getTrustManager());
+        }
+
+        SslContext sslCtx = sslCtxBuilder.build();
         ctx.pipeline().addAfter(ctx.name(), TLS_HANDLER_NAME, sslCtx.newHandler(ctx.alloc()));
         if (config.isAlpnEnabled()) {
             ctx.pipeline().addAfter(TLS_HANDLER_NAME, "tls.alpn", new AlpnHandlerImpl());

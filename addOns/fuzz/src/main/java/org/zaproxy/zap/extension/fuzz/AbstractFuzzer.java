@@ -436,8 +436,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
     }
 
     protected void increaseErrorCount(long taskId, String source, String reason) {
-        increaseErrorCount(
-                taskId, source, reason, Collections.<MessageLocationReplacement<?>>emptyList());
+        increaseErrorCount(taskId, source, reason, Collections.emptyList());
     }
 
     protected void increaseErrorCount(

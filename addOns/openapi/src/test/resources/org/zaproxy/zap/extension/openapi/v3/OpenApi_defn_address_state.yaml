@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  title: Test Address State
+  version: v1
+servers:
+  - url: https://example.com
+paths:
+  /customer:
+    post:
+      operationId: createCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerModel'
+      responses:
+        '200':
+          description: OK
+  /state:
+    put:
+      operationId: updateState
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StateModel'
+      responses:
+        '200':
+          description: OK
+  /amount:
+    put:
+      operationId: updateAmount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmountModel'
+      responses:
+        '200':
+          description: OK
+  /active:
+    put:
+      operationId: updateActive
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActiveModel'
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Address:
+      type: object
+      properties:
+        AddressLine1:
+          type: string
+        City:
+          type: string
+        PostalCode:
+          type: string
+    CustomerModel:
+      type: object
+      properties:
+        Name:
+          type: string
+        Address:
+          $ref: '#/components/schemas/Address'
+    StateModel:
+      type: object
+      properties:
+        Comment:
+          type: string
+        State:
+          type: integer
+          format: int32
+          enum:
+            - 4
+            - 6
+    AmountModel:
+      type: object
+      properties:
+        Comment:
+          type: string
+        Amount:
+          type: number
+          format: float
+    ActiveModel:
+      type: object
+      properties:
+        Comment:
+          type: string
+        Active:
+          type: boolean

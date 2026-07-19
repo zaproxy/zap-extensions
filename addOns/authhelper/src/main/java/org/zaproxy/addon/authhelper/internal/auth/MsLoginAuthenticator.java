@@ -51,6 +51,7 @@ public final class MsLoginAuthenticator implements Authenticator {
 
     private static final Logger LOGGER = LogManager.getLogger(MsLoginAuthenticator.class);
 
+    private static final Duration NO_WAIT = Duration.ofSeconds(0);
     private static final Duration PAGE_LOAD_WAIT_UNTIL = Duration.ofSeconds(5);
     private static final Duration DEFAULT_WAIT_UNTIL = Duration.ofSeconds(10);
 
@@ -62,6 +63,16 @@ public final class MsLoginAuthenticator implements Authenticator {
     private static final By PROOF_TOTP_FIELD = By.id("idTxtBx_SAOTCC_OTC");
     private static final By PROOF_TOTP_VERIFY_FIELD = By.id("idSubmit_SAOTCC_Continue");
     private static final By PROOF_DONE_FIELD = By.id("id__5");
+
+    private static final String PERMISSIONS_REQUESTED_TEXT = "Permissions requested";
+
+    private static final By PERMISSIONS_REQUESTED_HEADING =
+            By.xpath(
+                    "//*[@role='heading' and normalize-space(.)='"
+                            + PERMISSIONS_REQUESTED_TEXT
+                            + "']");
+
+    private static final By CONSENT_PRIMARY_BUTTON = By.cssSelector("input[name='idSIButton9']");
 
     private enum State {
         START,
@@ -78,6 +89,8 @@ public final class MsLoginAuthenticator implements Authenticator {
         PROOF_REDIRECT,
         PROOF_TOTP,
         PROOF,
+
+        PERMISSIONS_REQUESTED,
     }
 
     @Override
@@ -159,6 +172,10 @@ public final class MsLoginAuthenticator implements Authenticator {
                         userField = true;
                         pwdField = true;
                         states.add(State.PROOF_TOTP);
+                    } else if (findElement(wd, PERMISSIONS_REQUESTED_HEADING) != null) {
+                        userField = true;
+                        pwdField = true;
+                        states.add(State.PERMISSIONS_REQUESTED);
                     } else {
                         diags.recordStep(
                                 wd,
@@ -268,9 +285,7 @@ public final class MsLoginAuthenticator implements Authenticator {
 
                 case POST_PASSWORD:
                     if (!isMsLoginFlow(wd)) {
-                        LOGGER.debug(
-                                "URL no longer login after successfully completing all steps.");
-
+                        logFlowFinished();
                         successful = true;
                         break;
                     }
@@ -279,7 +294,10 @@ public final class MsLoginAuthenticator implements Authenticator {
                             Constant.messages.getString(
                                     "authhelper.auth.method.diags.steps.ms.stepchoice"));
 
-                    checkIfWindowClosed(wd, authHandle, targetHandle);
+                    if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
+                        successful = true;
+                        break;
+                    }
 
                     try {
                         waitForElement(wd, PROOF_REDIRECT_FIELD);
@@ -289,7 +307,10 @@ public final class MsLoginAuthenticator implements Authenticator {
                         // Ignore, there's still the next step to check.
                     }
 
-                    checkIfWindowClosed(wd, authHandle, targetHandle);
+                    if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
+                        successful = true;
+                        break;
+                    }
 
                     try {
                         WebElement proofTotpElement =
@@ -306,11 +327,27 @@ public final class MsLoginAuthenticator implements Authenticator {
                         // Ignore, there's still the next step to check.
                     }
 
-                    checkIfWindowClosed(wd, authHandle, targetHandle);
+                    if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
+                        successful = true;
+                        break;
+                    }
 
                     try {
                         waitForElement(wd, KMSI_FIELD);
                         states.add(State.STAY_SIGNED_IN);
+                        break;
+                    } catch (TimeoutException e) {
+                        // Try next state.
+                    }
+
+                    if (isMsLoginFlowFinished(wd, authHandle, targetHandle)) {
+                        successful = true;
+                        break;
+                    }
+
+                    try {
+                        waitForElement(wd, PERMISSIONS_REQUESTED_HEADING);
+                        states.add(State.PERMISSIONS_REQUESTED);
                         break;
                     } catch (TimeoutException e) {
                         diags.recordStep(
@@ -318,7 +355,7 @@ public final class MsLoginAuthenticator implements Authenticator {
                                 Constant.messages.getString(
                                         "authhelper.auth.method.diags.steps.ms.stepunknown"));
                         LOGGER.debug(
-                                "Still in login URL but no keep me signed in field found, assuming unsuccessful login.");
+                                "Still in login URL but no known MS login step found, assuming unsuccessful login.");
                     }
 
                     break;
@@ -403,6 +440,17 @@ public final class MsLoginAuthenticator implements Authenticator {
                                 "Still in proof but no skip/done button found, assuming unsuccessful login.");
                         break;
                     }
+
+                case PERMISSIONS_REQUESTED:
+                    WebElement acceptElement = wd.findElement(CONSENT_PRIMARY_BUTTON);
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.ms.clickpermissionsaccept"),
+                            acceptElement);
+                    acceptElement.click();
+                    states.add(State.POST_PASSWORD);
+                    break;
             }
         } while (!states.isEmpty());
 
@@ -445,6 +493,21 @@ public final class MsLoginAuthenticator implements Authenticator {
 
     private WebElement waitForElement(WebDriver wd, ExpectedCondition<WebElement> condition) {
         return new WebDriverWait(wd, DEFAULT_WAIT_UNTIL).until(condition);
+    }
+
+    private static boolean isMsLoginFlowFinished(
+            WebDriver wd, String authHandle, String targetHandle) {
+        checkIfWindowClosed(wd, authHandle, targetHandle);
+
+        if (!isMsLoginFlow(wd, NO_WAIT)) {
+            logFlowFinished();
+            return true;
+        }
+        return false;
+    }
+
+    private static void logFlowFinished() {
+        LOGGER.debug("URL no longer login after successfully completing all steps.");
     }
 
     private static boolean isMsLoginFlow(WebDriver wd) {

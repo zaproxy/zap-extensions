@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -264,15 +265,13 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
                             && countTimeBasedRequests < doTimeMaxRequests;
                     timeBasedSQLindex++, countTimeBasedRequests++) {
                 AtomicReference<HttpMessage> message = new AtomicReference<>();
-                String payloadValue =
-                        SQL_POSTGRES_TIME_REPLACEMENTS[timeBasedSQLindex].replace(
-                                ORIG_VALUE_TOKEN, paramValue);
+                String payloadTemplate = SQL_POSTGRES_TIME_REPLACEMENTS[timeBasedSQLindex];
                 TimingUtils.RequestSender requestSender =
                         x -> {
                             HttpMessage timedMsg = getNewMsg();
                             message.compareAndSet(null, timedMsg);
                             String finalPayload =
-                                    payloadValue.replace(SLEEP_TOKEN, String.valueOf(x));
+                                    assembleTimingPayload(payloadTemplate, paramValue, x);
                             setParameter(timedMsg, paramName, finalPayload);
                             sendAndReceive(timedMsg, false); // do not follow redirects
                             return TimeUnit.MILLISECONDS.toSeconds(timedMsg.getTimeElapsedMillis());
@@ -299,25 +298,20 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
 
                     if (isInjectable) {
                         String finalPayloadValue =
-                                payloadValue.replace(SLEEP_TOKEN, String.valueOf(sleepInSeconds));
+                                assembleTimingPayload(payloadTemplate, paramValue, sleepInSeconds);
                         LOGGER.debug(
                                 "[Time Based Postrgres SQL Injection - Found] on parameter [{}] with value [{}]",
                                 paramName,
                                 paramValue);
 
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                                .setParam(paramName)
-                                .setAttack(finalPayloadValue)
+                        buildAlert(
+                                        getBaseMsg().getRequestHeader().getURI().toString(),
+                                        paramName,
+                                        paramValue,
+                                        finalPayloadValue,
+                                        message.get().getTimeElapsedMillis(),
+                                        getBaseMsg().getTimeElapsedMillis())
                                 .setMessage(message.get())
-                                .setOtherInfo(
-                                        Constant.messages.getString(
-                                                "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                                finalPayloadValue,
-                                                message.get().getTimeElapsedMillis(),
-                                                paramValue,
-                                                getBaseMsg().getTimeElapsedMillis()))
                                 .raise();
                         return;
                     }
@@ -335,6 +329,49 @@ public class SqlInjectionPostgreSqlTimingScanRule extends AbstractAppParamPlugin
                     "An error occurred checking a URL for Postgres SQL Injection vulnerabilities",
                     e);
         }
+    }
+
+    private static String assembleTimingPayload(
+            String template, String paramValue, Number sleepArg) {
+        return template.replace(ORIG_VALUE_TOKEN, paramValue)
+                .replace(SLEEP_TOKEN, String.valueOf(sleepArg));
+    }
+
+    private AlertBuilder buildAlert(
+            String uri,
+            String paramName,
+            String paramValue,
+            String attackValue,
+            long attackElapsedMillis,
+            long originalElapsedMillis) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(uri)
+                .setParam(paramName)
+                .setAttack(attackValue)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                attackValue,
+                                attackElapsedMillis,
+                                paramValue,
+                                originalElapsedMillis));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com/?name=test",
+                                "name",
+                                "test",
+                                assembleTimingPayload(
+                                        SQL_POSTGRES_TIME_REPLACEMENTS[11],
+                                        "test",
+                                        DEFAULT_TIME_SLEEP_SEC),
+                                TimeUnit.SECONDS.toMillis(DEFAULT_TIME_SLEEP_SEC),
+                                100L)
+                        .build());
     }
 
     public void setSleepInSeconds(int sleep) {

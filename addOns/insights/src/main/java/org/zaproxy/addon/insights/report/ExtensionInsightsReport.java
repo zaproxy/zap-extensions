@@ -26,6 +26,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.zaproxy.addon.insights.ExtensionInsights;
+import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
 
@@ -34,6 +35,8 @@ public class ExtensionInsightsReport extends ExtensionAdaptor {
     public static final String NAME = "ExtensionInsightsReport";
 
     public static final String INSIGHTS_LIST = "insightsList";
+
+    public static final String STOPPING_INSIGHT = "stoppingInsight";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionReports.class);
@@ -94,6 +97,10 @@ public class ExtensionInsightsReport extends ExtensionAdaptor {
             // Force the processing so we get the very latest stats
             ext.processStats();
             reportData.addReportObjects(INSIGHTS_LIST, new ArrayList<>(ext.getInsights()));
+            Insight stopping = ext.getStoppingInsight();
+            if (stopping != null) {
+                reportData.addReportObjects(STOPPING_INSIGHT, stopping);
+            }
         }
     }
 }

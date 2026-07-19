@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -34,6 +33,8 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.extension.spiderAjax.internal.ScopeCheckComponent;
@@ -458,10 +459,9 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         if (!getStringValue(FIELD_START).equals(getTargetText(target))) {
             String url = this.getStringValue(FIELD_START);
             try {
-                // Need both constructors as they catch slightly different issues ;)
-                startUri = new URI(url);
-                new URL(url);
-            } catch (Exception e) {
+                UriUtils.isValid(url);
+                startUri = URI.create(url);
+            } catch (ZapUriException e) {
                 return Constant.messages.getString("spiderajax.scandialog.nostart.error");
             }
         } else if (this.target != null) {

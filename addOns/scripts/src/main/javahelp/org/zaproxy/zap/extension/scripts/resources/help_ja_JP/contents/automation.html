@@ -46,6 +46,7 @@
 	<li>target: 必須 (type が targeted の場合)。targeted スクリプトに対して起動されるターゲットURL。
 	<li>context: optional, the name of the context to use when running the script
 	<li>user: optional, the name of the user when running the Zest standalone script or chain (requires context). See Script Chaining for authentication with chains.
+	<li>failureLevel: optional, controls the Automation Framework progress level used when the script or chain execution fails: <code>info</code>, <code>warning</code>, or <code>error</code> (default: <code>error</code>).
 	</ul>
 
 	<H3>Authentication</H3>
@@ -79,7 +80,8 @@
 	<H4>Error Handling</H4>
 	<p>
 	If chain preparation fails (e.g. Zest not loaded), the job reports an error and the chain does not run.
-	If any script in the chain fails during execution, the job reports an error and stops; later scripts in the chain are not run.
+	If any script in the chain fails during execution, the job stops and reports the failure at the level set by <code>failureLevel</code> (default: <code>error</code>); later scripts in the chain are not run.
+	If the failure is reported as an <code>error</code>, the plan is considered failed. Using <code>warning</code> or <code>info</code> allows the plan to continue even when a script fails.
 	In this case, browser windows opened by the chain might not be closed immediately and are closed when ZAP shuts down.
 	</p>
 
@@ -140,6 +142,7 @@
       target:                    # String: The URL to be invoked for "targeted" script type
       context:                   # String: The name of the context to use when running the script (optional)
       user:                      # String: The name of the user to use when running the Zest standalone script or chain (optional, requires context)
+      failureLevel:              # String: The progress level at which script execution failures are reported: info, warning, error (default: error)
 	</pre>
 
 	<code>source</code> パラメーターは以前は <code>file</code> と呼ばれていましたが、どちらも機能します。

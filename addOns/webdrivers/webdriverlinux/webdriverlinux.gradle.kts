@@ -6,7 +6,6 @@ description = "Linux WebDrivers for Firefox and Chrome."
 extra["webdrivers"] =
     listOf(
         WebDriverData(WebDriverData.OS.LINUX, WebDriverData.Browser.CHROME, WebDriverData.Arch.X64),
-        WebDriverData(WebDriverData.OS.LINUX, WebDriverData.Browser.FIREFOX, WebDriverData.Arch.X32, false),
         WebDriverData(WebDriverData.OS.LINUX, WebDriverData.Browser.FIREFOX, WebDriverData.Arch.X64, false),
         WebDriverData(WebDriverData.OS.LINUX, WebDriverData.Browser.FIREFOX, WebDriverData.Arch.ARM64, false),
     )

@@ -20,16 +20,16 @@
 package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 
-public class JavaScriptUnescapeProcessor implements DefaultPayloadProcessor {
+public class JavaScriptUnescapeProcessor implements PayloadProcessor {
 
     public static final JavaScriptUnescapeProcessor INSTANCE = new JavaScriptUnescapeProcessor();
 
     public JavaScriptUnescapeProcessor() {}
 
     @Override
-    public DefaultPayload process(DefaultPayload payload) {
+    public Payload process(Payload payload) {
         payload.setValue(StringEscapeUtils.unescapeEcmaScript(payload.getValue()));
         return payload;
     }

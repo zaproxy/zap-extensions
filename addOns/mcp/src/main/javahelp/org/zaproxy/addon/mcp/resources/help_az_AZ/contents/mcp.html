@@ -9,8 +9,13 @@ MCP Integration Add-on
 <H1>MCP Integration Add-on</H1>
 
 This add-on implements an MCP (Model Context Protocol) server in ZAP, allowing AI assistants and other MCP clients to interact with ZAP through a standard HTTP-based protocol.
+<p>
+It also allows you to import MCP servers so that you can perform security tests on them, and provides
+ <a href="mcp-automation.html">Automation Framework</a> support.
 
-<H2>Security Warning</H2>
+<H2>MCP Server</H2>
+
+<H3>Security Warning</H3>
 
 <b>The MCP server must not be exposed to external networks.</b>
 It is designed to run on <code>localhost</code> and be accessed only by trusted MCP clients on the same machine.
@@ -25,8 +30,7 @@ Exposing the MCP server externally is dangerous because:
 
 <p>
 Ensure your firewall or OS network settings block external access to the MCP server port.
-
-<H2>Overview</H2>
+<p>
 
 The MCP server exposes ZAP functionality through:
 <ul>
@@ -35,18 +39,15 @@ The MCP server exposes ZAP functionality through:
 <li><a href="mcp-prompts.html">Prompts</a> - Reusable scan workflow templates (e.g. baseline scan, full scan)
 </ul>
 
-<H2>Configuration</H2>
 
-The MCP server is configured via the <a href="mcp-options.html">Options</a> panel.
-
-<H2>Authentication</H2>
+<H3>Authentication</H3>
 
 When the security key is enabled, clients must include the key in the <code>Authorization</code> header:
 <pre>
 Authorization: &lt;your-security-key&gt;
 </pre>
 
-<H2>Accessing the Server</H2>
+<H3>Accessing the Server</H3>
 
 The MCP server runs on <code>localhost</code>. MCP clients connect to:
 <pre>
@@ -55,7 +56,7 @@ http://localhost:8282
 
 (or whatever port you have configured)
 
-<H2>Custom Tools and Resources</H2>
+<H3>Custom Tools and Resources</H3>
 
 You can add custom MCP tools and resources using Extender scripts. The add-on provides templates to get started:
 <ul>
@@ -64,6 +65,98 @@ You can add custom MCP tools and resources using Extender scripts. The add-on pr
 </ul>
 
 Create a new Extender script (Scripts &rarr; Add &rarr; Extender) and choose one of these templates, or copy from an existing script. The templates demonstrate how to register and unregister with the MCP server's tool and resource registries.
+
+<H2>Importing External MCP Servers</H2>
+
+ZAP can probe an external MCP server and record all of its traffic in the history and sites tree,
+making those requests available for scanning and fuzzing like any other HTTP traffic.
+
+<p>
+The importer contacts the server in sequence:
+<ol>
+<li><b>initialize</b> — negotiates the MCP protocol version
+<li><b>notifications/initialized</b> — completes the handshake
+<li><b>tools/list</b>, <b>resources/list</b>, <b>prompts/list</b> — discovers all available tools, resources, and prompts
+<li><b>resources/read</b> — one request per discovered resource
+<li><b>tools/call</b> — one request per tool, with placeholder arguments derived from the tool's input schema
+<li><b>prompts/get</b> — one request per prompt, with placeholder arguments
+</ol>
+
+<p>
+String-typed arguments for <code>tools/call</code> and <code>prompts/get</code> requests are
+populated using ZAP's value generator (configured via <b>Options &rarr; Value Generator</b>) when
+it is available. The value generator produces realistic placeholder values (e.g. a plausible
+username, URL, or file path) based on the field name. If no value generator match is found, the
+field name itself is used as the placeholder value.
+
+<H3>Security Key</H3>
+
+If the external MCP server requires authentication, enter the full value to send as the
+<code>Authorization</code> header. For servers that use Bearer tokens, include the
+<code>Bearer </code> prefix — for example, <code>Bearer abc123</code>. ZAP sends the value
+exactly as entered, without adding any prefix automatically.
+
+<p>
+Import an MCP server via the GUI using <b>Import &rarr; Import MCP Server</b>, or via the
+<a href="mcp-automation-import.html">mcp-import</a> Automation Framework job.
+
+<H3>Spider Integration</H3>
+
+The MCP add-on registers a custom spider parser with the traditional spider.
+Any response the spider fetches that looks like an MCP endpoint &mdash; either a
+<code>text/event-stream</code> response or a JSON response carrying MCP markers such as
+<code>protocolVersion</code> or JSON-RPC method names like <code>tools/list</code> &mdash;
+is automatically imported using the same logic as a manual import. No configuration is
+required; the discovered traffic appears in the history and sites tree alongside the rest
+of the spider's findings.
+
+<H2>Sites Tree Structure for MCP Requests</H2>
+
+MCP traffic uses JSON-RPC 2.0 over HTTP POST. The add-on registers a custom variant
+that organises these requests in the Sites Tree and exposes their
+parameters for active scanning and fuzzing.
+
+<H3>Tree path layout</H3>
+
+<p>For most JSON-RPC methods the path is built from the HTTP URL path segments followed by the
+JSON-RPC method split on <code>/</code>. For <code>tools/call</code> and <code>prompts/get</code>
+an additional qualifier node (the tool or prompt <code>name</code>) is appended, giving a unique
+branch per named tool or prompt:
+
+<pre>
+http://localhost:8282
+  └── tools
+        └── call
+              └── zap_spider          ← tools/call with name="zap_spider"
+  └── prompts
+        └── get
+              └── baseline-scan       ← prompts/get with name="baseline-scan"
+  └── initialize
+  └── tools
+        └── list
+</pre>
+
+<H3>Resources in the Sites Tree</H3>
+
+<p>For <code>resources/read</code> the resource URI drives the tree path rather than the JSON-RPC
+method. The path is built as <code>resources / &lt;scheme&gt; / &lt;authority&gt; / &lt;path segments&gt;</code>,
+mirroring the structure of the resource URI:
+
+<pre>
+  └── resources
+        └── zap
+              └── alerts              ← uri="zap://alerts/{alertRef}"
+        └── logs
+              └── app
+                    └── errors        ← uri="logs://app/errors?limit=100"
+</pre>
+
+Template path segments (e.g. <code>{alertRef}</code>) are omitted from the tree path because they
+vary per request; their values are exposed as Input Vectors instead.
+
+<H2>Configuration</H2>
+
+The MCP server is configured via the <a href="mcp-options.html">Options</a> panel.
 
 </BODY>
 </HTML>

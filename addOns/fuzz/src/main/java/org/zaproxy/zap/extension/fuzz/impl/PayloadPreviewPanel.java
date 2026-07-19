@@ -64,7 +64,7 @@ class PayloadPreviewPanel {
     private JTextArea currentPayloadsTextArea;
     private JTextArea processedPayloadsTextArea;
 
-    private PayloadProcessorUIPanel<?, ?, ?> payloadProcessorUIPanel;
+    private PayloadProcessorUIPanel payloadProcessorUIPanel;
 
     public PayloadPreviewPanel(ResettableAutoCloseableIterator<Payload> payloads) {
         this.payloads = payloads;
@@ -107,7 +107,7 @@ class PayloadPreviewPanel {
                 getCurrentPayloadsTextArea(), NullPayloadProcessor.getNullPayloadProcessor());
     }
 
-    public void setPayloadProcessorUIPanel(PayloadProcessorUIPanel<?, ?, ?> panel) {
+    public void setPayloadProcessorUIPanel(PayloadProcessorUIPanel panel) {
         this.payloadProcessorUIPanel = panel;
         getPayloadsPreviewGenerateButton().setEnabled(panel != null);
     }
@@ -143,7 +143,7 @@ class PayloadPreviewPanel {
         return processedPayloadsTextArea;
     }
 
-    private void updatePayloadsTextArea(JTextArea textArea, PayloadProcessor<Payload> processor) {
+    private void updatePayloadsTextArea(JTextArea textArea, PayloadProcessor processor) {
         if (payloads == null || processor == null) {
             return;
         }
@@ -174,11 +174,9 @@ class PayloadPreviewPanel {
         textArea.setCaretPosition(0);
     }
 
-    @SuppressWarnings("unchecked")
     private void updateProcessedPayloadsTextArea() {
         updatePayloadsTextArea(
-                getProcessedPayloadsTextArea(),
-                (PayloadProcessor<Payload>) payloadProcessorUIPanel.getPayloadProcessor());
+                getProcessedPayloadsTextArea(), payloadProcessorUIPanel.getPayloadProcessor());
     }
 
     public JPanel getPanel() {
@@ -190,24 +188,23 @@ class PayloadPreviewPanel {
         getProcessedPayloadsTextArea().setText("");
     }
 
-    private static class NullPayloadProcessor<T extends Payload> implements PayloadProcessor<T> {
+    private static class NullPayloadProcessor implements PayloadProcessor {
 
-        private static final NullPayloadProcessor<?> NULL_PAYLOAD_PROCESSOR =
-                new NullPayloadProcessor<>();
+        private static final NullPayloadProcessor NULL_PAYLOAD_PROCESSOR =
+                new NullPayloadProcessor();
 
         @Override
-        public T process(T payload) throws PayloadProcessingException {
+        public Payload process(Payload payload) throws PayloadProcessingException {
             return payload;
         }
 
         @Override
-        public PayloadProcessor<T> copy() {
+        public PayloadProcessor copy() {
             return this;
         }
 
-        @SuppressWarnings("unchecked")
-        public static <T extends Payload> NullPayloadProcessor<T> getNullPayloadProcessor() {
-            return (NullPayloadProcessor<T>) NullPayloadProcessor.NULL_PAYLOAD_PROCESSOR;
+        public static NullPayloadProcessor getNullPayloadProcessor() {
+            return NullPayloadProcessor.NULL_PAYLOAD_PROCESSOR;
         }
     }
 

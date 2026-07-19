@@ -28,9 +28,8 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.zaproxy.addon.client.ClientOptions;
-import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions.ScopeCheck;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -64,6 +63,7 @@ public class ClientSpiderApi extends ApiImplementor {
     private static final String PARAM_USER_NAME = "userName";
     private static final String PARAM_MAX_CRAWL_DEPTH = "maxCrawlDepth";
     private static final String PARAM_PAGE_LOAD_TIME = "pageLoadTime";
+    private static final String PARAM_ACTION_WAIT_TIME = "actionWaitTime";
     private static final String PARAM_LOGOUT_AVOIDANCE = "logoutAvoidance";
     private static final String PARAM_NUMBER_OF_BROWSERS = "numberOfBrowsers";
     private static final String PARAM_SCOPE_CHECK = "scopeCheck";
@@ -89,6 +89,7 @@ public class ClientSpiderApi extends ApiImplementor {
                                 PARAM_SUBTREE_ONLY,
                                 PARAM_MAX_CRAWL_DEPTH,
                                 PARAM_PAGE_LOAD_TIME,
+                                PARAM_ACTION_WAIT_TIME,
                                 PARAM_NUMBER_OF_BROWSERS,
                                 PARAM_SCOPE_CHECK,
                                 PARAM_LOGOUT_AVOIDANCE)));
@@ -96,6 +97,9 @@ public class ClientSpiderApi extends ApiImplementor {
         addApiAction(new ApiAction(ACTION_STOP_SCAN, List.of(PARAM_SCAN_ID)));
 
         addApiView(new ApiView(VIEW_STATUS, List.of(PARAM_SCAN_ID)));
+
+        addApiOptions(
+                extension != null ? extension.getClientSpiderParam() : new ClientSpiderOptions());
     }
 
     @Override
@@ -150,7 +154,7 @@ public class ClientSpiderApi extends ApiImplementor {
 
         validateMode(url, context, validateUrl);
 
-        ClientOptions options = extension.getClientParam().clone();
+        ClientSpiderOptions options = extension.getClientSpiderParam().clone();
         options.setBrowserId(getBrowser(params));
 
         if (params.containsKey(PARAM_MAX_CRAWL_DEPTH)) {
@@ -158,6 +162,9 @@ public class ClientSpiderApi extends ApiImplementor {
         }
         if (params.containsKey(PARAM_PAGE_LOAD_TIME)) {
             options.setPageLoadTimeInSecs(ApiUtils.getIntParam(params, PARAM_PAGE_LOAD_TIME));
+        }
+        if (params.containsKey(PARAM_ACTION_WAIT_TIME)) {
+            options.setActionWaitTimeInSecs(ApiUtils.getIntParam(params, PARAM_ACTION_WAIT_TIME));
         }
         if (params.containsKey(PARAM_NUMBER_OF_BROWSERS)) {
             options.setThreadCount(ApiUtils.getIntParam(params, PARAM_NUMBER_OF_BROWSERS));
@@ -268,7 +275,6 @@ public class ClientSpiderApi extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-
         switch (name) {
             case VIEW_STATUS:
                 ClientSpider scan = getClientSpider(params);

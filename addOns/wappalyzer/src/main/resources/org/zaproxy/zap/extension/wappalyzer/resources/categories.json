@@ -770,5 +770,13 @@
     ],
     "name": "Fundraising & donations",
     "priority": 9
+  },
+  "112": {
+    "groups": [
+      5,
+      9
+    ],
+    "name": "Artificial Intelligence",
+    "priority": 9
   }
 }

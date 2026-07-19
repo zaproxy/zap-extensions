@@ -20,9 +20,11 @@
 package org.zaproxy.addon.client.ui;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 import javax.swing.JOptionPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.client.internal.ClientNode;
 
 public class PopupMenuClientDelete extends PopupMenuItemClient {
 
@@ -30,6 +32,12 @@ public class PopupMenuClientDelete extends PopupMenuItemClient {
 
     public PopupMenuClientDelete(ClientMapPanel clientMapPanel) {
         super(Constant.messages.getString("client.tree.popup.delete"), clientMapPanel);
+    }
+
+    @Override
+    public boolean isButtonEnabled() {
+        List<ClientNode> nodes = getClientMapPanel().getSelectedNodes();
+        return !(nodes.size() == 1 && nodes.get(0).isRoot());
     }
 
     @Override

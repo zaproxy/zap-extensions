@@ -23,9 +23,6 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -44,6 +41,8 @@ import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionException;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
@@ -333,7 +332,7 @@ public class ImportDialog extends AbstractDialog {
         }
 
         try {
-            new URL(definitionLocation).toURI();
+            UriUtils.isValid(definitionLocation);
             var uri = new URI(definitionLocation, true);
             return extOpenApi.importOpenApiDefinition(
                             uri,
@@ -342,7 +341,7 @@ public class ImportDialog extends AbstractDialog {
                             getSelectedContextId(),
                             getSelectedUser())
                     == null;
-        } catch (URIException | MalformedURLException | URISyntaxException ignored) {
+        } catch (ZapUriException | URIException ignored) {
             // Not a valid URI, try to import as a file
         } catch (InvalidUrlException e) {
             ThreadUtils.invokeAndWaitHandled(

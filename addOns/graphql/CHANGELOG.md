@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## Unreleased
 ### Changed
+- Update dependency.
+- Maintenance changes.
+
+## [0.33.0] - 2026-04-14
+### Changed
 - The alerts now have new tags for the OWASP Top 10 2025, and API Top 10 2023.
     - The "OWASP_2023_API4" tag was dropped in favor of the new unified mapping entry "API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION". This may be a breaking change for users that depended on the tag to define scan policies.
 - Depends on an updated version of the Common Library add-on.
@@ -244,6 +249,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.33.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.33.0
 [0.32.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.32.0
 [0.31.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.31.0
 [0.30.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.30.0

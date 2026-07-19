@@ -142,14 +142,16 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
     @Override
     public void unload() {
         super.unload();
+        stopProxies();
+        clearUpWorkPanel();
+    }
 
-        // clear up existing connections
+    private void stopProxies() {
         for (Entry<Integer, EventStreamProxy> sseEntry : sseProxies.entrySet()) {
             EventStreamProxy sseProxy = sseEntry.getValue();
             sseProxy.stop();
         }
-
-        clearUpWorkPanel();
+        sseProxies.clear();
     }
 
     private EventStreamPanel getEventStreamTab() {
@@ -209,7 +211,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
             }
         }
         proxy.start();
-        // TODO: save all proxies
     }
 
     @Override
@@ -259,17 +260,11 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
     public void sessionAboutToChange(Session session) {
         if (View.isInitialised()) {
             // Prevent the table from being used
-            //			getWebSocketPanel().setTable(null);
             storage.setTable(null);
         }
 
         // close existing connections
-        synchronized (sseProxies) {
-            for (EventStreamProxy sseProxy : sseProxies.values()) {
-                sseProxy.stop();
-            }
-            sseProxies.clear();
-        }
+        stopProxies();
     }
 
     @Override
@@ -391,12 +386,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
 
         @Override
         public boolean matchToDefaultView(Message aMessage) {
-            // use hex view only when previously selected
-            //            if (aMessage instanceof WebSocketMessageDTO) {
-            //                WebSocketMessageDTO msg = (WebSocketMessageDTO)aMessage;
-            //
-            //                return (msg.opcode == WebSocketMessage.OPCODE_BINARY);
-            //            }
             return false;
         }
 

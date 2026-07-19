@@ -20,6 +20,9 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import javax.script.ScriptException;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -28,11 +31,16 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunDiagnostics;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunFailureDiagnostic;
+import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunOutput;
+import org.zaproxy.zap.extension.zest.internal.ZestScriptMerger;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestScript.Type;
 
-public class ZestScriptWrapper extends ScriptWrapper {
+public class ZestScriptWrapper extends ScriptWrapper implements ScriptDiagnosticSource {
 
     public static final String ZAP_BREAK_VARIABLE_NAME = "zap.break";
     public static final String ZAP_BREAK_VARIABLE_VALUE = "set";
@@ -48,6 +56,41 @@ public class ZestScriptWrapper extends ScriptWrapper {
     private boolean recording = false;
     private int zestModCount;
     private User user;
+    private ZestScriptMerger.ChainProvenance chainProvenance;
+
+    /** Run diagnostics; cleared at run start and not copied by {@link #clone()}. */
+    private final RunDiagnosticsHolder runDiagnostics = new RunDiagnosticsHolder();
+
+    private static final class RunDiagnosticsHolder {
+        private RunFailureDiagnostic failure;
+        private final List<RunOutput> outputs = new ArrayList<>();
+        private int outputOrdinal;
+
+        void setFailure(RunFailureDiagnostic diagnostic) {
+            failure = diagnostic;
+        }
+
+        void appendOutput(
+                String scriptName, int sourceStatementIndex, String elementType, String message) {
+            outputs.add(
+                    new RunOutput(
+                            scriptName,
+                            sourceStatementIndex,
+                            outputOrdinal++,
+                            elementType,
+                            message));
+        }
+
+        void clear() {
+            failure = null;
+            outputs.clear();
+            outputOrdinal = 0;
+        }
+
+        RunDiagnostics snapshot() {
+            return new RunDiagnostics(Optional.ofNullable(failure), List.copyOf(outputs));
+        }
+    }
 
     public ZestScriptWrapper(ScriptWrapper script) {
         this.original = script;
@@ -187,6 +230,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
         clone.setDebug(this.isDebug());
         clone.setRecording(this.isRecording());
         clone.setUser(this.getUser());
+        clone.setChainProvenance(this.chainProvenance);
         return clone;
     }
 
@@ -251,5 +295,37 @@ public class ZestScriptWrapper extends ScriptWrapper {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    /**
+     * Provenance for a chain script (see {@link ZestScriptMerger.ChainProvenance}), or {@link
+     * Optional#empty()} for ordinary scripts.
+     */
+    public Optional<ZestScriptMerger.ChainProvenance> getChainProvenance() {
+        return Optional.ofNullable(chainProvenance);
+    }
+
+    public void setChainProvenance(ZestScriptMerger.ChainProvenance chainProvenance) {
+        this.chainProvenance = chainProvenance;
+    }
+
+    /** Replaces any prior failure diagnostics for this wrapper. {@code null} clears them. */
+    public void setLastRunFailure(RunFailureDiagnostic diagnostic) {
+        runDiagnostics.setFailure(diagnostic);
+    }
+
+    @Override
+    public RunDiagnostics getRunDiagnostics() {
+        return runDiagnostics.snapshot();
+    }
+
+    @Override
+    public void clearRunDiagnostics() {
+        runDiagnostics.clear();
+    }
+
+    void appendRunOutput(
+            String scriptName, int sourceStatementIndex, String elementType, String message) {
+        runDiagnostics.appendOutput(scriptName, sourceStatementIndex, elementType, message);
     }
 }

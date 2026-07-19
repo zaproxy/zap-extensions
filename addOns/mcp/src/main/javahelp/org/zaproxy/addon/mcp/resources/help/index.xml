@@ -6,6 +6,9 @@
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="MCP" target="addon.mcp" />
+	<indexitem text="MCP - automation" target="addon.mcp.automation" />
+	<indexitem text="MCP - automation - mcp-config" target="addon.mcp.automation.config" />
+	<indexitem text="MCP - automation - mcp-import" target="addon.mcp.automation.import" />
 	<indexitem text="MCP - options" target="addon.mcp.options" />
 	<indexitem text="MCP - tools" target="addon.mcp.tools" />
 	<indexitem text="MCP - prompts" target="addon.mcp.prompts" />

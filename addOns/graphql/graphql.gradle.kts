@@ -9,7 +9,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.40.0 & < 2.0.0")
+                    version.set(">= 1.43.0 & < 2.0.0")
                 }
             }
         }
@@ -74,6 +74,9 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
     zapAddOn("wappalyzer")
+
+    // Expose missing annotation GwtCompatible during compilation.
+    compileOnly("com.google.guava:guava:33.6.0-jre")
 
     implementation(libs.graphql.graphqlJava)
 

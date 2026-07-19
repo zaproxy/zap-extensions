@@ -23,8 +23,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -39,11 +37,13 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ScopeCheckComponent;
+import org.zaproxy.addon.commonlib.UriUtils;
+import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
+import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
@@ -74,6 +74,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_PAGE_LOAD_TIME = "client.options.label.pageloadtime";
     private static final String FIELD_SHUTDOWN_TIME = "client.options.label.shutdowntime";
     private static final String FIELD_LOGOUT_AVOIDANCE = "client.scandialog.label.logoutAvoidance";
+    private static final String FIELD_ACTION_WAIT_TIME = "client.options.label.actionwaittime";
 
     private static final Logger LOGGER = LogManager.getLogger(ClientSpiderDialog.class);
     private static final long serialVersionUID = 1L;
@@ -85,17 +86,18 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
 
     private SiteNode targetNode;
     private String targetUrl;
-    private ClientOptions params = null;
+    private ClientSpiderOptions params = null;
     private ZapTextField urlStartField;
     private boolean subtreeOnlyPreviousCheckedState;
     private ScopeCheckComponent scopeCheckComponent;
+    private ProvidedBrowsersComboBoxModel browserModel;
 
     private ExtensionUserManagement extUserMgmt;
 
     public ClientSpiderDialog(ExtensionClientIntegration ext, Frame owner) {
         super(owner, "client.scandialog.title", DisplayUtils.getScaledDimension(700, 350), LABELS);
         this.extension = ext;
-        params = this.extension.getClientParam();
+        params = this.extension.getClientSpiderParam();
         this.extUserMgmt =
                 Control.getSingleton()
                         .getExtensionLoader()
@@ -145,10 +147,15 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         }
 
         this.addCheckBoxField(0, FIELD_SUBTREE_ONLY, subtreeOnlyPreviousCheckedState);
-        this.addComboField(0, FIELD_BROWSER, new ArrayList<>(), null);
+        this.browserModel = getExtSelenium().createProvidedBrowsersComboBoxModel();
+        this.addComboField(0, FIELD_BROWSER, browserModel);
+        browserModel.setSelectedBrowser(params.getBrowserId());
 
         getScopeCheckComponent().setScopeCheck(params.getScopeCheck());
         addCustomComponent(0, getScopeCheckComponent().getComponent());
+        getScopeCheckComponent()
+                .getComponent()
+                .setEnabled(Control.getSingleton().getMode() != Control.Mode.protect);
 
         // This option is always read from the 'global' options
         this.addCheckBoxField(0, FIELD_ADVANCED, params.isShowAdvancedDialog());
@@ -176,6 +183,8 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         this.addNumberField(
                 1, FIELD_PAGE_LOAD_TIME, 0, Integer.MAX_VALUE, params.getPageLoadTimeInSecs());
         this.addNumberField(
+                1, FIELD_ACTION_WAIT_TIME, 0, Integer.MAX_VALUE, params.getActionWaitTimeInSecs());
+        this.addNumberField(
                 1, FIELD_SHUTDOWN_TIME, 0, Integer.MAX_VALUE, params.getShutdownTimeInSecs());
         this.addNumberField(1, FIELD_DURATION, 0, Integer.MAX_VALUE, params.getMaxDuration());
         addCheckBoxField(1, FIELD_LOGOUT_AVOIDANCE, params.isLogoutAvoidance());
@@ -183,8 +192,6 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         this.addPadding(1);
 
         this.pack();
-
-        this.updateBrowsers();
     }
 
     private ScopeCheckComponent getScopeCheckComponent() {
@@ -295,26 +302,6 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         return extSel;
     }
 
-    /**
-     * Updates the choices available in "Browser" combo box, based on the currently available
-     * browsers.
-     *
-     * @see ExtensionSelenium#getConfiguredBrowsers()
-     */
-    public void updateBrowsers() {
-        List<ProvidedBrowserUI> browserList = getExtSelenium().getProvidedBrowserUIList();
-        List<String> browserNames = new ArrayList<>();
-        String defaultBrowser = null;
-        for (ProvidedBrowserUI browser : browserList) {
-            browserNames.add(browser.getName());
-            if (browser.getBrowser().getId().equals(params.getBrowserId())) {
-                defaultBrowser = browser.getName();
-            }
-        }
-
-        setComboFields(FIELD_BROWSER, browserNames, defaultBrowser);
-    }
-
     private void setAdvancedOptions(boolean adv) {
         this.setTabsVisible(
                 new String[] {
@@ -322,7 +309,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
                 },
                 adv);
         // Always save in the 'global' options
-        extension.getClientParam().setShowAdvancedDialog(adv);
+        extension.getClientSpiderParam().setShowAdvancedDialog(adv);
     }
 
     /** Resets the spider dialogue to its default state. */
@@ -361,7 +348,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     /** Use the save method to launch a scan */
     @Override
     public void save() {
-        ClientOptions clientParams = this.extension.getClientParam();
+        ClientSpiderOptions clientParams = this.extension.getClientSpiderParam();
 
         String selectedBrowser = getSelectedBrowser();
         if (selectedBrowser != null) {
@@ -378,6 +365,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
             clientParams.setPageLoadTimeInSecs(this.getIntValue(FIELD_PAGE_LOAD_TIME));
             clientParams.setShutdownTimeInSecs(this.getIntValue(FIELD_SHUTDOWN_TIME));
             clientParams.setMaxDuration(this.getIntValue(FIELD_DURATION));
+            clientParams.setActionWaitTimeInSecs(this.getIntValue(FIELD_ACTION_WAIT_TIME));
             clientParams.setLogoutAvoidance(getBoolValue(FIELD_LOGOUT_AVOIDANCE));
         }
 
@@ -400,21 +388,11 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     /**
      * Gets the selected browser.
      *
-     * @return the selected browser, {@code null} if none selected
+     * @return the selected browser ID, {@code null} if none selected
      */
     private String getSelectedBrowser() {
-        if (isEmptyField(FIELD_BROWSER)) {
-            return null;
-        }
-
-        String browserName = this.getStringValue(FIELD_BROWSER);
-        List<ProvidedBrowserUI> browserList = getExtSelenium().getProvidedBrowserUIList();
-        for (ProvidedBrowserUI bui : browserList) {
-            if (browserName.equals(bui.getName())) {
-                return bui.getBrowser().getId();
-            }
-        }
-        return null;
+        ProvidedBrowserUI selected = browserModel.getSelectedItem();
+        return selected != null ? selected.getBrowser().getId() : null;
     }
 
     @Override
@@ -430,10 +408,8 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
             return Constant.messages.getString("client.scandialog.nostart.error");
         }
         try {
-            // Need both constructors as they catch slightly different issues ;)
-            new URI(startUrl);
-            new URL(startUrl);
-        } catch (Exception e) {
+            UriUtils.isValid(startUrl);
+        } catch (ZapUriException e) {
             return Constant.messages.getString("client.scandialog.nostart.error");
         }
 

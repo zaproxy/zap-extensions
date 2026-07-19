@@ -4,10 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [8] - 2026-04-14
 ### Changed
 - Update minimum ZAP version to 2.17.0.
 - The scan rule now has new tags for the OWASP Top 10 2025.
 - Depends on an updated version of the Common Library add-on.
+- Update dependency.
 
 ## [7] - 2025-09-18
 ### Changed
@@ -70,6 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Promoted to beta and separated from the passive scan alpha add-on.
 
+[8]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v8
 [7]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v7
 [6]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v6
 [5]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v5

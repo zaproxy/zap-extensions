@@ -20,6 +20,7 @@
 package org.zaproxy.addon.reports;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -64,6 +65,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -327,12 +329,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setContexts(Arrays.asList(context));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.com/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("https://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com2/test/");
 
         // When
@@ -359,12 +364,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setContexts(Arrays.asList(context));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.org/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("http://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com2/");
 
         // When
@@ -391,12 +399,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setSites(Arrays.asList(site1, site2));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.com/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("https://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com2/test/");
 
         // When
@@ -423,12 +434,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setSites(Arrays.asList(site1, site2));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.org/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("http://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com3/");
 
         // When
@@ -459,12 +473,15 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setContexts(Arrays.asList(context));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         alert1.setUri("https://www.example.com/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         alert2.setUri("https://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         alert3.setUri("https://www.example.com2/test/");
 
         // When
@@ -496,14 +513,17 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setContexts(Arrays.asList(context));
 
         Alert alert1 = new Alert(1);
+        alert1.setMessage(new HttpMessage());
         // In sites but not in contexts
         alert1.setUri("https://www.example.org/");
 
         Alert alert2 = new Alert(2);
+        alert2.setMessage(new HttpMessage());
         // In sites but excluded from contexts
         alert2.setUri("https://www.example.com/test/");
 
         Alert alert3 = new Alert(3);
+        alert3.setMessage(new HttpMessage());
         // In context but not in sites
         alert3.setUri("https://www.example.com2/test/");
 
@@ -519,6 +539,61 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(ExtensionReports.isIncluded(reportData, alertNode1), is(equalTo(false)));
         assertThat(ExtensionReports.isIncluded(reportData, alertNode2), is(equalTo(false)));
         assertThat(ExtensionReports.isIncluded(reportData, alertNode3), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldExcludeAlertsWithoutHttpMessage() {
+        // Given
+        ReportData reportData = new ReportData(true, true);
+
+        Alert alertWithoutMessage = new Alert(1);
+        alertWithoutMessage.setUri("https://www.example.com/");
+        // intentionally no setMessage(...) - mirrors core ExtensionAlert#isInvalid
+
+        Alert alertWithEmptyUri = new Alert(2);
+        alertWithEmptyUri.setMessage(new HttpMessage());
+        alertWithEmptyUri.setUri("");
+
+        Alert validAlert = new Alert(3);
+        validAlert.setMessage(new HttpMessage());
+        validAlert.setUri("https://www.example.com/");
+
+        // When
+        AlertNode alertNode1 = new AlertNode(-1, "Alert 1");
+        alertNode1.setUserObject(alertWithoutMessage);
+        AlertNode alertNode2 = new AlertNode(-2, "Alert 2");
+        alertNode2.setUserObject(alertWithEmptyUri);
+        AlertNode alertNode3 = new AlertNode(-3, "Alert 3");
+        alertNode3.setUserObject(validAlert);
+
+        // Then
+        assertThat(ExtensionReports.isIncluded(reportData, alertNode1), is(equalTo(false)));
+        assertThat(ExtensionReports.isIncluded(reportData, alertNode2), is(equalTo(false)));
+        assertThat(ExtensionReports.isIncluded(reportData, alertNode3), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldGenerateHtmlReportWithStoppingInsight() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-html");
+        File f = File.createTempFile("insights-stop-traditional-html", template.getExtension());
+        Insight stopping =
+                new Insight(
+                        Insight.Level.HIGH,
+                        Insight.Reason.EXCEEDED_HIGH,
+                        "https://www.example.com",
+                        "insight.auth.failure",
+                        "Auth failure",
+                        75,
+                        true);
+
+        // When
+        File r = ReportTestUtils.generateReportWithInsights(template, f, stopping);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        assertThat(report, containsString("Auth failure"));
+        assertThat(report, containsString("https://www.example.com"));
     }
 
     @ParameterizedTest
@@ -861,5 +936,104 @@ class ExtensionReportsUnitTest extends TestUtils {
         public void append(LogEvent event) {
             logConsumer.accept(((StringLayout) getLayout()).toSerializable(event));
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html", "traditional-html-plus"})
+    void shouldGenerateTraditionalHtmlReportsWithScriptDiagnostics(String templateName)
+            throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f = File.createTempFile("script-diagnostics-" + templateName, template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f);
+        String report = ReportTestUtils.readReportAsString(r);
+
+        // Then
+        assertThat(report, is(containsString("Script Diagnostics")));
+        assertThat(report, is(containsString("2026-04-01T12:00:00Z (FAILED)")));
+        assertThat(report, is(containsString("Job: ... boom")));
+        assertThat(report, is(containsString("my-script")));
+        assertThat(report, is(containsString("ZestClientElementClick")));
+        assertThat(report, is(containsString("step failed")));
+        assertThat(report, is(containsString("logged in")));
+        assertThat(report, is(containsString("abc64png")));
+        assertThat(report, is(containsString("script-diagnostic-screenshot")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html", "traditional-html-plus"})
+    void shouldOmitScriptDiagnosticStdoutWhenOutputSectionDisabled(String templateName)
+            throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f = File.createTempFile(templateName + "-no-script-stdout", template.getExtension());
+
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        true,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithStdoutAndError()),
+                        "scriptdiagnosticsoutput");
+        String report = ReportTestUtils.readReportAsString(r);
+
+        assertThat(report, is(containsString("boom")));
+        assertThat(report, is(not(containsString("logged in"))));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html", "traditional-html-plus"})
+    void shouldOmitScriptDiagnosticScreenshotWhenScreenshotsSectionDisabled(String templateName)
+            throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f =
+                File.createTempFile(
+                        templateName + "-no-script-screenshots", template.getExtension());
+
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        true,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithScreenshot()),
+                        "scriptdiagnosticsscreenshots");
+        String report = ReportTestUtils.readReportAsString(r);
+
+        assertThat(report, is(not(containsString("abc64png"))));
+    }
+
+    @Test
+    void shouldGenerateTraditionalPdfWithScriptDiagnostics() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-pdf");
+        File f = File.createTempFile("script-diagnostics-traditional-pdf", template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f);
+
+        // Then
+        byte[] reportBytes = Files.readAllBytes(r.toPath());
+        assertThat(reportBytes.length, is(greaterThan(1000)));
+        assertThat(Arrays.copyOf(reportBytes, 4), is(equalTo(new byte[] {'%', 'P', 'D', 'F'})));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-html", "traditional-html-plus"})
+    void shouldOmitScriptDiagnosticsFromHtmlWhenSectionDisabled(String templateName)
+            throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f =
+                File.createTempFile(
+                        "script-diagnostics-" + templateName + "-disabled",
+                        template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f, false);
+        String report = ReportTestUtils.readReportAsString(r);
+
+        // Then
+        assertThat(report, is(not(containsString("Script Diagnostics"))));
     }
 }

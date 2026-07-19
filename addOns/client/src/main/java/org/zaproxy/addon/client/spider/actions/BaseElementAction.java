@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client.spider.actions;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,22 +27,25 @@ import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.spider.SpiderAction;
-import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.client.spider.TaskContext;
 import org.zaproxy.zap.utils.Stats;
 
 abstract class BaseElementAction implements SpiderAction {
 
     private static final Logger LOGGER = LogManager.getLogger(BaseElementAction.class);
 
-    private final ValueProvider valueProvider;
     private final URI uri;
+    protected final ClientSideComponent component;
 
-    protected BaseElementAction(ValueProvider valueProvider, URI uri) {
-        this.valueProvider = Objects.requireNonNull(valueProvider);
+    protected BaseElementAction(URI uri, ClientSideComponent component) {
         this.uri = Objects.requireNonNull(uri);
+        this.component = Objects.requireNonNull(component);
     }
 
     protected URI getUri() {
@@ -49,65 +53,99 @@ abstract class BaseElementAction implements SpiderAction {
     }
 
     @Override
-    public final void run(WebDriver wd) {
+    public final boolean run(TaskContext context) {
         String statsPrefix = getStatsPrefix();
         Stats.incCounter(statsPrefix);
 
-        By by = getElementBy();
+        By by = component.getBy();
         if (by == null) {
             Stats.incCounter(statsPrefix + ".noby");
-            return;
+            return false;
         }
 
         WebElement element;
         try {
-            element = wd.findElement(by);
+            element =
+                    new WebDriverWait(context.getWebDriver(), Duration.ofMillis(2_500))
+                            .until(getExpectedCondition(by));
         } catch (Exception e) {
+            if (e instanceof TimeoutException) {
+                try {
+                    context.getWebDriver().findElement(by);
+                    Stats.incCounter(statsPrefix + ".expectationmismatch");
+                    return false;
+                } catch (Exception ex) {
+                    // Ignore.
+                }
+            }
             Stats.incCounter(statsPrefix + ".notfound");
-            return;
+            return false;
         }
 
-        if (!element.isDisplayed()) {
-            Stats.incCounter(statsPrefix + ".notdisplayed");
-            return;
+        String urlBeforeAction = context.getWebDriver().getCurrentUrl();
+        if (!run(context, element, statsPrefix) || !context.getWaitStrategy().waitAfterAction()) {
+            return false;
         }
 
-        run(wd, element, statsPrefix);
+        if (context.isStopped()) {
+            return false;
+        }
+
+        String currentUrl = context.getWebDriver().getCurrentUrl();
+        if (!urlBeforeAction.equals(currentUrl)) {
+            context.addNavigationEdge(urlBeforeAction, component, currentUrl);
+            return !context.isStopped() && context.getWaitStrategy().waitAfterPageLoad(currentUrl);
+        }
+
+        return true;
     }
 
     protected abstract String getStatsPrefix();
 
-    protected abstract By getElementBy();
+    protected abstract boolean run(TaskContext context, WebElement element, String statsPrefix);
 
-    protected abstract void run(WebDriver wd, WebElement element, String statsPrefix);
+    protected abstract ExpectedCondition<WebElement> getExpectedCondition(By by);
 
-    protected void fillInputs(List<WebElement> inputs, String action, String statsPrefix) {
-        inputs.forEach(input -> fillInput(input, action, statsPrefix));
+    protected void fillComponents(TaskContext context, String action, String statsPrefix) {
+        context.getWebDriver()
+                .findElements(By.xpath("//input | //textarea"))
+                .forEach(input -> fillInput(context, input, action, statsPrefix));
     }
 
-    protected void fillInput(WebElement input, String action, String statsPrefix) {
+    protected void fillInput(
+            TaskContext context, WebElement input, String action, String statsPrefix) {
         if (!input.isDisplayed()) {
             Stats.incCounter(statsPrefix + ".input.notdisplayed");
             return;
         }
 
-        String type = getAttribute(input, "type");
-        if (type == null) {
-            Stats.incCounter(statsPrefix + ".input.notype");
-            return;
+        String type;
+        String controlType;
+        if ("textarea".equalsIgnoreCase(input.getTagName())) {
+            type = "textarea";
+            controlType = "text";
+        } else {
+            type = getAttribute(input, "type");
+            if (type == null) {
+                Stats.incCounter(statsPrefix + ".input.notype");
+                return;
+            }
+            controlType = getControlType(type);
         }
 
         String value =
-                valueProvider.getValue(
-                        uri,
-                        action,
-                        getAttribute(input, "name"),
-                        getAttribute(input, "value"),
-                        List.of(),
-                        Map.of(),
-                        Map.of("Control Type", getControlType(type), "type", type));
+                context.getValueProvider()
+                        .getValue(
+                                uri,
+                                action,
+                                getAttribute(input, "name"),
+                                getAttribute(input, "value"),
+                                List.of(),
+                                Map.of(),
+                                Map.of("Control Type", controlType, "type", type));
 
         try {
+            input.clear();
             input.sendKeys(value);
             Stats.incCounter(statsPrefix + ".input." + type + ".sendkeys");
         } catch (Exception e) {
@@ -126,9 +164,5 @@ abstract class BaseElementAction implements SpiderAction {
 
     private static String getControlType(String type) {
         return !"password".equalsIgnoreCase(type) && !"file".equalsIgnoreCase(type) ? "text" : type;
-    }
-
-    protected static String getTagName(Map<String, String> data) {
-        return data.get("tagName");
     }
 }

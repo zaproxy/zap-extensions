@@ -39,7 +39,6 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
-import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -70,8 +69,6 @@ import org.zaproxy.addon.client.internal.ClientMapWriter;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
-import org.zaproxy.addon.client.internal.ReportedElement;
-import org.zaproxy.addon.client.internal.ReportedEvent;
 import org.zaproxy.addon.client.internal.ReportedObject;
 import org.zaproxy.addon.client.internal.db.ClientHistoryDao;
 import org.zaproxy.addon.client.internal.db.TableJdo;
@@ -83,11 +80,15 @@ import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderApi;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
+import org.zaproxy.addon.client.spider.ClientSpiderOptions;
+import org.zaproxy.addon.client.spider.ClientSpiderOptionsDialog;
 import org.zaproxy.addon.client.spider.ClientSpiderPanel;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
+import org.zaproxy.addon.client.spider.ScanOptions;
 import org.zaproxy.addon.client.spider.SpiderScanController;
 import org.zaproxy.addon.client.ui.ClientDetailsPanel;
 import org.zaproxy.addon.client.ui.ClientHistoryPanel;
+import org.zaproxy.addon.client.ui.ClientMapGraphPanel;
 import org.zaproxy.addon.client.ui.ClientMapPanel;
 import org.zaproxy.addon.client.ui.PopupMenuClientAttack;
 import org.zaproxy.addon.client.ui.PopupMenuClientCopyUrls;
@@ -105,7 +106,6 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
@@ -146,6 +146,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientMap clientTree;
     private ClientMapPanel clientMapPanel;
     private ClientDetailsPanel clientDetailsPanel;
+    private ClientMapGraphPanel clientMapGraphPanel;
     private ClientHistoryPanel clientHistoryPanel;
     private ClientSpiderPanel clientSpiderPanel;
     private ClientHistoryTableModel clientHistoryTableModel;
@@ -155,6 +156,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientPassiveScanController passiveScanController;
     private ClientPassiveScanHelper pscanHelper;
     private ClientOptions clientParam;
+    private ClientSpiderOptions clientSpiderParam;
     private ClientIntegrationAPI api;
     private EventConsumer eventConsumer;
     private Event lastAjaxSpiderStartEvent;
@@ -186,9 +188,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 new ClientSideDetails(
                                         Constant.messages.getString("client.tree.title"), null),
                                 this.getModel().getSession()));
+        clientTree.setReportedObjectConsumer(this::addReportedObject);
         spiderScanController =
                 new SpiderScanController(
                         this,
+                        clientTree,
                         Control.getSingleton()
                                 .getExtensionLoader()
                                 .getExtension(ExtensionCommonlib.class)
@@ -208,16 +212,22 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        this.api = new ClientIntegrationAPI(this);
+        this.api = new ClientIntegrationAPI(this, clientTree);
 
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
         extensionHook.addOptionsParamSet(getClientParam());
+        extensionHook.addOptionsParamSet(getClientSpiderParam());
         extensionHook.addApiImplementor(this.api);
         extensionHook.addApiImplementor(new ClientSpiderApi(this));
 
         if (hasView()) {
             extensionHook.getHookView().addSelectPanel(getClientMapPanel());
             extensionHook.getHookView().addWorkPanel(getClientDetailsPanel());
+
+            if (Constant.isDevMode()) {
+                clientMapGraphPanel = new ClientMapGraphPanel();
+                extensionHook.getHookView().addWorkPanel(clientMapGraphPanel);
+            }
             extensionHook.getHookView().addStatusPanel(getClientHistoryPanel());
 
             extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
@@ -310,6 +320,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             extensionHook
                     .getHookView()
                     .addOptionPanel(new OptionsPassiveScan(passiveScanController));
+            extensionHook
+                    .getHookView()
+                    .addOptionPanel(
+                            List.of(Constant.messages.getString("client.options.name")),
+                            new ClientSpiderOptionsDialog());
 
             getView()
                     .getMainFrame()
@@ -433,6 +448,13 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return clientParam;
     }
 
+    public ClientSpiderOptions getClientSpiderParam() {
+        if (clientSpiderParam == null) {
+            clientSpiderParam = new ClientSpiderOptions();
+        }
+        return clientSpiderParam;
+    }
+
     protected void checkFirefoxProfilesFile(Path iniPath, Path profilePath) throws IOException {
         boolean profileFound = false;
         int lastProfile = -1;
@@ -532,59 +554,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         }
     }
 
-    public ClientNode getOrAddClientNode(String url, boolean visited, boolean storage) {
-        return this.clientTree.getOrAddNode(url, visited, storage);
-    }
-
-    public ClientNode getClientNode(String url, boolean visited, boolean storage) {
-        return this.clientTree.getNode(url, visited, storage);
-    }
-
     public void clientNodeSelected(ClientNode node) {
         getClientDetailsPanel().setClientNode(node);
-    }
-
-    private void clientNodeChanged(ClientNode node) {
-        if (!hasView()) {
-            return;
+        if (clientMapGraphPanel != null) {
+            clientMapGraphPanel.refresh(clientTree.getGraph());
         }
-
-        ThreadUtils.invokeAndWaitHandled(() -> clientTree.nodeChanged(node));
-    }
-
-    public boolean addComponentToNode(ClientNode node, ClientSideComponent component) {
-        if (this.clientTree.addComponentToNode(node, component)) {
-            this.clientNodeChanged(node);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean setRedirect(String originalUrl, String redirectedUrl) {
-        ClientNode node = this.clientTree.setRedirect(originalUrl, redirectedUrl);
-        if (node != null) {
-            this.clientNodeChanged(node);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean setVisited(String url) {
-        ClientNode node = this.clientTree.setVisited(url);
-        if (node != null) {
-            this.clientNodeChanged(node);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean setContentLoaded(String url) {
-        ClientNode node = clientTree.setContentLoaded(url);
-        if (node != null) {
-            clientNodeChanged(node);
-            return true;
-        }
-        return false;
     }
 
     public void deleteNodes(List<ClientNode> nodes) {
@@ -623,7 +597,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientSpiderPanel getClientSpiderPanel() {
         if (clientSpiderPanel == null) {
             clientSpiderPanel =
-                    new ClientSpiderPanel(this, this.spiderScanController, this.getClientParam());
+                    new ClientSpiderPanel(
+                            this, this.spiderScanController, this.getClientSpiderParam());
         }
         return clientSpiderPanel;
     }
@@ -634,22 +609,12 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         }
     }
 
-    public void addReportedObject(ReportedObject obj) {
-        if (obj instanceof ReportedEvent) {
-            ReportedEvent ev = (ReportedEvent) obj;
-            String url = ev.getUrl();
-            if (url != null && isApiUrl(url)) {
-                // Don't record ZAP API calls
-                return;
-            }
-        } else if (obj instanceof ReportedElement) {
-            ReportedElement rn = (ReportedElement) obj;
-            String url = rn.getUrl();
-            if (url != null && isApiUrl(url)) {
-                // Don't record ZAP API calls
-                return;
-            }
+    private void addReportedObject(ReportedObject obj) {
+        if ("A".equals(obj.getNodeName())) {
+            // Dont add links - they flood the table
+            return;
         }
+
         this.clientHistoryTableModel.addReportedObject(obj);
         ClientHistoryDao.persist(obj);
         incPscanCount();
@@ -721,10 +686,6 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return clientHandler;
     }
 
-    protected static boolean isApiUrl(String url) {
-        return url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S);
-    }
-
     @Override
     public List<String> getActiveActions() {
         List<String> activeActions = new ArrayList<>();
@@ -742,7 +703,6 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         if (spiderDialog == null) {
             spiderDialog = new ClientSpiderDialog(this, View.getSingleton().getMainFrame());
         }
-        spiderDialog.updateBrowsers();
     }
 
     public void showScanDialog(SiteNode node) {
@@ -801,13 +761,25 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     public int startScan(
-            String url, ClientOptions options, Context context, User user, boolean subtreeOnly)
+            String url,
+            ClientSpiderOptions options,
+            Context context,
+            User user,
+            boolean subtreeOnly)
             throws URIException, NullPointerException {
-        return this.startScan(
-                abbreviateDisplayName(url),
-                null,
-                user,
-                new Object[] {new URI(url, true), options, context, subtreeOnly});
+        return startScan(
+                url,
+                options,
+                ScanOptions.builder()
+                        .setContext(context)
+                        .setUser(user)
+                        .setSubtreeOnly(subtreeOnly)
+                        .build());
+    }
+
+    public int startScan(String url, ClientSpiderOptions options, ScanOptions scanOptions)
+            throws URIException, NullPointerException {
+        return startScan(abbreviateDisplayName(url), null, url, options, scanOptions);
     }
 
     public int startScan(
@@ -815,7 +787,23 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         int id =
                 this.spiderScanController.startScan(
                         displayName, target, user, contextSpecificObjects);
-        if (hasView()) {
+        ClientSpider scan = spiderScanController.getScan(id);
+        if (scan != null && hasView() && !scan.isExternalControl()) {
+            addScanToUi(scan);
+        }
+        return id;
+    }
+
+    public int startScan(
+            String displayName,
+            Target target,
+            String startUrl,
+            ClientSpiderOptions clientOptions,
+            ScanOptions scanOptions) {
+        int id =
+                this.spiderScanController.startScan(
+                        displayName, target, startUrl, clientOptions, scanOptions);
+        if (hasView() && !scanOptions.isExternalControl()) {
             addScanToUi(this.spiderScanController.getScan(id));
         }
         return id;
@@ -896,6 +884,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             if (clientDetailsPanel != null) {
                 clientDetailsPanel.clear();
             }
+            if (clientMapGraphPanel != null) {
+                clientMapGraphPanel.clear();
+            }
             loadClientHistory();
             spiderScanController.reset();
 
@@ -952,6 +943,22 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     /**
+     * Exports the Client Map to the given writer, optionally filtering by context. Components are
+     * not included in this export.
+     *
+     * @param writer the writer to export to.
+     * @param context the context to filter by, or {@code null} to export all nodes.
+     * @throws IOException if an error occurs while exporting.
+     */
+    public int exportClientMap(Writer writer, Context context) throws IOException {
+        try {
+            return ClientMapWriter.exportClientMap(writer, clientTree, context);
+        } catch (UncheckedIOException e) {
+            throw new IOException(e);
+        }
+    }
+
+    /**
      * Registers a client callback implementor. Any requests to the callback URL which have the
      * implementor name as the next element of the path will be passed over to that implementor.
      * Implementors should use their unique ZAP add-on ID to prevent any clashes.
@@ -970,6 +977,29 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public void browserClosing(WebDriver wd) {
         this.api.browserClosing(wd);
+    }
+
+    /**
+     * Associates a browser proxy port with an {@link org.parosproxy.paros.network.HttpSender}
+     * initiator for client callback handling.
+     *
+     * <p>Should be called as soon as the proxy port is known, before the browser is launched, so
+     * that callbacks received during browser initialisation are associated correctly.
+     *
+     * @param port the browser proxy port
+     * @param initiator the HttpSender initiator
+     */
+    public void registerPortInitiator(int port, int initiator) {
+        this.api.registerPortInitiator(port, initiator);
+    }
+
+    /**
+     * Removes the initiator associated with the given browser proxy port.
+     *
+     * @param port the browser proxy port
+     */
+    public void unregisterPortInitiator(int port) {
+        this.api.unregisterPortInitiator(port);
     }
 
     private class ClientPassiveScanRuleProvider implements PassiveScanRuleProvider {

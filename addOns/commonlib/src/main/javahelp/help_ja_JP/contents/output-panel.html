@@ -25,5 +25,13 @@
 新しい出力がどのタブにも追加されるたびに、緑色のドットがタブアイコンおよび出力パネルアイコンの上に表示され、新しいコンテンツがあることを示します。
 この緑色のドットは、コンテンツが閲覧されたときにタブから消え、すべてのタブ (デタッチされたタブを含む) からの新しいコンテンツが閲覧されたときに出力パネルから消えます。
 
+<p>
+To avoid performance issues, messages appended to the panel are modified if needed:
+<ul>
+<li>Messages longer than 25 million characters are truncated.</li>
+<li>Lines longer than 15,000 characters are split.</li>
+</ul>
+When a message is modified, a notice appears above the text area that can be dismissed by clicking the close button next to it.
+
 </body>
 </html>

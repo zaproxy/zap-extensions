@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
-import org.zaproxy.zap.extension.fuzz.payloads.generator.StringPayloadGenerator;
+import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 
 public abstract class FuzzerPayloadSource implements Comparable<FuzzerPayloadSource> {
 
@@ -33,9 +33,9 @@ public abstract class FuzzerPayloadSource implements Comparable<FuzzerPayloadSou
         return name;
     }
 
-    public abstract StringPayloadGenerator getPayloadGenerator();
+    public abstract PayloadGenerator getPayloadGenerator();
 
-    public abstract StringPayloadGenerator getPayloadGenerator(int limit);
+    public abstract PayloadGenerator getPayloadGenerator(int limit);
 
     @Override
     public int compareTo(FuzzerPayloadSource other) {

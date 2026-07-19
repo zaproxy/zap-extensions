@@ -5094,6 +5094,24 @@
     },
     "website": "https://www.rockrms.com"
   },
+  "Rofofk": {
+    "cats": [
+		1,
+		6
+	],
+    "description": "Rofofk is an Arabic multi-tenant e-commerce SaaS platform.",
+    "headers": {
+      "X-Powered-By": "Rofofk"
+    },
+    "meta": {
+      "generator": "Rofofk"
+    },
+    "js": {
+      "Rofofk": ""
+    },
+    "website": "https://rofofk.com",
+    "icon": "Rofofk.svg"
+  },
   "Roistat": {
     "cats": [
       10,

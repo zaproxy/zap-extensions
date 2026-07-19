@@ -24,14 +24,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PrefixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PrefixStringProcessorUIHandler.PrefixStringProcessorUI;
 import org.zaproxy.zap.utils.ZapTextField;
 
-public class PrefixStringProcessorUIHandler
-        implements PayloadProcessorUIHandler<
-                DefaultPayload, PrefixStringProcessor, PrefixStringProcessorUI> {
+public class PrefixStringProcessorUIHandler implements PayloadProcessorUIHandler {
 
     private static final String PROCESSOR_NAME =
             Constant.messages.getString("fuzz.payload.processor.prefixString.name");
@@ -56,8 +53,7 @@ public class PrefixStringProcessorUIHandler
         return new PrefixStringProcessorUIPanel();
     }
 
-    public static class PrefixStringProcessorUI
-            implements PayloadProcessorUI<DefaultPayload, PrefixStringProcessor> {
+    public static class PrefixStringProcessorUI implements PayloadProcessorUI {
 
         private final String value;
 
@@ -67,11 +63,6 @@ public class PrefixStringProcessorUIHandler
 
         public String getValue() {
             return value;
-        }
-
-        @Override
-        public Class<PrefixStringProcessor> getPayloadProcessorClass() {
-            return PrefixStringProcessor.class;
         }
 
         @Override
@@ -100,9 +91,7 @@ public class PrefixStringProcessorUIHandler
         }
     }
 
-    public static class PrefixStringProcessorUIPanel
-            extends AbstractProcessorUIPanel<
-                    DefaultPayload, PrefixStringProcessor, PrefixStringProcessorUI> {
+    public static class PrefixStringProcessorUIPanel extends AbstractProcessorUIPanel {
 
         private static final String VALUE_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payload.processor.prefixString.value.label");
@@ -151,8 +140,13 @@ public class PrefixStringProcessorUIHandler
         }
 
         @Override
-        public void setPayloadProcessorUI(PrefixStringProcessorUI payloadProcessorUI) {
-            getValueTextField().setText(payloadProcessorUI.getValue());
+        public void setPayloadProcessorUI(PayloadProcessorUI payloadProcessorUI) {
+            if (!(payloadProcessorUI instanceof PrefixStringProcessorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected PrefixStringProcessorUI but got: "
+                                + payloadProcessorUI.getClass());
+            }
+            getValueTextField().setText(ui.getValue());
         }
 
         @Override

@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 
-public class TrimStringProcessor implements DefaultPayloadProcessor {
+public class TrimStringProcessor implements PayloadProcessor {
 
     private int length;
 
@@ -34,7 +34,7 @@ public class TrimStringProcessor implements DefaultPayloadProcessor {
     }
 
     @Override
-    public DefaultPayload process(DefaultPayload payload) {
+    public Payload process(Payload payload) {
         String value = payload.getValue();
         if (value.length() > length) {
             payload.setValue(value.substring(0, length));

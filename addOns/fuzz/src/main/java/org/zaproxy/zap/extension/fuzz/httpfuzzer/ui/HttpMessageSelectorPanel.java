@@ -37,7 +37,6 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.MessageSelectorPanel;
-import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 public class HttpMessageSelectorPanel implements MessageSelectorPanel<HttpMessage> {
@@ -71,8 +70,7 @@ public class HttpMessageSelectorPanel implements MessageSelectorPanel<HttpMessag
         messagesTree.setShowsRootHandles(true);
         messagesTree.setName("HttpMessageSelectorTree");
         messagesTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        messagesTree.setCellRenderer(
-                new SiteMapTreeCellRenderer(Collections.<SiteMapListener>emptyList()));
+        messagesTree.setCellRenderer(new SiteMapTreeCellRenderer(Collections.emptyList()));
         messagesTree.expandRow(0);
 
         JScrollPane scrollPane = new JScrollPane();

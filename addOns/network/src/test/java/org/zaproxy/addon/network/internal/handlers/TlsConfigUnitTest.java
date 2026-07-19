@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -32,10 +33,12 @@ import static org.zaproxy.addon.network.internal.TlsUtils.TLS_V1_2;
 import static org.zaproxy.addon.network.internal.TlsUtils.getSupportedApplicationProtocols;
 import static org.zaproxy.addon.network.internal.TlsUtils.getSupportedTlsProtocols;
 
+import io.netty.handler.ssl.ClientAuth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+import javax.net.ssl.X509TrustManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,6 +46,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 
 /** Unit test for {@link TlsConfig}. */
 class TlsConfigUnitTest {
@@ -66,6 +70,8 @@ class TlsConfigUnitTest {
         assertThat(
                 tlsConfig.getApplicationProtocols(),
                 is(equalTo(getSupportedApplicationProtocols())));
+        assertThat(tlsConfig.getClientAuthMode(), is(equalTo(ClientAuth.NONE)));
+        assertThat(tlsConfig.getTrustManager(), is(nullValue()));
     }
 
     @Test
@@ -172,7 +178,7 @@ class TlsConfigUnitTest {
         // When
         int hashCode = tlsConfig.hashCode();
         // Then
-        assertThat(hashCode, is(equalTo(2014107303)));
+        assertThat(hashCode, is(equalTo(-1473132313)));
     }
 
     @Test
@@ -277,5 +283,33 @@ class TlsConfigUnitTest {
         boolean equals = tlsConfig.equals(otherTlsConfig);
         // Then
         assertThat(equals, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldThrowWhenCreatingWithClientAuthWithNullTrustManager() {
+        // Given / When / Then
+        assertThrows(NullPointerException.class, () -> TlsConfig.withClientAuth(null));
+    }
+
+    @Test
+    void shouldCreateWithTrustManager() {
+        // Given
+        X509TrustManager trustManager = Mockito.mock(X509TrustManager.class);
+        // When
+        TlsConfig tlsConfig = TlsConfig.withClientAuth(trustManager);
+        // Then
+        assertThat(tlsConfig.getClientAuthMode(), is(equalTo(ClientAuth.REQUIRE)));
+        assertThat(tlsConfig.getTrustManager(), is(equalTo(trustManager)));
+    }
+
+    @Test
+    void shouldNotBeEqualWhenClientAuthModeDiffers() {
+        // Given
+        TlsConfig defaultConfig = new TlsConfig();
+        TlsConfig clientAuthConfig = TlsConfig.withClientAuth(Mockito.mock(X509TrustManager.class));
+        // When
+        boolean equals = defaultConfig.equals(clientAuthConfig);
+        // Then
+        assertThat(equals, is(equalTo(false)));
     }
 }

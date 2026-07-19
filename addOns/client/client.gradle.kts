@@ -35,17 +35,29 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.client.exim.ExtensionClientExim") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.client.exim"))
+                }
+                dependencies {
+                    addOns {
+                        register("exim") {
+                            version.set(">=0.20.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
                 register("selenium") {
-                    version.set(">=15.14.0")
+                    version.set(">=15.49.0")
                 }
                 register("network") {
                     version.set(">=0.8.0")
                 }
                 register("commonlib") {
-                    version.set(">=1.33.0")
+                    version.set(">=1.43.0")
                 }
                 register("database") {
                     version.set(">=0.9.0 & < 1.0.0")
@@ -72,12 +84,22 @@ jdoEnhance {
     persistenceUnitName.set(zapAddOn.addOnId.get())
 }
 
+spotless {
+    format("js") {
+        targetExclude("**/selenium/extensions/zap_browser_extension/js/*.bundle.js")
+    }
+}
+
 dependencies {
     jdoEnhance(libs.database.datanucleusJdo)
+
+    implementation(libs.client.jgraphtCore)
+    implementation(libs.client.jgraphx)
 
     zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("database")
+    zapAddOn("exim")
     zapAddOn("selenium")
     zapAddOn("network")
     zapAddOn("pscan")

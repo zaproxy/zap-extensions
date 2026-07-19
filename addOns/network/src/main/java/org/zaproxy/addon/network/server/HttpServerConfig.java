@@ -20,6 +20,7 @@
 package org.zaproxy.addon.network.server;
 
 import java.util.Objects;
+import javax.net.ssl.X509TrustManager;
 import org.parosproxy.paros.network.HttpSender;
 
 /**
@@ -33,12 +34,17 @@ public class HttpServerConfig {
     private final HttpMessageHandler httpMessageHandler;
     private final HttpSender httpSender;
     private final boolean serveZapApi;
+    private final X509TrustManager trustManager;
 
     private HttpServerConfig(
-            HttpMessageHandler httpMessageHandler, HttpSender httpSender, boolean serveZapApi) {
+            HttpMessageHandler httpMessageHandler,
+            HttpSender httpSender,
+            boolean serveZapApi,
+            X509TrustManager trustManager) {
         this.httpMessageHandler = httpMessageHandler;
         this.httpSender = httpSender;
         this.serveZapApi = serveZapApi;
+        this.trustManager = trustManager;
     }
 
     public HttpMessageHandler getHttpMessageHandler() {
@@ -51,6 +57,17 @@ public class HttpServerConfig {
 
     public boolean isServeZapApi() {
         return serveZapApi;
+    }
+
+    /**
+     * Gets the trust manager to use to validate client certificates, or {@code null} if client
+     * certificate authentication is not required.
+     *
+     * @return the trust manager, or {@code null}.
+     * @since 0.29.0
+     */
+    public X509TrustManager getTrustManager() {
+        return trustManager;
     }
 
     /**
@@ -74,6 +91,8 @@ public class HttpServerConfig {
         private HttpSender httpSender;
 
         private boolean serveZapApi;
+
+        private X509TrustManager trustManager;
 
         /**
          * Sets the HTTP message handler.
@@ -110,6 +129,20 @@ public class HttpServerConfig {
         }
 
         /**
+         * Sets the trust manager used to validate client certificates, making client certificate
+         * authentication required. Pass {@code null} to disable client certificate authentication.
+         *
+         * @param trustManager the trust manager, or {@code null} to disable client certificate
+         *     authentication.
+         * @return the builder for chaining.
+         * @since 0.29.0
+         */
+        public Builder setTrustManager(X509TrustManager trustManager) {
+            this.trustManager = trustManager;
+            return this;
+        }
+
+        /**
          * Builds the {@link HttpServerConfig} with properties set.
          *
          * @return the configuration.
@@ -120,7 +153,7 @@ public class HttpServerConfig {
                 throw new IllegalStateException("The httpMessageHandler was not set.");
             }
 
-            return new HttpServerConfig(httpMessageHandler, httpSender, serveZapApi);
+            return new HttpServerConfig(httpMessageHandler, httpSender, serveZapApi, trustManager);
         }
     }
 }

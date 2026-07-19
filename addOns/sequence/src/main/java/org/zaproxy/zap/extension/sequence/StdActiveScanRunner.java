@@ -37,6 +37,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
@@ -77,6 +78,8 @@ public class StdActiveScanRunner extends ZestZapRunner {
     private final ExtensionHistory extHistory;
     private final ExtensionSequence extSeq;
 
+    private final HttpSender httpSender;
+
     @Getter private List<SequenceStepData> steps = new ArrayList<>();
 
     public StdActiveScanRunner(
@@ -104,6 +107,17 @@ public class StdActiveScanRunner extends ZestZapRunner {
         fakeDirectory = new SiteNode(null, HistoryReference.TYPE_SEQUENCE_TEMPORARY, name);
         fakeRoot.add(fakeDirectory);
         step = 0;
+
+        httpSender = new HttpSender(HttpSender.ACTIVE_SCANNER_INITIATOR);
+        httpSender.setUser(user);
+    }
+
+    @Override
+    public ZestResponse send(ZestRequest request) throws IOException {
+        HttpMessage msg = ZestZapUtils.toHttpMessage(request, null);
+        msg.setRequestingUser(httpSender.getUser(msg));
+        httpSender.sendAndReceive(msg, request.isFollowRedirects());
+        return ZestZapUtils.toZestResponse(msg);
     }
 
     @Override

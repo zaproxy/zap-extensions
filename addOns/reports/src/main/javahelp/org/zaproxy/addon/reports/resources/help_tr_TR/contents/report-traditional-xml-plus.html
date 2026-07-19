@@ -6,6 +6,27 @@
 <BODY>
 	<H1>Traditional XML Report with Requests and Responses</H1>
 
+	<H3>Sections</H3>
+
+	<table>
+		<tr>
+			<th align="left">Section</th>
+			<th align="left">ID</th>
+		</tr>
+		<tr>
+			<td>Script Diagnostics</td>
+			<td>scriptdiagnostics</td>
+		</tr>
+		<tr>
+			<td>Screenshots for Script Diagnostics</td>
+			<td>scriptdiagnosticsscreenshots</td>
+		</tr>
+		<tr>
+			<td>Output for Script Diagnostics</td>
+			<td>scriptdiagnosticsoutput</td>
+		</tr>
+	</table>
+
 	<H3>Sample</H3>
 
 	<pre>
@@ -210,6 +231,67 @@
                                 &lt;/statistic&gt;
                         &lt;/statistics&gt;
         &lt;/OWASPZAPReport&gt;                
+</pre>
+
+	Section descriptions are documented in
+	<a href="report-traditional-script-diagnostics.html">Script
+		Diagnostics in Traditional Reports</a> . The XML representation is shown
+	below.
+
+	<h4>Script Diagnostics Section</h4>
+	When enabled, the report includes a
+	<code>scriptDiagnostics</code>
+	element containing
+	<code>run</code>
+	elements:
+
+	<pre>
+        &lt;scriptDiagnostics&gt;
+                &lt;run&gt;
+                        &lt;created&gt;2026-05-13T12:19:50.536360Z&lt;/created&gt;
+                        &lt;outcome&gt;FAILED&lt;/outcome&gt;
+                        &lt;summary&gt;Job: script Chain order: account_check -&gt; nav failed.&lt;/summary&gt;
+                        &lt;scripts&gt;
+                                { … }
+                        &lt;/scripts&gt;
+                &lt;/run&gt;
+        &lt;/scriptDiagnostics&gt;
+</pre>
+	Each script in a run has an order, name, type, and
+	<code>steps</code>
+	element. Steps include the source statement index, line (element type),
+	and
+	<code>outputs</code>
+	:
+
+	<pre>
+                &lt;step&gt;
+                        &lt;sourceStepIndex&gt;13&lt;/sourceStepIndex&gt;
+                        &lt;line&gt;ZestClientElementClick&lt;/line&gt;
+                        &lt;outputs&gt;
+                                &lt;output&gt;
+                                        &lt;kind&gt;ERROR&lt;/kind&gt;
+                                        &lt;message&gt;…&lt;/message&gt;
+                                &lt;/output&gt;
+                        &lt;/outputs&gt;
+                &lt;/step&gt;
+</pre>
+
+	<h4>Output for Script Diagnostics</h4>
+	For example:
+
+	<pre>
+                &lt;output&gt;
+                        &lt;kind&gt;OUTPUT&lt;/kind&gt;
+                        &lt;message&gt;In example_script&lt;/message&gt;
+                &lt;/output&gt;
+</pre>
+
+	<h4>Screenshots for Script Diagnostics</h4>
+	For example:
+
+	<pre>
+        &lt;screenshot&gt;…&lt;/screenshot&gt;
 </pre>
 
 </BODY>

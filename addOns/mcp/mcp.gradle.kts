@@ -7,6 +7,18 @@ zapAddOn {
         author.set("ZAP Dev Team")
         extensions {
             register("org.zaproxy.addon.mcp.ExtensionMcp")
+            register("org.zaproxy.addon.mcp.spider.ExtensionMcpSpider") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.mcp.spider"))
+                }
+                dependencies {
+                    addOns {
+                        register("spider") {
+                            version.set(">=0.20.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -36,6 +48,7 @@ dependencies {
     zapAddOn("network")
     zapAddOn("pscan")
     zapAddOn("reports")
+    zapAddOn("spider")
 
     testImplementation(project(":testutils"))
     testImplementation(project(":addOns:graaljs"))

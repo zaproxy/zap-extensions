@@ -5,5 +5,8 @@ extension: pdf
 sections:
  - alertcount
  - insights
+ - scriptdiagnostics
+ - scriptdiagnosticsscreenshots
+ - scriptdiagnosticsoutput
  - instancecount
  - alertdetails

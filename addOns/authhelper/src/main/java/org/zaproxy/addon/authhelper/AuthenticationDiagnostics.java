@@ -322,6 +322,7 @@ return getSelector(arguments[0], document)
                 screenshotDiag.setDescription(
                         Constant.messages.getString(
                                 "authhelper.auth.method.diags.zest.interaction",
+                                element.getIndex(),
                                 ZestZapUtils.toUiString(element, false)));
                 i += 1;
                 zestScript.getStatements().add(i, screenshotDiag);

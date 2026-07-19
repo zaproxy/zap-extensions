@@ -20,6 +20,7 @@
 package org.zaproxy.addon.network.internal.handlers;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -57,6 +58,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.util.Attribute;
 import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -66,14 +68,17 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.X509TrustManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -520,6 +525,39 @@ class TlsProtocolHandlerUnitTest {
     }
 
     @Test
+    void shouldFireExceptionOnServerSideWhenHandshakeFails() throws Exception {
+        // Given
+        AtomicReference<Throwable> serverException = new AtomicReference<>();
+        CountDownLatch exceptionLatch = new CountDownLatch(1);
+        createServer(
+                ch -> {
+                    ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(certificateService);
+                    ch.attr(ChannelAttributes.TLS_CONFIG).set(tlsConfig);
+                    ch.pipeline()
+                            .addLast(new TlsProtocolHandler())
+                            .addLast(
+                                    new ChannelInboundHandlerAdapter() {
+                                        @Override
+                                        public void exceptionCaught(
+                                                ChannelHandlerContext ctx, Throwable cause) {
+                                            serverException.set(cause);
+                                            exceptionLatch.countDown();
+                                            ctx.close();
+                                        }
+                                    });
+                });
+        int port = server.start(Server.ANY_PORT);
+        createClientTls(port, new AlpnTestHandler(), createAlpnConfig("h0"));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols()).willReturn(List.of("different-protocol"));
+        // When
+        assertThrows(SSLHandshakeException.class, () -> clientTls.connect(port, ""));
+        // Then
+        assertThat(exceptionLatch.await(5, TimeUnit.SECONDS), is(true));
+        assertThat(serverException.get(), is(instanceOf(SSLException.class)));
+    }
+
+    @Test
     void shouldCallPipelineConfiguratorAfterProtocolNegotiation() throws Exception {
         // Given
         int port = server.start(Server.ANY_PORT);
@@ -561,6 +599,93 @@ class TlsProtocolHandlerUnitTest {
         assertThrows(SSLHandshakeException.class, () -> clientTls.connect(port, ""));
         // Then
         verify(pipelineConfigurator, times(0)).configure(any(), any());
+    }
+
+    @Test
+    void shouldCallPipelineConfiguratorWithH2Protocol() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createClientTls(
+                port,
+                new AlpnTestHandler(),
+                createAlpnConfig(TlsUtils.APPLICATION_PROTOCOL_HTTP_2));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols())
+                .willReturn(List.of(TlsUtils.APPLICATION_PROTOCOL_HTTP_2));
+        pipelineConfigurator = mock(PipelineConfigurator.class);
+        // When
+        clientTls.connect(port, "");
+        // Then
+        verify(pipelineConfigurator).configure(any(), eq(TlsUtils.APPLICATION_PROTOCOL_HTTP_2));
+    }
+
+    @Test
+    void shouldRejectConnectionWhenClientAuthRequiredButNoCertPresented() throws Exception {
+        // Given
+        server.stop();
+        serverChannelReady = new CountDownLatch(1);
+        tlsConfig = TlsConfig.withClientAuth(acceptAllTrustManager());
+        createDefaultServer();
+        int port = server.start(Server.ANY_PORT);
+        createClientTls(port);
+        // When / Then
+        assertThrows(Exception.class, () -> clientTls.connect(port, "test"));
+        assertThat(messagesReceived, is(empty()));
+    }
+
+    @Test
+    void shouldAllowConnectionWhenClientAuthRequiredAndCertPresented() throws Exception {
+        // Given
+        server.stop();
+        serverChannelReady = new CountDownLatch(1);
+        tlsConfig = TlsConfig.withClientAuth(acceptAllTrustManager());
+        createDefaultServer();
+        int port = server.start(Server.ANY_PORT);
+        SelfSignedCertificate clientCert = new SelfSignedCertificate();
+        createClientTlsWithCert(port, clientCert);
+        String message = "Sending with client cert.";
+        // When
+        clientTls.connect(port, message);
+        // Then
+        assertThat(messagesReceived, contains(message));
+    }
+
+    private void createClientTlsWithCert(int port, SelfSignedCertificate clientCert) {
+        clientTls =
+                new TextTestClient(
+                        SERVER_ADDRESS,
+                        ch -> {
+                            SslContext sslCtx;
+                            try {
+                                sslCtx =
+                                        SslContextBuilder.forClient()
+                                                .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                                                .keyManager(clientCert.key(), clientCert.cert())
+                                                .protocols(TlsUtils.getSupportedTlsProtocols())
+                                                .build();
+                            } catch (SSLException e) {
+                                throw new RuntimeException(e);
+                            }
+                            SslHandler sslHandler =
+                                    sslCtx.newHandler(ch.alloc(), SERVER_ADDRESS, port);
+                            sslHandler.setHandshakeTimeout(5, TimeUnit.SECONDS);
+                            ch.pipeline().addFirst(sslHandler);
+                        });
+    }
+
+    private static X509TrustManager acceptAllTrustManager() {
+        return new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        };
     }
 
     private void waitForServerChannel() throws InterruptedException {

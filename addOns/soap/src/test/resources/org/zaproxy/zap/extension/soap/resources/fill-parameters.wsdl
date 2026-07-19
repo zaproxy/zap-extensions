@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='utf-8'?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="http://example.org/main"
+                  targetNamespace="http://example.org/main"
+                  name="FillParamsService">
+  <wsdl:types>
+
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="http://example.org/main"
+               elementFormDefault="qualified">
+
+      <xs:complexType name="TypeA">
+        <xs:sequence>
+          <xs:element name="inherited" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="TypeB">
+        <xs:complexContent>
+          <xs:extension base="tns:TypeA">
+            <xs:sequence>
+              <xs:element name="added" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="NamedBox">
+        <xs:sequence>
+          <xs:element name="inner" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:attribute name="globalRefKey" type="xs:string"/>
+
+      <xs:element name="Request">
+        <xs:complexType>
+          <xs:sequence>
+
+            <xs:element name="refOuter" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element xmlns:data="http://example.org/data"
+                              ref="data:refBlock"
+                              minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="branchBox" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:choice minOccurs="1" maxOccurs="1">
+                    <xs:element name="optA" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="optB" type="xs:int"    minOccurs="0" maxOccurs="1"/>
+                  </xs:choice>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="attrBox" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:attribute name="keyA" type="xs:string"/>
+                <xs:attribute name="keyB" type="xs:string"/>
+                <xs:attribute name="fixedKey" type="xs:string" fixed="FIXED-VAL"/>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="enumField" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="EL-1"/>
+                  <xs:enumeration value="EL-2"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="enumBox" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:attribute name="enumKey" use="required">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="EV-1"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="unicodeBox" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:attribute name="codeKey" use="required">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="val-ää"/>
+                      <xs:enumeration value="val-bb"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="boundedInt" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:int">
+                  <xs:minInclusive value="0"/>
+                  <xs:maxInclusive value="100"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="positiveIntField" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:positiveInteger">
+                  <xs:maxInclusive value="100"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="negativeIntField" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:negativeInteger">
+                  <xs:minInclusive value="-100"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="nonNegativeIntField" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:nonNegativeInteger">
+                  <xs:maxInclusive value="100"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="nonPositiveIntField" minOccurs="0" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:nonPositiveInteger">
+                  <xs:minInclusive value="-100"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <!-- xs:token is a string-derived built-in; must produce a param with a non-empty hint -->
+            <xs:element name="tokenField" type="xs:token" minOccurs="0" maxOccurs="1"/>
+
+            <!-- No type attribute: parser falls back to xs:string / paramValue default -->
+            <xs:element name="plainField" minOccurs="0" maxOccurs="1"/>
+
+            <xs:element name="namedBox" type="tns:NamedBox" minOccurs="0" maxOccurs="1"/>
+
+            <xs:element name="block" type="tns:TypeB" minOccurs="0" maxOccurs="1"/>
+
+            <xs:element name="groupOuter" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element xmlns:data="http://example.org/data"
+                              ref="data:group"
+                              minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="attrWrapper" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:attribute name="plainKey" type="xs:string"/>
+                <xs:attribute name="äKey"     type="xs:string"/>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="attrRefWrapper" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:attribute ref="tns:globalRefKey"/>
+                <xs:attribute name="inlineKey" type="xs:string"/>
+              </xs:complexType>
+            </xs:element>
+
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="RequestResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ack" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+    </xs:schema>
+
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="http://example.org/data"
+               elementFormDefault="qualified">
+
+      <xs:element name="refBlock">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="leafField" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="group">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="data:metaBlock" minOccurs="0" maxOccurs="1"
+                        xmlns:data="http://example.org/data"/>
+            <xs:element name="leafField" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="metaBlock">
+        <xs:complexType>
+          <xs:attribute name="idKey"   type="xs:string"/>
+          <xs:attribute name="nameKey" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+
+    </xs:schema>
+
+  </wsdl:types>
+
+  <wsdl:message name="RequestMsg">
+    <wsdl:part name="parameters" element="tns:Request"/>
+  </wsdl:message>
+  <wsdl:message name="RequestResponseMsg">
+    <wsdl:part name="parameters" element="tns:RequestResponse"/>
+  </wsdl:message>
+
+  <wsdl:portType name="FillParamsPortType">
+    <wsdl:operation name="Invoke">
+      <wsdl:input  message="tns:RequestMsg"/>
+      <wsdl:output message="tns:RequestResponseMsg"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="FillParamsBinding" type="tns:FillParamsPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Invoke">
+      <soap:operation soapAction="Invoke"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="FillParamsService">
+    <wsdl:port name="FillParamsPort" binding="tns:FillParamsBinding">
+      <soap:address location="http://localhost:8080/fill-params"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

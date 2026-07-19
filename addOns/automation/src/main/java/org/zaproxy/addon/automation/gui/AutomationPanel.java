@@ -666,6 +666,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     public void setCurrentPlan(AutomationPlan plan) {
         currentPlan = plan;
         getTreeModel().setPlan(currentPlan);
+        packPlanTableColumns();
         getRunPlanButton()
                 .setEnabled(
                         currentPlan != null
@@ -746,6 +747,14 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         getRemoveJobButton().setEnabled(false);
         getAddTestButton().setEnabled(false);
         getRemoveTestButton().setEnabled(false);
+    }
+
+    private void packPlanTableColumns() {
+        if (currentPlan == null) {
+            return;
+        }
+        // Allow the tree table to reflect the new plan before resizing columns.
+        EventQueue.invokeLater(tree::packAll);
     }
 
     private PlanTreeTableModel getTreeModel() {

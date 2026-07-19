@@ -72,7 +72,7 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
 
         this.messageProcessors =
                 messageProcessors.isEmpty()
-                        ? Collections.<HttpFuzzerMessageProcessor>emptyList()
+                        ? Collections.emptyList()
                         : Collections.synchronizedList(new ArrayList<>(messageProcessors));
         currentSession = Model.getSingleton().getSession();
 

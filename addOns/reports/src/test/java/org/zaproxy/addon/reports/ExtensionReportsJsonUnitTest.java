@@ -22,6 +22,7 @@ package org.zaproxy.addon.reports;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -44,6 +45,8 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -51,7 +54,10 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.automation.JobResultData;
+import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.zap.extension.alert.AlertNode;
+import org.zaproxy.zap.extension.scripts.internal.db.ScriptRunRecorder;
+import org.zaproxy.zap.extension.scripts.report.ScriptRunReportData;
 import org.zaproxy.zap.extension.sequence.StdActiveScanRunner.SequenceStepData;
 import org.zaproxy.zap.extension.sequence.automation.SequenceAScanJobResultData;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
@@ -747,15 +753,214 @@ class ExtensionReportsJsonUnitTest extends TestUtils {
 
         JSONArray alerts = site.getJSONObject(0).getJSONArray("alerts");
         assertThat(alerts.size(), is(equalTo(1)));
-        checkAlert(site.getJSONObject(0));
         JSONArray instances = alerts.getJSONObject(0).getJSONArray("instances");
         checkJsonAlertInstanceAndMessages(instances, 0);
-        checkJsonAlertInstanceAndMessages(instances, 0);
+        checkJsonAlertInstanceAndMessages(instances, 1);
 
         // tags are not included in non plus report
         JSONArray tags = alerts.getJSONObject(0).getJSONArray("tags");
         assertThat(tags.size(), is(equalTo(1)));
         assertThat(tags.getJSONObject(0).getString("tag"), is(equalTo("tagkey")));
         assertThat(tags.getJSONObject(0).getString("link"), is(equalTo("tagvalue")));
+    }
+
+    @Test
+    void shouldRenderStoppingInsightInJsonReport() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json");
+        File f = File.createTempFile("insights-stop-traditional-json", template.getExtension());
+        Insight stopping =
+                new Insight(
+                        Insight.Level.HIGH,
+                        Insight.Reason.EXCEEDED_HIGH,
+                        "https://www.example.com",
+                        "insight.auth.failure",
+                        "Auth failure",
+                        75,
+                        true);
+
+        // When
+        File r = ReportTestUtils.generateReportWithInsights(template, f, stopping);
+        String report = new String(Files.readAllBytes(r.toPath()));
+        JSONObject json = JSONObject.fromObject(report);
+
+        // Then
+        JSONObject stoppingInsight = json.getJSONObject("stoppingInsight");
+        assertThat(stoppingInsight.getString("key"), is(equalTo("insight.auth.failure")));
+        assertThat(stoppingInsight.getString("site"), is(equalTo("https://www.example.com")));
+        assertThat(stoppingInsight.getLong("statistic"), is(equalTo(75L)));
+    }
+
+    @Test
+    void shouldNotMarkSystemicWhenInstancesBelowThresholdEvenWithSystemicTag() throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile("traditional-json");
+        File f = File.createTempFile("systemic-tag-json", template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithSystemicTaggedAlert(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+        JSONArray alerts = site.getJSONObject(0).getJSONArray("alerts");
+
+        // Then
+        assertThat(alerts.getJSONObject(0).getBoolean("systemic"), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-json", "traditional-json-plus"})
+    void shouldGenerateTraditionalJsonWithScriptDiagnostics(String templateName) throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f = File.createTempFile(templateName + "-script-diagnostics", template.getExtension());
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f);
+
+        // Then
+        JSONObject json = readJsonReport(r);
+        ReportTestUtils.ScriptDiagnosticsAssertions.assertJsonScriptDiagnostics(json);
+        assertThat(json.getJSONArray("site").size(), is(equalTo(0)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-json", "traditional-json-plus"})
+    void shouldEscapeQuotesAndSlashesInScriptDiagnosticsJson(String templateName) throws Exception {
+        // Given
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f =
+                File.createTempFile(
+                        templateName + "-script-diagnostics-escape", template.getExtension());
+        List<ScriptRunReportData.Run> runs = ReportTestUtils.ScriptDiagnosticsEscapeData.runs(true);
+
+        // When
+        File r = ReportTestUtils.generateReportWithScriptDiagnostics(template, f, runs);
+
+        // Then — must parse as JSON and round-trip string values ([[${...}]] encoding)
+        JSONObject run = scriptDiagnosticsRun(r, 0);
+        ReportTestUtils.ScriptDiagnosticsAssertions.assertJsonRunStructure(run);
+        assertThat(
+                run.getString("created"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.CREATED)));
+        assertThat(
+                run.getString("outcome"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.OUTCOME)));
+        assertThat(
+                run.getString("summary"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.SUMMARY)));
+        JSONObject script = run.getJSONArray("scripts").getJSONObject(0);
+        assertThat(
+                script.getString("scriptName"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.SCRIPT_NAME)));
+        assertThat(
+                script.getString("scriptType"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.SCRIPT_TYPE)));
+        JSONObject step = script.getJSONArray("steps").getJSONObject(0);
+        assertThat(
+                step.getString("line"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.LINE)));
+        assertThat(
+                step.getString("screenshot"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.SCREENSHOT)));
+        JSONArray outputs = step.getJSONArray("outputs");
+        assertThat(outputs.size(), is(equalTo(2)));
+        assertThat(
+                outputs.getJSONObject(0).getString("kind"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.ERROR_KIND)));
+        assertThat(
+                outputs.getJSONObject(0).getString("message"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.ERROR_MESSAGE)));
+        assertThat(
+                outputs.getJSONObject(1).getString("kind"),
+                is(equalTo(ScriptRunRecorder.OUTPUT_KIND_OUTPUT)));
+        assertThat(
+                outputs.getJSONObject(1).getString("message"),
+                is(equalTo(ReportTestUtils.ScriptDiagnosticsEscapeData.OUTPUT_MESSAGE)));
+    }
+
+    private static JSONObject readJsonReport(File reportFile) throws IOException {
+        return JSONObject.fromObject(new String(Files.readAllBytes(reportFile.toPath())));
+    }
+
+    private static JSONObject scriptDiagnosticsRun(File report, int runIndex) throws IOException {
+        return readJsonReport(report)
+                .getJSONObject("scriptDiagnostics")
+                .getJSONArray("runs")
+                .getJSONObject(runIndex);
+    }
+
+    private static JSONObject firstScriptFromRun(File report, int runIndex) throws IOException {
+        return scriptDiagnosticsRun(report, runIndex).getJSONArray("scripts").getJSONObject(0);
+    }
+
+    private static JSONObject firstStepFromRun(File report, int runIndex) throws IOException {
+        return firstScriptFromRun(report, runIndex).getJSONArray("steps").getJSONObject(0);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-json", "traditional-json-plus"})
+    void shouldOmitScriptDiagnosticStdoutWhenOutputSectionDisabled(String templateName)
+            throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f = File.createTempFile(templateName + "-no-script-stdout", template.getExtension());
+
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        true,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithStdoutAndError()),
+                        "scriptdiagnosticsoutput");
+        JSONObject step = firstStepFromRun(r, 0);
+        JSONArray outputs = step.getJSONArray("outputs");
+        assertThat(outputs.size(), is(equalTo(1)));
+        assertThat(outputs.getJSONObject(0).getString("kind"), is(equalTo("ERROR")));
+        assertThat(outputs.getJSONObject(0).getString("message"), is(equalTo("boom")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-json", "traditional-json-plus"})
+    void shouldOmitScriptDiagnosticScreenshotWhenScreenshotsSectionDisabled(String templateName)
+            throws Exception {
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f =
+                File.createTempFile(
+                        templateName + "-no-script-screenshots", template.getExtension());
+
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        true,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithScreenshot()),
+                        "scriptdiagnosticsscreenshots");
+        JSONObject step = firstStepFromRun(r, 0);
+        assertThat(step.containsKey("screenshot"), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"traditional-json", "traditional-json-plus"})
+    void shouldOmitScriptDiagnosticsWhenSectionDisabled(String templateName) throws Exception {
+        // Given — main section off; optional sections (e.g. screenshots) still enabled
+        Template template = ReportTestUtils.getTemplateFromYamlFile(templateName);
+        File f =
+                File.createTempFile(
+                        templateName + "-no-script-diagnostics-section", template.getExtension());
+        List<String> sections = new ArrayList<>(template.getSections());
+        sections.remove("scriptdiagnostics");
+        assertThat(sections, hasItem("scriptdiagnosticsscreenshots"));
+        assertThat(sections, hasItem("scriptdiagnosticsoutput"));
+
+        // When
+        File r =
+                ReportTestUtils.generateReportWithScriptDiagnostics(
+                        template,
+                        f,
+                        false,
+                        List.of(ReportTestUtils.defaultScriptDiagnosticRunWithScreenshot()));
+        // Then
+        JSONObject json = readJsonReport(r);
+        assertThat(json.containsKey("scriptDiagnostics"), is(equalTo(false)));
     }
 }

@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 
-public interface PayloadProcessor<T extends Payload> {
+public interface PayloadProcessor {
 
     /**
      * Processes the given {@code payload}.
@@ -31,7 +31,7 @@ public interface PayloadProcessor<T extends Payload> {
      * @throws PayloadProcessingException if an error occurred while processing the payload.
      * @see Payload#getValue()
      */
-    T process(T payload) throws PayloadProcessingException;
+    Payload process(Payload payload) throws PayloadProcessingException;
 
-    PayloadProcessor<T> copy();
+    PayloadProcessor copy();
 }

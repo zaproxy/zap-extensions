@@ -5,6 +5,10 @@ extension: html
 sections:
  - alertcount
  - insights
+ - scriptdiagnostics
+ - scriptdiagnosticsscreenshots
+ - scriptdiagnosticsoutput
+ - sequencedetails
  - instancecount
  - alertdetails
- - sequencedetails
+ 

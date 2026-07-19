@@ -29,7 +29,10 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
+import org.zaproxy.addon.commonlib.ui.GenerateFixPromptMenu;
+import org.zaproxy.addon.commonlib.ui.PopupMenuTreeTools;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
+import org.zaproxy.addon.commonlib.ui.SitesTreeInfoMenu;
 import org.zaproxy.addon.commonlib.ui.TabbedOutputPanel;
 
 public class ExtensionCommonlib extends ExtensionAdaptor {
@@ -108,9 +111,15 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
 
     @Override
     public void hook(ExtensionHook extensionHook) {
+        CommonlibParam commonlibParam = new CommonlibParam();
+        extensionHook.addOptionsParamSet(commonlibParam);
+
         if (hasView()) {
             extensionHook.getHookView().addStatusPanel(getProgressPanel());
             getView().setOutputPanel(new TabbedOutputPanel());
+            extensionHook.getHookMenu().addPopupMenuItem(new GenerateFixPromptMenu(commonlibParam));
+            extensionHook.getHookMenu().addPopupMenuItem(new SitesTreeInfoMenu());
+            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuTreeTools());
         }
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
     }

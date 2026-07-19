@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.EmptyPayloadGenerator;
+import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
@@ -34,9 +35,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultEmptyPayloadGenera
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
-public class DefaultEmptyPayloadGeneratorUIHandler
-        implements PayloadGeneratorUIHandler<
-                DefaultPayload, DefaultEmptyPayloadGenerator, DefaultEmptyPayloadGeneratorUI> {
+public class DefaultEmptyPayloadGeneratorUIHandler implements PayloadGeneratorUIHandler {
 
     private static final String PAYLOAD_GENERATOR_NAME =
             Constant.messages.getString("fuzz.payloads.generator.empty.name");
@@ -63,8 +62,7 @@ public class DefaultEmptyPayloadGeneratorUIHandler
         return new DefaultEmptyPayloadGeneratorUIPanel();
     }
 
-    public static class DefaultEmptyPayloadGeneratorUI
-            implements PayloadGeneratorUI<DefaultPayload, DefaultEmptyPayloadGenerator> {
+    public static class DefaultEmptyPayloadGeneratorUI implements PayloadGeneratorUI {
 
         private final String value;
         private final int repetitions;
@@ -83,11 +81,6 @@ public class DefaultEmptyPayloadGeneratorUIHandler
         }
 
         @Override
-        public Class<DefaultEmptyPayloadGenerator> getPayloadGeneratorClass() {
-            return DefaultEmptyPayloadGenerator.class;
-        }
-
-        @Override
         public String getName() {
             return PAYLOAD_GENERATOR_NAME;
         }
@@ -103,19 +96,17 @@ public class DefaultEmptyPayloadGeneratorUIHandler
         }
 
         @Override
-        public DefaultEmptyPayloadGenerator getPayloadGenerator() {
+        public PayloadGenerator getPayloadGenerator() {
             return new DefaultEmptyPayloadGenerator(new DefaultPayload(value), repetitions);
         }
 
         @Override
-        public DefaultEmptyPayloadGeneratorUI copy() {
+        public PayloadGeneratorUI copy() {
             return this;
         }
     }
 
-    public static class DefaultEmptyPayloadGeneratorUIPanel
-            implements PayloadGeneratorUIPanel<
-                    DefaultPayload, DefaultEmptyPayloadGenerator, DefaultEmptyPayloadGeneratorUI> {
+    public static class DefaultEmptyPayloadGeneratorUIPanel implements PayloadGeneratorUIPanel {
 
         private static final String NUMBER_REPETITIONS_FIELD_LABEL =
                 Constant.messages.getString("fuzz.payloads.generator.empty.repetitions.label");
@@ -168,8 +159,13 @@ public class DefaultEmptyPayloadGeneratorUIHandler
         }
 
         @Override
-        public void setPayloadGeneratorUI(DefaultEmptyPayloadGeneratorUI payloadGeneratorUI) {
-            getRepetitionsNumberSpinner().setValue(payloadGeneratorUI.getRepetitions());
+        public void setPayloadGeneratorUI(PayloadGeneratorUI payloadGeneratorUI) {
+            if (!(payloadGeneratorUI instanceof DefaultEmptyPayloadGeneratorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected DefaultEmptyPayloadGeneratorUI but got: "
+                                + payloadGeneratorUI.getClass());
+            }
+            getRepetitionsNumberSpinner().setValue(ui.getRepetitions());
         }
 
         @Override
@@ -194,7 +190,7 @@ public class DefaultEmptyPayloadGeneratorUIHandler
         }
     }
 
-    public static class DefaultEmptyPayloadGenerator extends EmptyPayloadGenerator<DefaultPayload> {
+    public static class DefaultEmptyPayloadGenerator extends EmptyPayloadGenerator {
 
         public DefaultEmptyPayloadGenerator(DefaultPayload value, int numberOfPayloads) {
             super(value, numberOfPayloads);

@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Client Side Integration - Client Spider Options
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Client Side Integration - Client Spider Options</H1>
+
+The Client Spider Options panel (available under Options / Client Integration / Client Spider) allows you to configure the default settings used by the <a href="spider.html">Client Spider</a>.
+
+<p>
+These defaults are used when starting a new spider scan and are also pre-populated in the <a href="spider.html">Client Spider dialog</a>.
+
+<h2>Options</h2>
+
+<ul>
+<li><b>Browser</b> - The browser the spider uses to crawl the target application.</li>
+<li><b>Number of Browser Windows to Open</b> - The number of browser windows the spider uses in parallel. More windows increases speed but uses more memory.</li>
+<li><b>Maximum Crawl Depth</b> - The maximum depth the spider will crawl to. 0 means unlimited.</li>
+<li><b>Maximum Children</b> - The maximum number of child nodes to add under any single node in the tree. 0 means unlimited.</li>
+<li><b>Initial Page Load Time</b> - The number of seconds to wait after the initial URL is loaded. Default: 0.</li>
+<li><b>Page Load Time</b> - The number of seconds to wait after each subsequent URL is loaded. Default: 0.</li>
+<li><b>Action Wait Time</b> - The number of seconds to wait after performing an action on the browser (e.g. opening a URL, clicking a button, submitting a form). Default: 0.</li>
+<li><b>Shutdown Time</b> - The number of seconds to wait for new events after the last action before the spider shuts down. Default: 5.</li>
+<li><b>Maximum Duration</b> - The maximum number of minutes the spider is allowed to run. 0 means unlimited.</li>
+<li><b>Scope Check</b> - Controls how the spider handles requests to out-of-scope resources:
+	<ul>
+		<li><b>Flexible</b> - Allows out-of-scope resources (e.g. third-party scripts and stylesheets) to pass through the proxy so the browser can load them, but does not crawl them. This is the default.</li>
+		<li><b>Strict</b> - Blocks all out-of-scope resources at the proxy. The browser will only be able to load resources that are in scope.</li>
+	</ul>
+</li>
+<li><b>Logout Avoidance</b> - When enabled, the spider will avoid clicking elements that are likely to log the user out.</li>
+</ul>
+
+<p>When both <b>Page Load Time</b> and <b>Action Wait Time</b> are set to 0, the spider uses an adaptive wait strategy instead of fixed delays. The adaptive strategy monitors in-scope network traffic and waits until requests quiesce, up to a hard limit of 15 seconds. It applies a longer quiesce threshold (2.5 seconds) the first time a URL is visited, and shorter thresholds for subsequent visits.
+
+</BODY>
+</HTML>

@@ -30,7 +30,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.RegexPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
@@ -41,9 +41,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
-public class RegexPayloadGeneratorUIHandler
-        implements PayloadGeneratorUIHandler<
-                DefaultPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
+public class RegexPayloadGeneratorUIHandler implements PayloadGeneratorUIHandler {
 
     private static final String PAYLOAD_GENERATOR_NAME =
             Constant.messages.getString("fuzz.payloads.generator.regex.name");
@@ -68,8 +66,7 @@ public class RegexPayloadGeneratorUIHandler
         return new RegexPayloadGeneratorUIPanel();
     }
 
-    public static class RegexPayloadGeneratorUI
-            implements PayloadGeneratorUI<DefaultPayload, RegexPayloadGenerator> {
+    public static class RegexPayloadGeneratorUI implements PayloadGeneratorUI {
 
         private final String regex;
         private final int maxPayloads;
@@ -98,11 +95,6 @@ public class RegexPayloadGeneratorUIHandler
 
         public boolean isRandomOrder() {
             return randomOrder;
-        }
-
-        @Override
-        public Class<RegexPayloadGenerator> getPayloadGeneratorClass() {
-            return RegexPayloadGenerator.class;
         }
 
         @Override
@@ -148,8 +140,7 @@ public class RegexPayloadGeneratorUIHandler
     }
 
     public static class RegexPayloadGeneratorUIPanel
-            extends AbstractPersistentPayloadGeneratorUIPanel<
-                    DefaultPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
+            extends AbstractPersistentPayloadGeneratorUIPanel {
 
         private static final int DEFAULT_MAX_PAYLOADS = 1000;
 
@@ -323,7 +314,7 @@ public class RegexPayloadGeneratorUIHandler
             }
             StringBuilder contents = new StringBuilder();
             try {
-                try (ResettableAutoCloseableIterator<DefaultPayload> payloads =
+                try (ResettableAutoCloseableIterator<Payload> payloads =
                         payloadGenerator.iterator()) {
                     for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext(); i++) {
                         if (contents.length() > 0) {
@@ -353,11 +344,16 @@ public class RegexPayloadGeneratorUIHandler
         }
 
         @Override
-        public void setPayloadGeneratorUI(RegexPayloadGeneratorUI payloadGeneratorUI) {
-            oldGenerator = payloadGeneratorUI;
-            getRegexTextField().setText(payloadGeneratorUI.getRegex());
-            getMaxPayloadsNumberSpinner().setValue(payloadGeneratorUI.getMaxPayloads());
-            getRandomOrderCheckbox().setSelected(payloadGeneratorUI.isRandomOrder());
+        public void setPayloadGeneratorUI(PayloadGeneratorUI payloadGeneratorUI) {
+            if (!(payloadGeneratorUI instanceof RegexPayloadGeneratorUI ui)) {
+                throw new IllegalArgumentException(
+                        "Expected RegexPayloadGeneratorUI but got: "
+                                + payloadGeneratorUI.getClass());
+            }
+            oldGenerator = ui;
+            getRegexTextField().setText(ui.getRegex());
+            getMaxPayloadsNumberSpinner().setValue(ui.getMaxPayloads());
+            getRandomOrderCheckbox().setSelected(ui.isRandomOrder());
             setPreviewAndSaveButtonsEnabled(true);
         }
 

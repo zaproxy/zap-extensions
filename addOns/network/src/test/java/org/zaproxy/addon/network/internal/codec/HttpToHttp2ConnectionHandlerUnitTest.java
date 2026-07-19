@@ -26,6 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -161,6 +162,21 @@ class HttpToHttp2ConnectionHandlerUnitTest {
             client.close();
             client = null;
         }
+    }
+
+    @Test
+    void shouldReturnSchemeFromCreate() {
+        // Given
+        DefaultHttp2Connection connection = new DefaultHttp2Connection(false);
+        // When
+        HttpToHttp2ConnectionHandler handler =
+                HttpToHttp2ConnectionHandler.create(
+                        new InboundHttp2ToHttpAdapter(connection),
+                        null,
+                        connection,
+                        HttpHeader.HTTPS);
+        // Then
+        assertThat(handler.getDefaultScheme(), is(equalTo(HttpHeader.HTTPS)));
     }
 
     @Test
@@ -348,6 +364,43 @@ class HttpToHttp2ConnectionHandlerUnitTest {
         HttpMessage receivedResponse = responses.get(0);
         assertResponseHeader(
                 receivedResponse, "HTTP/2 200", "header-a: 1", "header-b: 2", "content-length: 0");
+        assertResponseBody(receivedResponse, "");
+        assertMessageProperties(receivedResponse, 3);
+    }
+
+    @Test
+    void shouldWriteMultipleRequestsWithIncrementingStreamIds() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createRequestHeader("GET http://127.0.0.1:" + port + "/ HTTP/2");
+        HttpMessage msg2 = new HttpMessage();
+        msg2.setRequestHeader(new HttpRequestHeader("GET http://127.0.0.1:" + port + "/ HTTP/2"));
+        // When
+        Channel channel = client.connect(port, msg);
+        waitForResponse();
+        responseReceived = new CountDownLatch(1);
+        channel.writeAndFlush(msg2).sync();
+        waitForResponse();
+        // Then
+        assertThat(requests, hasSize(2));
+        assertThat(responses, hasSize(2));
+        assertMessageProperties(requests.get(0), 3);
+        assertMessageProperties(requests.get(1), 5);
+    }
+
+    @Test
+    void shouldWriteResponseWith204Status() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createRequestHeader("GET http://127.0.0.1:" + port + "/ HTTP/2");
+        responseProducer = msg -> msg.setResponseHeader("HTTP/2 204");
+        // When
+        client.send(port, msg);
+        // Then
+        waitForResponse();
+        assertThat(responses, hasSize(1));
+        HttpMessage receivedResponse = responses.get(0);
+        assertResponseHeader(receivedResponse, "HTTP/2 204", "content-length: 0");
         assertResponseBody(receivedResponse, "");
         assertMessageProperties(receivedResponse, 3);
     }

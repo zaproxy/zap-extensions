@@ -23,15 +23,15 @@ import com.github.curiousoddman.rgxgen.RgxGen;
 import com.github.curiousoddman.rgxgen.iterators.StringIterator;
 import com.github.curiousoddman.rgxgen.parsing.dflt.RgxGenParseException;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 /**
- * A {@code StringPayloadGenerator} that generates {@code DefaultPayload}s based on a regular
- * expression.
+ * A {@code PayloadGenerator} that generates {@code DefaultPayload}s based on a regular expression.
  *
  * @see DefaultPayload
  */
-public class RegexPayloadGenerator implements StringPayloadGenerator {
+public class RegexPayloadGenerator implements PayloadGenerator {
 
     /**
      * Default limit for calculation of number of generated payloads of an infinite regular
@@ -80,7 +80,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
     }
 
     @Override
-    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
+    public ResettableAutoCloseableIterator<Payload> iterator() {
         return new RegexIterator(generator, maxPayloads, randomOrder);
     }
 
@@ -226,7 +226,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         }
     }
 
-    private static class RegexIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
+    private static class RegexIterator implements ResettableAutoCloseableIterator<Payload> {
 
         private final RgxGen generator;
         private final int maxPayloads;
@@ -254,7 +254,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public DefaultPayload next() {
+        public Payload next() {
             count++;
             if (randomOrder) {
                 return new DefaultPayload(generator.generate());

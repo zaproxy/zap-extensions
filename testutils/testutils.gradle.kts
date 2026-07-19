@@ -18,14 +18,21 @@ tasks.withType<JavaCompile>().configureEach {
 
 dependencies {
     compileOnly(libs.testutils.zap)
+
+    implementation(project(":testutilscore"))
     implementation(project(":addOns:network"))
     implementation(libs.testutils.httpclient5)
 
-    api(libs.test.hamcrest)
-    api(libs.test.junit.jupiter)
-    runtimeOnly(libs.test.junit.platformLauncher)
-    api(libs.test.mockito.junit.jupiter)
-
     api(libs.testutils.nanohttpd.webserver)
     api(libs.testutils.nanohttpd.websocket)
+}
+
+tasks.withType<Test>().configureEach {
+    systemProperties.putAll(
+        mapOf(
+            "wdm.chromeDriverVersion" to "108.0.5359.71",
+            "wdm.geckoDriverVersion" to "0.36.0",
+            "wdm.forceCache" to "true",
+        ),
+    )
 }

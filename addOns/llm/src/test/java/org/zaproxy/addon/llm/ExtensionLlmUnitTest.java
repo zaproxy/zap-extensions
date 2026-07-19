@@ -161,6 +161,23 @@ public class ExtensionLlmUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReturnNoCommsIfProviderHasNoModels() {
+        // Given
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "claude", LlmProvider.CLAUDE, "key", "", List.of())));
+        ext.getOptions().setDefaultProviderName("claude");
+
+        // When
+        LlmCommunicationService comms = ext.getCommunicationService("KEY1", null);
+
+        // Then
+        assertThat(comms, is(nullValue()));
+    }
+
+    @Test
     void shouldReturnDefaultProvider() {
         // Given
         ext.getOptions()

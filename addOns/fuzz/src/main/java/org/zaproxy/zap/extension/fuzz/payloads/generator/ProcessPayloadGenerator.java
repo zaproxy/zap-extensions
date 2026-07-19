@@ -30,9 +30,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class ProcessPayloadGenerator implements StringPayloadGenerator {
+public class ProcessPayloadGenerator implements PayloadGenerator {
 
     private static final Logger LOGGER = LogManager.getLogger(ProcessPayloadGenerator.class);
 
@@ -42,12 +43,7 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
 
     public ProcessPayloadGenerator(
             Path command, int numberOfInvocations, boolean failOnErrorOutput) {
-        this(
-                command,
-                Collections.<String>emptyList(),
-                null,
-                numberOfInvocations,
-                failOnErrorOutput);
+        this(command, Collections.emptyList(), null, numberOfInvocations, failOnErrorOutput);
     }
 
     public ProcessPayloadGenerator(
@@ -57,7 +53,7 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
             boolean failOnErrorOutput) {
         this(
                 command,
-                Collections.<String>emptyList(),
+                Collections.emptyList(),
                 workingDirectory,
                 numberOfInvocations,
                 failOnErrorOutput);
@@ -110,7 +106,7 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
     }
 
     @Override
-    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
+    public ResettableAutoCloseableIterator<Payload> iterator() {
         return new ApplicationPayloadIterator(
                 numberOfInvocations, processBuilder, failOnErrorOutput);
     }
@@ -121,7 +117,7 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
     }
 
     private static class ApplicationPayloadIterator
-            implements ResettableAutoCloseableIterator<DefaultPayload> {
+            implements ResettableAutoCloseableIterator<Payload> {
 
         private final int numberOfInvocations;
         private final ProcessBuilder processBuilder;
@@ -141,7 +137,7 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public DefaultPayload next() {
+        public Payload next() {
             count++;
             return new DefaultPayload(invokeProcess());
         }

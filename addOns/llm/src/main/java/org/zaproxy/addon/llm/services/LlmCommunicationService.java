@@ -25,8 +25,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.anthropic.AnthropicChatModel;
 import dev.langchain4j.model.azure.AzureOpenAiChatModel;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -61,21 +63,21 @@ public class LlmCommunicationService {
     protected static final String AI_REVIEWED_TAG_KEY = "AI-Reviewed";
 
     private LlmAssistant llmAssistant;
-    private LlmResponseHandler listener;
+    private ChatModelListener listener;
     @Getter private LlmProviderConfig pconf;
     @Getter private String modelName;
     private Requestor requestor;
 
-    private static ChatModel model;
+    private ChatModel model;
     private static ObjectMapper objectMapper = new ObjectMapper();
     private static ObjectWriter prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
     private ChatMemory chatMemory;
 
     public LlmCommunicationService(
-            LlmProviderConfig pconf, String modelName, String outputTabName) {
+            LlmProviderConfig pconf, String modelName, ChatModelListener listener) {
         this.pconf = pconf;
         this.modelName = modelName;
-        listener = new LlmResponseHandler(outputTabName);
+        this.listener = listener;
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
         model = buildModel();
 
@@ -102,7 +104,7 @@ public class LlmCommunicationService {
                             .endpoint(pconf.getEndpoint())
                             .temperature(0.3)
                             .responseFormat(ResponseFormat.JSON)
-                            .listeners(List.of(listener))
+                            .listeners(listener != null ? List.of(listener) : List.of())
                             .logRequestsAndResponses(true)
                             .build();
             case OLLAMA ->
@@ -110,7 +112,7 @@ public class LlmCommunicationService {
                             .baseUrl(pconf.getEndpoint())
                             .modelName(modelName)
                             .temperature(0.3)
-                            .listeners(List.of(listener))
+                            .listeners(listener != null ? List.of(listener) : List.of())
                             .logRequests(true)
                             .logResponses(true)
                             .build();
@@ -124,7 +126,7 @@ public class LlmCommunicationService {
                         .baseUrl(baseUrl)
                         .modelName(modelName)
                         .temperature(0.3)
-                        .listeners(List.of(listener))
+                        .listeners(listener != null ? List.of(listener) : List.of())
                         .build();
             }
             case GOOGLE_GEMINI ->
@@ -132,7 +134,16 @@ public class LlmCommunicationService {
                             .apiKey(pconf.getApiKey())
                             .modelName(modelName)
                             .temperature(0.3)
-                            .listeners(List.of(listener))
+                            .listeners(listener != null ? List.of(listener) : List.of())
+                            .logRequests(true)
+                            .logResponses(true)
+                            .build();
+            case CLAUDE ->
+                    AnthropicChatModel.builder()
+                            .apiKey(pconf.getApiKey())
+                            .modelName(modelName)
+                            .temperature(0.3)
+                            .listeners(listener != null ? List.of(listener) : List.of())
                             .logRequests(true)
                             .logResponses(true)
                             .build();
@@ -213,9 +224,5 @@ public class LlmCommunicationService {
 
     public static String mapJsonObject(Map<String, Object> payload) throws JsonProcessingException {
         return prettyWriter.writeValueAsString(payload);
-    }
-
-    public void switchToOutputTab() {
-        this.listener.setFocus();
     }
 }

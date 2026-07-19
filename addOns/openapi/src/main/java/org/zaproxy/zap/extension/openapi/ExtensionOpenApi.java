@@ -152,7 +152,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             if (openApiSpecs != null && !openApiSpecs.isEmpty()) {
                 for (TableOpenApiReadResult spec : openApiSpecs) {
                     importOpenApiDefinition(
-                            spec.definition, spec.target, null, false, null, contextId, true);
+                            spec.definition, spec.target, null, false, null, contextId, true, 0);
                 }
             }
         } catch (DatabaseException e) {
@@ -251,6 +251,16 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public OpenApiResults importOpenApiDefinitionV2(
             final URI uri, final String targetUrl, boolean initViaUi, int contextId, User user) {
+        return importOpenApiDefinitionV2(uri, targetUrl, initViaUi, contextId, user, 0);
+    }
+
+    public OpenApiResults importOpenApiDefinitionV2(
+            final URI uri,
+            final String targetUrl,
+            boolean initViaUi,
+            int contextId,
+            User user,
+            int maxMessages) {
         OpenApiResults results = new OpenApiResults();
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         requestor.setUser(user);
@@ -268,7 +278,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             initViaUi,
                             requestor,
                             contextId,
-                            false));
+                            false,
+                            maxMessages));
         } catch (IOException e) {
             if (initViaUi) {
                 ThreadUtils.invokeAndWaitHandled(
@@ -347,6 +358,16 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public OpenApiResults importOpenApiDefinitionV2(
             final File file, final String targetUrl, boolean initViaUi, int contextId, User user) {
+        return importOpenApiDefinitionV2(file, targetUrl, initViaUi, contextId, user, 0);
+    }
+
+    public OpenApiResults importOpenApiDefinitionV2(
+            final File file,
+            final String targetUrl,
+            boolean initViaUi,
+            int contextId,
+            User user,
+            int maxMessages) {
         OpenApiResults results = new OpenApiResults();
         try {
             Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
@@ -389,7 +410,14 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
             List<String> errors =
                     importOpenApiDefinition(
-                            openApiString, targetUrl, null, initViaUi, requestor, contextId, false);
+                            openApiString,
+                            targetUrl,
+                            null,
+                            initViaUi,
+                            requestor,
+                            contextId,
+                            false,
+                            maxMessages);
             results.setErrors(errors);
         } catch (IOException e) {
             if (initViaUi) {
@@ -412,7 +440,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             boolean initViaUi,
             final Requestor requestor,
             int contextId,
-            boolean existsInDb) {
+            boolean existsInDb,
+            int maxMessages) {
         if (defn == null || defn.isEmpty()) {
             throw new OpenApiExceptions.EmptyDefinitionException();
         }
@@ -428,7 +457,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                         ProgressPane currentImportPane = null;
                         try {
                             Context context = getModel().getSession().getContext(contextId);
-                            List<RequestModel> requestModels = converter.getRequestModels(context);
+                            List<RequestModel> requestModels =
+                                    converter.getRequestModels(context, maxMessages);
                             if (context != null) {
                                 converter.updateVariantChecks(
                                         context,

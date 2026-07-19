@@ -123,6 +123,51 @@ public class SwaggerSecretDetectorScriptUnitTest extends GraalJsActiveScriptScan
     @ParameterizedTest
     @ValueSource(
             strings = {
+                "var SwaggerUIBundle = {};<script src=\"jquery.js\"></script>SwaggerUIBundle version: 3.20.0",
+                "window.SwaggerUi = {};<script src=\"bootstrap.js\"></script>SwaggerUi version: 2.1.9",
+                "var swashbuckleConfig = {};<script src=\"redoc.js\"></script>swashbuckleConfig version = 2.0.0"
+            })
+    void shouldNotAlertForSwaggerVersionInNonSwaggerContext(String body) throws Exception {
+        // Given
+        nano.addHandler(new StaticHandler("/foo/bar", body));
+        HttpMessage msg = getHttpMessage("/foo/bar");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @Test
+    void shouldNotAlertForUnrelatedSoftwareVersion() throws Exception {
+        // Given
+        String body = "React version: 3.20.0";
+        nano.addHandler(new StaticHandler("/foo/bar", body));
+        HttpMessage msg = getHttpMessage("/foo/bar");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {"SwaggerUIBundle version: 3.25.0", "window.SwaggerUi version = '2.2.11'"})
+    void shouldNotAlertForSwaggerVersionsOutsideVulnerableRange(String body) throws Exception {
+        // Given
+        nano.addHandler(new StaticHandler("/foo/bar", body));
+        HttpMessage msg = getHttpMessage("/foo/bar");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
                 "clientId:'abcdefgh' clientSecret: 'abcdefgh'",
                 "oAuth2ClientId: 'abcdefgh' api_key: \"abcdefgh\"",
                 "clientId:'abcdefgh' oAuth2ClientSecret: 'abcdefgh'",

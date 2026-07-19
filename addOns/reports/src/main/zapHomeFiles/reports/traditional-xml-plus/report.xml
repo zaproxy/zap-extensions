@@ -42,7 +42,8 @@
 							</th:block>
 						</instances>
 						<count th:text="${instances.size()}"></count>
-						<systemic th:text="${helper.isSystemic(alert)}"></systemic>
+						<systemic
+							th:text="${helper.isSystemic(alertTree, alert.name, alert.risk)}"></systemic>
 						<solution th:text="${alert.solution}"></solution>
 						<otherinfo th:text="${alert.otherinfo}"></otherinfo>
 						<reference th:text="${alert.reference}"></reference>
@@ -93,5 +94,60 @@
 				</insight>
 			</th:block>
 		</insights>
+	</th:block>
+	<th:block
+		th:if="${reportData.reportObjects.get('stoppingInsight') != null}"
+		th:with="stopping=${reportData.reportObjects.get('stoppingInsight')}">
+		<stoppingInsight>
+			<level th:text="${stopping.level}"></level>
+			<reason th:text="${stopping.reason}"></reason>
+			<site th:text="${stopping.site}"></site>
+			<key th:text="${stopping.key}"></key>
+			<description th:text="${stopping.description}"></description>
+			<statistic th:text="${stopping.statistic}"></statistic>
+		</stoppingInsight>
+	</th:block>
+	<th:block
+		th:if="${reportData.isIncludeSection('scriptdiagnostics') &amp;&amp; reportData.reportObjects.get('scriptDiagnostics') != null}">
+		<scriptDiagnostics>
+			<th:block
+				th:each="run: ${reportData.reportObjects.get('scriptDiagnostics').runs}">
+				<run>
+					<created th:text="${run.created}"></created>
+					<outcome th:text="${run.outcome}"></outcome>
+					<summary th:text="${run.summary}"></summary>
+					<scripts>
+						<th:block th:each="scr: ${run.scripts}">
+							<script>
+								<order th:text="${scr.order}"></order>
+								<scriptName th:text="${scr.scriptName}"></scriptName>
+								<scriptType th:text="${scr.scriptType}"></scriptType>
+								<steps>
+									<th:block th:each="st: ${scr.steps}">
+										<step>
+											<sourceStepIndex
+												th:text="${st.sourceStepIndex}"></sourceStepIndex>
+											<line th:text="${st.line}"></line>
+											<outputs>
+												<th:block th:each="out: ${st.outputs}">
+													<output>
+														<kind th:text="${out.kind}"></kind>
+														<message th:text="${out.message}"></message>
+													</output>
+												</th:block>
+											</outputs>
+											<th:block
+												th:if="${reportData.isIncludeSection('scriptdiagnosticsscreenshots') &amp;&amp; st.screenshot != null}">
+												<screenshot th:text="${st.screenshot}"></screenshot>
+											</th:block>
+										</step>
+									</th:block>
+								</steps>
+							</script>
+						</th:block>
+					</scripts>
+				</run>
+			</th:block>
+		</scriptDiagnostics>
 	</th:block>
 </OWASPZAPReport>

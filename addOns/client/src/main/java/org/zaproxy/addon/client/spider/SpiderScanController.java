@@ -29,8 +29,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanController;
@@ -42,6 +42,8 @@ public class SpiderScanController implements ScanController<ClientSpider> {
     private static final Logger LOGGER = LogManager.getLogger(SpiderScanController.class);
 
     private ExtensionClientIntegration extension;
+
+    private final ClientMap clientMap;
 
     private final ValueProvider valueProvider;
 
@@ -85,9 +87,13 @@ public class SpiderScanController implements ScanController<ClientSpider> {
      */
     private List<ClientSpider> clientSpiderList;
 
-    public SpiderScanController(ExtensionClientIntegration extension, ValueProvider valueProvider) {
+    public SpiderScanController(
+            ExtensionClientIntegration extension,
+            ClientMap clientMap,
+            ValueProvider valueProvider) {
         this.clientSpidersLock = new ReentrantLock();
         this.extension = extension;
+        this.clientMap = clientMap;
         this.valueProvider = valueProvider;
         this.clientSpiderMap = new HashMap<>();
         this.clientSpiderList = new ArrayList<>();
@@ -95,49 +101,65 @@ public class SpiderScanController implements ScanController<ClientSpider> {
 
     @Override
     public int startScan(String name, Target target, User user, Object[] contextSpecificObjects) {
+        ClientSpiderOptions clientOptions = null;
+        String startUrl = null;
+
+        ScanOptions.Builder scanOptionsBuilder = ScanOptions.builder();
+
+        if (user != null) {
+            scanOptionsBuilder.setUser(user);
+        }
+
+        if (contextSpecificObjects != null) {
+            for (Object obj : contextSpecificObjects) {
+                if (obj == null) {
+                    continue;
+                }
+
+                if (obj instanceof ClientSpiderOptions) {
+                    LOGGER.debug("Setting custom spider params");
+                    clientOptions = (ClientSpiderOptions) obj;
+                } else if (obj instanceof URI uri) {
+                    startUrl = uri.toString();
+                } else if (obj instanceof Context ctx) {
+                    scanOptionsBuilder.setContext(ctx);
+                } else if (obj instanceof Boolean subtree) {
+                    scanOptionsBuilder.setSubtreeOnly(subtree);
+                } else {
+                    LOGGER.error(
+                            "Unexpected contextSpecificObject: {}",
+                            obj.getClass().getCanonicalName());
+                }
+            }
+        }
+
+        return startScan(name, target, startUrl, clientOptions, scanOptionsBuilder.build());
+    }
+
+    public int startScan(
+            String name,
+            Target target,
+            String startUrl,
+            ClientSpiderOptions clientOptions,
+            ScanOptions scanOptions) {
         clientSpidersLock.lock();
         try {
             int id = this.scanIdCounter++;
 
-            ClientOptions clientOptions = extension.getClientParam();
-            URI startUri = null;
-            boolean subtreeOnly = false;
-            Context context = null;
-
-            if (contextSpecificObjects != null) {
-                for (Object obj : contextSpecificObjects) {
-                    if (obj == null) {
-                        continue;
-                    }
-
-                    if (obj instanceof ClientOptions) {
-                        LOGGER.debug("Setting custom spider params");
-                        clientOptions = (ClientOptions) obj;
-                    } else if (obj instanceof URI) {
-                        startUri = (URI) obj;
-                    } else if (obj instanceof Context) {
-                        context = (Context) obj;
-                    } else if (obj instanceof Boolean) {
-                        subtreeOnly = (Boolean) obj;
-                    } else {
-                        LOGGER.error(
-                                "Unexpected contextSpecificObject: {}",
-                                obj.getClass().getCanonicalName());
-                    }
-                }
+            if (clientOptions == null) {
+                clientOptions = extension.getClientSpiderParam();
             }
 
             ClientSpider scan =
                     new ClientSpider(
                             extension,
+                            clientMap,
                             name,
-                            startUri.toString(),
+                            startUrl,
                             clientOptions,
-                            id,
-                            context,
-                            user,
-                            subtreeOnly,
-                            valueProvider);
+                            scanOptions,
+                            valueProvider,
+                            id);
 
             this.clientSpiderMap.put(id, scan);
             this.clientSpiderList.add(scan);

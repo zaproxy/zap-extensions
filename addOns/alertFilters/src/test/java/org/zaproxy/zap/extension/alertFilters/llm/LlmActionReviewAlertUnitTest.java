@@ -97,7 +97,7 @@ class LlmActionReviewAlertUnitTest extends TestUtils {
     void shouldIncludeAlertTitleAndDescriptionInPrompt() throws Exception {
         // Given
         LlmCommunicationService comms = mock(LlmCommunicationService.class);
-        given(extLlm.getCommunicationService(anyString(), anyString())).willReturn(comms);
+        given(extLlm.getCommunicationService(anyString(), any())).willReturn(comms);
         ChatResponse resp = mock(ChatResponse.class);
         given(comms.chat(any(ChatRequest.class))).willReturn(resp);
         AiMessage aiMsg = mock(AiMessage.class);
@@ -122,7 +122,7 @@ class LlmActionReviewAlertUnitTest extends TestUtils {
     void shouldIncludeAlertOtherInfoInPrompt() throws Exception {
         // Given
         LlmCommunicationService comms = mock(LlmCommunicationService.class);
-        given(extLlm.getCommunicationService(anyString(), anyString())).willReturn(comms);
+        given(extLlm.getCommunicationService(anyString(), any())).willReturn(comms);
         ChatResponse resp = mock(ChatResponse.class);
         given(comms.chat(any(ChatRequest.class))).willReturn(resp);
         AiMessage aiMsg = mock(AiMessage.class);
