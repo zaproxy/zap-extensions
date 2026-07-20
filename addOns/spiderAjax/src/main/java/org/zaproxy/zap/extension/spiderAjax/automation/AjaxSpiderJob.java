@@ -274,7 +274,9 @@ public class AjaxSpiderJob extends AutomationJob {
         try {
             uri = new URI(uriStr);
         } catch (Exception e1) {
-            progress.error(Constant.messages.getString("automation.error.context.badurl", uriStr));
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.context.badurl", uriStr, e1.getLocalizedMessage()));
             return;
         }
 

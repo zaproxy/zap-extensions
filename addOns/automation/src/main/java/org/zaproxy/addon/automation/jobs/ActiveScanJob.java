@@ -209,7 +209,9 @@ public class ActiveScanJob extends AutomationJob {
                 }
             }
         } catch (Exception e1) {
-            progress.error(Constant.messages.getString("automation.error.context.badurl", urlStr));
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.context.badurl", urlStr, e1.getLocalizedMessage()));
             return;
         }
 

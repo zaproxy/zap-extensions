@@ -147,7 +147,10 @@ public class ReplacerJob extends AutomationJob {
             } catch (Exception e) {
                 progress.error(
                         Constant.messages.getString(
-                                "replacer.automation.error.badurl", this.getName(), afd.getUrl()));
+                                "replacer.automation.error.badurl",
+                                this.getName(),
+                                afd.getUrl(),
+                                e.getLocalizedMessage()));
                 result = false;
             }
         }

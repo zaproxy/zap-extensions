@@ -210,7 +210,9 @@ public class SpiderJob extends AutomationJob {
                 uri = new URI(urlStr, true);
             }
         } catch (Exception e1) {
-            progress.error(Constant.messages.getString("automation.error.context.badurl", urlStr));
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.context.badurl", urlStr, e1.getLocalizedMessage()));
             return;
         }
         User user = this.getUser(this.getParameters().getUser(), progress);

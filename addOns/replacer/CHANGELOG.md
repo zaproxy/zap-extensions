@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Include cause of invalid URL in error message of Replacer job.
 
 ## [22] - 2026-03-19
 ### Added
