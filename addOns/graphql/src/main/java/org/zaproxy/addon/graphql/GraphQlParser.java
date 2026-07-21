@@ -76,6 +76,7 @@ public class GraphQlParser {
     private final ExtensionGraphQl extensionGraphQl;
     private final GraphQlParam param;
     private boolean syncParse;
+    private int maxMessages;
 
     // For Unit Tests
     protected GraphQlParser(String endpointUrlStr) throws URIException {
@@ -176,9 +177,15 @@ public class GraphQlParser {
                 UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
         var generator =
                 new GraphQlGenerator(
-                        extensionGraphQl.getValueGenerator(), schema, requestor, param);
+                        extensionGraphQl.getValueGenerator(),
+                        schema,
+                        requestor,
+                        param,
+                        maxMessages);
         if (syncParse) {
-            fingerprint();
+            if (maxMessages <= 0) {
+                fingerprint();
+            }
             detectCycles(schema, generator);
             if (param.getQueryGenEnabled()) {
                 generate(generator);
@@ -189,7 +196,9 @@ public class GraphQlParser {
                 new ParserThread(THREAD_PREFIX + threadId.incrementAndGet()) {
                     @Override
                     public void run() {
-                        fingerprint();
+                        if (maxMessages <= 0) {
+                            fingerprint();
+                        }
                         detectCycles(schema, generator);
                         if (param.getQueryGenEnabled()) {
                             generate(generator);
@@ -198,6 +207,10 @@ public class GraphQlParser {
                 };
         extensionGraphQl.addParserThread(t);
         t.startParser();
+    }
+
+    public void setMaxMessages(int maxMessages) {
+        this.maxMessages = maxMessages;
     }
 
     private void fingerprint() {
@@ -210,7 +223,9 @@ public class GraphQlParser {
 
     private void generate(GraphQlGenerator generator) {
         try {
-            generator.checkServiceMethods();
+            if (maxMessages <= 0) {
+                generator.checkServiceMethods();
+            }
             generator.generateAndSend();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
