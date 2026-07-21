@@ -20,7 +20,11 @@
 package org.zaproxy.addon.graphql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaParser;
@@ -28,6 +32,8 @@ import graphql.schema.idl.UnExecutableSchemaGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.graphql.GraphQlParam.ArgsTypeOption;
+import org.zaproxy.addon.graphql.GraphQlParam.QuerySplitOption;
 import org.zaproxy.zap.testutils.TestUtils;
 
 class GraphQlGeneratorUnitTest extends TestUtils {
@@ -48,7 +54,39 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     private GraphQlGenerator createGraphQlGenerator(String sdl) {
-        return new GraphQlGenerator(valueProvider, sdl, null, param);
+        return new GraphQlGenerator(valueProvider, sdl, null, param, 0);
+    }
+
+    @Test
+    void shouldLimitMessagesWhenMaxMessagesSet() {
+        // Given
+        Requestor requestor = mock(Requestor.class);
+        GraphQlParam limitedParam =
+                new GraphQlParam(
+                        true,
+                        5,
+                        true,
+                        5,
+                        5,
+                        true,
+                        ArgsTypeOption.INLINE,
+                        QuerySplitOption.LEAF,
+                        GraphQlParam.RequestMethodOption.POST_JSON,
+                        GraphQlParam.CycleDetectionModeOption.DISABLED,
+                        0);
+        GraphQlGenerator limitedGenerator =
+                new GraphQlGenerator(
+                        valueProvider,
+                        getHtml("scalarFieldsOnly.graphql"),
+                        requestor,
+                        limitedParam,
+                        2);
+
+        // When
+        limitedGenerator.generateAndSend();
+
+        // Then
+        verify(requestor, times(2)).sendQuery(anyString(), anyString(), any());
     }
 
     @Test
@@ -124,7 +162,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
                 };
         generator =
                 new GraphQlGenerator(
-                        vg, getHtml("nonNullableScalarArguments.graphql"), null, param);
+                        vg, getHtml("nonNullableScalarArguments.graphql"), null, param, 0);
         // When
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         // Then

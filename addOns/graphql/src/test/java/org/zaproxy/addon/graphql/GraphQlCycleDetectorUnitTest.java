@@ -77,7 +77,7 @@ class GraphQlCycleDetectorUnitTest extends TestUtils {
         String sdl = getHtml("circularRelationship.graphql");
         GraphQLSchema schema =
                 UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
-        var generator = new GraphQlGenerator(valueProvider, schema, null, param);
+        var generator = new GraphQlGenerator(valueProvider, schema, null, param, 0);
         var cyclesDetector = new GraphQlCycleDetector(schema, generator, null, param);
         List<GraphQlCycleDetectionResult> results = new ArrayList<>();
         // When
@@ -104,7 +104,7 @@ class GraphQlCycleDetectorUnitTest extends TestUtils {
         String sdl = getHtml("circularRelationship.graphql");
         GraphQLSchema schema =
                 UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
-        var generator = new GraphQlGenerator(valueProvider, schema, null, param);
+        var generator = new GraphQlGenerator(valueProvider, schema, null, param, 0);
         var queryMsgBuilder =
                 new GraphQlQueryMessageBuilder(UrlBuilder.build("https://example.com/graphql"));
         var cyclesDetector = new GraphQlCycleDetector(schema, generator, queryMsgBuilder, param);

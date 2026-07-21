@@ -64,25 +64,34 @@ public class GraphQlGenerator {
     }
 
     private final ValueProvider valueProvider;
+    private final int maxMessages;
+    private int messagesSent;
 
     public GraphQlGenerator(
-            ValueProvider valueProvider, String sdl, Requestor requestor, GraphQlParam param) {
+            ValueProvider valueProvider,
+            String sdl,
+            Requestor requestor,
+            GraphQlParam param,
+            int maxMessages) {
         this(
                 valueProvider,
                 UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl)),
                 requestor,
-                param);
+                param,
+                maxMessages);
     }
 
     public GraphQlGenerator(
             ValueProvider valueProvider,
             GraphQLSchema schema,
             Requestor requestor,
-            GraphQlParam param) {
+            GraphQlParam param,
+            int maxMessages) {
         this.valueProvider = valueProvider;
         this.schema = schema;
         this.requestor = requestor;
         this.param = param;
+        this.maxMessages = maxMessages;
         this.inlineArgsEnabled = param.getArgsType() == GraphQlParam.ArgsTypeOption.INLINE;
     }
 
@@ -180,8 +189,7 @@ public class GraphQlGenerator {
             StringBuilder query = new StringBuilder();
             JSONObject variables = new JSONObject();
             generate(query, variables, getRequestTypeObject(requestType), 0);
-            prefixRequestType(query, requestType);
-            requestor.sendQuery(query.toString(), variables.toString(), param.getRequestMethod());
+            sendGeneratedQuery(query, variables, requestType);
         } catch (InterruptedException e) {
             // Do nothing.
         }
@@ -222,9 +230,23 @@ public class GraphQlGenerator {
                 return;
             }
             query.append('}');
-            prefixRequestType(query, requestType);
-            requestor.sendQuery(query.toString(), variables.toString(), param.getRequestMethod());
+            try {
+                sendGeneratedQuery(query, variables, requestType);
+            } catch (InterruptedException e) {
+                return;
+            }
         }
+    }
+
+    private void sendGeneratedQuery(
+            StringBuilder query, JSONObject variables, RequestType requestType)
+            throws InterruptedException {
+        if (maxMessages > 0 && messagesSent >= maxMessages) {
+            throw new InterruptedException();
+        }
+        prefixRequestType(query, requestType);
+        requestor.sendQuery(query.toString(), variables.toString(), param.getRequestMethod());
+        messagesSent++;
     }
 
     private GraphQLObjectType getRequestTypeObject(RequestType requestType) {
@@ -285,9 +307,7 @@ public class GraphQlGenerator {
                 query.append(getFirstLeafQuery(type, variables, variableName));
                 if (requestor != null) {
                     query.append(StringUtils.repeat("} ", depth));
-                    prefixRequestType(query, requestType);
-                    requestor.sendQuery(
-                            query.toString(), variables.toString(), param.getRequestMethod());
+                    sendGeneratedQuery(query, variables, requestType);
                 }
             } else if (getFirstLeafField(type) == null) {
                 LOGGER.warn(
@@ -318,9 +338,7 @@ public class GraphQlGenerator {
                     variableName.setLength(variableName.length() - field.getName().length() - 1);
                     if (requestor != null) {
                         query.append("} ".repeat(depth + 1));
-                        prefixRequestType(query, requestType);
-                        requestor.sendQuery(
-                                query.toString(), variables.toString(), param.getRequestMethod());
+                        sendGeneratedQuery(query, variables, requestType);
                     }
                 } else {
                     query.append(field.getName()).append(' ');
