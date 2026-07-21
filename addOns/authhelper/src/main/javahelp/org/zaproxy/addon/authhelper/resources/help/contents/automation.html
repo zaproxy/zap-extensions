@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Authentication Helper Automation Framework Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Authentication Helper Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+
+<H2>Job: diagnostics</H2>
+The diagnostics job starts or stops plan-level recording of authentication related diagnostics.
+Recorded diagnostics appear in the Authentication Diagnostics UI and can be included in the
+<a href="reports.html">Authentication Report</a>.
+<p>
+A plan may include multiple diagnostics jobs. Recording starts when <code>enabled</code> is <code>true</code>
+and stops (and is persisted) when <code>enabled</code> is <code>false</code>.
+If recording is still on at plan finish, it is stopped and persisted automatically.
+<pre>
+  - type: diagnostics                  # Enable or disable plan-level diagnostics recording
+    parameters:
+      enabled:                         # Bool: If true, start diagnostics recording, default: false
+</pre>
+<p>
+Enabling both this job and <code>env</code> authentication diagnostics (browser/client
+<code>authentication.parameters.diagnostics</code>) in the same plan is not recommended and may cause
+duplicate diagnostic records. Prefer using one diagnostics mechanism per plan.
+</BODY>
+</HTML>

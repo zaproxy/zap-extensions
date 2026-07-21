@@ -16,4 +16,5 @@
 	<indexitem text="Verification Identification" target="authhelper.verification-id" />
 	<indexitem text="Authentication Tester Dialog" target="authhelper.auth-tester" />
 	<indexitem text="Report Templates" target="authhelper.report-templates" />
+	<indexitem text="Authentication Helper Automation Framework" target="authhelper.automation" />
 </index>
