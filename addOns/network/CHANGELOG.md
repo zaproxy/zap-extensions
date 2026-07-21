@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Option to support client certificates programmatically.
+- Add option to control how browser background requests should be handled, default to hide.
 
 ### Changed
 - Update dependencies.

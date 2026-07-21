@@ -101,17 +101,9 @@ public class GlobalExclusionsOptions extends VersionedAbstractParam {
                             "(?i)^https?://api\\.bing\\.com/qsml\\.aspx?query=.*$",
                             false),
                     new GlobalExclusion(
-                            "Site - Google malware detector updates",
-                            "(?i)^https?://(?:safebrowsing-cache|sb-ssl|sb|safebrowsing).*\\.(?:google|googleapis)\\.com/.*$",
-                            true),
-                    new GlobalExclusion(
                             "Site - Lastpass manager",
                             "(?i)^https?://(?:[^/])*\\.?lastpass\\.com",
                             false),
-                    new GlobalExclusion(
-                            "Site - Firefox browser updates",
-                            "(?i)^https?://(?:.*addons|aus[0-9])\\.mozilla\\.(?:org|net|com)/.*$",
-                            true),
                     new GlobalExclusion(
                             "Site - Firefox extensions phoning home",
                             "(?i)^https?://(?:[^/])*\\.?(?:getfoxyproxy\\.org|getfirebug\\.com|noscript\\.net)",
@@ -120,14 +112,6 @@ public class GlobalExclusionsOptions extends VersionedAbstractParam {
                             "Site - Microsoft Windows updates",
                             // http://serverfault.com/questions/332003/what-urls-must-be-in-ies-trusted-sites-list-to-allow-windows-update
                             "(?i)^https?://(?:.*update\\.microsoft|.*\\.windowsupdate)\\.com/.*$",
-                            true),
-                    new GlobalExclusion(
-                            "Site - Google Chrome extension updates",
-                            "(?i)^https?://clients2\\.google\\.com/service/update2/crx.*$",
-                            true),
-                    new GlobalExclusion(
-                            "Site - Firefox captive portal detection",
-                            "(?i)^https?://detectportal\\.firefox\\.com.*$",
                             true),
                     new GlobalExclusion(
                             "Site - Google Analytics",
@@ -143,23 +127,9 @@ public class GlobalExclusionsOptions extends VersionedAbstractParam {
                             "(?i)^https?://fonts.*$",
                             false),
                     new GlobalExclusion(
-                            "Site - Mozilla CDN (requests such as getpocket)",
-                            "(?i)^https?://.*\\.cdn\\.mozilla\\.(?:com|org|net)/.*$",
-                            true),
-                    new GlobalExclusion(
-                            "Site - Firefox browser telemetry",
-                            "(?i)^https?://.*\\.telemetry\\.mozilla\\.(?:com|org|net)/.*$",
-                            true),
-                    new GlobalExclusion(
                             "Site - Adblockplus updates and notifications",
                             "(?i)^https?://.*\\.adblockplus\\.org.*$",
-                            false),
-                    new GlobalExclusion(
-                            "Site - Firefox services",
-                            "(?i)^https?://.*\\.services\\.mozilla\\.com.*$",
-                            true),
-                    new GlobalExclusion(
-                            "Site - Google updates", "(?i)^https?://.*\\.gvt1\\.com.*$", true));
+                            false));
 
     private List<GlobalExclusion> globalExclusions = List.of();
     private boolean confirmRemoveGlobalExclusions = true;

@@ -8,7 +8,18 @@
 	<H1>Local Servers/Proxies</H1>
 
 	<H2>Local Servers/Proxies</H2>
-	This tab allows you to configure the addresses and ports on which ZAP accepts incoming connections.
+	This tab allows you to configure the addresses and ports on which ZAP accepts incoming connections and how browser requests are handled.
+
+	<H3>Browser Request Action</H3>
+	Controls how background requests automatically made by browsers (e.g. update checks, telemetry, captive portal probes) are handled.
+	<p>
+	The selected action applies to all known browser background requests:
+	<ul>
+		<li><strong>None</strong> - Browser background requests are processed like any other request, and will therefore be shown in the History and Sites Tree.</li>
+		<li><strong>Block</strong> - Browser background requests are intercepted and immediately answered with a <code>403 Forbidden</code> response.</li>
+		<li><strong>Hide</strong> (default) - Browser background requests are silently forwarded to the target without any further action.
+		This keeps local server/proxy history clean while still allowing browsers to operate normally.</li>
+	</ul>
 
 	<H3>Main Proxy</H3>
 	By default ZAP will listen on one local address and port, and usually these should be the address and port

@@ -70,6 +70,7 @@ class CallbackServiceUnitTest extends TestUtils {
         Control.initSingletonForTesting(mock(Model.class), mock(ExtensionLoader.class));
         extensionNetwork = new ExtensionNetwork();
         extensionNetwork.init();
+        extensionNetwork.initModel(mock());
         extensionNetwork.hook(mock(ExtensionHook.class));
     }
 
