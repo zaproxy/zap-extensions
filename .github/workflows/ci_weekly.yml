@@ -1,0 +1,26 @@
+name: CI Weekly
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly on Monday
+    - cron:  '0 8 * * 1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+        with:
+          gradle-home-cache-includes: |
+            caches
+            notifications
+      - run: ./gradlew -Dorg.gradle.jvmargs=-Xmx4g --continue testWeekly
+        env:
+          ZAP_REMOTE_TESTS: 1

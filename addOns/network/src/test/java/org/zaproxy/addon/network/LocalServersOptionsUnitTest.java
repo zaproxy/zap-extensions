@@ -44,6 +44,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
@@ -52,6 +53,7 @@ import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
+import org.zaproxy.addon.network.internal.server.http.handlers.BrowserRequestHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link LocalServersOptions}. */
@@ -148,6 +150,8 @@ class LocalServersOptionsUnitTest {
         assertThat(options.isConfirmRemoveAlias(), is(equalTo(true)));
         assertThat(options.getServers(), is(empty()));
         assertThat(options.isConfirmRemoveServer(), is(equalTo(true)));
+        assertThat(
+                options.getBrowserRequestAction(), is(equalTo(BrowserRequestHandler.Action.HIDE)));
         LocalServerConfig mainProxy = options.getMainProxy();
         assertThat(mainProxy, is(notNullValue()));
         assertThat(mainProxy.getAddress(), is(equalTo(LocalServerConfig.DEFAULT_ADDRESS)));
@@ -1669,6 +1673,57 @@ class LocalServersOptionsUnitTest {
         assertThat(options.getServers(), hasSize(0));
         assertThat(config.getProperty("proxies.confirmRemoveProxy"), is(nullValue()));
         assertThat(config.getProperty("proxies.all"), is(nullValue()));
+    }
+
+    @ParameterizedTest
+    @EnumSource(BrowserRequestHandler.Action.class)
+    void shouldSetAndPersistBrowserRequestAction(BrowserRequestHandler.Action action) {
+        // Given / When
+        options.setBrowserRequestAction(action);
+        // Then
+        assertThat(options.getBrowserRequestAction(), is(equalTo(action)));
+        assertThat(
+                config.getString("network.localServers.browserRequestAction"),
+                is(equalTo(action.name())));
+    }
+
+    @ParameterizedTest
+    @EnumSource(BrowserRequestHandler.Action.class)
+    void shouldLoadBrowserRequestActionFromConfig(BrowserRequestHandler.Action action) {
+        // Given
+        config =
+                configWith(
+                        """
+                        <network>
+                          <localServers>
+                            <browserRequestAction>%s</browserRequestAction>
+                          </localServers>
+                        </network>
+                        """
+                                .formatted(action.name()));
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.getBrowserRequestAction(), is(equalTo(action)));
+    }
+
+    @Test
+    void shouldUseDefaultBrowserRequestActionForInvalidConfig() {
+        // Given
+        config =
+                configWith(
+                        """
+                        <network>
+                          <localServers>
+                            <browserRequestAction>NOT_VALID</browserRequestAction>
+                          </localServers>
+                        </network>
+                        """);
+        // When
+        options.load(config);
+        // Then
+        assertThat(
+                options.getBrowserRequestAction(), is(equalTo(BrowserRequestHandler.Action.HIDE)));
     }
 
     private static ZapXmlConfiguration configWith(String value) {

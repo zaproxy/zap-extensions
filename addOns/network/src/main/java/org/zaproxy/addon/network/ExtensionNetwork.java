@@ -117,6 +117,7 @@ import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
 import org.zaproxy.addon.network.internal.server.http.LocalServerHandler;
 import org.zaproxy.addon.network.internal.server.http.MainProxyHandler;
 import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.BrowserRequestHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.CloseOnRecursiveRequestHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.ConnectReceivedHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.DecodeResponseHandler;
@@ -193,6 +194,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private HttpSender proxyHttpSender;
     private HttpSenderHandler httpSenderHandler;
     private PassThroughHandler passThroughHandler;
+    private BrowserRequestHandler browserRequestHandler;
     private AliasChecker aliasChecker;
     private Map<String, LocalServer> localServers;
     private ExecutorService blockingServerExecutor;
@@ -555,13 +557,15 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         boolean addApiHandler = config.isServeZapApi();
         HttpSender httpSender = config.getHttpSender();
         if (httpSender != null) {
-            List<HttpMessageHandler> handlers = new ArrayList<>(addApiHandler ? 7 : 6);
+            List<HttpMessageHandler> handlers = new ArrayList<>(addApiHandler ? 8 : 7);
             handlers.add(ConnectReceivedHandler.getSetAndOverrideInstance());
             handlers.add(RemoveAcceptEncodingHandler.getEnabledInstance());
             handlers.add(DecodeResponseHandler.getEnabledInstance());
             if (addApiHandler) {
                 handlers.add(ZapApiHandler.getEnabledInstance());
             }
+            handlers.add(browserRequestHandler);
+
             handlers.add(config.getHttpMessageHandler());
             handlers.add(CloseOnRecursiveRequestHandler.getInstance());
             handlers.add(new HttpSenderHandler(httpSender));
@@ -570,11 +574,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                             new MainProxyHandler(
                                     blockingServerExecutor, legacyProxyListenerHandler, handlers);
         } else {
-            List<HttpMessageHandler> handlers = new ArrayList<>(addApiHandler ? 3 : 2);
+            List<HttpMessageHandler> handlers = new ArrayList<>(addApiHandler ? 4 : 3);
             handlers.add(ConnectReceivedHandler.getSetAndOverrideInstance());
             if (addApiHandler) {
                 handlers.add(ZapApiHandler.getEnabledInstance());
             }
+            handlers.add(browserRequestHandler);
+
             handlers.add(config.getHttpMessageHandler());
             mainServerHandler = () -> new MainServerHandler(blockingServerExecutor, handlers);
         }
@@ -641,6 +647,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 };
 
         passThroughHandler = new PassThroughHandler(this::shouldPassThrough);
+        browserRequestHandler =
+                new BrowserRequestHandler(
+                        localServersOptions::getBrowserRequestAction, proxyHttpSender);
 
         extensionHook.addApiImplementor(new LegacyProxiesApi(this));
 
@@ -930,6 +939,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 serverCertificateService,
                 legacyProxyListenerHandler,
                 passThroughHandler,
+                browserRequestHandler,
                 legacyNoCacheRequestHandler,
                 httpSenderHandler,
                 new LocalServerConfig(config, aliasChecker),

@@ -176,6 +176,22 @@ subprojects {
 
     tasks.withType<Test>().configureEach {
         inputs.property("ZAP_REMOTE_TESTS", if (System.getenv("ZAP_REMOTE_TESTS") == "1") "1" else "0")
+
+        useJUnitPlatform {
+            excludeTags("weekly")
+        }
+    }
+
+    val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
+    val testWeekly by tasks.registering(Test::class) {
+
+        testClassesDirs = sourceSets["test"].output.classesDirs
+        classpath = sourceSets["test"].runtimeClasspath
+
+        useJUnitPlatform {
+            includeTags("weekly")
+            excludeTags.clear()
+        }
     }
 
     configurations {
@@ -340,8 +356,6 @@ subprojects {
     }
 
     if (mavenPublishAddOn) {
-        val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
-
         tasks.register<Jar>("javadocJar") {
             from(tasks.named("javadoc"))
             archiveClassifier.set("javadoc")

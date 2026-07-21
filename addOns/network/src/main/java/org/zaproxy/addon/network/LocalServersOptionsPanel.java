@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -38,6 +40,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
+import org.zaproxy.addon.network.internal.server.http.handlers.BrowserRequestHandler;
 import org.zaproxy.addon.network.internal.ui.AliasTableModel;
 import org.zaproxy.addon.network.internal.ui.AliasTablePanel;
 import org.zaproxy.addon.network.internal.ui.LocalServersTableModel;
@@ -124,6 +127,7 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
     private static class ServersPanel {
 
         private final ExtensionNetwork extensionNetwork;
+        private final JComboBox<BrowserRequestHandler.Action> actionComboBox;
         private final MainProxyPanel mainProxyPanel;
         private final LocalServersTablePanel localServersTablePanel;
         private final LocalServersTableModel localServersTableModel;
@@ -131,6 +135,14 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
 
         ServersPanel(ExtensionNetwork extensionNetwork) {
             this.extensionNetwork = extensionNetwork;
+
+            actionComboBox = new JComboBox<>(BrowserRequestHandler.Action.values());
+
+            JLabel actionLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "network.ui.options.localservers.browserrequestaction.label"));
+            actionLabel.setLabelFor(actionComboBox);
 
             ZapLabel labelDesc =
                     new ZapLabel(
@@ -167,12 +179,25 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
 
             layout.setHorizontalGroup(
                     layout.createParallelGroup()
+                            .addGroup(
+                                    layout.createSequentialGroup()
+                                            .addComponent(actionLabel)
+                                            .addComponent(actionComboBox))
+                            .addComponent(actionLabel)
                             .addComponent(labelDesc)
                             .addComponent(mainProxyPanel)
                             .addComponent(localServersTablePanel));
 
             layout.setVerticalGroup(
                     layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup()
+                                            .addComponent(actionLabel)
+                                            .addComponent(
+                                                    actionComboBox,
+                                                    GroupLayout.PREFERRED_SIZE,
+                                                    GroupLayout.PREFERRED_SIZE,
+                                                    GroupLayout.PREFERRED_SIZE))
                             .addComponent(
                                     labelDesc,
                                     GroupLayout.PREFERRED_SIZE,
@@ -217,6 +242,7 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
         }
 
         void init(LocalServersOptions options) {
+            actionComboBox.setSelectedItem(options.getBrowserRequestAction());
             mainProxyPanel.setServerConfig(options.getMainProxy());
             localServersTableModel.setServers(options.getServers());
             localServersTablePanel.setRemoveWithoutConfirmation(!options.isConfirmRemoveServer());
@@ -229,6 +255,9 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
         }
 
         void save(LocalServersOptions options) {
+            options.setBrowserRequestAction(
+                    (BrowserRequestHandler.Action) actionComboBox.getSelectedItem());
+
             options.setMainProxy(mainProxyPanel.getServerConfig());
             options.setServers(localServersTableModel.getElements());
             options.setConfirmRemoveServer(!localServersTablePanel.isRemoveWithoutConfirmation());

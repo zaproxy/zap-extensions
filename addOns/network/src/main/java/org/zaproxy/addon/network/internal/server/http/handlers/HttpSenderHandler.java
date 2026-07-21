@@ -70,8 +70,12 @@ public class HttpSenderHandler implements HttpMessageHandler {
             return;
         }
 
+        send(ctx, msg, ctx.isExcluded());
+    }
+
+    protected void send(HttpMessageHandlerContext ctx, HttpMessage msg, boolean exclude) {
         try {
-            if (ctx.isExcluded()) {
+            if (exclude) {
                 httpSender.sendAndReceive(msg, EXCLUDED_REQ_CONFIG);
                 ctx.overridden();
             } else {
@@ -86,14 +90,10 @@ public class HttpSenderHandler implements HttpMessageHandler {
                             e.getTimeout());
             LOGGER.warn(message);
             setErrorResponse(
-                    ctx,
-                    msg,
-                    HttpStatusCode.GATEWAY_TIMEOUT,
-                    GATEWAY_TIMEOUT_REASON_PHRASE,
-                    message);
+                    msg, HttpStatusCode.GATEWAY_TIMEOUT, GATEWAY_TIMEOUT_REASON_PHRASE, message);
 
         } catch (IOException e) {
-            setErrorResponse(ctx, msg, HttpStatusCode.BAD_GATEWAY, BAD_GATEWAY_REASON_PHRASE, e);
+            setErrorResponse(msg, HttpStatusCode.BAD_GATEWAY, BAD_GATEWAY_REASON_PHRASE, e);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             ctx.close();
@@ -101,11 +101,7 @@ public class HttpSenderHandler implements HttpMessageHandler {
     }
 
     private static void setErrorResponse(
-            HttpMessageHandlerContext ctx,
-            HttpMessage msg,
-            int statusCode,
-            String reasonPhrase,
-            Exception cause) {
+            HttpMessage msg, int statusCode, String reasonPhrase, Exception cause) {
         StringBuilder strBuilder = new StringBuilder();
 
         if (cause instanceof SSLException) {
@@ -166,15 +162,11 @@ public class HttpSenderHandler implements HttpMessageHandler {
             }
         }
 
-        setErrorResponse(ctx, msg, statusCode, reasonPhrase, strBuilder.toString());
+        setErrorResponse(msg, statusCode, reasonPhrase, strBuilder.toString());
     }
 
-    private static void setErrorResponse(
-            HttpMessageHandlerContext ctx,
-            HttpMessage msg,
-            int statusCode,
-            String reasonPhrase,
-            String message) {
+    protected static void setErrorResponse(
+            HttpMessage msg, int statusCode, String reasonPhrase, String message) {
         HttpResponseHeader responseHeader;
         try {
             responseHeader =

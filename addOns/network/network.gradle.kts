@@ -85,4 +85,6 @@ dependencies {
     }
 
     testImplementation(libs.log4j.core)
+    testImplementation(libs.selenium.seleniumJava)
+    testImplementation(libs.log4j.slf4j2)
 }

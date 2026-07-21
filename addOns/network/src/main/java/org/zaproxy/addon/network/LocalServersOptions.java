@@ -37,6 +37,7 @@ import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
+import org.zaproxy.addon.network.internal.server.http.handlers.BrowserRequestHandler;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
 /** The options related to local servers/proxies. */
@@ -96,10 +97,13 @@ public class LocalServersOptions extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_PASS_THROUGH =
             PASS_THROUGHS_BASE_KEY + ".confirmRemove";
 
+    private static final String BROWSER_REQUEST_ACTION_KEY = BASE_KEY + ".browserRequestAction";
+
     private List<Alias> aliases = new ArrayList<>();
     private boolean confirmRemoveAlias = true;
     private List<PassThrough> passThroughs = new ArrayList<>();
     private boolean confirmRemovePassThrough = true;
+    private BrowserRequestHandler.Action browserRequestAction = BrowserRequestHandler.Action.HIDE;
     private LocalServerConfig mainProxy = new LocalServerConfig();
     private List<LocalServerConfig> servers = Collections.emptyList();
     private boolean confirmRemoveServer = true;
@@ -156,6 +160,9 @@ public class LocalServersOptions extends VersionedAbstractParam {
             }
         }
         confirmRemovePassThrough = getBoolean(CONFIRM_REMOVE_PASS_THROUGH, true);
+
+        browserRequestAction =
+                getEnum(BROWSER_REQUEST_ACTION_KEY, BrowserRequestHandler.Action.HIDE);
 
         readMainProxyAndServers();
     }
@@ -369,6 +376,26 @@ public class LocalServersOptions extends VersionedAbstractParam {
      */
     public boolean isConfirmRemovePassThrough() {
         return confirmRemovePassThrough;
+    }
+
+    /**
+     * Gets the action to take for browser-initiated requests.
+     *
+     * @return the action, never {@code null}.
+     */
+    public BrowserRequestHandler.Action getBrowserRequestAction() {
+        return browserRequestAction;
+    }
+
+    /**
+     * Sets the action to take for browser-initiated requests.
+     *
+     * @param action the action.
+     * @throws NullPointerException if the given action is {@code null}.
+     */
+    public void setBrowserRequestAction(BrowserRequestHandler.Action action) {
+        this.browserRequestAction = Objects.requireNonNull(action);
+        getConfig().setProperty(BROWSER_REQUEST_ACTION_KEY, action.name());
     }
 
     private static Pattern createPassThroughPattern(String value) {
