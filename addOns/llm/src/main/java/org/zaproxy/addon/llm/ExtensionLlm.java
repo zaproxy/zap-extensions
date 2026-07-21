@@ -19,10 +19,12 @@
  */
 package org.zaproxy.addon.llm;
 
-import dev.langchain4j.model.chat.listener.ChatModelListener;
+import dev.langchain4j.service.tool.ToolProvider;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.ImageIcon;
 import org.apache.commons.configuration.ConfigurationException;
@@ -59,6 +61,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
     private LlmOptions options;
     private LlmOptions prevOptions;
     private Map<String, LlmCommunicationService> commsServices = new ConcurrentHashMap<>();
+    private final List<ToolProvider> toolProviders = new CopyOnWriteArrayList<>();
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
 
@@ -204,17 +207,26 @@ public class ExtensionLlm extends ExtensionAdaptor {
         prevOptions = options.clone();
     }
 
+    public void addToolProvider(ToolProvider provider) {
+        toolProviders.add(provider);
+        commsServices.clear();
+    }
+
+    public void removeToolProvider(ToolProvider provider) {
+        toolProviders.remove(provider);
+        commsServices.clear();
+    }
+
     public LlmCommunicationService getCommunicationService(String commsKey, String outputTabName) {
         if (!isConfigured()) {
             return null;
         }
-        if (this.hasView()) {
-            ChatModelListener listener = null;
-            if (outputTabName != null) {
-                listener = new LlmGuiResponseHandler(getChatTab(commsKey, outputTabName));
-            }
+        if (this.hasView() && outputTabName != null) {
             return new LlmCommunicationService(
-                    options.getDefaultProviderConfig(), options.getDefaultModelName(), listener);
+                    options.getDefaultProviderConfig(),
+                    options.getDefaultModelName(),
+                    new LlmGuiResponseHandler(getChatTab(commsKey, outputTabName)),
+                    List.copyOf(toolProviders));
         }
         return commsServices.computeIfAbsent(
                 commsKey,
@@ -222,7 +234,8 @@ public class ExtensionLlm extends ExtensionAdaptor {
                         new LlmCommunicationService(
                                 options.getDefaultProviderConfig(),
                                 options.getDefaultModelName(),
-                                new LlmLogResponseHandler(commsKey)));
+                                hasView() ? null : new LlmLogResponseHandler(commsKey),
+                                List.copyOf(toolProviders)));
     }
 
     public void setDefaultProvider(String name, String modelName) {

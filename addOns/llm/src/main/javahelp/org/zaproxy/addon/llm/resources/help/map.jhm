@@ -8,4 +8,5 @@
     <mapID target="addon.llm" url="contents/llm.html" />
     <mapID target="addon.llm.options" url="contents/options.html"/>
     <mapID target="addon.llm.chat" url="contents/chat.html"/>
+    <mapID target="addon.llm.mcp" url="contents/mcp.html"/>
 </map>

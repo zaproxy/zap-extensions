@@ -13,6 +13,20 @@ zapAddOn {
                 }
             }
         }
+        extensions {
+            register("org.zaproxy.addon.llm.mcp.ExtensionLlmMcp") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.llm.mcp"))
+                }
+                dependencies {
+                    addOns {
+                        register("mcp") {
+                            version.set(">=0.3.0")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -26,6 +40,7 @@ crowdin {
 
 dependencies {
     zapAddOn("commonlib")
+    zapAddOn("mcp")
 
     api(libs.llm.langchain4j)
     implementation(libs.llm.langchain4j.anthropic)

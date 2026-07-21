@@ -36,6 +36,8 @@ import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.service.tool.ToolProvider;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -51,6 +53,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
 import org.zaproxy.addon.llm.utils.HistoryPersister;
@@ -63,6 +66,7 @@ public class LlmCommunicationService {
     protected static final String AI_REVIEWED_TAG_KEY = "AI-Reviewed";
 
     private LlmAssistant llmAssistant;
+    private LlmChatAssistant chatAssistant;
     private ChatModelListener listener;
     @Getter private LlmProviderConfig pconf;
     @Getter private String modelName;
@@ -74,18 +78,32 @@ public class LlmCommunicationService {
     private ChatMemory chatMemory;
 
     public LlmCommunicationService(
-            LlmProviderConfig pconf, String modelName, ChatModelListener listener) {
+            LlmProviderConfig pconf,
+            String modelName,
+            ChatModelListener listener,
+            List<ToolProvider> toolProviders) {
         this.pconf = pconf;
         this.modelName = modelName;
         this.listener = listener;
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
-        model = buildModel();
+        model = buildModel(true);
 
         llmAssistant =
                 AiServices.builder(LlmAssistant.class)
                         .chatModel(model)
                         .chatMemory(chatMemory)
                         .build();
+
+        chatAssistant =
+                AiServices.builder(LlmChatAssistant.class)
+                        .chatModel(
+                                pconf.getProvider() == LlmProvider.AZURE_OPENAI
+                                        ? buildModel(false)
+                                        : model)
+                        .chatMemory(chatMemory)
+                        .toolProviders(toolProviders)
+                        .build();
+
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
     }
 
@@ -94,19 +112,23 @@ public class LlmCommunicationService {
         this.llmAssistant = assistant;
     }
 
-    private ChatModel buildModel() {
+    private ChatModel buildModel(boolean withJsonResponseFormat) {
 
         return switch (pconf.getProvider()) {
-            case AZURE_OPENAI ->
-                    AzureOpenAiChatModel.builder()
-                            .apiKey(pconf.getApiKey())
-                            .deploymentName(modelName)
-                            .endpoint(pconf.getEndpoint())
-                            .temperature(0.3)
-                            .responseFormat(ResponseFormat.JSON)
-                            .listeners(listener != null ? List.of(listener) : List.of())
-                            .logRequestsAndResponses(true)
-                            .build();
+            case AZURE_OPENAI -> {
+                var builder =
+                        AzureOpenAiChatModel.builder()
+                                .apiKey(pconf.getApiKey())
+                                .deploymentName(modelName)
+                                .endpoint(pconf.getEndpoint())
+                                .temperature(0.3)
+                                .listeners(listener != null ? List.of(listener) : List.of())
+                                .logRequestsAndResponses(true);
+                if (withJsonResponseFormat) {
+                    builder = builder.responseFormat(ResponseFormat.JSON);
+                }
+                yield builder.build();
+            }
             case OLLAMA ->
                     OllamaChatModel.builder()
                             .baseUrl(pconf.getEndpoint())
@@ -214,7 +236,7 @@ public class LlmCommunicationService {
     }
 
     public String chat(String str) {
-        return model.chat(str);
+        return chatAssistant.chat(str);
     }
 
     public static <T> T mapResponse(ChatResponse response, Class<T> clazz)
@@ -224,5 +246,9 @@ public class LlmCommunicationService {
 
     public static String mapJsonObject(Map<String, Object> payload) throws JsonProcessingException {
         return prettyWriter.writeValueAsString(payload);
+    }
+
+    interface LlmChatAssistant {
+        String chat(@UserMessage String message);
     }
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>LLM MCP Support</TITLE>
+</HEAD>
+<BODY>
+<H1>LLM MCP Support</H1>
+
+When both the LLM Support add-on and the MCP add-on are installed, the <b>LLM MCP Support</b> sub-extension automatically gives the LLM the ability to
+invoke ZAP's MCP tools directly during a chat session.
+
+<H2>How It Works</H2>
+Each time you send a chat message, the LLM receives the full list of tools currently registered in the MCP add-on
+alongside your message. If the LLM decides a tool is needed to answer your request, it invokes that tool
+in-process (no HTTP round-trip to the MCP server is required), observes the result, and may invoke further
+tools before returning a final answer.
+
+<p>
+Because tools are resolved per request, any tools registered after start-up - for example from scripts
+or third-party add-ons - are available immediately without restarting ZAP.
+</p>
+
+<H2>Available Tools</H2>
+The full set of tools exposed by the MCP add-on are available to the LLM add-on.
+
+<H2>Example Usage</H2>
+
+You can ask the LLM to carry out a complete scan workflow in plain language. For example:
+
+<ul>
+    <li>"Run a spider scan against https://example.com and tell me how many URLs it found."</li>
+    <li>"Start an active scan on https://example.com using the Default Policy, then generate a report when it finishes."</li>
+    <li>"What is the current passive scan queue size?"</li>
+</ul>
+
+The LLM will invoke the appropriate tools, poll for completion where necessary, and summarise the results.
+
+<H2>Requirements</H2>
+<ul>
+    <li>Both the <b>LLM Support</b> and <b>MCP</b> add-ons must be installed.</li>
+    <li>The LLM provider must be configured in the <a href="options.html">Options</a> panel.</li>
+    <li>The MCP add-on does <b>not</b> need to have its HTTP server enabled or configured; tools are called
+        in-process.</li>
+</ul>
+
+<H2>Security Considerations</H2>
+Allowing an LLM to invoke scan tools means it can initiate network activity against configured targets.
+Ensure that:
+<ul>
+    <li>You only ask the LLM to scan targets you are authorised to test.</li>
+    <li>Untrusted data appended to the chat (such as HTTP responses) could attempt prompt injection.
+        See the <a href="chat.html#prompt-injection">chat help page</a> for countermeasures that are applied.</li>
+</ul>
+
+</BODY>
+</HTML>
