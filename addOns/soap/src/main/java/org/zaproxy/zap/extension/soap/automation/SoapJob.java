@@ -48,6 +48,7 @@ public class SoapJob extends AutomationJob {
 
     private static final String PARAM_WSDL_FILE = "wsdlFile";
     private static final String PARAM_WSDL_URL = "wsdlUrl";
+    private static final String PARAM_MAX_MESSAGES = "maxMessages";
 
     private ExtensionImportWSDL extSoap;
 
@@ -80,6 +81,14 @@ public class SoapJob extends AutomationJob {
                 this.getName(),
                 null,
                 progress);
+
+        if (getParameters().getMaxMessages() < 0) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "soap.automation.warn.maxMessages",
+                            getName(),
+                            getParameters().getMaxMessages()));
+        }
     }
 
     @Override
@@ -92,11 +101,13 @@ public class SoapJob extends AutomationJob {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_WSDL_FILE, "");
         map.put(PARAM_WSDL_URL, "");
+        map.put(PARAM_MAX_MESSAGES, "0");
         return map;
     }
 
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+        int maxMessages = getParameters().getMaxMessages();
 
         String wsdlFile = this.getParameters().getWsdlFile();
         if (!StringUtils.isEmpty(wsdlFile)) {
@@ -104,7 +115,7 @@ public class SoapJob extends AutomationJob {
             if (!file.exists() || !file.canRead()) {
                 progress.error(Constant.messages.getString("soap.automation.error.file", wsdlFile));
             } else {
-                getExtSoap().syncImportWsdlFile(file);
+                getExtSoap().syncImportWsdlFile(file, maxMessages);
             }
         }
 
@@ -113,7 +124,7 @@ public class SoapJob extends AutomationJob {
             String wsdlUrl = env.replaceVars(wsdlStr);
             try {
                 new URI(wsdlUrl, true);
-                getExtSoap().syncImportWsdlUrl(wsdlUrl);
+                getExtSoap().syncImportWsdlUrl(wsdlUrl, maxMessages);
             } catch (Exception e) {
                 progress.error(Constant.messages.getString("soap.automation.error.url", wsdlUrl));
             }
@@ -202,5 +213,6 @@ public class SoapJob extends AutomationJob {
     public static class Parameters extends AutomationData {
         private String wsdlFile = "";
         private String wsdlUrl = "";
+        private int maxMessages;
     }
 }

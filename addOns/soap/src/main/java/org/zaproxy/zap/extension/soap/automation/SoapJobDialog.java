@@ -36,11 +36,12 @@ public class SoapJobDialog extends StandardFieldsDialog {
     private static final String NAME_PARAM = "soap.automation.dialog.name";
     private static final String WSDL_FILE_PARAM = "soap.automation.dialog.wsdlfile";
     private static final String WSDL_URL_PARAM = "soap.automation.dialog.wsdlurl";
+    private static final String MAX_MESSAGES_PARAM = "soap.automation.dialog.maxmessages";
 
     private SoapJob job;
 
     public SoapJobDialog(SoapJob job) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 200));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 230));
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
@@ -56,6 +57,11 @@ public class SoapJobDialog extends StandardFieldsDialog {
         if (urlField instanceof JTextField) {
             ((JTextField) urlField).setText(this.job.getParameters().getWsdlUrl());
         }
+        this.addNumberField(
+                MAX_MESSAGES_PARAM,
+                0,
+                Integer.MAX_VALUE,
+                this.job.getParameters().getMaxMessages());
         this.addPadding();
     }
 
@@ -64,6 +70,7 @@ public class SoapJobDialog extends StandardFieldsDialog {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setWsdlFile(this.getStringValue(WSDL_FILE_PARAM));
         this.job.getParameters().setWsdlUrl(this.getStringValue(WSDL_URL_PARAM));
+        this.job.getParameters().setMaxMessages(this.getIntValue(MAX_MESSAGES_PARAM));
         this.job.resetAndSetChanged();
     }
 
