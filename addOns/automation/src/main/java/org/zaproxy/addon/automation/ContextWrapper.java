@@ -312,7 +312,9 @@ public class ContextWrapper {
                 new URI(url, true);
             }
         } catch (URIException e) {
-            progress.error(Constant.messages.getString("automation.error.context.badurl", url));
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.context.badurl", url, e.getLocalizedMessage()));
         }
     }
 
@@ -350,7 +352,9 @@ public class ContextWrapper {
                 new URI(urlWithEnvs, true);
                 this.context.addIncludeInContextRegex(urlWithEnvs + ".*");
             } catch (Exception e) {
-                progress.error(Constant.messages.getString("automation.error.context.badurl", url));
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.context.badurl", url, e.getLocalizedMessage()));
             }
         }
         List<String> includePaths = getData().getIncludePaths();

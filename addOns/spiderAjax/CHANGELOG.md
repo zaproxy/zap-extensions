@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Include cause of invalid URL in error message of Ajax Spider job.
 
 ## [23.32.0] - 2026-07-06
 ### Changed

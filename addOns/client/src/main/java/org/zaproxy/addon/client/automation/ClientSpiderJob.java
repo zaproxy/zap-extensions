@@ -114,7 +114,9 @@ public class ClientSpiderJob extends AutomationJob {
                             .startScan(
                                     uriStr, paramsToOptions(), context.getContext(), user, false);
         } catch (URIException e) {
-            progress.error(Constant.messages.getString("automation.error.context.badurl", uriStr));
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.context.badurl", uriStr, e.getLocalizedMessage()));
             return;
         } catch (Exception e) {
             progress.error(

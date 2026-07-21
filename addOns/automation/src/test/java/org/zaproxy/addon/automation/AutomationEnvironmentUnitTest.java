@@ -211,7 +211,9 @@ class AutomationEnvironmentUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("Invalid URL: Not a url")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("Invalid URL: 'Not a url' Cause: incorrect path")));
     }
 
     @Test
@@ -238,7 +240,8 @@ class AutomationEnvironmentUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
         assertThat(
-                progress.getErrors().get(0), is(equalTo("Invalid URL: Not a url with ${envvar}")));
+                progress.getErrors().get(0),
+                is(equalTo("Invalid URL: 'Not a url with ${envvar}' Cause: incorrect path")));
     }
 
     @Test
