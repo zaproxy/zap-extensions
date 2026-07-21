@@ -108,10 +108,11 @@ class PostmanJobUnitTest extends TestUtils {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(3)));
+        assertThat(params.size(), is(equalTo(4)));
         assertThat(params.get("collectionFile"), is(equalTo("")));
         assertThat(params.get("collectionUrl"), is(equalTo("")));
         assertThat(params.get("variables"), is(equalTo("")));
+        assertThat(params.get("maxMessages"), is(equalTo("0")));
     }
 
     @Test
@@ -121,6 +122,7 @@ class PostmanJobUnitTest extends TestUtils {
         String collectionFile = "C:\\Users\\ZAPBot\\Documents\\test file.json";
         String collectionUrl = "https://example.com/test%20file.json";
         String variables = "key1=value1,key2=value2";
+        int maxMessages = 1;
         String yamlStr =
                 "parameters:\n"
                         + "  collectionUrl: "
@@ -130,7 +132,10 @@ class PostmanJobUnitTest extends TestUtils {
                         + collectionFile
                         + "\n"
                         + "  variables: "
-                        + variables;
+                        + variables
+                        + "\n"
+                        + "  maxMessages: "
+                        + maxMessages;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
@@ -145,8 +150,31 @@ class PostmanJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getCollectionFile(), is(equalTo(collectionFile)));
         assertThat(job.getParameters().getCollectionUrl(), is(equalTo(collectionUrl)));
         assertThat(job.getParameters().getVariables(), is(equalTo(variables)));
+        assertThat(job.getParameters().getMaxMessages(), is(equalTo(maxMessages)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldWarnIfNegativeMaxMessages() {
+        // Given
+        mockMessages(new ExtensionPostman());
+        AutomationProgress progress = new AutomationProgress();
+        String yamlStr = "parameters:\n" + "  maxMessages: -1";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        PostmanJob job = new PostmanJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("Job postman maxMessages must be zero or greater, was: -1")));
     }
 
     @Test
@@ -230,6 +258,10 @@ class PostmanJobUnitTest extends TestUtils {
         assertThat(
                 generatedTemplate,
                 stringContainsInOrder(
-                        "- type: postman", "collectionFile:", "collectionUrl:", "variables:"));
+                        "- type: postman",
+                        "collectionFile:",
+                        "collectionUrl:",
+                        "variables:",
+                        "maxMessages:"));
     }
 }

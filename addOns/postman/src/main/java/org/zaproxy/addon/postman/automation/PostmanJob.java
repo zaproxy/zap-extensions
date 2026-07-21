@@ -46,6 +46,7 @@ public class PostmanJob extends AutomationJob {
     private static final String PARAM_COLLECTION_URL = "collectionUrl";
     private static final String PARAM_COLLECTION_FILE = "collectionFile";
     private static final String PARAM_VARS = "variables";
+    private static final String PARAM_MAX_MESSAGES = "maxMessages";
 
     private Parameters parameters = new Parameters();
     private Data data;
@@ -66,6 +67,14 @@ public class PostmanJob extends AutomationJob {
                 this.getName(),
                 null,
                 progress);
+
+        if (getParameters().getMaxMessages() < 0) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "postman.automation.warn.maxMessages",
+                            getName(),
+                            getParameters().getMaxMessages()));
+        }
     }
 
     @Override
@@ -79,6 +88,7 @@ public class PostmanJob extends AutomationJob {
         map.put(PARAM_COLLECTION_URL, "");
         map.put(PARAM_COLLECTION_FILE, "");
         map.put(PARAM_VARS, "");
+        map.put(PARAM_MAX_MESSAGES, "0");
         return map;
     }
 
@@ -87,6 +97,7 @@ public class PostmanJob extends AutomationJob {
         String collectionFile = this.getParameters().getCollectionFile();
         String collectionStr = this.getParameters().getCollectionUrl();
         String variables = this.getParameters().getVariables();
+        int maxMessages = getParameters().getMaxMessages();
 
         PostmanParser parser = new PostmanParser();
 
@@ -94,7 +105,7 @@ public class PostmanJob extends AutomationJob {
             File file = JobUtils.getFile(collectionFile, getPlan());
 
             try {
-                parser.importFromFile(file.getAbsolutePath(), variables, false);
+                parser.importFromFile(file.getAbsolutePath(), variables, false, maxMessages);
             } catch (IOException e) {
                 progress.error(
                         Constant.messages.getString("postman.automation.error", e.getMessage()));
@@ -108,7 +119,7 @@ public class PostmanJob extends AutomationJob {
             try {
                 UriUtils.isValid(collectionUrl);
 
-                parser.importFromUrl(collectionUrl, variables, false);
+                parser.importFromUrl(collectionUrl, variables, false, maxMessages);
             } catch (ZapUriException | IOException e) {
                 progress.error(
                         Constant.messages.getString("postman.automation.error", e.getMessage()));
@@ -196,5 +207,6 @@ public class PostmanJob extends AutomationJob {
         private String collectionFile = "";
         private String collectionUrl = "";
         private String variables = "";
+        private int maxMessages;
     }
 }

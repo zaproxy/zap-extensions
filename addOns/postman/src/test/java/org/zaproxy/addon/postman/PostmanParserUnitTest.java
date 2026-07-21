@@ -298,6 +298,19 @@ class PostmanParserUnitTest extends TestUtils {
                 httpMessages.size() == 0 ? null : (long) httpMessages.size());
     }
 
+    @Test
+    void shouldLimitHttpMessagesWhenMaxMessagesSet() {
+        Item item = new Item(new Request("https://example.com"));
+        List<AbstractItem> items =
+                new ArrayList<>(
+                        List.of(item, item, new ItemGroup(new ArrayList<>(List.of(item, item)))));
+        List<HttpMessage> httpMessages = new ArrayList<>();
+
+        PostmanParser.extractHttpMessages(items, httpMessages, new ArrayList<>(), null, 2);
+
+        assertEquals(2, httpMessages.size());
+    }
+
     // The 'Content-Type' header gets set according to the mode of the request body, but if it's
     // explicitly defined in the request, that value will take precedence
     @Test
@@ -376,7 +389,7 @@ class PostmanParserUnitTest extends TestUtils {
         PostmanParser parser = new PostmanParser();
         List<String> errors = new ArrayList<>();
 
-        parser.getHttpMessages(collectionJson, "", errors);
+        parser.getHttpMessages(collectionJson, "", errors, 0);
 
         assertEquals(expectedErrors.size(), errors.size());
         for (int i = 0; i < errors.size(); i++) {
@@ -437,7 +450,8 @@ class PostmanParserUnitTest extends TestUtils {
         String collectionJson =
                 "{\"item\":{\"request\":{\"url\":{\"raw\":\"https://example.com/:someKey\",\"variable\":{\"key\":\"someKey\",\"value\":\"somePath\"}}}}}";
         PostmanParser parser = new PostmanParser();
-        List<HttpMessage> messages = parser.getHttpMessages(collectionJson, "", new ArrayList<>());
+        List<HttpMessage> messages =
+                parser.getHttpMessages(collectionJson, "", new ArrayList<>(), 0);
 
         assertEquals(
                 "https://example.com/somePath",
@@ -503,7 +517,7 @@ class PostmanParserUnitTest extends TestUtils {
     @MethodSource("jsonVarsTestData")
     void shouldReplaceJsonVars(String collection, String value) throws JsonProcessingException {
         PostmanParser parser = new PostmanParser();
-        List<HttpMessage> messages = parser.getHttpMessages(collection, "", new ArrayList<>());
+        List<HttpMessage> messages = parser.getHttpMessages(collection, "", new ArrayList<>(), 0);
         HttpMessage message = messages.get(0);
 
         assertEquals(
@@ -534,7 +548,7 @@ class PostmanParserUnitTest extends TestUtils {
         PostmanParser parser = new PostmanParser();
 
         // When
-        List<HttpMessage> messages = parser.getHttpMessages(collection, "", new ArrayList<>());
+        List<HttpMessage> messages = parser.getHttpMessages(collection, "", new ArrayList<>(), 0);
 
         // Then
         HttpMessage message = messages.get(0);
