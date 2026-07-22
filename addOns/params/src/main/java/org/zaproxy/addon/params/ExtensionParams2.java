@@ -40,7 +40,6 @@ import org.parosproxy.paros.core.scanner.VariantMultipartFormParameters;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DatabaseUnsupportedException;
-import org.parosproxy.paros.db.RecordParam;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -55,6 +54,7 @@ import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.params.internal.db.ParamsDao;
 import org.zaproxy.addon.params.internal.db.ParamsTableJdo;
+import org.zaproxy.addon.params.internal.db.RecordParam;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.control.ExtensionFactory;
@@ -368,7 +368,7 @@ public class ExtensionParams2 extends ExtensionAdaptor {
                                 param.getTimesUsed(),
                                 setToString(param.getFlags()),
                                 setToString(param.getValues()));
-                param.setId(rp.getParamId());
+                param.setId(rp.paramId());
             } else {
                 ParamsDao.update(
                         pmf,
@@ -699,8 +699,8 @@ public class ExtensionParams2 extends ExtensionAdaptor {
                 List<RecordParam> params = ParamsDao.getAll(pmf);
 
                 for (RecordParam param : params) {
-                    SiteParameters sps = getSiteParameters(param.getSite());
-                    sps.addParam(param.getSite(), param);
+                    SiteParameters sps = getSiteParameters(param.site());
+                    sps.addParam(param.site(), param);
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
