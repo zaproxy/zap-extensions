@@ -40,11 +40,12 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
     private static final String TARGET_URL_PARAM = "openapi.automation.dialog.targeturl";
     private static final String CONTEXT_PARAM = "openapi.automation.dialog.context";
     private static final String USER_PARAM = "automation.dialog.all.user";
+    private static final String MAX_MESSAGES_PARAM = "openapi.automation.dialog.maxmessages";
 
     private OpenApiJob job;
 
     public OpenApiJobDialog(OpenApiJob job) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 300));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 330));
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
@@ -74,6 +75,8 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         List<String> users = job.getEnv().getAllUserNames();
         users.add(0, "");
         addComboField(USER_PARAM, users, job.getData().getParameters().getUser());
+        this.addNumberField(
+                MAX_MESSAGES_PARAM, 0, Integer.MAX_VALUE, job.getParameters().getMaxMessages());
         this.addPadding();
     }
 
@@ -85,6 +88,7 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setTargetUrl(this.getStringValue(TARGET_URL_PARAM));
         this.job.getParameters().setContext(getStringValue(CONTEXT_PARAM));
         this.job.getParameters().setUser(getStringValue(USER_PARAM));
+        this.job.getParameters().setMaxMessages(this.getIntValue(MAX_MESSAGES_PARAM));
         this.job.resetAndSetChanged();
     }
 
