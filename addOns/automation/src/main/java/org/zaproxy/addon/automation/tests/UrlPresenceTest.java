@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
@@ -71,19 +72,23 @@ public class UrlPresenceTest extends AbstractAutomationTest {
         if (this.getData().getOnFail() == null) {
             progress.error(
                     Constant.messages.getString(
-                            "automation.test.error.badonfail", getJobType(), this.getName()));
+                            "automation.tests.error.badonfail", getJobType(), this.getName()));
         }
 
         String operator = this.getData().getOperator();
-        if (StringUtils.isEmpty(operator)) {
+        if (!StringUtils.isEmpty(operator)
+                && !EnumUtils.isValidEnumIgnoreCase(Operator.class, operator)) {
             progress.error(
                     Constant.messages.getString(
-                            "automation.test.url.error.badoperator", getJobType(), this.getName()));
+                            "automation.tests.url.badOperator",
+                            getJobType(),
+                            this.getName(),
+                            operator));
         }
         if (StringUtils.isEmpty(this.getData().getUrl())) {
             progress.error(
                     Constant.messages.getString(
-                            "automation.test.url.error.badurl", getJobType(), this.getName()));
+                            "automation.tests.url.error.nourl", getJobType(), this.getName()));
         }
         if (!StringUtils.isEmpty(this.getData().getRequestHeaderRegex())) {
             compilePattern(this.getData().getRequestHeaderRegex(), progress);
