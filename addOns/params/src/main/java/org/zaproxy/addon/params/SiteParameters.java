@@ -25,10 +25,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.parosproxy.paros.db.RecordParam;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HtmlParameter.Type;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.params.internal.db.RecordParam;
 import org.zaproxy.zap.extension.httpsessions.ExtensionHttpSessions;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -192,7 +192,7 @@ public class SiteParameters {
     public synchronized void addParam(String site2, RecordParam param) {
         Map<String, HtmlParameterStats> params = null;
 
-        HtmlParameter.Type type = HtmlParameter.Type.valueOf(param.getType());
+        HtmlParameter.Type type = HtmlParameter.Type.valueOf(param.type());
         switch (type) {
             case cookie:
                 params = cookieParams;
@@ -213,15 +213,15 @@ public class SiteParameters {
         // These should all be new
         HtmlParameterStats p =
                 new HtmlParameterStats(
-                        param.getParamId(),
+                        param.paramId(),
                         site,
-                        param.getName(),
-                        param.getType(),
-                        param.getUsed(),
-                        stringToSet(param.getValues()),
-                        stringToSet(param.getFlags()));
+                        param.name(),
+                        param.type(),
+                        param.used(),
+                        stringToSet(param.values()),
+                        stringToSet(param.flags()));
         if (params != null) {
-            params.put(param.getName(), p);
+            params.put(param.name(), p);
             ThreadUtils.invokeLater(() -> model.addHtmlParameterStats(p));
         }
     }

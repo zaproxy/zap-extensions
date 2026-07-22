@@ -25,7 +25,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
-import org.parosproxy.paros.db.RecordParam;
 
 /** Persistence for tracked parameters in the Params add-on session table {@code PARAMS_PARAM}. */
 public final class ParamsDao {
