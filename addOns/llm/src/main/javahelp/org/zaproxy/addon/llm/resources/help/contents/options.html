@@ -86,12 +86,26 @@ The default endpoint is: <code>https://openrouter.ai/api/v1</code>.
 </section>
 
 <section>
-    <h2>Toolbar Model Selector</h2>
+    <h2>Main Toolbar Model Selector</h2>
     <p>
-        The main toolbar includes an LLM button that lets you quickly switch the default provider
-        and model. The dropdown shows one entry for each provider/model combination and indicates
-        which one is currently the default. The <strong>None</strong> entry clears the default
-        provider and model.
+        The main ZAP toolbar includes an LLM button that lets you quickly switch the global default
+        provider and model. The dropdown shows one entry for each provider/model combination and
+        indicates which one is currently the default. The <strong>None</strong> entry clears the
+        default provider and model.
+    </p>
+    <p>
+        Changing the global default here applies to new chat tabs and any other LLM feature that
+        uses the default. It does <em>not</em> change the provider already selected in an open
+        chat tab — each tab manages its own provider independently.
+    </p>
+</section>
+
+<section>
+    <h2>Chat Tab Provider Selector</h2>
+    <p>
+        Each LLM Chat tab has its own provider dropdown in its toolbar. This lets you choose a
+        different provider or model for that conversation without affecting other tabs or the global
+        default. See the <a href="chat.html">LLM Chat</a> help for details.
     </p>
 </section>
 

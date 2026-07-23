@@ -22,27 +22,44 @@ package org.zaproxy.addon.llm.ui;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.model.chat.listener.ChatModelErrorContext;
+import dev.langchain4j.model.chat.listener.ChatModelListener;
+import dev.langchain4j.model.chat.listener.ChatModelRequestContext;
+import dev.langchain4j.model.chat.listener.ChatModelResponseContext;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.output.TokenUsage;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.NumberFormat;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 
@@ -81,10 +98,45 @@ public class LlmChatTabPanel extends JPanel {
     private boolean isProcessing;
     private boolean containsStructuredPayload;
 
+    // Per-tab provider state — independent of the global default
+    private LlmProviderConfig tabProviderConfig;
+    private String tabModelName = "";
+    private final AtomicLong totalTokensUsed = new AtomicLong(0);
+    private JComboBox<ProviderEntry> providerCombo;
+    private boolean updatingCombo = false;
+    private JLabel tokenLabel;
+
+    /** Kept on the tab so conversation memory survives ExtensionLlm cache clears. */
+    private LlmCommunicationService tabService;
+
+    private int tabServiceToolsVersion = -1;
+
+    private static final class ProviderEntry {
+        final LlmProviderConfig config;
+        final String model;
+
+        ProviderEntry(LlmProviderConfig config, String model) {
+            this.config = config;
+            this.model = model;
+        }
+
+        @Override
+        public String toString() {
+            String displayModel =
+                    model.isEmpty()
+                            ? Constant.messages.getString("llm.toolbar.model.empty")
+                            : model;
+            return Constant.messages.getString(
+                    "llm.chat.toolbar.provider.entry", config.getName(), displayModel);
+        }
+    }
+
     public LlmChatTabPanel(ExtensionLlm extension, String tag) {
         this.extension = extension;
         this.tag = tag;
         setLayout(new BorderLayout());
+
+        add(createToolBar(), BorderLayout.NORTH);
 
         // Initialize message area
         messageArea = new ZapTextArea();
@@ -155,35 +207,263 @@ public class LlmChatTabPanel extends JPanel {
         splitPane.setDividerSize(8);
 
         add(splitPane, BorderLayout.CENTER);
+
+        initTabProvider();
     }
 
-    private void updateInputPanelBorder() {
-        Color borderColor = UIManager.getColor("Separator.foreground");
-        if (borderColor == null) {
-            borderColor = UIManager.getColor("controlShadow");
+    private JToolBar createToolBar() {
+        JToolBar toolbar = new JToolBar();
+        toolbar.setFloatable(false);
+
+        toolbar.add(new JLabel(Constant.messages.getString("llm.chat.toolbar.provider.label")));
+        toolbar.addSeparator(new Dimension(4, 0));
+
+        providerCombo = new JComboBox<>();
+        providerCombo.setToolTipText(
+                Constant.messages.getString("llm.chat.toolbar.button.tooltip"));
+        providerCombo.addActionListener(
+                e -> {
+                    if (updatingCombo) return;
+                    ProviderEntry selected = (ProviderEntry) providerCombo.getSelectedItem();
+                    if (selected != null) {
+                        changeTabProvider(selected.config, selected.model);
+                    }
+                });
+        toolbar.add(providerCombo);
+
+        toolbar.addSeparator();
+
+        tokenLabel = new JLabel(Constant.messages.getString("llm.chat.toolbar.tokens", "0"));
+        toolbar.add(tokenLabel);
+
+        toolbar.add(Box.createHorizontalGlue());
+
+        JButton optionsButton = new JButton();
+        optionsButton.setToolTipText(
+                Constant.messages.getString("llm.chat.toolbar.options.tooltip"));
+        optionsButton.setIcon(
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                LlmChatTabPanel.class.getResource("/resource/icon/16/041.png"))));
+        optionsButton.addActionListener(
+                e ->
+                        Control.getSingleton()
+                                .getMenuToolsControl()
+                                .options(Constant.messages.getString("llm.options.title")));
+        toolbar.add(optionsButton);
+
+        return toolbar;
+    }
+
+    LlmProviderConfig getTabProviderConfig() {
+        return tabProviderConfig;
+    }
+
+    /** Populates the provider combo and sets the selection, falling back to first available. */
+    void initTabProvider() {
+        LlmProviderConfig previousConfig = tabProviderConfig;
+        String previousModel = tabModelName;
+        List<LlmProviderConfig> configs = extension.getProviderConfigs();
+
+        // Determine the target selection: honour existing tab choice, then global default,
+        // then first available.
+        LlmProviderConfig targetConfig = tabProviderConfig;
+        String targetModel = tabModelName;
+
+        if (targetConfig == null) {
+            targetConfig = extension.getDefaultProviderConfig();
+            targetModel = extension.getDefaultModelName();
+            if (targetConfig != null
+                    && (targetModel == null || targetModel.isEmpty())
+                    && !targetConfig.getModels().isEmpty()) {
+                targetModel = targetConfig.getModels().get(0);
+            }
+            if (targetConfig == null && !configs.isEmpty()) {
+                targetConfig = configs.get(0);
+                List<String> models = configs.get(0).getModels();
+                targetModel = models.isEmpty() ? "" : models.get(0);
+            }
         }
-        if (borderColor == null) {
-            borderColor = Color.LIGHT_GRAY;
-        }
-        if (inputPanel != null) {
-            inputPanel.setBorder(
-                    BorderFactory.createCompoundBorder(
-                            BorderFactory.createMatteBorder(1, 0, 0, 0, borderColor),
-                            new EmptyBorder(10, 10, 10, 10)));
+
+        updatingCombo = true;
+        try {
+            providerCombo.removeAllItems();
+            // Track the best match: exact (config+model) > config-only > index 0
+            int selectIdx = 0;
+            boolean exactFound = false;
+            int configMatchIdx = -1;
+            int idx = 0;
+            for (LlmProviderConfig config : configs) {
+                List<String> models = config.getModels();
+                // Providers with no models still get one combo entry (empty model name).
+                List<String> modelEntries = models.isEmpty() ? List.of("") : models;
+                boolean sameProvider =
+                        targetConfig != null && config.getName().equals(targetConfig.getName());
+                for (String model : modelEntries) {
+                    providerCombo.addItem(new ProviderEntry(config, model));
+                    if (!exactFound && sameProvider) {
+                        if (configMatchIdx < 0) {
+                            configMatchIdx = idx;
+                        }
+                        if (Objects.equals(model, targetModel)) {
+                            selectIdx = idx;
+                            exactFound = true;
+                        }
+                    }
+                    idx++;
+                }
+            }
+            if (!exactFound && configMatchIdx >= 0) {
+                selectIdx = configMatchIdx;
+            }
+            if (providerCombo.getItemCount() > 0) {
+                providerCombo.setSelectedIndex(selectIdx);
+                ProviderEntry sel = providerCombo.getItemAt(selectIdx);
+                boolean commsChanged =
+                        previousConfig != null
+                                && !sameTabComms(
+                                        previousConfig, previousModel, sel.config, sel.model);
+                boolean previousModelUnavailable = previousConfig != null && !exactFound;
+                tabProviderConfig = sel.config;
+                tabModelName = sel.model;
+                if (commsChanged) {
+                    clearTabService();
+                    totalTokensUsed.set(0);
+                    updateTokenLabel();
+                }
+                if (previousModelUnavailable) {
+                    String previousLabel =
+                            new ProviderEntry(previousConfig, previousModel).toString();
+                    SwingUtilities.invokeLater(
+                            () ->
+                                    appendMessage(
+                                            Constant.messages.getString(
+                                                    "llm.chat.toolbar.model.removed",
+                                                    previousLabel,
+                                                    sel.toString())));
+                }
+            } else if (previousConfig != null) {
+                tabProviderConfig = null;
+                tabModelName = "";
+                clearTabService();
+                totalTokensUsed.set(0);
+                updateTokenLabel();
+                String previousLabel = new ProviderEntry(previousConfig, previousModel).toString();
+                SwingUtilities.invokeLater(
+                        () ->
+                                appendMessage(
+                                        Constant.messages.getString(
+                                                "llm.chat.toolbar.model.removed.none",
+                                                previousLabel)));
+            }
+            providerCombo.setEnabled(providerCombo.getItemCount() > 0);
+        } finally {
+            updatingCombo = false;
         }
     }
 
-    private void updateTextAreaColors(ZapTextArea txt) {
-        if (txt != null) {
-            Color bgColor = UIManager.getColor("TextArea.background");
-            Color fgColor = UIManager.getColor("TextArea.foreground");
-            if (bgColor != null) {
-                txt.setBackground(bgColor);
-            }
-            if (fgColor != null) {
-                txt.setForeground(fgColor);
-            }
+    private void changeTabProvider(LlmProviderConfig config, String modelName) {
+        if (sameTabComms(tabProviderConfig, tabModelName, config, modelName)) {
+            // Keep conversation memory; just refresh the config reference (e.g. after options
+            // reload).
+            tabProviderConfig = config;
+            return;
         }
+        tabProviderConfig = config;
+        tabModelName = modelName;
+        clearTabService();
+        totalTokensUsed.set(0);
+        updateTokenLabel();
+
+        SwingUtilities.invokeLater(
+                () ->
+                        appendMessage(
+                                Constant.messages.getString(
+                                        "llm.chat.toolbar.model.changed",
+                                        new ProviderEntry(config, modelName).toString())));
+    }
+
+    private void clearTabService() {
+        tabService = null;
+        tabServiceToolsVersion = -1;
+        extension.removeCommunicationService(tag);
+    }
+
+    private LlmCommunicationService getOrCreateTabService() {
+        int toolsVersion = extension.getToolProvidersVersion();
+        if (tabService != null
+                && tabServiceToolsVersion == toolsVersion
+                && sameTabComms(
+                        tabService.getPconf(),
+                        tabService.getModelName(),
+                        tabProviderConfig,
+                        tabModelName)) {
+            return tabService;
+        }
+        tabService =
+                extension.buildCommunicationService(
+                        tabProviderConfig, tabModelName, createTokenListener());
+        tabServiceToolsVersion = toolsVersion;
+        if (tabService != null) {
+            extension.cacheTabCommunicationService(tag, tabService);
+        } else {
+            extension.removeCommunicationService(tag);
+        }
+        return tabService;
+    }
+
+    /**
+     * Whether two provider selections should share the same communication service / chat memory.
+     * Compares connection identity and selected model, but not the full models list — that list
+     * changes when models are added/removed in options and must not wipe conversation history.
+     */
+    static boolean sameTabComms(
+            LlmProviderConfig a, String modelA, LlmProviderConfig b, String modelB) {
+        return a != null
+                && b != null
+                && Objects.equals(a.getName(), b.getName())
+                && Objects.equals(a.getProvider(), b.getProvider())
+                && Objects.equals(a.getApiKey(), b.getApiKey())
+                && Objects.equals(a.getEndpoint(), b.getEndpoint())
+                && Objects.equals(modelA, modelB);
+    }
+
+    private void updateTokenLabel() {
+        if (tokenLabel != null) {
+            tokenLabel.setText(
+                    Constant.messages.getString(
+                            "llm.chat.toolbar.tokens",
+                            NumberFormat.getNumberInstance().format(totalTokensUsed.get())));
+        }
+    }
+
+    /** Accumulates token usage from a response; safe to call from any thread. */
+    public void addTokenUsage(TokenUsage usage) {
+        if (usage == null) return;
+        long tokens = 0;
+        if (usage.totalTokenCount() != null) {
+            tokens = usage.totalTokenCount();
+        } else {
+            if (usage.inputTokenCount() != null) tokens += usage.inputTokenCount();
+            if (usage.outputTokenCount() != null) tokens += usage.outputTokenCount();
+        }
+        totalTokensUsed.addAndGet(tokens);
+        SwingUtilities.invokeLater(this::updateTokenLabel);
+    }
+
+    private ChatModelListener createTokenListener() {
+        return new ChatModelListener() {
+            @Override
+            public void onRequest(ChatModelRequestContext requestContext) {}
+
+            @Override
+            public void onResponse(ChatModelResponseContext responseContext) {
+                addTokenUsage(responseContext.chatResponse().tokenUsage());
+            }
+
+            @Override
+            public void onError(ChatModelErrorContext errorContext) {}
+        };
     }
 
     private void sendMessage() {
@@ -192,7 +472,12 @@ public class LlmChatTabPanel extends JPanel {
             return;
         }
 
-        if (!extension.isConfigured()) {
+        // Lazily re-try init in case the tab was created before options were loaded
+        if (tabProviderConfig == null) {
+            initTabProvider();
+        }
+
+        if (tabProviderConfig == null) {
             appendMessage(Constant.messages.getString("llm.chat.panel.error.notconfigured"));
             return;
         }
@@ -212,8 +497,7 @@ public class LlmChatTabPanel extends JPanel {
                 new Thread(
                         () -> {
                             try {
-                                LlmCommunicationService service =
-                                        extension.getCommunicationService(tag, null);
+                                LlmCommunicationService service = getOrCreateTabService();
                                 if (service == null) {
                                     appendToOutput("llm.chat.panel.error.service", null);
                                     return;
@@ -341,6 +625,35 @@ public class LlmChatTabPanel extends JPanel {
             if (tabbedPane.getParent() instanceof LlmChatPanel chatPanel) {
                 chatPanel.grabFocus();
                 chatPanel.setTabFocus();
+            }
+        }
+    }
+
+    private void updateInputPanelBorder() {
+        Color borderColor = UIManager.getColor("Separator.foreground");
+        if (borderColor == null) {
+            borderColor = UIManager.getColor("controlShadow");
+        }
+        if (borderColor == null) {
+            borderColor = Color.LIGHT_GRAY;
+        }
+        if (inputPanel != null) {
+            inputPanel.setBorder(
+                    BorderFactory.createCompoundBorder(
+                            BorderFactory.createMatteBorder(1, 0, 0, 0, borderColor),
+                            new EmptyBorder(10, 10, 10, 10)));
+        }
+    }
+
+    private void updateTextAreaColors(ZapTextArea txt) {
+        if (txt != null) {
+            Color bgColor = UIManager.getColor("TextArea.background");
+            Color fgColor = UIManager.getColor("TextArea.foreground");
+            if (bgColor != null) {
+                txt.setBackground(bgColor);
+            }
+            if (fgColor != null) {
+                txt.setForeground(fgColor);
             }
         }
     }

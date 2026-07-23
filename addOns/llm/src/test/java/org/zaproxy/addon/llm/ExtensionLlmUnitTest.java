@@ -104,6 +104,46 @@ public class ExtensionLlmUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReturnNewCommsAfterRemoval() {
+        // Given
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "default",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost",
+                                        List.of("model1"))));
+        ext.getOptions().setDefaultProviderName("default");
+
+        // When
+        LlmCommunicationService comms1 = ext.getCommunicationService("KEY1", null);
+        ext.removeCommunicationService("KEY1");
+        LlmCommunicationService comms2 = ext.getCommunicationService("KEY1", null);
+
+        // Then
+        assertThat(comms1, is(not(equalTo(comms2))));
+    }
+
+    @Test
+    void shouldBumpToolProvidersVersionWhenToolsChange() {
+        // Given
+        int before = ext.getToolProvidersVersion();
+        ToolProvider provider = mock(ToolProvider.class);
+
+        // When
+        ext.addToolProvider(provider);
+        int afterAdd = ext.getToolProvidersVersion();
+        ext.removeToolProvider(provider);
+        int afterRemove = ext.getToolProvidersVersion();
+
+        // Then
+        assertThat(afterAdd, is(not(equalTo(before))));
+        assertThat(afterRemove, is(not(equalTo(afterAdd))));
+    }
+
+    @Test
     void shouldReturnDifferentCommsForSameKeyIfChanged() {
         // Given
         ext.getOptions()

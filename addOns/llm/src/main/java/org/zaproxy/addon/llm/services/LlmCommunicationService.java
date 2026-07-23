@@ -112,6 +112,12 @@ public class LlmCommunicationService {
         this.llmAssistant = assistant;
     }
 
+    /** For testing purposes only. */
+    LlmCommunicationService(ChatModel model, ChatMemory chatMemory) {
+        this.model = model;
+        this.chatMemory = chatMemory;
+    }
+
     private ChatModel buildModel(boolean withJsonResponseFormat) {
 
         return switch (pconf.getProvider()) {
@@ -232,10 +238,21 @@ public class LlmCommunicationService {
     }
 
     public ChatResponse chat(ChatRequest chatRequest) {
-        return model.chat(chatRequest);
+        chatMemory.add(chatRequest.messages());
+        ChatResponse response =
+                model.chat(
+                        ChatRequest.builder()
+                                .messages(chatMemory.messages())
+                                .parameters(chatRequest.parameters())
+                                .build());
+        chatMemory.add(response.aiMessage());
+        return response;
     }
 
     public String chat(String str) {
+        LOGGER.debug(
+                "Sending chat message with {} prior memory message(s)",
+                chatMemory.messages().size());
         return chatAssistant.chat(str);
     }
 
