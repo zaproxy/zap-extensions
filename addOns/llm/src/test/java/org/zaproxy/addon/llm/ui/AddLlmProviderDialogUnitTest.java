@@ -21,13 +21,23 @@ package org.zaproxy.addon.llm.ui;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
+import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -59,5 +69,68 @@ class AddLlmProviderDialogUnitTest extends TestUtils {
         String endpoint = AddLlmProviderDialog.endpointValueOnSelect(provider);
         // Then
         assertThat(endpoint, is(""));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "http://localhost:11434/",
+                "http://localhost:11434",
+                "https://openrouter.ai/api/v1",
+                "https://docs-test-001.openai.azure.com/",
+                "http://127.0.0.1:11434",
+                "http://192.168.0.232:11434",
+                "http://host.docker.internal:11434"
+            })
+    void shouldAcceptValidHttpEndpoints(String endpoint) {
+        assertThat(AddLlmProviderDialog.isValidHttpEndpoint(endpoint), is(true));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(
+            strings = {
+                " ",
+                "localhost:11434",
+                "127.0.0.1:11434",
+                "example.com",
+                "http://",
+                "https://",
+                "ftp://example.com/",
+                "http:///path"
+            })
+    void shouldRejectInvalidHttpEndpoints(String endpoint) {
+        assertThat(AddLlmProviderDialog.isValidHttpEndpoint(endpoint), is(false));
+    }
+
+    @Test
+    void shouldEnsurePathWhenBuildingRequestUri() throws Exception {
+        URI uri = AddLlmProviderDialog.toRequestUri("http://192.168.0.232:11434");
+
+        assertThat(uri.getHost(), is("192.168.0.232"));
+        assertThat(uri.getPort(), is(11434));
+        assertThat(uri.getPath(), is("/"));
+    }
+
+    @Test
+    void shouldTreatSuccessfulHttpSenderProbeAsReachable() throws Exception {
+        HttpSender sender = mock(HttpSender.class);
+
+        assertThat(
+                AddLlmProviderDialog.isEndpointReachable("http://192.168.0.232:11434", sender),
+                is(true));
+        verify(sender).sendAndReceive(any(HttpMessage.class));
+    }
+
+    @Test
+    void shouldTreatHttpSenderFailureAsUnreachable() throws Exception {
+        HttpSender sender = mock(HttpSender.class);
+        doThrow(new IOException("connection refused"))
+                .when(sender)
+                .sendAndReceive(any(HttpMessage.class));
+
+        assertThat(
+                AddLlmProviderDialog.isEndpointReachable("http://192.168.0.232:11434", sender),
+                is(false));
     }
 }
