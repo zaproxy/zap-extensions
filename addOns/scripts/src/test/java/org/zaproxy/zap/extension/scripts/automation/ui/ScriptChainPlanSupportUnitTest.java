@@ -44,6 +44,7 @@ import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJob;
 import org.zaproxy.zap.extension.scripts.automation.actions.AddScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.RunScriptAction;
@@ -98,7 +99,7 @@ class ScriptChainPlanSupportUnitTest extends TestUtils {
         addGraal.getParameters().setEngine("Graal.js");
 
         ScriptJob addTargeted = scriptJob("add-targeted", AddScriptAction.NAME, "targeted");
-        addTargeted.getParameters().setType(ExtensionScript.TYPE_TARGETED);
+        addTargeted.getParameters().setType(ExtensionScriptsUI.TYPE_TARGETED);
 
         ScriptJob addFromSource = scriptJob("add-zest", AddScriptAction.NAME, "");
         addFromSource.getParameters().setType(ExtensionScript.TYPE_STANDALONE);
