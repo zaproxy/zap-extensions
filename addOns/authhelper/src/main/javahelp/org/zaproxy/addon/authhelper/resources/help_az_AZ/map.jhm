@@ -16,4 +16,5 @@
     <mapID target="authhelper.verification-id" url="contents/verification-id.html" />
     <mapID target="authhelper.auth-tester" url="contents/auth-tester.html" />
     <mapID target="authhelper.report-templates" url="contents/reports.html" />
+    <mapID target="authhelper.automation" url="contents/automation.html" />
 </map>
