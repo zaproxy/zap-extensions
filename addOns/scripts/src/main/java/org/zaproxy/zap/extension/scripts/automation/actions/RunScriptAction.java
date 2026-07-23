@@ -41,6 +41,7 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 import org.zaproxy.zap.extension.scripts.automation.diagnostics.ScriptRunDiagnosticsSession;
 import org.zaproxy.zap.extension.scripts.automation.diagnostics.ScriptRunRecordBuilder;
@@ -91,7 +92,7 @@ public class RunScriptAction extends ScriptAction {
     private static final String EXTENSION_ZEST_NAME = "ExtensionZest";
     private static final String RUN_NAME_CHAIN_PREFIX = "chain_";
     private static final List<String> SCRIPT_TYPES =
-            Arrays.asList(ExtensionScript.TYPE_STANDALONE, ExtensionScript.TYPE_TARGETED);
+            Arrays.asList(ExtensionScript.TYPE_STANDALONE, ExtensionScriptsUI.TYPE_TARGETED);
     private static final List<String> DISABLED_FIELDS =
             Arrays.asList(
                     ScriptJobDialog.SCRIPT_ENGINE_PARAM,
@@ -191,7 +192,7 @@ public class RunScriptAction extends ScriptAction {
             }
         }
 
-        if (ExtensionScript.TYPE_TARGETED.equals(scriptType)) {
+        if (ExtensionScriptsUI.TYPE_TARGETED.equals(scriptType)) {
             if (getEngineWrapper(params) == null) {
                 issue =
                         Constant.messages.getString(
@@ -300,7 +301,7 @@ public class RunScriptAction extends ScriptAction {
                                             StringUtils.defaultString(parameters.getName()),
                                             StringUtils.defaultString(parameters.getType()))));
 
-            if (parameters.getType().equals(ExtensionScript.TYPE_TARGETED)) {
+            if (parameters.getType().equals(ExtensionScriptsUI.TYPE_TARGETED)) {
                 diagnosticsSession.execute(
                         script,
                         progress,
@@ -322,7 +323,7 @@ public class RunScriptAction extends ScriptAction {
 
                             HttpMessage httpMessage =
                                     siteNode.getHistoryReference().getHttpMessage();
-                            extScript.invokeTargetedScript(script, httpMessage);
+                            getExtScriptsUI().invokeTargetedScript(script, httpMessage);
                         },
                         context,
                         (e) -> reportScriptError(progress, jobName, script, context, e));
