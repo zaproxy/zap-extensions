@@ -843,6 +843,94 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReportDiagnosticsWithoutAuthConfig() {
+        // Given
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        reportData.setSections(List.of("diagnostics", "diagnosticsmessages"));
+        Context context = mock(Context.class);
+        ManualAuthenticationMethod authMethod =
+                new ManualAuthenticationMethodType().createAuthenticationMethod(0);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        reportData.setContexts(List.of(context));
+
+        Diagnostic diagnostic = new Diagnostic("plan", "", "");
+        DiagnosticStep step = new DiagnosticStep("messages");
+        step.setUrl("https://api.example.com/v1/users");
+        diagnostic.getSteps().add(step);
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When / Then
+        try (var tableJdo =
+                org.mockito.Mockito.mockStatic(
+                        org.zaproxy.addon.authhelper.internal.db.TableJdo.class)) {
+            javax.jdo.PersistenceManagerFactory pmf = mock();
+            javax.jdo.PersistenceManager pm = mock();
+            @SuppressWarnings("unchecked")
+            javax.jdo.Query<Diagnostic> query = mock(javax.jdo.Query.class);
+            tableJdo.when(org.zaproxy.addon.authhelper.internal.db.TableJdo::getPmf)
+                    .thenReturn(pmf);
+            given(pmf.getPersistenceManager()).willReturn(pm);
+            given(pm.newQuery(Diagnostic.class)).willReturn(query);
+            given(query.executeList()).willReturn(List.of(diagnostic));
+
+            dataHandler.handle(reportData);
+
+            AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+            assertThat(ard.isValidReport(), is(equalTo(true)));
+            assertThat(ard.getSite(), is(equalTo("https://api.example.com")));
+            assertThat(ard.getSummaryItems().size(), is(equalTo(0)));
+            assertThat(ard.getDiagnostics(), contains(diagnostic));
+        }
+    }
+
+    @Test
+    void shouldSkipSummaryWhenSectionNotRequested() {
+        // Given
+        String site = "https://www.example.com";
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        reportData.setSections(List.of("diagnostics"));
+        Context context = mock(Context.class);
+
+        BrowserBasedAuthenticationMethod authMethod =
+                new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.AUTO_DETECT);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getSessionManagementMethod())
+                .willReturn(
+                        new AutoDetectSessionManagementMethodType()
+                                .createSessionManagementMethod(0));
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+        InMemoryStats stats = new InMemoryStats();
+        stats.counterInc(site, "stats.auth.test", 1);
+        given(extStats.getInMemoryStats()).willReturn(stats);
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSite(), is(equalTo(site)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(0)));
+        assertThat(ard.getFailureDetails(), is(nullValue()));
+    }
+
+    @Test
     void shouldReportWithNoRegexes() {
         // Given
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
