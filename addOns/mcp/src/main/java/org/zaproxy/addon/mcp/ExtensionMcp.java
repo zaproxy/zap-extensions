@@ -52,9 +52,12 @@ import org.zaproxy.addon.mcp.tools.ZapCreateContextTool;
 import org.zaproxy.addon.mcp.tools.ZapGenerateReportTool;
 import org.zaproxy.addon.mcp.tools.ZapGetActiveScanStatusTool;
 import org.zaproxy.addon.mcp.tools.ZapGetAjaxSpiderStatusTool;
+import org.zaproxy.addon.mcp.tools.ZapGetHistoryTool;
 import org.zaproxy.addon.mcp.tools.ZapGetPassiveScanStatusTool;
 import org.zaproxy.addon.mcp.tools.ZapGetSpiderStatusTool;
 import org.zaproxy.addon.mcp.tools.ZapInfoTool;
+import org.zaproxy.addon.mcp.tools.ZapListResourcesTool;
+import org.zaproxy.addon.mcp.tools.ZapReadResourceTool;
 import org.zaproxy.addon.mcp.tools.ZapStartActiveScanTool;
 import org.zaproxy.addon.mcp.tools.ZapStartAjaxSpiderTool;
 import org.zaproxy.addon.mcp.tools.ZapStartSpiderTool;
@@ -151,6 +154,9 @@ public class ExtensionMcp extends ExtensionAdaptor {
         toolRegistry.registerTool(new ZapGetActiveScanStatusTool());
         toolRegistry.registerTool(new ZapGetPassiveScanStatusTool());
         toolRegistry.registerTool(new ZapGenerateReportTool());
+        toolRegistry.registerTool(new ZapGetHistoryTool());
+        toolRegistry.registerTool(new ZapListResourcesTool(resourceRegistry));
+        toolRegistry.registerTool(new ZapReadResourceTool(resourceRegistry));
 
         resourceRegistry.registerResource(new AlertsResource());
         resourceRegistry.registerResource(new AlertInstancesResource());
