@@ -163,7 +163,8 @@ public class Importer {
                                     e);
                             throw STOP_IMPORT_EXCEPTION;
                         }
-                    });
+                    },
+                    options);
         } catch (Exception e) {
             if (e != STOP_IMPORT_EXCEPTION) {
                 result.addError(

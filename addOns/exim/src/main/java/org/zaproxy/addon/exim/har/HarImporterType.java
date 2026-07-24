@@ -27,6 +27,7 @@ import java.io.Reader;
 import java.util.Objects;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.exim.ImporterOptions;
 import org.zaproxy.addon.exim.ImporterOptions.MessageHandler;
 import org.zaproxy.addon.exim.ImporterType;
 
@@ -44,6 +45,17 @@ public class HarImporterType extends ImporterType {
 
     @Override
     public void importData(Reader reader, MessageHandler handler) throws Exception {
+        importData(reader, handler, false);
+    }
+
+    @Override
+    public void importData(Reader reader, MessageHandler handler, ImporterOptions options)
+            throws Exception {
+        importData(reader, handler, options.isSendRequests());
+    }
+
+    private void importData(Reader reader, MessageHandler handler, boolean sendRequests)
+            throws Exception {
         JsonParser parser = HarUtils.JSON_MAPPER.createParser(reader);
 
         validateNextToken(parser, JsonToken.START_OBJECT, null);
@@ -57,10 +69,15 @@ public class HarImporterType extends ImporterType {
         validateNextToken(parser, JsonToken.START_ARRAY, ENTRIES_FIELD);
         parser.nextToken();
 
+        HarImporter.SendContext sendContext =
+                sendRequests ? HarImporter.SendContext.create() : null;
         HarEntry entry;
         while ((entry = parser.readValueAs(HarEntry.class)) != null) {
-            HttpMessage message = HarUtils.createHttpMessage(entry);
-            handler.handle(message);
+            HttpMessage message =
+                    sendRequests ? sendContext.send(entry) : HarUtils.createHttpMessage(entry);
+            if (message != null) {
+                handler.handle(message);
+            }
         }
     }
 

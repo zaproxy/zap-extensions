@@ -19,7 +19,9 @@ The import job allows you to import HAR (HTTP Archive File), ModSecurity2 Logs, 
     parameters:
       type:                            # String: One of ['har', 'modsec2', 'url', 'zap_messages']
       fileName:                        # String: Name of the file containing the data
+      sendRequests:                    # Bool: If true and type is har, send the requests instead of importing recorded responses, default: false
 </pre>
+When <code>sendRequests</code> is true, redirects are followed, so the number of HAR entries is only a soft limit on how many HTTP requests may be made. The Mode is enforced when sending the requests (and following redirections).
 
 <H2>Job: export</H2>
 The export job allows you to export messages in HAR format or as URLs as well as exporting the Sites Tree in the <a href="sitestreeformat.html">Sites Tree format</a>.

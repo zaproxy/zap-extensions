@@ -79,4 +79,20 @@ public abstract class ImporterType {
      * @throws Exception if an error occurs while importing.
      */
     public abstract void importData(Reader reader, MessageHandler handler) throws Exception;
+
+    /**
+     * Imports data from the reader and passes each {@code HttpMessage} to the handler.
+     *
+     * <p>Default implementation delegates to {@link #importData(Reader, MessageHandler)}.
+     *
+     * @param reader from where to import the data.
+     * @param handler the message handler to receive imported messages.
+     * @param options the importer options.
+     * @throws Exception if an error occurs while importing.
+     * @since 0.22.0
+     */
+    public void importData(Reader reader, MessageHandler handler, ImporterOptions options)
+            throws Exception {
+        importData(reader, handler);
+    }
 }
