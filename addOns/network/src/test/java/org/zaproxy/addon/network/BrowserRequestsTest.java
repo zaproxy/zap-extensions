@@ -95,8 +95,7 @@ class BrowserRequestsTest extends TestUtils {
                 case CHROME:
                     {
                         ChromeOptions options = new ChromeOptions();
-                        options.addArguments("--headless=new");
-                        options.addArguments("--proxy-bypass-list=<-loopback>");
+                        options.addArguments("--headless=new", "--proxy-bypass-list=<-loopback>");
 
                         setCommonProperties(proxyPort, options);
 
@@ -106,8 +105,10 @@ class BrowserRequestsTest extends TestUtils {
                 case EDGE:
                     {
                         EdgeOptions options = new EdgeOptions();
-                        options.addArguments("--headless");
-                        options.addArguments("--proxy-bypass-list=<-loopback>");
+                        options.addArguments(
+                                "--headless=new",
+                                "--no-sandbox",
+                                "--proxy-bypass-list=<-loopback>");
 
                         setCommonProperties(proxyPort, options);
 
@@ -131,6 +132,7 @@ class BrowserRequestsTest extends TestUtils {
         }
 
         private void setCommonProperties(int proxyPort, MutableCapabilities capabilities) {
+            capabilities.setCapability("webSocketUrl", true);
             capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 
             Proxy proxyConfig = new Proxy();
