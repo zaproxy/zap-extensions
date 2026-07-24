@@ -37,11 +37,12 @@ public class PostmanJobDialog extends StandardFieldsDialog {
     private static final String COLLECTION_FILE_PARAM = "postman.automation.dialog.collectionfile";
     private static final String COLLECTION_URL_PARAM = "postman.automation.dialog.collectionurl";
     private static final String VARS_PARAM = "postman.automation.dialog.vars";
+    private static final String MAX_MESSAGES_PARAM = "postman.automation.dialog.maxmessages";
 
     private PostmanJob job;
 
     public PostmanJobDialog(PostmanJob job) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 250));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 280));
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
@@ -59,6 +60,11 @@ public class PostmanJobDialog extends StandardFieldsDialog {
         }
 
         this.addTextField(VARS_PARAM, this.job.getParameters().getVariables());
+        this.addNumberField(
+                MAX_MESSAGES_PARAM,
+                0,
+                Integer.MAX_VALUE,
+                this.job.getParameters().getMaxMessages());
         this.addPadding();
     }
 
@@ -68,6 +74,7 @@ public class PostmanJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setCollectionFile((this.getStringValue(COLLECTION_FILE_PARAM)));
         this.job.getParameters().setCollectionUrl(this.getStringValue(COLLECTION_URL_PARAM));
         this.job.getParameters().setVariables(this.getStringValue(VARS_PARAM));
+        this.job.getParameters().setMaxMessages(this.getIntValue(MAX_MESSAGES_PARAM));
         this.job.resetAndSetChanged();
     }
 
