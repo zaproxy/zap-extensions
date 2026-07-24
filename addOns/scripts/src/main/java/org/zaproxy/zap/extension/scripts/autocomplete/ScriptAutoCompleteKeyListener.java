@@ -34,7 +34,6 @@ import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 
 public class ScriptAutoCompleteKeyListener extends KeyAdapter {
@@ -98,7 +97,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         HashMap<String, String> httpSenderMap = new HashMap<>();
         httpSenderMap.put("helper", "org.zaproxy.zap.extension.script.HttpSenderScriptHelper");
         httpSenderMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
-        typeToClassMaps.put(ExtensionScript.TYPE_HTTP_SENDER, httpSenderMap);
+        typeToClassMaps.put(ExtensionScriptsUI.TYPE_HTTP_SENDER, httpSenderMap);
 
         // Passive Rules
         HashMap<String, String> passiveRuleMap = new HashMap<>();
@@ -119,7 +118,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         // Proxy
         HashMap<String, String> proxyMap = new HashMap<>();
         proxyMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
-        typeToClassMaps.put(ExtensionScript.TYPE_PROXY, proxyMap);
+        typeToClassMaps.put(ExtensionScriptsUI.TYPE_PROXY, proxyMap);
 
         // Script Input Vector
         HashMap<String, String> inputVectorMap = new HashMap<>();
@@ -132,7 +131,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         // Targeted
         HashMap<String, String> targetedMap = new HashMap<>();
         targetedMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
-        typeToClassMaps.put(ExtensionScript.TYPE_TARGETED, targetedMap);
+        typeToClassMaps.put(ExtensionScriptsUI.TYPE_TARGETED, targetedMap);
     }
 
     public void insertText(String text) {

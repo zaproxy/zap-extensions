@@ -26,7 +26,6 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.MenuWeights;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
@@ -82,7 +81,7 @@ public class InvokeScriptWithHttpMessagePopupMenu extends PopupMenuItemHttpMessa
         final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
 
         for (ScriptWrapper script :
-                extension.getExtScript().getScripts(ExtensionScript.TYPE_TARGETED)) {
+                extension.getExtScript().getScripts(ExtensionScriptsUI.TYPE_TARGETED)) {
             ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(script);
             mainPopupMenuItems.add(piicm);
         }

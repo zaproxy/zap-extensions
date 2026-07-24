@@ -25,8 +25,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
@@ -142,7 +142,7 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
         if (!script.isPassive()) {
             createPopupAddActionMenu(parent, child, stmt, new ZestActionInvoke());
         }
-        if (ExtensionScript.TYPE_PROXY.equals(wrapper.getType().getName())) {
+        if (ExtensionScriptsUI.TYPE_PROXY.equals(wrapper.getType().getName())) {
             createPopupAddActionMenu(parent, child, stmt, new ZestActionIntercept());
         }
 
