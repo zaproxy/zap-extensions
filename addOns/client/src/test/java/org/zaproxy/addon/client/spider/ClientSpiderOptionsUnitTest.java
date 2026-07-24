@@ -61,6 +61,9 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         assertThat(
                 options.getActionWaitTimeInSecs(),
                 is(ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME));
+        assertThat(
+                options.isCacheStaticResources(),
+                is(ClientSpiderOptions.DEFAULT_CACHE_STATIC_RESOURCES));
         assertThat(options.getScopeCheck(), is(ClientSpiderOptions.ScopeCheck.getDefault()));
         assertThat(options.getAdaptiveTimeout(), is(15_000));
         assertThat(options.getAdaptiveQuiesceFirstAccess(), is(2_500));
@@ -80,6 +83,9 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         config.setProperty(
                 "client.spider.logoutAvoidance", !ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE);
         config.setProperty("client.spider.actionWaitTime", 9);
+        config.setProperty(
+                "client.spider.cacheStaticResources",
+                !ClientSpiderOptions.DEFAULT_CACHE_STATIC_RESOURCES);
         config.setProperty("client.spider.adaptive.timeout", 10);
         config.setProperty("client.spider.adaptive.quiesceFirstAccess", 11);
         // When
@@ -95,6 +101,9 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         assertThat(options.getThreadCount(), is(7));
         assertThat(options.isLogoutAvoidance(), is(!ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE));
         assertThat(options.getActionWaitTimeInSecs(), is(9));
+        assertThat(
+                options.isCacheStaticResources(),
+                is(!ClientSpiderOptions.DEFAULT_CACHE_STATIC_RESOURCES));
         assertThat(options.getAdaptiveTimeout(), is(10));
         assertThat(options.getAdaptiveQuiesceFirstAccess(), is(11));
     }
@@ -136,6 +145,7 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         options.setThreadCount(32);
         options.setLogoutAvoidance(false);
         options.setActionWaitTimeInSecs(2);
+        options.setCacheStaticResources(false);
         // Then
         assertThat(config.getProperty("client.spider.browserId"), is("firefox-headless"));
         assertThat(config.getProperty("client.spider.initialLoadTime"), is(4));
@@ -147,6 +157,7 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         assertThat(config.getProperty("client.spider.threads"), is(32));
         assertThat(config.getProperty("client.spider.logoutAvoidance"), is(false));
         assertThat(config.getProperty("client.spider.actionWaitTime"), is(2));
+        assertThat(config.getProperty("client.spider.cacheStaticResources"), is(false));
 
         assertThat(options.getBrowserId(), is("firefox-headless"));
         assertThat(options.getInitialLoadTimeInSecs(), is(4));
@@ -158,5 +169,6 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         assertThat(options.getThreadCount(), is(32));
         assertThat(options.isLogoutAvoidance(), is(false));
         assertThat(options.getActionWaitTimeInSecs(), is(2));
+        assertThat(options.isCacheStaticResources(), is(false));
     }
 }

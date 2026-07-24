@@ -50,6 +50,7 @@ public class ClientSpiderOptionsDialog extends AbstractParamPanel {
     private final ZapNumberSpinner shutdownTimeSpinner;
     private final ZapNumberSpinner maxDurationSpinner;
     private final JCheckBox logoutAvoidanceCheckbox;
+    private final JCheckBox cacheStaticResourcesCheckbox;
     private final ScopeCheckComponent scopeCheckComponent;
 
     public ClientSpiderOptionsDialog() {
@@ -77,6 +78,9 @@ public class ClientSpiderOptionsDialog extends AbstractParamPanel {
         maxDurationSpinner = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
         logoutAvoidanceCheckbox =
                 new JCheckBox(Constant.messages.getString("client.options.label.logoutAvoidance"));
+        cacheStaticResourcesCheckbox =
+                new JCheckBox(
+                        Constant.messages.getString("client.options.label.cacheStaticResources"));
         scopeCheckComponent = new ScopeCheckComponent();
 
         setLayout(new GridBagLayout());
@@ -153,6 +157,11 @@ public class ClientSpiderOptionsDialog extends AbstractParamPanel {
         add(logoutAvoidanceCheckbox, LayoutHelper.getGBC(0, row, 2, 1.0, new Insets(2, 2, 2, 2)));
         row++;
 
+        add(
+                cacheStaticResourcesCheckbox,
+                LayoutHelper.getGBC(0, row, 2, 1.0, new Insets(2, 2, 2, 2)));
+        row++;
+
         add(new JLabel(), LayoutHelper.getGBC(0, row, 2, 1.0, 1.0));
     }
 
@@ -173,6 +182,7 @@ public class ClientSpiderOptionsDialog extends AbstractParamPanel {
         shutdownTimeSpinner.setValue(clientOptions.getShutdownTimeInSecs());
         maxDurationSpinner.setValue(clientOptions.getMaxDuration());
         logoutAvoidanceCheckbox.setSelected(clientOptions.isLogoutAvoidance());
+        cacheStaticResourcesCheckbox.setSelected(clientOptions.isCacheStaticResources());
         scopeCheckComponent.setScopeCheck(clientOptions.getScopeCheck());
     }
 
@@ -195,6 +205,7 @@ public class ClientSpiderOptionsDialog extends AbstractParamPanel {
         clientOptions.setShutdownTimeInSecs(shutdownTimeSpinner.getValue());
         clientOptions.setMaxDuration(maxDurationSpinner.getValue());
         clientOptions.setLogoutAvoidance(logoutAvoidanceCheckbox.isSelected());
+        clientOptions.setCacheStaticResources(cacheStaticResourcesCheckbox.isSelected());
         clientOptions.setScopeCheck(scopeCheckComponent.getScopeCheck());
     }
 
