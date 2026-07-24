@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
+import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
+import org.zaproxy.zap.extension.fuzz.payloads.generator.DefaultStringPayloadGenerator;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.InvalidMessageException;
 import org.zaproxy.zap.model.MessageLocation;
@@ -38,162 +41,114 @@ import org.zaproxy.zap.model.MessageLocation;
 class MultipleMessageLocationsReplacerUnitTest {
 
     @Test
-    void clusterBombShouldIterateWithLastLocationChangingFastest()
+    void shouldIterateClusterBombWithLastLocationChangingFastest()
             throws InvalidMessageException, ReplacementException {
         // Given
-        var replacer = createReplacer();
-        var orders =
-                iterateAll(
-                        new MultipleMessageLocationsClusterBombReplacer<>(),
-                        replacer,
-                        "1",
-                        "2",
-                        "a",
-                        "b");
+        RecordingReplacer messageReplacer = new RecordingReplacer();
+        MultipleMessageLocationsReplacer<Message> multipleReplacer =
+                new MultipleMessageLocationsClusterBombReplacer<>();
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators =
+                generators(List.of("1", "2"), List.of("a", "b"));
+        // When
+        List<String> orders = iterateAll(multipleReplacer, messageReplacer, generators);
         // Then
         assertThat(orders, contains("1a", "1b", "2a", "2b"));
     }
 
     @Test
-    void pitchforkShouldIterateInLockstepOrder()
-            throws InvalidMessageException, ReplacementException {
+    void shouldIteratePitchforkInLockstep() throws InvalidMessageException, ReplacementException {
         // Given
-        var replacer = createReplacer();
-        var orders =
-                iterateAll(
-                        new MultipleMessageLocationsPitchforkReplacer<>(),
-                        replacer,
-                        "1",
-                        "2",
-                        "a",
-                        "b");
+        RecordingReplacer messageReplacer = new RecordingReplacer();
+        MultipleMessageLocationsReplacer<Message> multipleReplacer =
+                new MultipleMessageLocationsPitchforkReplacer<>();
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators =
+                generators(List.of("1", "2"), List.of("a", "b"));
+        // When
+        List<String> orders = iterateAll(multipleReplacer, messageReplacer, generators);
         // Then
         assertThat(orders, contains("1a", "2b"));
     }
 
     @Test
-    void strategiesShouldDifferWithThreeLocations()
+    void shouldProduceSameOrderForSingleLocationWithBothStrategies()
             throws InvalidMessageException, ReplacementException {
         // Given
-        var replacer = createReplacer();
-        var clusterBomb =
+        RecordingReplacer messageReplacer = new RecordingReplacer();
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators =
+                generators(List.of("1", "2", "3"));
+        // When
+        List<String> clusterBomb =
                 iterateAll(
                         new MultipleMessageLocationsClusterBombReplacer<>(),
-                        replacer,
-                        "1",
-                        "2",
-                        "a",
-                        "b",
-                        "x",
-                        "y");
-        var pitchfork =
+                        messageReplacer,
+                        generators);
+        List<String> pitchfork =
                 iterateAll(
                         new MultipleMessageLocationsPitchforkReplacer<>(),
-                        replacer,
-                        "1",
-                        "2",
-                        "a",
-                        "b",
-                        "x",
-                        "y");
-        // Then
-        assertThat(clusterBomb, contains("1ax", "1ay", "1bx", "1by", "2ax", "2ay", "2bx", "2by"));
-        assertThat(pitchfork, contains("1ax", "2by"));
-    }
-
-    @Test
-    void singleLocationShouldProduceSameOrderForBothStrategies()
-            throws InvalidMessageException, ReplacementException {
-        // Given
-        var replacer = createReplacer();
-        var clusterBomb =
-                iterateAll(
-                        new MultipleMessageLocationsClusterBombReplacer<>(),
-                        replacer,
-                        List.of("1", "2", "3"));
-        var pitchfork =
-                iterateAll(
-                        new MultipleMessageLocationsPitchforkReplacer<>(),
-                        replacer,
-                        List.of("1", "2", "3"));
+                        messageReplacer,
+                        generators(List.of("1", "2", "3")));
         // Then
         assertThat(clusterBomb, contains("1", "2", "3"));
         assertThat(pitchfork, is(equalTo(clusterBomb)));
     }
 
     @Test
-    void pitchforkShouldStopAtShortestList() throws InvalidMessageException, ReplacementException {
+    void shouldStopPitchforkAtShortestList() throws InvalidMessageException, ReplacementException {
         // Given
-        var replacer = createReplacer();
-        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators = new TreeSet<>();
-        generators.add(new TestGenerator(new TestMessageLocation("loc0"), List.of("1", "2", "3")));
-        generators.add(new TestGenerator(new TestMessageLocation("loc1"), List.of("a", "b")));
+        RecordingReplacer messageReplacer = new RecordingReplacer();
+        MultipleMessageLocationsReplacer<Message> multipleReplacer =
+                new MultipleMessageLocationsPitchforkReplacer<>();
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators =
+                generators(List.of("1", "2", "3"), List.of("a", "b"));
         // When
-        var orders =
-                iterateGenerators(
-                        new MultipleMessageLocationsPitchforkReplacer<>(), replacer, generators);
+        List<String> orders = iterateAll(multipleReplacer, messageReplacer, generators);
         // Then
         assertThat(orders, contains("1a", "2b"));
     }
 
     @Test
-    void clusterBombShouldReportCartesianProductSize() throws Exception {
+    void shouldReportClusterBombCartesianProductSize() {
         // Given
-        var messageReplacer = createReplacer();
-        var multipleReplacer = new MultipleMessageLocationsClusterBombReplacer<Message>();
-        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators = new TreeSet<>();
-        generators.add(new TestGenerator(new TestMessageLocation("loc0"), List.of("1", "2")));
-        generators.add(new TestGenerator(new TestMessageLocation("loc1"), List.of("a", "b", "c")));
-        multipleReplacer.init(messageReplacer, generators);
+        MultipleMessageLocationsReplacer<Message> multipleReplacer =
+                new MultipleMessageLocationsClusterBombReplacer<>();
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators =
+                generators(List.of("1", "2"), List.of("a", "b", "c"));
+        // When
+        multipleReplacer.init(new RecordingReplacer(), generators);
         // Then
         assertThat(multipleReplacer.getNumberOfReplacements(), is(equalTo(6L)));
     }
 
     @Test
-    void pitchforkShouldReportMinListSize() throws Exception {
+    void shouldReportPitchforkMinListSize() {
         // Given
-        var messageReplacer = createReplacer();
-        var multipleReplacer = new MultipleMessageLocationsPitchforkReplacer<Message>();
-        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators = new TreeSet<>();
-        generators.add(new TestGenerator(new TestMessageLocation("loc0"), List.of("1", "2")));
-        generators.add(new TestGenerator(new TestMessageLocation("loc1"), List.of("a", "b", "c")));
-        multipleReplacer.init(messageReplacer, generators);
+        MultipleMessageLocationsReplacer<Message> multipleReplacer =
+                new MultipleMessageLocationsPitchforkReplacer<>();
+        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators =
+                generators(List.of("1", "2"), List.of("a", "b", "c"));
+        // When
+        multipleReplacer.init(new RecordingReplacer(), generators);
         // Then
         assertThat(multipleReplacer.getNumberOfReplacements(), is(equalTo(2L)));
     }
 
-    private static RecordingReplacer createReplacer() {
-        return new RecordingReplacer(mock(Message.class));
-    }
-
-    private static List<String> iterateAll(
-            MultipleMessageLocationsReplacer<Message> multipleReplacer,
-            RecordingReplacer messageReplacer,
-            String... payloadsByGenerator)
-            throws InvalidMessageException, ReplacementException {
+    @SafeVarargs
+    private static SortedSet<MessageLocationReplacementGenerator<?, ?>> generators(
+            List<String>... payloadLists) {
         SortedSet<MessageLocationReplacementGenerator<?, ?>> generators = new TreeSet<>();
-        int generatorCount = payloadsByGenerator.length / 2;
-        for (int i = 0; i < generatorCount; i++) {
-            String locId = "loc" + i;
+        for (int i = 0; i < payloadLists.length; i++) {
+            DefaultStringPayloadGenerator payloadGenerator =
+                    new DefaultStringPayloadGenerator(payloadLists[i]);
             generators.add(
-                    new TestGenerator(
-                            new TestMessageLocation(locId),
-                            List.of(payloadsByGenerator[i * 2], payloadsByGenerator[i * 2 + 1])));
+                    new PayloadGeneratorMessageLocation(
+                            new TestMessageLocation("loc" + i),
+                            payloadGenerator.getNumberOfPayloads(),
+                            payloadGenerator.iterator()));
         }
-        return iterateGenerators(multipleReplacer, messageReplacer, generators);
+        return generators;
     }
 
     private static List<String> iterateAll(
-            MultipleMessageLocationsReplacer<Message> multipleReplacer,
-            RecordingReplacer messageReplacer,
-            List<String> payloads)
-            throws InvalidMessageException, ReplacementException {
-        SortedSet<MessageLocationReplacementGenerator<?, ?>> generators = new TreeSet<>();
-        generators.add(new TestGenerator(new TestMessageLocation("loc0"), payloads));
-        return iterateGenerators(multipleReplacer, messageReplacer, generators);
-    }
-
-    private static List<String> iterateGenerators(
             MultipleMessageLocationsReplacer<Message> multipleReplacer,
             RecordingReplacer messageReplacer,
             SortedSet<MessageLocationReplacementGenerator<?, ?>> generators)
@@ -211,32 +166,27 @@ class MultipleMessageLocationsReplacerUnitTest {
 
     private static class RecordingReplacer implements MessageLocationReplacer<Message> {
 
-        private final Message message;
+        private final Message message = mock(Message.class);
         private String lastCombination;
-
-        RecordingReplacer(Message message) {
-            this.message = message;
-        }
 
         @Override
         public void init(Message message) {}
 
         @Override
         public boolean supports(MessageLocation location) {
-            return location instanceof TestMessageLocation;
+            return true;
         }
 
         @Override
         public boolean supports(Class<? extends MessageLocation> classLocation) {
-            return TestMessageLocation.class.isAssignableFrom(classLocation);
+            return true;
         }
 
         @Override
         public Message replace(SortedSet<? extends MessageLocationReplacement<?>> replacements) {
             StringBuilder combination = new StringBuilder();
             for (MessageLocationReplacement<?> replacement : replacements) {
-                combination.append(
-                        ((StringMessageLocationReplacement) replacement).getReplacement());
+                combination.append(((Payload) replacement.getReplacement()).getValue());
             }
             lastCombination = combination.toString();
             return message;
@@ -293,58 +243,5 @@ class MultipleMessageLocationsReplacerUnitTest {
         public boolean equals(Object obj) {
             return obj instanceof TestMessageLocation testLocation && id.equals(testLocation.id);
         }
-    }
-
-    private static class TestGenerator
-            implements MessageLocationReplacementGenerator<
-                    String, StringMessageLocationReplacement> {
-
-        private final MessageLocation messageLocation;
-        private final List<String> payloads;
-        private int index;
-
-        TestGenerator(MessageLocation messageLocation, List<String> payloads) {
-            this.messageLocation = messageLocation;
-            this.payloads = payloads;
-        }
-
-        @Override
-        public MessageLocation getMessageLocation() {
-            return messageLocation;
-        }
-
-        @Override
-        public long getNumberOfReplacements() {
-            return payloads.size();
-        }
-
-        @Override
-        public int compareTo(MessageLocationReplacementGenerator<?, ?> other) {
-            if (other == null) {
-                return 1;
-            }
-            return messageLocation.compareTo(other.getMessageLocation());
-        }
-
-        @Override
-        public boolean hasNext() {
-            return index < payloads.size();
-        }
-
-        @Override
-        public StringMessageLocationReplacement next() {
-            return new StringMessageLocationReplacement(messageLocation, payloads.get(index++));
-        }
-
-        @Override
-        public void remove() {}
-
-        @Override
-        public void reset() {
-            index = 0;
-        }
-
-        @Override
-        public void close() {}
     }
 }

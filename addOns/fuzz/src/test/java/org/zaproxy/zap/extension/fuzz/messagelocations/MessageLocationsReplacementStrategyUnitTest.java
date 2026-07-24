@@ -22,43 +22,26 @@ package org.zaproxy.zap.extension.fuzz.messagelocations;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /** Unit test for {@link MessageLocationsReplacementStrategy}. */
 class MessageLocationsReplacementStrategyUnitTest {
 
-    @Test
-    void shouldReturnClusterBombForClusterBombConfigId() {
-        assertThat(
-                MessageLocationsReplacementStrategy.getValue("clusterBomb"),
-                is(MessageLocationsReplacementStrategy.CLUSTER_BOMB));
-    }
-
-    @Test
-    void shouldReturnPitchforkForPitchforkConfigId() {
-        assertThat(
-                MessageLocationsReplacementStrategy.getValue("pitchfork"),
-                is(MessageLocationsReplacementStrategy.PITCHFORK));
-    }
-
-    @Test
-    void shouldReturnClusterBombForLegacyDepthConfigId() {
-        assertThat(
-                MessageLocationsReplacementStrategy.getValue("depth"),
-                is(MessageLocationsReplacementStrategy.CLUSTER_BOMB));
-    }
-
-    @Test
-    void shouldReturnPitchforkForLegacyBreadthConfigId() {
-        assertThat(
-                MessageLocationsReplacementStrategy.getValue("breadth"),
-                is(MessageLocationsReplacementStrategy.PITCHFORK));
-    }
-
-    @Test
-    void shouldDefaultToClusterBombForUnknownConfigId() {
-        assertThat(
-                MessageLocationsReplacementStrategy.getValue("unknown"),
-                is(MessageLocationsReplacementStrategy.CLUSTER_BOMB));
+    @ParameterizedTest
+    @CsvSource({
+        "clusterBomb, CLUSTER_BOMB",
+        "pitchfork, PITCHFORK",
+        "depth, CLUSTER_BOMB",
+        "breadth, PITCHFORK",
+        "unknown, CLUSTER_BOMB"
+    })
+    void shouldReturnStrategyForConfigId(
+            String configId, MessageLocationsReplacementStrategy expected) {
+        // Given / When
+        MessageLocationsReplacementStrategy strategy =
+                MessageLocationsReplacementStrategy.getValue(configId);
+        // Then
+        assertThat(strategy, is(expected));
     }
 }
