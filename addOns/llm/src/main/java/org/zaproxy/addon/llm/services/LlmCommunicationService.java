@@ -36,6 +36,7 @@ import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.tool.ToolProvider;
 import java.io.BufferedReader;
@@ -94,12 +95,15 @@ public class LlmCommunicationService {
                         .chatMemory(chatMemory)
                         .build();
 
+        ChatModel chatModel =
+                pconf.getProvider() == LlmProvider.AZURE_OPENAI ? buildModel(false) : model;
+        if (!toolProviders.isEmpty()) {
+            chatModel = new TextToolCallNormalizingChatModel(chatModel, toolProviders);
+        }
+
         chatAssistant =
                 AiServices.builder(LlmChatAssistant.class)
-                        .chatModel(
-                                pconf.getProvider() == LlmProvider.AZURE_OPENAI
-                                        ? buildModel(false)
-                                        : model)
+                        .chatModel(chatModel)
                         .chatMemory(chatMemory)
                         .toolProviders(toolProviders)
                         .build();
@@ -116,6 +120,11 @@ public class LlmCommunicationService {
     LlmCommunicationService(ChatModel model, ChatMemory chatMemory) {
         this.model = model;
         this.chatMemory = chatMemory;
+        this.chatAssistant =
+                AiServices.builder(LlmChatAssistant.class)
+                        .chatModel(model)
+                        .chatMemory(chatMemory)
+                        .build();
     }
 
     private ChatModel buildModel(boolean withJsonResponseFormat) {
@@ -266,6 +275,12 @@ public class LlmCommunicationService {
     }
 
     interface LlmChatAssistant {
+        @SystemMessage(
+                "You are a helpful assistant integrated into ZAP (Zed Attack Proxy). "
+                        + "Answer general and conversational questions directly in natural language. "
+                        + "Only use tools when the user asks you to perform a ZAP action or retrieve ZAP data. "
+                        + "Never respond with raw tool-call JSON; invoke tools through the tool-calling "
+                        + "mechanism instead.")
         String chat(@UserMessage String message);
     }
 }
