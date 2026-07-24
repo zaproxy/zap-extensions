@@ -14,3 +14,4 @@
       requestMethod:                   # Enum [post_json, post_graphql, get]: The request method, default: post_json
       cycleDetectionMode:              # Enum [disabled, quick, exhaustive]: The cycle detection mode, default: quick
       maxCycleDetectionAlerts:         # Int: The maximum number of alerts to raise for detected cycles, default: 100
+      maxMessages:                     # Int: Maximum number of messages to import, default: 0, import all messages
