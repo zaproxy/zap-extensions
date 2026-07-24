@@ -28,6 +28,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.authhelper.VerificationRequestDetails.VerificationComparator;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.model.Context;
@@ -144,6 +145,7 @@ public class VerificationDetectionProcessor implements Runnable {
         StringBuilder sb = new StringBuilder();
         appendHeader(sb, details.getMsg().getRequestHeader(), HttpHeader.CONTENT_TYPE);
         appendHeader(sb, details.getMsg().getRequestHeader(), HttpHeader.REFERER);
+        appendHeader(sb, details.getMsg().getRequestHeader(), HttpFieldsNames.ORIGIN);
         if (!sb.isEmpty()) {
             authMethod.setPollHeaders(sb.toString());
         }
@@ -182,6 +184,10 @@ public class VerificationDetectionProcessor implements Runnable {
                     .setHeader(
                             HttpRequestHeader.REFERER,
                             origReqHeader.getHeader(HttpRequestHeader.REFERER));
+            msg.getRequestHeader()
+                    .setHeader(
+                            HttpFieldsNames.ORIGIN,
+                            origReqHeader.getHeader(HttpFieldsNames.ORIGIN));
 
             msg.getRequestBody().setBody(vrd.getMsg().getRequestBody().getBytes());
             msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
