@@ -122,6 +122,16 @@ class WSDLCustomParserTestCase extends TestUtils {
         assertNull(result);
     }
 
+    @Test
+    void shouldLimitMessagesWhenMaxMessagesSet() throws Exception {
+        Path wsdl = Files.createTempFile("soap-max-messages", ".wsdl");
+        Files.writeString(wsdl, wsdlContent);
+
+        parser.syncImportWsdlFile(wsdl.toFile(), 1);
+
+        assertThat(parser.getLastConfig().getBindOp().getName(), is(equalTo("sayByeWorld")));
+    }
+
     @ParameterizedTest
     @EmptySource
     @ValueSource(strings = {"generated"})

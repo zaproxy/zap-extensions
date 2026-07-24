@@ -2,3 +2,4 @@
     parameters:
       wsdlFile:                        # String: Local file path of the WSDL, default: null, no definition will be imported
       wsdlUrl:                         # String: URL pointing to the WSDL, default: null, no definition will be imported
+      maxMessages:                     # Int: Maximum number of messages to import, default: 0, import all messages

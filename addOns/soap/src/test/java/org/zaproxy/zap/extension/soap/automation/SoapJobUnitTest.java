@@ -44,9 +44,10 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.soap.ExtensionImportWSDL;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
-class SoapJobUnitTest {
+class SoapJobUnitTest extends TestUtils {
 
     private ExtensionImportWSDL extSoap;
 
@@ -86,9 +87,10 @@ class SoapJobUnitTest {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(2)));
+        assertThat(params.size(), is(equalTo(3)));
         assertThat(params.get("wsdlFile"), is(equalTo("")));
         assertThat(params.get("wsdlUrl"), is(equalTo("")));
+        assertThat(params.get("maxMessages"), is(equalTo("0")));
     }
 
     @Test
@@ -98,8 +100,17 @@ class SoapJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
         String wsdlFile = "C:\\Users\\ZAPBot\\Documents\\test file.wsdl";
         String wsdlUrl = "https://example.com/test%20file.wsdl";
+        int maxMessages = 1;
         String yamlStr =
-                "parameters:\n" + "  wsdlUrl: " + wsdlUrl + "\n" + "  wsdlFile: " + wsdlFile;
+                "parameters:\n"
+                        + "  wsdlUrl: "
+                        + wsdlUrl
+                        + "\n"
+                        + "  wsdlFile: "
+                        + wsdlFile
+                        + "\n"
+                        + "  maxMessages: "
+                        + maxMessages;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
@@ -113,8 +124,31 @@ class SoapJobUnitTest {
         // Then
         assertThat(job.getParameters().getWsdlFile(), is(equalTo(wsdlFile)));
         assertThat(job.getParameters().getWsdlUrl(), is(equalTo(wsdlUrl)));
+        assertThat(job.getParameters().getMaxMessages(), is(equalTo(maxMessages)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldWarnIfNegativeMaxMessages() {
+        // Given
+        mockMessages(new ExtensionImportWSDL());
+        AutomationProgress progress = new AutomationProgress();
+        String yamlStr = "parameters:\n" + "  maxMessages: -1";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SoapJob job = new SoapJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("Job soap maxMessages must be zero or greater, was: -1")));
     }
 
     @Test

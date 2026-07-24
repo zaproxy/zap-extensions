@@ -104,13 +104,13 @@ public class WSDLCustomParser {
     }
 
     /* Import a WSDL document from a URL synchronously. */
-    public void syncImportWsdlUrl(final String url) {
-        parseWSDLUrl(url);
+    public void syncImportWsdlUrl(final String url, int maxMessages) {
+        parseWSDLUrl(url, maxMessages);
     }
 
     /* Import a WSDL document from a local file synchronously. */
-    public void syncImportWsdlFile(final File file) {
-        parseWSDLFile(file);
+    public void syncImportWsdlFile(final File file, int maxMessages) {
+        parseWSDLFile(file, maxMessages);
     }
 
     /* Method called from external classes to import a WSDL file from an URL. */
@@ -123,7 +123,7 @@ public class WSDLCustomParser {
                     public void run() {
                         // Thread name: THREAD_PREFIX + threadId++
                         this.setName(threadName);
-                        parseWSDLUrl(url);
+                        parseWSDLUrl(url, 0);
                     }
                 };
         t.start();
@@ -137,7 +137,7 @@ public class WSDLCustomParser {
     }
 
     public boolean extContentWSDLImport(final String content, final boolean sendMessages) {
-        return parseWSDLContent(content, sendMessages);
+        return parseWSDLContent(content, sendMessages, 0);
     }
 
     /*
@@ -149,7 +149,7 @@ public class WSDLCustomParser {
                     @Override
                     public void run() {
                         this.setName(threadName);
-                        parseWSDLFile(file);
+                        parseWSDLFile(file, 0);
                     }
                 };
         t.start();
@@ -177,7 +177,7 @@ public class WSDLCustomParser {
      * Generates WSDL definitions from a WSDL file and then it calls parsing
      * functions.
      */
-    private void parseWSDLFile(File file) {
+    private void parseWSDLFile(File file, int maxMessages) {
         if (file == null) return;
         try {
             if (View.isInitialised()) {
@@ -189,7 +189,7 @@ public class WSDLCustomParser {
             WSDLParser parser = new WSDLParser();
             final String path = file.getAbsolutePath();
             Definitions wsdl = parser.parse(path);
-            parseWSDL(wsdl, true);
+            parseWSDL(wsdl, true, maxMessages);
 
         } catch (ResourceDownloadException rde) {
             String exMsg =
@@ -208,7 +208,7 @@ public class WSDLCustomParser {
      * Generates WSDL definitions from a WSDL string and then it calls parsing
      * functions.
      */
-    private void parseWSDLUrl(String url) {
+    private void parseWSDLUrl(String url, int maxMessages) {
         if (url == null || url.trim().equals("")) return;
         try {
             if (View.isInitialised()) {
@@ -245,14 +245,14 @@ public class WSDLCustomParser {
             if (content.trim().isEmpty()) {
                 LOGGER.debug("Response from WSDL file request has no body content, url: {}", url);
             } else {
-                parseWSDLContent(content);
+                parseWSDLContent(content, true, maxMessages);
             }
         } catch (Exception e) {
             LOGGER.error("There was an error while parsing WSDL from URL. ", e);
         }
     }
 
-    private boolean parseWSDLContent(String content, boolean sendMessages) {
+    private boolean parseWSDLContent(String content, boolean sendMessages, int maxMessages) {
         if (content == null || content.trim().length() <= 0) {
             return false;
         } else {
@@ -263,7 +263,7 @@ public class WSDLCustomParser {
                         new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
                 Definitions wsdl = parser.parse(contentI);
                 contentI.close();
-                parseWSDL(wsdl, sendMessages);
+                parseWSDL(wsdl, sendMessages, maxMessages);
                 return true;
             } catch (WrongGrammarException wge) {
                 LOGGER.warn("Are you sure this is a WSDL? {}", wge.getMessage());
@@ -276,14 +276,15 @@ public class WSDLCustomParser {
     }
 
     private boolean parseWSDLContent(String content) {
-        return parseWSDLContent(content, true);
+        return parseWSDLContent(content, true, 0);
     }
 
     /* Parses WSDL definitions and identifies endpoints and operations. */
-    private void parseWSDL(Definitions wsdl, boolean sendMessages) {
+    private void parseWSDL(Definitions wsdl, boolean sendMessages, int maxMessages) {
         StringBuilder sb = new StringBuilder();
         List<Service> services = wsdl.getServices();
         keyIndex++;
+        int messages = 0;
 
         /* Endpoint identification. */
         for (Service service : services) {
@@ -309,6 +310,10 @@ public class WSDLCustomParser {
 
                     /* Identifies operations for each endpoint.. */
                     for (BindingOperation bindOp : operations) {
+                        if (maxMessages > 0 && messages >= maxMessages) {
+                            printOutput(sb);
+                            return;
+                        }
                         sb.append("|\t|-- SOAP 1.")
                                 .append(soapVersion)
                                 .append(" Operation: ")
@@ -331,6 +336,9 @@ public class WSDLCustomParser {
                                 new SOAPMsgConfig(wsdl, soapVersion, formParams, port, bindOp);
                         lastConfig = soapConfig;
                         HttpMessage requestMessage = createSoapRequest(soapConfig);
+                        if (requestMessage != null) {
+                            messages++;
+                        }
                         if (sendMessages) sendSoapRequest(requestMessage, sb);
                     } // bindingOperations loop
                 } // Binding check if
