@@ -1192,7 +1192,7 @@ public class AuthUtils {
                 } catch (JSONException e) {
                     AuthUtils.extractJsonTokens(JSONArray.fromObject(responseData), "", tokens);
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {}",
                         msg.getRequestHeader().getURI(),
