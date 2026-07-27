@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -38,6 +39,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -146,6 +149,35 @@ class VerificationDetectionProcessorUnitTest extends TestUtils {
                 is(sameInstance(details)));
         verify(authenticationMethod).setLoggedInIndicatorPattern("\\Q 200 OK\\E");
         verify(authenticationMethod).setLoggedOutIndicatorPattern("\\Q 303 See Other\\E");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "content-type, application/json",
+        "referer, https://example.com",
+        "origin, https://example.com"
+    })
+    void shouldIncludeKnownHeaderInPollHeaders(String headerName, String headerValue) {
+        // Given
+        authenticationMethod = mock();
+        given(context.getAuthenticationMethod()).willReturn(authenticationMethod);
+        alertBuilder = mock();
+        given(rule.getAlert(any())).willReturn(alertBuilder);
+        missingSessionResponse =
+                () ->
+                        newFixedLengthResponse(
+                                Response.Status.REDIRECT_SEE_OTHER, NanoHTTPD.MIME_HTML, "");
+        verificationMessage.getRequestHeader().setHeader(headerName, headerValue);
+        VerificationRequestDetails details =
+                new VerificationRequestDetails(verificationMessage, SESSION_TOKEN, context);
+        processor = new VerificationDetectionProcessor(context, details, rule);
+
+        // When
+        processor.run();
+
+        // Then
+        verify(authenticationMethod)
+                .setPollHeaders(argThat(s -> s.contains(headerName + ": " + headerValue)));
     }
 
     @Test
