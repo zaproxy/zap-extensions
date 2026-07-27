@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- `zap_list_resources` and `zap_read_resource` tools for clients that only support tools (e.g. the LLM bridge).
+- `zap_get_history` tool to fetch selected history fields with body paging via `body_offset` / `max_body_chars`.
+
 ### Changed
 - Maintenance changes.
 
