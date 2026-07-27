@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.sse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,14 +45,14 @@ public class EventStreamListener implements Runnable {
         try {
             String firstEventLine;
             String line;
-            while ((firstEventLine = reader.readLine()) != null) {
+            while ((firstEventLine = readLineWithTimeout()) != null) {
                 if (firstEventLine.equals("")) {
                     // blank line before any event data (e.g. keep-alive) - not an event
                     continue;
                 }
 
                 StringBuilder rawEvent = new StringBuilder(firstEventLine);
-                while ((line = reader.readLine()) != null) {
+                while ((line = readLineWithTimeout()) != null) {
                     if (line.equals("")) {
                         // event finishes on newline => trigger dispatch
                         proxy.processEvent(rawEvent.toString());
@@ -61,15 +62,25 @@ public class EventStreamListener implements Runnable {
                     rawEvent.append(line);
                 }
             }
+        } catch (IOException e) {
+            LOGGER.debug("I/O exception while handling Server-Sent Event:", e);
         } catch (Exception e) {
-            // includes SocketException
-            // no more reading possible
             LOGGER.warn(
                     "An exception occurred while reading Server-Sent Events: {}",
                     e.getMessage(),
                     e);
         } finally {
             this.proxy.stop();
+        }
+    }
+
+    private String readLineWithTimeout() throws IOException {
+        while (true) {
+            try {
+                return reader.readLine();
+            } catch (SocketTimeoutException e) {
+                LOGGER.debug("Socket timed out waiting for Server-Sent Event, continuing.");
+            }
         }
     }
 
