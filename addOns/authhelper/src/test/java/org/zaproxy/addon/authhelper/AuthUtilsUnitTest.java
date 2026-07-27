@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -562,6 +563,25 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(
                 tokens.get("json:auth.accessToken").getValue(),
                 is(equalTo("example-session-token")));
+    }
+
+    @Test
+    void shouldHandleParsingExceptions() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "blah-blah-json");
+        msg.getResponseBody()
+                .setBody(
+                        """
+                        {"auth": {"{}": "123"}}
+                        """);
+
+        // When
+        Map<String, SessionToken> tokens =
+                assertDoesNotThrow(() -> AuthUtils.getResponseSessionTokens(msg));
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(0)));
     }
 
     @Test
