@@ -35,6 +35,7 @@ public class LlmProviderConfig {
     private String apiKey;
     private String endpoint;
     private List<String> models;
+    private boolean trusted;
 
     public LlmProviderConfig(
             String name,
@@ -42,14 +43,31 @@ public class LlmProviderConfig {
             String apiKey,
             String endpoint,
             List<String> models) {
+        this(
+                name,
+                provider,
+                apiKey,
+                endpoint,
+                models,
+                provider != null && provider.isTrustedByDefault());
+    }
+
+    public LlmProviderConfig(
+            String name,
+            LlmProvider provider,
+            String apiKey,
+            String endpoint,
+            List<String> models,
+            boolean trusted) {
         this.name = name;
         this.provider = provider;
         this.apiKey = apiKey;
         this.endpoint = endpoint;
         this.models = new ArrayList<>(models);
+        this.trusted = trusted;
     }
 
     public LlmProviderConfig(LlmProviderConfig other) {
-        this(other.name, other.provider, other.apiKey, other.endpoint, other.models);
+        this(other.name, other.provider, other.apiKey, other.endpoint, other.models, other.trusted);
     }
 }

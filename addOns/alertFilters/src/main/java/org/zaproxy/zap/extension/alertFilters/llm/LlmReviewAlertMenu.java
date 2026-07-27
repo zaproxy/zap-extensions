@@ -20,10 +20,12 @@
 package org.zaproxy.zap.extension.alertFilters.llm;
 
 import java.awt.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.ui.LlmChatTabPanel;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 import org.zaproxy.zap.utils.Stats;
@@ -32,6 +34,7 @@ import org.zaproxy.zap.utils.Stats;
 public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = LogManager.getLogger(LlmReviewAlertMenu.class);
 
     private ExtensionLlm extLlm;
     private LlmActionReviewAlert actionReviewAlert;
@@ -50,10 +53,25 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
                                 actionReviewAlert.reviewAlert(alert, true);
                             } catch (Exception e) {
                                 Stats.incCounter("stats.llm.alertreview.result.error");
-                                View.getSingleton()
-                                        .showWarningDialog(
-                                                Constant.messages.getString(
-                                                        "alertFilters.llm.reviewalert.error"));
+                                LOGGER.error("Alert review failed.", e);
+                                String outputTabName =
+                                        Constant.messages.getString(
+                                                "alertFilters.llm.reviewalert.output.tab");
+                                LlmChatTabPanel chatTab =
+                                        extLlm.getOrCreateChatTab("ALERT_REVIEW", outputTabName);
+                                if (chatTab != null) {
+                                    String detail =
+                                            e.getMessage() != null
+                                                    ? e.getMessage()
+                                                    : e.getClass().getSimpleName();
+                                    chatTab.appendToOutput(
+                                            LlmChatTabPanel.ERROR_LABEL,
+                                            Constant.messages.getString(
+                                                            "alertFilters.llm.reviewalert.error")
+                                                    + "\n"
+                                                    + detail);
+                                    chatTab.showTab();
+                                }
                             }
                         },
                         "ZAP-LLM-Alert-Review")

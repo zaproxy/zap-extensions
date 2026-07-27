@@ -69,6 +69,13 @@ The default endpoint is: <code>https://openrouter.ai/api/v1</code>.
         <li><strong>API Key</strong>: The API key, if required by the provider.
         <li><strong>Endpoint Base URL</strong>: The base URL for API requests, if supported by the provider.
         <li><strong>Models</strong>: One or more model/deployment names, one per line. At least one model must be specified for all providers.
+        <li><strong>Trusted</strong>: Whether ZAP may share additional data with this provider and allow it to use tools.
+            When a provider is trusted, ZAP features may include richer context in prompts (for example HTTP requests,
+            response headers, and surrounding evidence) and may add tools (such as MCP tools) to the LLM context.
+            When a provider is untrusted, ZAP sends only the minimum data needed for the feature and never includes tools.
+            Local providers such as Ollama default to trusted; remote providers default to untrusted.
+            You can change this at any time via the provider dialog or by toggling the checkbox in the providers table.
+            For untrusted providers the tools toggle in the chat toolbar is disabled.
     </ul>
 </section>
 

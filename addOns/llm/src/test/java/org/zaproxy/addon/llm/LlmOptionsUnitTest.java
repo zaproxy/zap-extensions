@@ -124,4 +124,55 @@ class LlmOptionsUnitTest extends TestUtils {
         // Then
         assertThat(options.getCommsIssue(), nullValue());
     }
+
+    @Test
+    void shouldPersistAndRestoreTrustedFlag() {
+        // Given
+        options.setProviderConfigs(
+                List.of(
+                        new LlmProviderConfig(
+                                "claude",
+                                LlmProvider.CLAUDE,
+                                "key",
+                                "",
+                                List.of("claude-sonnet-4-6"),
+                                true),
+                        new LlmProviderConfig(
+                                "ollama",
+                                LlmProvider.OLLAMA,
+                                "",
+                                "http://localhost:11434",
+                                List.of("llama3.2"),
+                                false)));
+
+        // When
+        LlmOptions reloaded = new LlmOptions();
+        reloaded.load(options.getConfig());
+
+        // Then
+        assertThat(reloaded.getProviderConfig("claude").isTrusted(), is(true));
+        assertThat(reloaded.getProviderConfig("ollama").isTrusted(), is(false));
+    }
+
+    @Test
+    void shouldDefaultTrustedFromProviderTypeWhenMissingFromConfig() {
+        // Given
+        options.getConfig().setProperty("llm.providers.provider(0).name", "ollama");
+        options.getConfig().setProperty("llm.providers.provider(0).type", "OLLAMA");
+        options.getConfig().setProperty("llm.providers.provider(0).endpoint", "http://localhost");
+        options.getConfig().setProperty("llm.providers.provider(0).models.model(0)", "llama3.2");
+        options.getConfig().setProperty("llm.providers.provider(1).name", "claude");
+        options.getConfig().setProperty("llm.providers.provider(1).type", "CLAUDE");
+        options.getConfig().setProperty("llm.providers.provider(1).apikey", "key");
+        options.getConfig()
+                .setProperty("llm.providers.provider(1).models.model(0)", "claude-sonnet-4-6");
+
+        // When
+        LlmOptions loaded = new LlmOptions();
+        loaded.load(options.getConfig());
+
+        // Then
+        assertThat(loaded.getProviderConfig("ollama").isTrusted(), is(true));
+        assertThat(loaded.getProviderConfig("claude").isTrusted(), is(false));
+    }
 }

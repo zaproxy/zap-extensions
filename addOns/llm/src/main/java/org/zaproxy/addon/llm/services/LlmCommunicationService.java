@@ -70,6 +70,7 @@ public class LlmCommunicationService {
     private ChatModelListener listener;
     @Getter private LlmProviderConfig pconf;
     @Getter private String modelName;
+    @Getter private List<ToolProvider> toolProviders;
     private Requestor requestor;
 
     private ChatModel model;
@@ -85,6 +86,7 @@ public class LlmCommunicationService {
         this.pconf = pconf;
         this.modelName = modelName;
         this.listener = listener;
+        this.toolProviders = toolProviders != null ? List.copyOf(toolProviders) : List.of();
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
         model = buildModel(true);
 
@@ -101,7 +103,7 @@ public class LlmCommunicationService {
                                         ? buildModel(false)
                                         : model)
                         .chatMemory(chatMemory)
-                        .toolProviders(toolProviders)
+                        .toolProviders(this.toolProviders)
                         .build();
 
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.GroupLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -56,6 +57,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
     protected final JPasswordField apiKeyField;
     protected final JTextField endpointField;
     protected final JTextArea modelsArea;
+    protected final JCheckBox trustedCheckBox;
 
     protected final LlmProviderConfigsTableModel model;
 
@@ -94,6 +96,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                     updateEndpointFieldState();
                     updateSuggestedName();
                     updateSuggestedEndpoint();
+                    updateSuggestedTrusted();
                 });
         providerLabel.setLabelFor(providerComboBox);
 
@@ -115,6 +118,9 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         JScrollPane modelsScrollPane = new JScrollPane(modelsArea);
         modelNameLabel.setLabelFor(modelsArea);
 
+        trustedCheckBox =
+                new JCheckBox(Constant.messages.getString("llm.options.providers.field.trusted"));
+
         layout.setHorizontalGroup(
                 layout.createParallelGroup()
                         .addGroup(
@@ -134,7 +140,8 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                                                         .addComponent(providerComboBox)
                                                         .addComponent(apiKeyField)
                                                         .addComponent(endpointField)
-                                                        .addComponent(modelsScrollPane))));
+                                                        .addComponent(modelsScrollPane)
+                                                        .addComponent(trustedCheckBox))));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
@@ -157,7 +164,8 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(modelNameLabel)
-                                        .addComponent(modelsScrollPane)));
+                                        .addComponent(modelsScrollPane))
+                        .addComponent(trustedCheckBox));
 
         initView();
         setConfirmButtonEnabled(true);
@@ -254,7 +262,8 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                         provider,
                         new String(apiKeyField.getPassword()),
                         endpoint,
-                        parseModels());
+                        parseModels(),
+                        trustedCheckBox.isSelected());
     }
 
     public LlmProviderConfig getProviderConfig() {
@@ -296,6 +305,13 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                 || (isAnyProviderDefaultEndpoint(currentEndpoint)
                         && !currentEndpoint.equals(suggestedEndpoint))) {
             endpointField.setText(suggestedEndpoint);
+        }
+    }
+
+    protected void updateSuggestedTrusted() {
+        LlmProvider provider = (LlmProvider) providerComboBox.getSelectedItem();
+        if (provider != null) {
+            trustedCheckBox.setSelected(provider.isTrustedByDefault());
         }
     }
 

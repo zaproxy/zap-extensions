@@ -26,6 +26,7 @@ Each chat tab has a toolbar at the top containing the following controls:
 
 <ul>
     <li><b>Provider dropdown:</b> Shows the LLM provider and model currently active for this tab, for example <i>My Claude - claude-opus-4-5</i>. Click the dropdown to select a different provider or model from those you have configured. Each tab has its own independent provider selection — changing one tab's provider does not affect other tabs, and changing the global default (via the main ZAP toolbar button) does not alter providers already chosen in open tabs.</li>
+    <li><b>Tools toggle (power drill icon):</b> Enables or disables adding registered tools (such as those from the MCP add-on) to the LLM context for this tab. When enabled (the default for trusted providers), the LLM can invoke tools during the conversation. When disabled, subsequent messages are sent without tools. The toggle is only available when the selected model provider is marked as <b>Trusted</b> in the LLM Options — trusted providers may also receive richer data from other ZAP features; for untrusted providers the button is disabled and tools are never included. Toggling tools rebuilds the chat service for this tab (conversation history shown in the panel is retained for display, but is not carried across to the rebuilt service).</li>
     <li><b>Token counter:</b> Displays the cumulative number of tokens used in conversations with the current provider on this tab. The counter resets to zero when you select a different provider or model. Note that not all providers report token usage; if a provider does not, the counter will remain at zero.</li>
     <li><b>Options button (gear icon):</b> Opens the <a href="options.html">LLM Options</a> panel directly, where you can add, modify, or remove model providers.</li>
 </ul>
@@ -42,7 +43,7 @@ Note that the conversation history shown in the chat area is for display only �
 <H2>Using the Chat Interface</H2>
 The chat interface consists of:
 <ul>
-    <li><b>Toolbar:</b> Shows the active provider, token usage, and an options button. See above.</li>
+    <li><b>Toolbar:</b> Shows the active provider, tools toggle, token usage, and an options button. See above.</li>
     <li><b>Message Area:</b> Displays the conversation history between you and the LLM assistant. Messages are shown with labels indicating who sent them ("You" for your messages, "Assistant" for LLM responses). Located in the top portion of the panel.</li>
     <li><b>Input Area:</b> A multi-line text area at the bottom of the panel where you type your questions or messages.</li>
     <li><b>Send Button:</b> Click to send your message to the LLM.</li>
@@ -113,7 +114,7 @@ To append HTTP request/response data to the chat:
 
 <H2>Tips</H2>
 <ul>
-    <li>Use multiple tabs to organize different conversations — each tab keeps its own provider selection, message history, and token count independently.</li>
+    <li>Use multiple tabs to organize different conversations — each tab keeps its own provider selection, tools toggle, message history, and token count independently.</li>
     <li>If you want to compare responses from different models, open two tabs and set each to a different provider.</li>
     <li>The token counter gives you a rough indication of how much of your context window or quota you are using in this conversation with a given model.</li>
     <li>You can ask questions about security testing, web application vulnerabilities, ZAP usage, or any other topic the LLM can help with.</li>

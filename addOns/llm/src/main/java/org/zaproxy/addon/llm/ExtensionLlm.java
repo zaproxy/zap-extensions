@@ -250,7 +250,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
                             options.getDefaultProviderConfig(),
                             options.getDefaultModelName(),
                             listener,
-                            List.copyOf(toolProviders));
+                            toolsFor(options.getDefaultProviderConfig()));
                 });
     }
 
@@ -289,9 +289,15 @@ public class ExtensionLlm extends ExtensionAdaptor {
     /**
      * Builds a {@link LlmCommunicationService} using the given provider config, bypassing the
      * global default. Used by individual chat tabs that maintain their own provider selection.
+     *
+     * @param includeTools if {@code true}, registered tool providers are added to the LLM context
+     *     when the provider is trusted; otherwise the service is built without tools
      */
     public LlmCommunicationService buildCommunicationService(
-            LlmProviderConfig providerConfig, String modelName, ChatModelListener listener) {
+            LlmProviderConfig providerConfig,
+            String modelName,
+            ChatModelListener listener,
+            boolean includeTools) {
         if (providerConfig == null || LlmProvider.NONE.equals(providerConfig.getProvider())) {
             return null;
         }
@@ -305,7 +311,17 @@ public class ExtensionLlm extends ExtensionAdaptor {
             return null;
         }
         return new LlmCommunicationService(
-                providerConfig, modelName, listener, List.copyOf(toolProviders));
+                providerConfig,
+                modelName,
+                listener,
+                includeTools ? toolsFor(providerConfig) : List.of());
+    }
+
+    private List<ToolProvider> toolsFor(LlmProviderConfig providerConfig) {
+        if (providerConfig == null || !providerConfig.isTrusted()) {
+            return List.of();
+        }
+        return List.copyOf(toolProviders);
     }
 
     public void setDefaultProvider(String name, String modelName) {

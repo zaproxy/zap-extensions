@@ -8,10 +8,12 @@
 <H1>LLM MCP Support</H1>
 
 When both the LLM Support add-on and the MCP add-on are installed, the <b>LLM MCP Support</b> sub-extension automatically gives the LLM the ability to
-invoke ZAP's MCP tools directly during a chat session.
+invoke ZAP's MCP tools directly during a chat session. Tools are only included when the selected model provider is marked as
+<a href="options.html">Trusted</a> (the same flag that controls whether ZAP may share additional data with the provider).
+You can also turn tools off for an individual chat tab using the tools toggle in the chat toolbar.
 
 <H2>How It Works</H2>
-Each time you send a chat message, the LLM receives the full list of tools currently registered in the MCP add-on
+Each time you send a chat message with tools enabled, the LLM receives the full list of tools currently registered in the MCP add-on
 alongside your message. If the LLM decides a tool is needed to answer your request, it invokes that tool
 in-process (no HTTP round-trip to the MCP server is required), observes the result, and may invoke further
 tools before returning a final answer.

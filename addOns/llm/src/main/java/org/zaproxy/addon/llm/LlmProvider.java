@@ -53,6 +53,14 @@ public enum LlmProvider {
         return this != NONE;
     }
 
+    /**
+     * Whether providers of this type should be treated as trusted by default. Non cloud based
+     * providers default to trusted; cloud based providers default to untrusted.
+     */
+    public boolean isTrustedByDefault() {
+        return this == OLLAMA;
+    }
+
     public String getDefaultEndpoint() {
         if (this == OPENROUTER) {
             return "https://openrouter.ai/api/v1";
