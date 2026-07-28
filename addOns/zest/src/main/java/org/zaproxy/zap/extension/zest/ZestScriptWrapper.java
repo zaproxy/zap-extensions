@@ -31,6 +31,7 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource;
 import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunDiagnostics;
 import org.zaproxy.zap.extension.scripts.diagnostics.ScriptDiagnosticSource.RunFailureDiagnostic;
@@ -107,8 +108,8 @@ public class ZestScriptWrapper extends ScriptWrapper implements ScriptDiagnostic
                 case ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE:
                     ztype = Type.Passive;
                     break;
-                case ExtensionScript.TYPE_TARGETED:
-                case ExtensionScript.TYPE_PROXY:
+                case ExtensionScriptsUI.TYPE_TARGETED:
+                case ExtensionScriptsUI.TYPE_PROXY:
                     ztype = Type.Targeted;
                     break;
                 case ExtensionScript.TYPE_STANDALONE:

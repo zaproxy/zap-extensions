@@ -41,6 +41,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.extension.scripts.automation.FailureLevel;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJob;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
@@ -465,7 +466,7 @@ public class ScriptJobDialog extends StandardFieldsDialog {
 
     private void onScriptTypeTarget(String scriptType) {
         if (RunScriptAction.NAME.equals(getScriptAction().getName())) {
-            if (ExtensionScript.TYPE_TARGETED.equals(scriptType)) {
+            if (ExtensionScriptsUI.TYPE_TARGETED.equals(scriptType)) {
                 this.getField(SCRIPT_TARGET_PARAM).setEnabled(true);
                 this.getField(SCRIPT_ENGINE_PARAM).setEnabled(true);
             } else {
