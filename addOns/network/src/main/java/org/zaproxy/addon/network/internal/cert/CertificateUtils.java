@@ -130,6 +130,8 @@ public final class CertificateUtils {
      */
     private static final Duration SERVER_CERTIFICATE_START_ADJUSTMENT = Duration.ofDays(30);
 
+    private static final int CN_MAX_LENGTH = 64;
+
     private CertificateUtils() {}
 
     public static char[] getPassphrase() {
@@ -280,8 +282,10 @@ public final class CertificateUtils {
         PublicKey publicKey = keyPair.getPublic();
 
         X500NameBuilder namebld = new X500NameBuilder(BCStyle.INSTANCE);
-        if (certData.getCommonName() != null) {
-            namebld.addRDN(BCStyle.CN, certData.getCommonName());
+        String commonName = certData.getCommonName();
+        boolean cnAdded = commonName != null && commonName.length() <= CN_MAX_LENGTH;
+        if (cnAdded) {
+            namebld.addRDN(BCStyle.CN, commonName);
         }
         namebld.addRDN(BCStyle.OU, "Zed Attack Proxy Project");
         namebld.addRDN(BCStyle.O, "ZAP");
@@ -316,7 +320,7 @@ public final class CertificateUtils {
         if (subjectAlternativeNames.length > 0) {
             certGen.addExtension(
                     Extension.subjectAlternativeName,
-                    certData.isSubjectAlternativeNameIsCritical(),
+                    certData.isSubjectAlternativeNameIsCritical() || !cnAdded,
                     new GeneralNames(subjectAlternativeNames));
         }
 

@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -127,6 +128,32 @@ class CertificateUtilsUnitTest {
         assertThat(
                 serverCert.getSubjectAlternativeNames().toString(),
                 containsString("[[2, example.org], [7, 127.0.0.1]]"));
+    }
+
+    @Test
+    void shouldOmitCnWhenDomainNameExceedsLimit() throws Exception {
+        // Given
+        CertConfig config = new CertConfig(Duration.ofDays(60));
+        KeyStore rootCaKeyStore =
+                CertificateUtils.stringToKeystore(NetworkTestUtils.FISH_CERT_BASE64_STR);
+        X509Certificate rootCaCert = CertificateUtils.getCertificate(rootCaKeyStore);
+        PublicKey rootCaPublicKey = rootCaCert.getPublicKey();
+        PrivateKey rooCaPrivateKey = CertificateUtils.getPrivateKey(rootCaKeyStore);
+        String longHostname = "a".repeat(65) + ".example.org";
+        CertData certData = new CertData(longHostname);
+        // When
+        KeyStore keyStore =
+                CertificateUtils.createServerKeyStore(
+                        rootCaCert, rootCaPublicKey, rooCaPrivateKey, certData, 1L, config);
+        // Then
+        X509Certificate serverCert = CertificateUtils.getCertificate(keyStore);
+        assertThat(serverCert.getSubjectX500Principal().getName(), not(containsString("CN=")));
+        assertThat(
+                serverCert.getSubjectAlternativeNames().toString(),
+                containsString("[2, " + longHostname + "]"));
+        assertThat(
+                serverCert.getCriticalExtensionOIDs(),
+                hasItem(Extension.subjectAlternativeName.getId()));
     }
 
     @Test
