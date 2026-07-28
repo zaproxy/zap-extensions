@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Content Security Policy scan rule analyzes all active CSP headers and META policies together using browser-style intersection (Issue 9403).
 - Update dependency.
 - Updated help entries for the following scan rules, clarifying the data used to supplement their alerts for credit card related findings:
   - Information Disclosure: Referrer
   - PII Disclosure
+
+### Removed
+- CSP "Header & Meta" alert (10055-12) is no longer raised.
 
 ## [75] - 2026-07-06
 ### Changed
