@@ -196,7 +196,7 @@ The Content Security Policy (CSP) passive scan rule parses and analyzes CSP head
 or weakness. This rule leverages HtmlUnit's <a href="https://github.com/HtmlUnit/htmlunit-csp">htmlunit-csp</a> 
 library to perform it's parsing and assessment of CSPs.
 <p>
-If a response has multiple CSPs they are analyzed individually, as there is no sure way to intersect/merge the policies and further different browsers have varying levels of CSP support and enforcement.
+If a response has multiple Content-Security-Policy headers or CSP META definitions, they are analyzed together using browser-style intersection: a resource is allowed only if every policy allows it.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyScanRule.java">ContentSecurityPolicyScanRule.java</a>
 <br>
