@@ -85,7 +85,10 @@ public class LlmProviderConfigsTableModel
             case 1:
                 return config.getProvider().toString();
             case 2:
-                return String.join(", ", config.getModels());
+                return config.getModels().stream()
+                        .map(model -> config.getProvider().toDisplayModelName(model))
+                        .reduce((a, b) -> a + ", " + b)
+                        .orElse("");
             case 3:
                 return config.getEndpoint();
             case 4:

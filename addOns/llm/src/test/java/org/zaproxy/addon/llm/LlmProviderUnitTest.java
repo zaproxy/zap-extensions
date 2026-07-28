@@ -77,16 +77,42 @@ class LlmProviderUnitTest {
     }
 
     @Test
-    void shouldTrustOllamaByDefault() {
+    void shouldTrustLocalProvidersByDefault() {
         assertThat(LlmProvider.OLLAMA.isTrustedByDefault(), is(true));
+        assertThat(LlmProvider.JLAMA.isTrustedByDefault(), is(true));
     }
 
     @ParameterizedTest
     @EnumSource(
             value = LlmProvider.class,
             mode = Mode.EXCLUDE,
-            names = {"OLLAMA"})
+            names = {"OLLAMA", "JLAMA"})
     void shouldNotTrustNonLocalProvidersByDefault(LlmProvider provider) {
         assertThat(provider.isTrustedByDefault(), is(false));
+    }
+
+    @Test
+    void jlamaShouldUseLocalModelPathAndExternalFactory() {
+        assertThat(LlmProvider.JLAMA.isLocalModelPath(), is(true));
+        assertThat(LlmProvider.JLAMA.requiresExternalFactory(), is(true));
+        assertThat(LlmProvider.JLAMA.supportsApiKey(), is(false));
+        assertThat(LlmProvider.JLAMA.supportsEndpoint(), is(false));
+    }
+
+    @Test
+    void jlamaDisplayModelNameShouldBeDirectoryName() {
+        assertThat(
+                LlmProvider.JLAMA.toDisplayModelName("/home/user/.ZAP/llm-models/TinyLlama-Q4"),
+                is("TinyLlama-Q4"));
+        assertThat(LlmProvider.JLAMA.toDisplayModelName("TinyLlama-Q4"), is("TinyLlama-Q4"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = LlmProvider.class,
+            mode = Mode.EXCLUDE,
+            names = {"NONE", "OLLAMA", "JLAMA"})
+    void shouldSupportApiKey(LlmProvider provider) {
+        assertThat(provider.supportsApiKey(), is(true));
     }
 }

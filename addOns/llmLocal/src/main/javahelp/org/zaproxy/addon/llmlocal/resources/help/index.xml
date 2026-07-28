@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="1.0">
+    <indexitem text="Jlama" target="addon.llmlocal" />
+    <indexitem text="Local LLM Support" target="addon.llmlocal" />
+    <indexitem text="local LLM" target="addon.llmlocal" />
+</index>

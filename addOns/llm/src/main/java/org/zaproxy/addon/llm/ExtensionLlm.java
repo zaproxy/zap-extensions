@@ -22,8 +22,11 @@ package org.zaproxy.addon.llm;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.service.tool.ToolProvider;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,6 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -67,6 +71,10 @@ public class ExtensionLlm extends ExtensionAdaptor {
     private Map<String, LlmCommunicationService> commsServices = new ConcurrentHashMap<>();
     private final List<ToolProvider> toolProviders = new CopyOnWriteArrayList<>();
     private final AtomicInteger toolProvidersVersion = new AtomicInteger();
+    private final Map<LlmProvider, LlmChatModelFactory> chatModelFactories =
+            new ConcurrentHashMap<>();
+    private final Map<LlmProvider, LlmLocalModelDownloadUi> localModelDownloadUis =
+            new ConcurrentHashMap<>();
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
 
@@ -234,6 +242,96 @@ public class ExtensionLlm extends ExtensionAdaptor {
         return toolProvidersVersion.get();
     }
 
+    /**
+     * Registers a factory that can create chat models for a provider implemented in another add-on.
+     *
+     * @param factory the factory to register
+     */
+    public void registerChatModelFactory(LlmChatModelFactory factory) {
+        if (factory == null || factory.getProvider() == null) {
+            return;
+        }
+        chatModelFactories.put(factory.getProvider(), factory);
+        commsServices.clear();
+    }
+
+    /**
+     * Unregisters a previously registered chat model factory.
+     *
+     * @param factory the factory to unregister
+     */
+    public void unregisterChatModelFactory(LlmChatModelFactory factory) {
+        if (factory == null || factory.getProvider() == null) {
+            return;
+        }
+        chatModelFactories.remove(factory.getProvider(), factory);
+        commsServices.clear();
+    }
+
+    /**
+     * Returns the registered factory for the given provider, or {@code null} if none is registered.
+     *
+     * @param provider the provider
+     * @return the factory, or {@code null}
+     */
+    public LlmChatModelFactory getChatModelFactory(LlmProvider provider) {
+        return provider == null ? null : chatModelFactories.get(provider);
+    }
+
+    /**
+     * Returns {@code true} if a chat model factory is registered for the given provider.
+     *
+     * @param provider the provider
+     * @return {@code true} if a factory is available
+     */
+    public boolean hasChatModelFactory(LlmProvider provider) {
+        return getChatModelFactory(provider) != null;
+    }
+
+    /**
+     * Registers UI that can download a local model for a provider implemented in another add-on.
+     *
+     * @param downloadUi the download UI to register
+     */
+    public void registerLocalModelDownloadUi(LlmLocalModelDownloadUi downloadUi) {
+        if (downloadUi == null || downloadUi.getProvider() == null) {
+            return;
+        }
+        localModelDownloadUis.put(downloadUi.getProvider(), downloadUi);
+    }
+
+    /**
+     * Unregisters a previously registered local model download UI.
+     *
+     * @param downloadUi the download UI to unregister
+     */
+    public void unregisterLocalModelDownloadUi(LlmLocalModelDownloadUi downloadUi) {
+        if (downloadUi == null || downloadUi.getProvider() == null) {
+            return;
+        }
+        localModelDownloadUis.remove(downloadUi.getProvider(), downloadUi);
+    }
+
+    /**
+     * Returns the registered local model download UI for the given provider, or {@code null}.
+     *
+     * @param provider the provider
+     * @return the download UI, or {@code null}
+     */
+    public LlmLocalModelDownloadUi getLocalModelDownloadUi(LlmProvider provider) {
+        return provider == null ? null : localModelDownloadUis.get(provider);
+    }
+
+    /**
+     * Returns {@code true} if a local model download UI is registered for the given provider.
+     *
+     * @param provider the provider
+     * @return {@code true} if download UI is available
+     */
+    public boolean hasLocalModelDownloadUi(LlmProvider provider) {
+        return getLocalModelDownloadUi(provider) != null;
+    }
+
     public LlmCommunicationService getCommunicationService(String commsKey, String outputTabName) {
         if (!isConfigured()) {
             return null;
@@ -351,11 +449,143 @@ public class ExtensionLlm extends ExtensionAdaptor {
         options.setDefaultProviderName(providerName);
         options.setDefaultModelName(modelName);
         this.optionsReset();
+        refreshChatProviders();
 
         try {
             options.getConfig().save();
         } catch (ConfigurationException e) {
             LOGGER.error("Failed to save LLM default provider selection:", e);
+        }
+    }
+
+    /**
+     * Adds or replaces a provider configuration by name and optionally selects it as the default
+     * (using the first model in the config).
+     *
+     * <p>Cached communication services are kept unless this change makes them unusable (for example
+     * the selected model was removed, or the provider connection details changed). Chat tab
+     * services are preserved across default-selection changes; non-tab caches (e.g. OpenAPI) are
+     * dropped when the global default changes so callers pick up the new default.
+     *
+     * @param config the provider configuration
+     * @param setAsDefault {@code true} to make this the default provider/model
+     */
+    public void configureProvider(LlmProviderConfig config, boolean setAsDefault) {
+        if (options == null || config == null || StringUtils.isBlank(config.getName())) {
+            return;
+        }
+
+        LlmProviderConfig previous = options.getProviderConfig(config.getName());
+        String previousDefaultName = options.getDefaultProviderName();
+        String previousDefaultModel = options.getDefaultModelName();
+
+        List<LlmProviderConfig> configs = getProviderConfigs();
+        configs.removeIf(existing -> config.getName().equals(existing.getName()));
+        configs.add(new LlmProviderConfig(config));
+        options.setProviderConfigs(configs);
+
+        if (setAsDefault) {
+            String modelName = config.getModels().isEmpty() ? "" : config.getModels().get(0);
+            options.setDefaultProviderName(config.getName());
+            options.setDefaultModelName(modelName);
+        } else if (config.getName().equals(options.getDefaultProviderName())
+                && StringUtils.isNotEmpty(options.getDefaultModelName())
+                && !config.getModels().contains(options.getDefaultModelName())) {
+            // The configured default model was removed from this provider.
+            options.setDefaultModelName(
+                    config.getModels().isEmpty() ? "" : config.getModels().get(0));
+        }
+
+        invalidateCommsAfterProviderChange(
+                previous, config, previousDefaultName, previousDefaultModel);
+        prevOptions = options.clone();
+
+        try {
+            options.getConfig().save();
+        } catch (ConfigurationException e) {
+            LOGGER.error("Failed to save LLM provider configuration:", e);
+        }
+        refreshChatProviders();
+    }
+
+    /**
+     * Drops cached services that can no longer run with the updated provider config. Unrelated
+     * conversations are left alone.
+     */
+    private void invalidateCommsAfterProviderChange(
+            LlmProviderConfig previous,
+            LlmProviderConfig updated,
+            String previousDefaultName,
+            String previousDefaultModel) {
+        boolean defaultChanged =
+                !Objects.equals(previousDefaultName, options.getDefaultProviderName())
+                        || !Objects.equals(previousDefaultModel, options.getDefaultModelName());
+        boolean connectionChanged = previous != null && !sameCommsIdentity(previous, updated);
+
+        Set<String> removedModels = new HashSet<>();
+        if (previous != null) {
+            removedModels.addAll(previous.getModels());
+            removedModels.removeAll(updated.getModels());
+        }
+
+        if (!connectionChanged && removedModels.isEmpty() && !defaultChanged) {
+            return;
+        }
+
+        Set<String> chatTabTags = getChatTabTags();
+        commsServices
+                .entrySet()
+                .removeIf(
+                        entry -> {
+                            LlmCommunicationService service = entry.getValue();
+                            if (service == null || service.getPconf() == null) {
+                                return false;
+                            }
+                            String serviceProvider = service.getPconf().getName();
+                            String serviceModel = service.getModelName();
+
+                            if (updated.getName().equals(serviceProvider)) {
+                                if (connectionChanged) {
+                                    return true;
+                                }
+                                if (removedModels.contains(serviceModel)) {
+                                    return true;
+                                }
+                            }
+
+                            // Global default changed: drop non-tab caches built on the old default
+                            // so callers (OpenAPI, etc.) rebuild; keep chat tab conversations.
+                            return defaultChanged
+                                    && !chatTabTags.contains(entry.getKey())
+                                    && Objects.equals(previousDefaultName, serviceProvider)
+                                    && Objects.equals(previousDefaultModel, serviceModel);
+                        });
+    }
+
+    private Set<String> getChatTabTags() {
+        if (llmChatPanel == null || llmChatPanel.getTabbedPane() == null) {
+            return Set.of();
+        }
+        return llmChatPanel.getTabbedPane().getChatTabTags();
+    }
+
+    /**
+     * Whether two configs share the same connection identity (ignoring the models list). Matches
+     * {@link LlmChatTabPanel#sameTabComms} connection fields so adding/removing unused models does
+     * not wipe conversation history.
+     */
+    static boolean sameCommsIdentity(LlmProviderConfig a, LlmProviderConfig b) {
+        return a != null
+                && b != null
+                && Objects.equals(a.getName(), b.getName())
+                && Objects.equals(a.getProvider(), b.getProvider())
+                && Objects.equals(a.getApiKey(), b.getApiKey())
+                && Objects.equals(a.getEndpoint(), b.getEndpoint());
+    }
+
+    private void refreshChatProviders() {
+        if (llmChatPanel != null) {
+            SwingUtilities.invokeLater(llmChatPanel::refreshProviders);
         }
     }
 }

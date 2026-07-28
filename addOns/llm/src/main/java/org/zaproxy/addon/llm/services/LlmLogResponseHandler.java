@@ -56,6 +56,6 @@ public class LlmLogResponseHandler implements ChatModelListener {
 
     @Override
     public void onError(ChatModelErrorContext errorContext) {
-        LOGGER.error("[{}] LLM Error : {} ", commsKey, errorContext.error().getMessage());
+        LOGGER.error("[{}] LLM Error", commsKey, errorContext.error());
     }
 }
