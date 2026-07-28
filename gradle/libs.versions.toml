@@ -44,7 +44,7 @@ commonlib-jackson-datatype-jsr310.module = "com.fasterxml.jackson.datatype:jacks
 database-datanucleusJdo = "org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.10"
 database-flywayCore = { module =  "org.flywaydb:flyway-core", version.ref = "flyway" }
 database-flywayDatabaseHsqldb =  { module = "org.flywaydb:flyway-database-hsqldb", version.ref = "flyway" }
-database-sqliteJdbc = "org.xerial:sqlite-jdbc:3.53.2.0"
+database-sqliteJdbc = "org.xerial:sqlite-jdbc:3.53.2.1"
 diff-diffutils = { module = "com.googlecode.java-diff-utils:diffutils", version.ref = "diffutils" }
 exim-harReader = "de.sstoehr:har-reader:3.1.6"
 exim-hektorFsm = "io.hektor:hektor-fsm:0.0.8"
@@ -55,9 +55,9 @@ graaljs-graaljs = { module = "org.graalvm.js:js-community", version.ref = "graal
 graaljs-jsScriptEngine = { module = "org.graalvm.js:js-scriptengine", version.ref = "graaljs" }
 graphql-graphqlJava = "com.graphql-java:graphql-java:26.0"
 groovy-groovy = "org.apache.groovy:groovy-all:5.0.7"
-grpc-protobuf = "io.grpc:grpc-protobuf:1.82.2"
+grpc-protobuf = "io.grpc:grpc-protobuf:1.83.0"
 httpsinfo-deepviolet = "com.github.spoofzu:DeepViolet:6.1.1"
-imagelocationscanner-metadataExtractor = "com.drewnoakes:metadata-extractor:2.20.0"
+imagelocationscanner-metadataExtractor = "com.drewnoakes:metadata-extractor:2.21.0"
 jruby-jruby = "org.jruby:jruby-complete:9.4.15.0"
 jython-jython = "org.python:jython-standalone:2.7.4"
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
@@ -129,7 +129,7 @@ zest-zest = "org.zaproxy:zest:0.36.0"
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:2.2.0"
-dependencyUpdates = "com.github.ben-manes.versions:0.54.0"
+dependencyUpdates = "com.github.ben-manes.versions:0.56.0"
 errorprone = "net.ltgt.errorprone:5.1.0"
 japicmp = "me.champeau.gradle.japicmp:0.4.6"
 lombok = "io.freefair.lombok:9.5.0"
