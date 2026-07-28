@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Provider label for the in-process local provider is now "Local (Jlama)" (requires the Local LLM Support add-on).
 
 ## [0.0.1] - 2026-08-07
 

@@ -23,11 +23,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import dev.langchain4j.service.tool.ToolProvider;
 import java.util.List;
@@ -371,6 +374,10 @@ public class ExtensionLlmUnitTest extends TestUtils {
                         .isTrusted(),
                 is(true));
         assertThat(
+                new LlmProviderConfig("jlama", LlmProvider.JLAMA, "", "", List.of("/models/tiny"))
+                        .isTrusted(),
+                is(true));
+        assertThat(
                 new LlmProviderConfig(
                                 "claude",
                                 LlmProvider.CLAUDE,
@@ -379,5 +386,145 @@ public class ExtensionLlmUnitTest extends TestUtils {
                                 List.of("claude-sonnet-4-6"))
                         .isTrusted(),
                 is(false));
+    }
+
+    @Test
+    void shouldRegisterAndUnregisterChatModelFactory() {
+        // Given
+        LlmChatModelFactory factory = mock(LlmChatModelFactory.class);
+        when(factory.getProvider()).thenReturn(LlmProvider.JLAMA);
+
+        // When
+        ext.registerChatModelFactory(factory);
+
+        // Then
+        assertThat(ext.hasChatModelFactory(LlmProvider.JLAMA), is(true));
+        assertThat(ext.getChatModelFactory(LlmProvider.JLAMA), is(factory));
+
+        // When
+        ext.unregisterChatModelFactory(factory);
+
+        // Then
+        assertThat(ext.hasChatModelFactory(LlmProvider.JLAMA), is(false));
+        assertThat(ext.getChatModelFactory(LlmProvider.JLAMA), is(nullValue()));
+    }
+
+    @Test
+    void shouldConfigureProviderAsDefault() {
+        // Given
+        ext.getOptions().setProviderConfigs(List.of());
+        LlmProviderConfig config =
+                new LlmProviderConfig("Local", LlmProvider.JLAMA, "", "", List.of("/models/tiny"));
+
+        // When
+        ext.configureProvider(config, true);
+
+        // Then
+        assertThat(ext.getProviderConfigs(), hasSize(1));
+        assertThat(ext.getDefaultProviderConfig().getName(), is("Local"));
+        assertThat(ext.getDefaultProviderConfig().getProvider(), is(LlmProvider.JLAMA));
+        assertThat(ext.getDefaultModelName(), is("/models/tiny"));
+    }
+
+    @Test
+    void configureProviderShouldKeepCommsWhenOnlyAddingModel() {
+        // Given
+        ext.removeCommunicationService("CFG_KEEP");
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "ollama",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost:11434",
+                                        List.of("model1"))));
+        ext.getOptions().setDefaultProviderName("ollama");
+        ext.getOptions().setDefaultModelName("model1");
+        LlmCommunicationService before = ext.getCommunicationService("CFG_KEEP", null);
+        assertThat(before, is(not(nullValue())));
+
+        // When — add another model without changing the selected one
+        ext.configureProvider(
+                new LlmProviderConfig(
+                        "ollama",
+                        LlmProvider.OLLAMA,
+                        null,
+                        "http://localhost:11434",
+                        List.of("model1", "model2")),
+                false);
+
+        // Then
+        assertThat(ext.getCommunicationService("CFG_KEEP", null), is(sameInstance(before)));
+        assertThat(ext.getDefaultModelName(), is("model1"));
+        assertThat(ext.getProviderConfigs().get(0).getModels(), hasSize(2));
+    }
+
+    @Test
+    void configureProviderShouldDropCommsWhenModelRemoved() {
+        // Given
+        ext.removeCommunicationService("CFG_DROP_MODEL");
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "ollama",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost:11434",
+                                        List.of("model1", "model2"))));
+        ext.getOptions().setDefaultProviderName("ollama");
+        ext.getOptions().setDefaultModelName("model1");
+        LlmCommunicationService before = ext.getCommunicationService("CFG_DROP_MODEL", null);
+        assertThat(before, is(not(nullValue())));
+        assertThat(before.getModelName(), is("model1"));
+
+        // When — remove the model the cached service is using
+        ext.configureProvider(
+                new LlmProviderConfig(
+                        "ollama",
+                        LlmProvider.OLLAMA,
+                        null,
+                        "http://localhost:11434",
+                        List.of("model2")),
+                false);
+
+        // Then
+        assertThat(
+                ext.getCommunicationService("CFG_DROP_MODEL", null), is(not(sameInstance(before))));
+        assertThat(ext.getDefaultModelName(), is("model2"));
+    }
+
+    @Test
+    void configureProviderShouldDropCommsWhenConnectionChanges() {
+        // Given
+        ext.removeCommunicationService("CFG_DROP_CONN");
+        ext.getOptions()
+                .setProviderConfigs(
+                        List.of(
+                                new LlmProviderConfig(
+                                        "ollama",
+                                        LlmProvider.OLLAMA,
+                                        null,
+                                        "http://localhost:11434",
+                                        List.of("model1"))));
+        ext.getOptions().setDefaultProviderName("ollama");
+        ext.getOptions().setDefaultModelName("model1");
+        LlmCommunicationService before = ext.getCommunicationService("CFG_DROP_CONN", null);
+        assertThat(before, is(not(nullValue())));
+
+        // When
+        ext.configureProvider(
+                new LlmProviderConfig(
+                        "ollama",
+                        LlmProvider.OLLAMA,
+                        null,
+                        "http://localhost:11435",
+                        List.of("model1")),
+                false);
+
+        // Then
+        assertThat(
+                ext.getCommunicationService("CFG_DROP_CONN", null), is(not(sameInstance(before))));
     }
 }

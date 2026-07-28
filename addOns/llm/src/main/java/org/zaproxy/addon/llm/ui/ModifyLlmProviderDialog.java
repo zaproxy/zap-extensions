@@ -44,14 +44,17 @@ public class ModifyLlmProviderDialog extends AddLlmProviderDialog {
 
     @Override
     protected void init() {
+        refreshProviders(providerConfig.getProvider());
         nameTextField.setText(providerConfig.getName());
         providerComboBox.setSelectedItem(providerConfig.getProvider());
         apiKeyField.setText(providerConfig.getApiKey());
         updateSuggestedEndpoint();
         setEndpointText(providerConfig.getEndpoint());
-        modelsArea.setText(String.join("\n", providerConfig.getModels()));
+        setModels(providerConfig.getModels());
         timeoutSpinner.setValue(providerConfig.getTimeoutSeconds());
         trustedCheckBox.setSelected(providerConfig.isTrusted());
         updateEndpointFieldState();
+        updateApiKeyFieldState();
+        updateModelsFieldState();
     }
 }

@@ -69,6 +69,7 @@ val addOns =
         "jython",
         "kotlin",
         "llm",
+        "llmLocal",
         "mcp",
         "network",
         "oast",
@@ -117,6 +118,10 @@ val addOns =
         "websocket",
         "zest",
     )
+
+if (JavaVersion.current() < JavaVersion.VERSION_21) {
+    addOns.remove("llmLocal")
+}
 
 addOns.forEach { include("$addOnsProjectName:$it") }
 

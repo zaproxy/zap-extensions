@@ -54,7 +54,11 @@ import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.LlmChatModelFactory;
 import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
@@ -141,6 +145,12 @@ public class LlmCommunicationService {
                                         : model)
                         .chatMemory(chatMemory)
                         .toolProviders(this.toolProviders);
+        if (!this.toolProviders.isEmpty() && pconf.getProvider() == LlmProvider.JLAMA) {
+            // Local models only see tools via the chat template; a short system hint helps smaller
+            // Instruct models actually invoke them instead of answering in plain text.
+            chatAssistantBuilder.systemMessage(
+                    Constant.messages.getString("llm.chat.system.jlama.tools"));
+        }
         if (toolExecutionHandler != null) {
             chatAssistantBuilder
                     .beforeToolExecution(toolExecutionHandler::beforeToolExecution)
@@ -233,8 +243,22 @@ public class LlmCommunicationService {
                             .logRequests(true)
                             .logResponses(true)
                             .build();
+            case JLAMA -> createExternalModel(withJsonResponseFormat);
             default -> throw new RuntimeException("Unknown model provider");
         };
+    }
+
+    private ChatModel createExternalModel(boolean withJsonResponseFormat) {
+        ExtensionLlm extensionLlm =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionLlm.class);
+        LlmChatModelFactory factory =
+                extensionLlm != null ? extensionLlm.getChatModelFactory(pconf.getProvider()) : null;
+        if (factory == null) {
+            throw new RuntimeException(
+                    Constant.messages.getString(
+                            "llm.error.factory.unavailable", pconf.getProvider().toString()));
+        }
+        return factory.create(pconf, modelName, listener, withJsonResponseFormat);
     }
 
     private Integer importHttpCalls(String openapiContent) throws RuntimeException {

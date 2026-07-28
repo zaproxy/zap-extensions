@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Local LLM Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Local LLM Support</H1>
+
+This optional add-on adds a <em>Local (Jlama)</em> provider to the
+<strong>LLM Support</strong> add-on. It runs an open-source LLM
+<strong>in-process</strong> inside ZAP, using
+<a href="https://github.com/tjake/jlama">Jlama</a>, so no separate Ollama or API server is required.
+
+<H2>Requirements</H2>
+<ul>
+    <li>The <strong>LLM Support</strong> add-on must also be installed.</li>
+    <li>ZAP must be running on <strong>Java 21 or later</strong>.</li>
+    <li>The Java Vector API and Jlama native SIMD must be enabled. Add these JVM options and restart
+        ZAP:
+        <pre>--add-modules jdk.incubator.vector --enable-preview</pre>
+        <code>--enable-preview</code> is required on Java 21 so the bundled
+        <code>jlama-native</code> library can load. Without it, Jlama falls back to Panama vector
+        ops and many Q4 models fail on Apple Silicon with
+        <code>UnsupportedOperationException: ARM_128</code>.
+        For packaged ZAP, set the options under <em>Options</em> &rarr; <em>JVM</em> (stored in
+        <code>.ZAP_JVM.properties</code>). For IDE / <code>ZAP_D</code> launches, add the same
+        options to the run configuration VM arguments. You can also set
+        <code>JDK_JAVA_OPTIONS='--add-modules jdk.incubator.vector --enable-preview'</code> before
+        starting ZAP. On newer JDKs you may also need
+        <code>--enable-native-access=ALL-UNNAMED</code>.
+    </li>
+    <li>Sufficient RAM for the chosen model (quantized models are strongly recommended).</li>
+</ul>
+
+<H2>Local model directory</H2>
+<p>
+Configure the provider with the path to a local <strong>SafeTensors</strong> model directory.
+A valid directory typically contains at least:
+</p>
+<ul>
+    <li><code>config.json</code></li>
+    <li>tokenizer files (for example <code>tokenizer.json</code>)</li>
+    <li>one or more <code>*.safetensors</code> weight files</li>
+</ul>
+<p>
+Pre-quantized models suitable for Jlama are published under
+<a href="https://huggingface.co/tjake">huggingface.co/tjake</a>. Download a model locally, then
+point ZAP at that folder.
+</p>
+<p>
+Single-file GGUF models are not supported by this add-on.
+</p>
+
+<H2>Configuration</H2>
+<ol>
+    <li>Install <strong>LLM Support</strong> and <strong>Local LLM Support</strong>.</li>
+    <li>Open <em>Options</em> &rarr; <em>LLM</em> and add a provider of type <em>Local (Jlama)</em>.</li>
+    <li>Use <em>Browse...</em> or <em>Download...</em> to add one or more local models (HuggingFace
+        downloads land under <code>&lt;ZAP home&gt;/llm-models</code>; the tjake catalog is offered in
+        the download dialog).</li>
+    <li>Select that provider/model from the LLM toolbar or chat panel, as with any other provider.</li>
+</ol>
+
+<H2>Command Line</H2>
+<p>
+You can download a HuggingFace model and configure it as the default local LLM provider in one step:
+</p>
+<pre>zap.sh -llmlocal tjake/Llama-3.2-1B-Instruct-Jlama-Q4</pre>
+<p>
+The model is stored under <code>&lt;ZAP home&gt;/llm-models</code>. Re-running the option with the same
+model reuses the cached files and refreshes the LLM provider configuration.
+</p>
+<p>
+<code>-jlama</code> is accepted as a deprecated alias for <code>-llmlocal</code>.
+</p>
+
+<H2>MCP / tools</H2>
+<p>
+ZAP can pass MCP tools (spider, active scan, and so on) to the local model when the provider is marked
+<strong>Trusted</strong> and the chat tools toggle is enabled. Whether the model actually
+<em>sees</em> those tools depends on its HuggingFace chat template:
+</p>
+<ul>
+    <li><strong>Tool-capable Instruct models</strong> (recommended): for example
+        <code>tjake/Llama-3.2-1B-Instruct-Jlama-Q4</code>,
+        <code>tjake/Llama-3.2-3B-Instruct-JQ4</code>, or
+        <code>tjake/granite-3.0-2b-instruct-JQ4</code>. These templates include a tools section, so
+        Jlama can inject tool definitions into the prompt.</li>
+    <li><strong>Chat-only models</strong> such as TinyLlama: their templates have no tools section.
+        MCP tools are never included in the prompt, so the model cannot call them.</li>
+</ul>
+<p>
+Even with a tool-capable template, very small models (around 1B parameters) may still ignore tools
+when many MCP tools are present. Prefer a 2B–3B Instruct model when testing tool calling.
+</p>
+
+<H2>Compared with Ollama</H2>
+<p>
+Ollama also runs models locally, but as a separate HTTP service. This add-on loads the model inside the
+ZAP JVM process via Jlama. That is convenient for air-gapped use, but it increases ZAP's memory usage and
+requires a newer JDK with Vector API flags.
+</p>
+
+</BODY>
+</HTML>

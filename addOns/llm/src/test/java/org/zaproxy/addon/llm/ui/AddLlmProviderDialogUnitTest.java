@@ -20,7 +20,11 @@
 package org.zaproxy.addon.llm.ui;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItemInArray;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,7 +32,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.NullSource;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.LlmChatModelFactory;
+import org.zaproxy.addon.llm.LlmLocalModelDownloadUi;
 import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -59,5 +68,72 @@ class AddLlmProviderDialogUnitTest extends TestUtils {
         String endpoint = AddLlmProviderDialog.endpointValueOnSelect(provider);
         // Then
         assertThat(endpoint, is(""));
+    }
+
+    @Test
+    void shouldHideJlamaWhenFactoryNotRegistered() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        ExtensionLlm extensionLlm = new ExtensionLlm();
+        when(extensionLoader.getExtension(ExtensionLlm.class)).thenReturn(extensionLlm);
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        LlmProvider[] providers = AddLlmProviderDialog.availableProviders(null);
+
+        // Then
+        assertThat(providers, not(hasItemInArray(LlmProvider.JLAMA)));
+    }
+
+    @Test
+    void shouldShowJlamaWhenFactoryRegistered() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        ExtensionLlm extensionLlm = new ExtensionLlm();
+        LlmChatModelFactory factory = mock(LlmChatModelFactory.class);
+        when(factory.getProvider()).thenReturn(LlmProvider.JLAMA);
+        extensionLlm.registerChatModelFactory(factory);
+        when(extensionLoader.getExtension(ExtensionLlm.class)).thenReturn(extensionLlm);
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        LlmProvider[] providers = AddLlmProviderDialog.availableProviders(null);
+
+        // Then
+        assertThat(providers, hasItemInArray(LlmProvider.JLAMA));
+    }
+
+    @Test
+    void shouldIncludeJlamaWhenAlwaysIncludeEvenWithoutFactory() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        when(extensionLoader.getExtension(ExtensionLlm.class)).thenReturn(new ExtensionLlm());
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        LlmProvider[] providers = AddLlmProviderDialog.availableProviders(LlmProvider.JLAMA);
+
+        // Then
+        assertThat(providers, hasItemInArray(LlmProvider.JLAMA));
+    }
+
+    @Test
+    void shouldRegisterAndUnregisterLocalModelDownloadUi() {
+        // Given
+        ExtensionLlm extensionLlm = new ExtensionLlm();
+        LlmLocalModelDownloadUi downloadUi = mock(LlmLocalModelDownloadUi.class);
+        when(downloadUi.getProvider()).thenReturn(LlmProvider.JLAMA);
+
+        // When
+        extensionLlm.registerLocalModelDownloadUi(downloadUi);
+
+        // Then
+        assertThat(extensionLlm.hasLocalModelDownloadUi(LlmProvider.JLAMA), is(true));
+
+        // When
+        extensionLlm.unregisterLocalModelDownloadUi(downloadUi);
+
+        // Then
+        assertThat(extensionLlm.hasLocalModelDownloadUi(LlmProvider.JLAMA), is(false));
     }
 }

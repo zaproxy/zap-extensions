@@ -132,7 +132,7 @@ public class LlmChatTabPanel extends JPanel {
             String displayModel =
                     model.isEmpty()
                             ? Constant.messages.getString("llm.toolbar.model.empty")
-                            : model;
+                            : config.getProvider().toDisplayModelName(model);
             return Constant.messages.getString(
                     "llm.chat.toolbar.provider.entry", config.getName(), displayModel);
         }
@@ -328,6 +328,12 @@ public class LlmChatTabPanel extends JPanel {
 
     /** Populates the provider combo and sets the selection, falling back to first available. */
     void initTabProvider() {
+        // Unused tabs should follow the current global default (e.g. after -llmlocal configures one).
+        if (isUnused()) {
+            tabProviderConfig = null;
+            tabModelName = "";
+        }
+
         LlmProviderConfig previousConfig = tabProviderConfig;
         String previousModel = tabModelName;
         List<LlmProviderConfig> configs = extension.getProviderConfigs();
@@ -434,6 +440,20 @@ public class LlmChatTabPanel extends JPanel {
         } finally {
             updatingCombo = false;
         }
+    }
+
+    /**
+     * Returns {@code true} when this tab has not been used for a conversation yet (welcome text
+     * only, no service).
+     */
+    boolean isUnused() {
+        if (tabService != null || totalTokensUsed.get() != 0) {
+            return false;
+        }
+        String text = messageArea.getText();
+        return text == null
+                || text.isEmpty()
+                || text.equals(Constant.messages.getString("llm.chat.panel.welcome"));
     }
 
     private void changeTabProvider(LlmProviderConfig config, String modelName) {
@@ -608,6 +628,7 @@ public class LlmChatTabPanel extends JPanel {
                                 }
 
                             } catch (Exception e) {
+                                LOGGER.error("Error sending chat message", e);
                                 appendToOutput("llm.chat.panel.error.send", e.getMessage());
                             }
                         },

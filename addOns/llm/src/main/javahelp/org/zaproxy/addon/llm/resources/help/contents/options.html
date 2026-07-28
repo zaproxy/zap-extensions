@@ -22,6 +22,7 @@
         <li>Azure OpenAI
         <li>Claude (Anthropic)
         <li>Google Gemini
+        <li>Local (Jlama) — requires the separate <strong>Local LLM Support</strong> add-on
         <li>Ollama
         <li>OpenAI Compatible
     </ul>
@@ -51,6 +52,17 @@ The endpoint base URL is built-in and so does not need to be specified.
 You will typically not need to specify an API key. Local models do not need an API key and if you access cloud models then you can configure the API key in Ollama.
 <p>
 If you have Ollama installed on the same machine as ZAP then by default the endpoint will be <code>http://localhost:11434/</code>.
+
+<h3>Local (Jlama)</h3>
+
+Local LLM Support runs a local SafeTensors model <strong>in-process</strong> inside ZAP using
+<a href="https://github.com/tjake/jlama">Jlama</a>. It is provided by the separate
+<strong>Local LLM Support</strong> add-on and only appears in the provider list when that add-on is installed and ZAP is
+running on Java 21+.
+<p>
+Instead of remote model names, configure a local model directory containing <code>config.json</code>
+and SafeTensors weights, or use <em>Download...</em> / <em>Browse...</em> to add one or more models under
+<code>&lt;ZAP home&gt;/llm-models</code>. See the Local LLM Support help for JVM flags and model layout details.
 
 <h3>OpenAI Compatible</h3>
 
