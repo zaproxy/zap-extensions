@@ -1418,7 +1418,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
     }
 
     @Test
-    void shouldAlertWhenOrTrueResponseExceedsBothThresholds() throws Exception {
+    void shouldAlertWhenOrTrueResponseExceedsRatioThreshold() throws Exception {
         // Sanity check: ratio=1.5x, diff=50% of normalLen — SHOULD alert.
         // Confirms the fix doesn't suppress real detections.
         String normalBody = "C".repeat(5000);
