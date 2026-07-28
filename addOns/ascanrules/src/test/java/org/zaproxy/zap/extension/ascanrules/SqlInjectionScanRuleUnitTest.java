@@ -1369,4 +1369,75 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             return responseFn.get();
         }
     }
+
+    @Test
+    void shouldNotAlertWhenOrTrueResponseRatioBelowThreshold() throws Exception {
+        // OR-TRUE response is ~38% larger — under the 1.4x ratio threshold.
+        // Simulates a dynamic page with natural size variation (ads, tokens, etc).
+        String normalBody = "A".repeat(3000);
+        String orTrueBody = "A".repeat(4140); // ratio ~1.38x
+
+        nano.addHandler(new NanoServerHandler("/sqli-fp-ratio") {
+            private int count = 0;
+
+            @Override
+            protected Response serve(IHTTPSession session) {
+                count++;
+                return newFixedLengthResponse(count == 1 ? normalBody : orTrueBody);
+            }
+        });
+
+        HttpMessage msg = getHttpMessage("/sqli-fp-ratio?id=1");
+        rule.init(msg, parent);
+        rule.scan();
+
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotAlertWhenOrTrueResponseJustUnderRatioThreshold() throws Exception {
+        // OR-TRUE response is just under 1.4x — boundary check, should NOT alert.
+        String normalBody = "B".repeat(5000);
+        String orTrueBody = "B".repeat(6999); // ratio ~1.3998x
+
+        nano.addHandler(new NanoServerHandler("/sqli-fp-boundary") {
+            private int count = 0;
+
+            @Override
+            protected Response serve(IHTTPSession session) {
+                count++;
+                return newFixedLengthResponse(count == 1 ? normalBody : orTrueBody);
+            }
+        });
+
+        HttpMessage msg = getHttpMessage("/sqli-fp-boundary?id=1");
+        rule.init(msg, parent);
+        rule.scan();
+
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldAlertWhenOrTrueResponseExceedsBothThresholds() throws Exception {
+        // Sanity check: ratio=1.5x, diff=50% of normalLen — SHOULD alert.
+        // Confirms the fix doesn't suppress real detections.
+        String normalBody = "C".repeat(5000);
+        String orTrueBody = "C".repeat(7500); // ratio=1.5x, diff=2500=50% of normalLen
+
+        nano.addHandler(new NanoServerHandler("/sqli-true-positive") {
+            private int count = 0;
+
+            @Override
+            protected Response serve(IHTTPSession session) {
+                count++;
+                return newFixedLengthResponse(count == 1 ? normalBody : orTrueBody);
+            }
+        });
+
+        HttpMessage msg = getHttpMessage("/sqli-true-positive?id=1");
+        rule.init(msg, parent);
+        rule.scan();
+
+        assertThat(alertsRaised, hasSize(greaterThanOrEqualTo(1)));
+    }
 }
