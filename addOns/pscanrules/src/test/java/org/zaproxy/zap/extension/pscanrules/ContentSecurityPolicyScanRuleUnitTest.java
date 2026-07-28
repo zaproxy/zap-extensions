@@ -27,7 +27,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -59,6 +61,21 @@ class ContentSecurityPolicyScanRuleUnitTest
     @Override
     protected ContentSecurityPolicyScanRule createScanner() {
         return new ContentSecurityPolicyScanRule();
+    }
+
+    @Override
+    public void shouldHaveExpectedAlertRefsInExampleAlerts() {
+        // Given / When
+        List<String> alertRefs = rule.getExampleAlerts().stream().map(Alert::getAlertRef).toList();
+        // Then
+        assertThat(
+                alertRefs,
+                equalTo(
+                        IntStream.rangeClosed(1, 13)
+                                // 10055-12 retired; skip contiguous check.
+                                .filter(i -> i != 12)
+                                .mapToObj(i -> "10055-" + i)
+                                .toList()));
     }
 
     @Test
@@ -98,10 +115,6 @@ class ContentSecurityPolicyScanRuleUnitTest
     void shouldReturnExpectedExampleAlerts() {
         // Given / When
         int count = rule.getExampleAlerts().size();
-        long countInfos =
-                rule.getExampleAlerts().stream()
-                        .filter(alert -> Alert.RISK_INFO == alert.getRisk())
-                        .count();
         long countLows =
                 rule.getExampleAlerts().stream()
                         .filter(alert -> Alert.RISK_LOW == alert.getRisk())
@@ -111,8 +124,7 @@ class ContentSecurityPolicyScanRuleUnitTest
                         .filter(alert -> Alert.RISK_MEDIUM == alert.getRisk())
                         .count();
         // Then
-        assertThat(count, is(equalTo(13)));
-        assertThat(countInfos, is(equalTo(1L)));
+        assertThat(count, is(equalTo(12)));
         assertThat(countLows, is(equalTo(3L)));
         assertThat(countMediums, is(equalTo(9L)));
     }
@@ -284,11 +296,12 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    void shouldNotAlertOnReasonableMetaCsp() {
-        // Given
+    void shouldAlertOnReasonableMetaCspWithoutFrameAncestors() {
+        // Given — meta CSPs cannot enforce frame-ancestors, so a otherwise-reasonable meta
+        // policy still leaves framing unrestricted at the effective PolicyList layer
         HttpMessage msg = createHttpMessage();
         msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
+                "<html><head><meta http-equiv=\""
                         + HttpFieldsNames.CONTENT_SECURITY_POLICY
                         + "\" content=\""
                         + REASONABLE_META_POLICY
@@ -297,7 +310,12 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
+        assertThat(alertsRaised.get(0).getOtherInfo(), containsString("frame-ancestors"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
     }
 
     @Test
@@ -305,7 +323,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given
         HttpMessage msg = createHttpMessage();
         msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
+                "<html><head><meta http-equiv=\""
                         + HttpFieldsNames.CONTENT_SECURITY_POLICY
                         + "\" content=\""
                         // The comma here causes the parsing to fail and return null
@@ -317,27 +335,6 @@ class ContentSecurityPolicyScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
-    }
-
-    @Test
-    void shouldAlertOnMetaCspWithPrefetch() {
-        // Given
-        HttpMessage msg = createHttpMessage();
-        msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "; prefetch-src *"
-                        + "\"></head></html>");
-        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(
-                alertsRaised.get(0).getOtherInfo(),
-                is("Warnings:\n" + "The prefetch-src directive has been deprecated\n"));
     }
 
     @Test
@@ -357,12 +354,12 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertWhenHeaderAndMetaBothPresent() {
-        // Given
+    void shouldNotAlertWhenHeaderAndMetaBothPresentAndReasonable() {
+        // Given — header provides frame-ancestors; meta is AND'd rather than flagged separately
         HttpMessage msg =
                 createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
+                "<html><head><meta http-equiv=\""
                         + HttpFieldsNames.CONTENT_SECURITY_POLICY
                         + "\" content=\""
                         + REASONABLE_META_POLICY
@@ -371,31 +368,205 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
-        Alert alert = alertsRaised.get(0);
-        assertThat(alert.getName(), equalTo("CSP: Header & Meta"));
-        assertThat(alert.getAlertRef(), equalTo("10055-12"));
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
-    void shouldAlertOnMetaPolicyWithInvalidDirective() {
-        // Given
-        HttpMessage msg = createHttpMessage();
+    void shouldNotAlertOnFrameAncestorsWhenHeaderRestrictsAndMetaHasWildcard() {
+        // Given — meta FA is ignored for enforce queries; header FA still restricts via AND
+        HttpMessage msg =
+                createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
+                "<html><head><meta http-equiv=\""
                         + HttpFieldsNames.CONTENT_SECURITY_POLICY
                         + "\" content=\""
                         + REASONABLE_META_POLICY
-                        + "; sandbox allow-forms"
+                        + "; frame-ancestors *"
+                        + "\"></head></html>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then — Notices + Meta Policy Invalid Directive; no FA nofallback
+        assertThat(alertsRaised.size(), equalTo(2));
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-11"));
+        assertThat(
+                alertsRaised.stream().noneMatch(a -> "10055-13".equals(a.getAlertRef())),
+                is(equalTo(true)));
+    }
+
+    @Test
+    void shouldAlertWhenAllEnforcePoliciesAllowUnsafeInline() {
+        // Given — intersection still weak when every policy allows unsafe-inline
+        HttpMessage msg =
+                createHttpMessage(
+                        "script-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none'");
+        msg.getResponseHeader()
+                .addHeader(
+                        HttpFieldsNames.CONTENT_SECURITY_POLICY,
+                        "script-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(
+                alertsRaised.stream().anyMatch(a -> "10055-5".equals(a.getAlertRef())),
+                is(equalTo(true)));
+    }
+
+    @Test
+    void shouldIncludeMultiPolicyOtherInfoAndUseFirstPolicyAsEvidence() {
+        // Given
+        String first = "script-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none'";
+        String second = "default-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none'";
+        HttpMessage msg = createHttpMessage(first);
+        msg.getResponseHeader().addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, second);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        Alert unsafeInline =
+                alertsRaised.stream()
+                        .filter(a -> "10055-5".equals(a.getAlertRef()))
+                        .findFirst()
+                        .orElseThrow();
+        assertThat(unsafeInline.getEvidence(), equalTo(first));
+        assertThat(
+                unsafeInline.getOtherInfo(),
+                containsString("The response contained 2 Content-Security-Policy policies"));
+        assertThat(unsafeInline.getOtherInfo(), containsString(first));
+        assertThat(unsafeInline.getOtherInfo(), containsString(second));
+    }
+
+    @Test
+    void shouldAndCommaSeparatedPoliciesInSingleHeader() {
+        // Given — one header field value is a serialized CSP list
+        HttpMessage msg = createHttpMessage(REASONABLE_POLICY + ", script-src 'unsafe-inline'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then — reasonable half blocks unsafe-inline via AND
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldReportParsedPolicyCountForCommaSeparatedCspList() {
+        // Given — one header text, two parsed policies, both allow unsafe-inline
+        String cspList =
+                "script-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none', "
+                        + "default-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none'";
+        HttpMessage msg = createHttpMessage(cspList);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        Alert unsafeInline =
+                alertsRaised.stream()
+                        .filter(a -> "10055-5".equals(a.getAlertRef()))
+                        .findFirst()
+                        .orElseThrow();
+        assertThat(
+                unsafeInline.getOtherInfo(),
+                containsString("The response contained 2 Content-Security-Policy policies"));
+        assertThat(unsafeInline.getOtherInfo(), containsString(cspList));
+    }
+
+    @Test
+    void shouldNotAlertOnWildcardWhenSiblingPolicyRestrictsConnectSrc() {
+        // Given
+        HttpMessage msg =
+                createHttpMessage(
+                        "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'");
+        msg.getResponseHeader()
+                .addHeader(
+                        HttpFieldsNames.CONTENT_SECURITY_POLICY,
+                        "connect-src 'self'; default-src 'self'; form-action 'none'; frame-ancestors 'self'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldAlertOnWildcardWhenAllPoliciesAllowWildcardConnectSrc() {
+        // Given
+        String policy =
+                "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'";
+        HttpMessage msg = createHttpMessage(policy);
+        msg.getResponseHeader().addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
+        assertThat(alertsRaised.get(0).getOtherInfo(), containsString("connect-src"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                containsString("The response contained 2 Content-Security-Policy policies"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {"; sandbox allow-forms", "; frame-ancestors 'none'", "; report-uri /csp"})
+    void shouldAlertOnMetaPolicyWithInvalidDirective(String invalidDirective) {
+        // Given
+        HttpMessage msg = createHttpMessage();
+        msg.setResponseBody(
+                "<html><head><meta http-equiv=\""
+                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
+                        + "\" content=\""
+                        + REASONABLE_META_POLICY
+                        + invalidDirective
                         + "\"></head></html>");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
         // Then
+        assertThat(
+                alertsRaised.stream().anyMatch(a -> "10055-11".equals(a.getAlertRef())),
+                is(equalTo(true)));
+        assertThat(
+                alertsRaised.stream()
+                        .filter(a -> "10055-3".equals(a.getAlertRef()))
+                        .findFirst()
+                        .orElseThrow()
+                        .getOtherInfo(),
+                containsString("ignored when delivered via a meta element"));
+    }
+
+    @Test
+    void shouldNotAlertOnUnsafeHashesWhenSiblingPolicyLacksThem() {
+        // Given
+        HttpMessage msg =
+                createHttpMessage(
+                        "default-src 'self'; script-src 'unsafe-hashes'"
+                                + " 'sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY=';"
+                                + " form-action 'none'; frame-ancestors 'none'");
+        msg.getResponseHeader()
+                .addHeader(
+                        HttpFieldsNames.CONTENT_SECURITY_POLICY,
+                        "default-src 'self'; script-src 'self'; form-action 'none';"
+                                + " frame-ancestors 'none'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(
+                alertsRaised.stream().noneMatch(a -> "10055-7".equals(a.getAlertRef())),
+                is(equalTo(true)));
+    }
+
+    @Test
+    void shouldAlertNoticesOnlyForHeaderWithSyntaxIssues() {
+        // Given
+        HttpMessage msg =
+                createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
+        String noisy = "default-src none; form-action 'none'; frame-ancestors 'none'";
+        msg.getResponseHeader().addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, noisy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
         assertThat(alertsRaised.size(), equalTo(1));
-        Alert alert = alertsRaised.get(0);
-        assertThat(alert.getName(), equalTo("CSP: Meta Policy Invalid Directive"));
-        assertThat(alert.getAlertRef(), equalTo("10055-11"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-3"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(noisy));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                containsString("missing the required quotes: 'none'"));
     }
 
     @ParameterizedTest
@@ -511,28 +682,18 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    void shouldRaiseAlertWhenCspIncludesStyleUnsafeInline() {
-        // Given
-        HttpMessage msg = createHttpMessage("style-src 'unsafe-inline'");
+    void shouldNotAlertOnScriptUnsafeInlineWhenStrictDynamicPresent() {
+        // Given — 'strict-dynamic' disables 'unsafe-inline' for scripts per CSP3
+        HttpMessage msg =
+                createHttpMessage(
+                        "script-src 'strict-dynamic' 'unsafe-inline'; form-action 'none';"
+                                + " frame-ancestors 'none'");
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
-        // Verify the specific alerts
         assertThat(
-                alertsRaised.get(0).getName(),
-                equalTo("CSP: Failure to Define Directive with No Fallback"));
-        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
-
-        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: Wildcard Directive"));
-        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-4"));
-
-        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: script-src unsafe-inline"));
-        assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-5"));
-
-        assertThat(alertsRaised.get(3).getName(), equalTo("CSP: style-src unsafe-inline"));
+                alertsRaised.stream().noneMatch(a -> "10055-5".equals(a.getAlertRef())),
+                is(equalTo(true)));
     }
 
     @Test
@@ -551,8 +712,8 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    void shouldRaiseAlertOnSecondCspHasIssueFirstDoesNot() {
-        // Given
+    void shouldNotAlertWhenSecondCspHasIssueButFirstIsReasonable() {
+        // Given — browser AND: the reasonable policy blocks what the loose policy would allow
         HttpMessage msg =
                 createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         msg.getResponseHeader()
@@ -560,64 +721,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
-        // Verify the specific alerts
-        assertThat(
-                alertsRaised.get(0).getName(),
-                equalTo("CSP: Failure to Define Directive with No Fallback"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("style-src 'unsafe-inline'"));
-        assertThat(
-                alertsRaised.get(0).getOtherInfo(),
-                equalTo(
-                        "The directive(s): frame-ancestors, form-action is/are among the directives that do not fallback to default-src."));
-        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
-
-        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: Wildcard Directive"));
-        assertThat(alertsRaised.get(1).getEvidence(), equalTo("style-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-4"));
-
-        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: script-src unsafe-inline"));
-        assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(2).getEvidence(), equalTo("style-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-5"));
-
-        assertThat(alertsRaised.get(3).getName(), equalTo("CSP: style-src unsafe-inline"));
-        assertThat(alertsRaised.get(3).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(3).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(3).getEvidence(), equalTo("style-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(3).getAlertRef(), equalTo("10055-6"));
-    }
-
-    @Test
-    void shouldRaiseAlertOnUnsafeInDefaultSrc() {
-        // Given
-        HttpMessage msg =
-                createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
-        msg.getResponseHeader()
-                .addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, "default-src 'unsafe-inline'");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(3));
-        // Verify the specific alerts
-        assertThat(
-                alertsRaised.get(0).getName(),
-                equalTo("CSP: Failure to Define Directive with No Fallback"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("default-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
-
-        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: script-src unsafe-inline"));
-        assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(1).getEvidence(), equalTo("default-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-5"));
-
-        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: style-src unsafe-inline"));
-        assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(2).getEvidence(), equalTo("default-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-6"));
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
@@ -694,7 +798,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 is(equalTo("Warnings:\nThe prefetch-src directive has been deprecated\n")));
@@ -720,7 +824,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getDescription(),
                 is(
