@@ -252,7 +252,8 @@ public final class CertificateUtils {
                     rootCaCert, rootCaPublicKey, rootCaPrivateKey, certData, serial, config);
         } catch (Exception e) {
             throw new GenerationException(
-                    "An error occurred while generating the server certificate:", e);
+                    "An error occurred while generating the server certificate: " + e.getMessage(),
+                    e);
         }
     }
 
