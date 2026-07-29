@@ -18,7 +18,6 @@ buildscript {
 plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.zaproxy.common) apply false
-    alias(libs.plugins.dependencyUpdates)
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.errorprone)
     alias(libs.plugins.lombok)
@@ -46,7 +45,6 @@ node {
 
 allprojects {
     apply(plugin = "com.diffplug.spotless")
-    apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "net.ltgt.errorprone")
     apply(plugin = "io.freefair.lombok")
 
