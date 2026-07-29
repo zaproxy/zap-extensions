@@ -129,7 +129,6 @@ zest-zest = "org.zaproxy:zest:0.36.0"
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:2.2.0"
-dependencyUpdates = "com.github.ben-manes.versions:0.56.0"
 errorprone = "net.ltgt.errorprone:5.1.0"
 japicmp = "me.champeau.gradle.japicmp:0.4.6"
 lombok = "io.freefair.lombok:9.5.0"
