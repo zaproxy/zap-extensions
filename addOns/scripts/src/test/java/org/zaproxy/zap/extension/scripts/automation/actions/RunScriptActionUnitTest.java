@@ -83,6 +83,7 @@ class RunScriptActionUnitTest extends TestUtils {
     private static final String ZEST_ENGINE_NAME = "Mozilla Zest";
 
     private ExtensionScript extScript;
+    private ExtensionScriptsUI extScriptsUI;
     private ExtensionLoader extensionLoader;
     private Model model;
     private AutomationProgress progress;
@@ -119,9 +120,13 @@ class RunScriptActionUnitTest extends TestUtils {
     @BeforeEach
     void setUp() {
         extScript = mock(ExtensionScript.class);
+        extScriptsUI = mock(ExtensionScriptsUI.class);
         extensionLoader = mock(ExtensionLoader.class);
         model = mock(Model.class);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extScript);
+        lenient()
+                .when(extensionLoader.getExtension(ExtensionScriptsUI.class))
+                .thenReturn(extScriptsUI);
         lenient()
                 .when(extensionLoader.getExtension("ExtensionZest"))
                 .thenReturn(ZEST_CHAIN_SCRIPT_STUB);
@@ -440,7 +445,7 @@ class RunScriptActionUnitTest extends TestUtils {
     @Test
     void shouldExecuteTargetedScriptWhenTypeTargetedAndTargetFound() throws Exception {
         // Given
-        parameters.setType(ExtensionScript.TYPE_TARGETED);
+        parameters.setType(ExtensionScriptsUI.TYPE_TARGETED);
         parameters.setName("myScript");
         parameters.setTarget("http://example.com/");
         ScriptWrapper script = createMockZestWrapper("myScript");
@@ -463,7 +468,7 @@ class RunScriptActionUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
-        verify(extScript, times(1)).invokeTargetedScript(script, httpMessage);
+        verify(extScriptsUI, times(1)).invokeTargetedScript(script, httpMessage);
     }
 
     /** Single Script Execution Tests (non-chain) */
@@ -559,7 +564,7 @@ class RunScriptActionUnitTest extends TestUtils {
     @Test
     void shouldRejectChainAtRuntimeWhenTypeNotStandalone() throws Exception {
         // Given: type targeted + chain set → runScriptChain rejects early
-        parameters.setType(ExtensionScript.TYPE_TARGETED);
+        parameters.setType(ExtensionScriptsUI.TYPE_TARGETED);
         parameters.setChain(List.of("script1", "script2"));
         lenient().when(extScript.getScript("script1")).thenReturn(createMockZestWrapper("script1"));
         lenient().when(extScript.getScript("script2")).thenReturn(createMockZestWrapper("script2"));
@@ -598,7 +603,7 @@ class RunScriptActionUnitTest extends TestUtils {
         ScriptJobParameters targetedParams =
                 new ScriptJobParameters(
                         RunScriptAction.NAME,
-                        ExtensionScript.TYPE_TARGETED,
+                        ExtensionScriptsUI.TYPE_TARGETED,
                         ZEST_ENGINE_NAME,
                         "",
                         "",

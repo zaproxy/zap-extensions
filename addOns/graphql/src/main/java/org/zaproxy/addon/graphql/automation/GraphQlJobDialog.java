@@ -47,6 +47,7 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
     private static final String ENDPOINT_PARAM = "graphql.automation.dialog.endpoint";
     private static final String SCHEMA_URL_PARAM = "graphql.automation.dialog.schemaurl";
     private static final String SCHEMA_FILE_PARAM = "graphql.automation.dialog.schemafile";
+    private static final String MAX_MESSAGES_PARAM = "graphql.automation.dialog.maxmessages";
 
     private static final String QUERY_GEN_ENABLED_PARAM = "graphql.automation.dialog.querygen";
     private static final String MAX_QUERY_DEPTH_PARAM = "graphql.automation.dialog.maxquerydepth";
@@ -103,6 +104,12 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
         if (fileName != null && JobUtils.containsVars(fileName)) {
             setFieldValue(SCHEMA_FILE_PARAM, fileName);
         }
+        this.addNumberField(
+                0,
+                MAX_MESSAGES_PARAM,
+                0,
+                Integer.MAX_VALUE,
+                this.job.getParameters().getMaxMessages());
 
         this.addCheckBoxField(
                 0,
@@ -197,6 +204,7 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setEndpoint(this.getStringValue(ENDPOINT_PARAM));
         this.job.getParameters().setSchemaUrl(this.getStringValue(SCHEMA_URL_PARAM));
         this.job.getParameters().setSchemaFile(this.getStringValue(SCHEMA_FILE_PARAM));
+        this.job.getParameters().setMaxMessages(this.getIntValue(MAX_MESSAGES_PARAM));
 
         boolean queryGenEnabled = getBoolValue(QUERY_GEN_ENABLED_PARAM);
         this.job.getParameters().setQueryGenEnabled(queryGenEnabled);
