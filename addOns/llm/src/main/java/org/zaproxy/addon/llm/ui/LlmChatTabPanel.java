@@ -59,6 +59,7 @@ import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.services.LlmToolExecutionHandler;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -69,6 +70,8 @@ public class LlmChatTabPanel extends JPanel {
 
     public static final String ASSISTANT_LABEL = "llm.chat.panel.assistant.label";
     public static final String ERROR_LABEL = "llm.chat.panel.error.label";
+    public static final String TOOL_CALL_LABEL = "llm.chat.panel.tool.call.label";
+    public static final String TOOL_RESULT_LABEL = "llm.chat.panel.tool.result.label";
     public static final String USER_LABEL = "llm.chat.panel.user.label";
 
     private static final long serialVersionUID = 1L;
@@ -484,7 +487,11 @@ public class LlmChatTabPanel extends JPanel {
         }
         tabService =
                 extension.buildCommunicationService(
-                        tabProviderConfig, tabModelName, createTokenListener(), includeTools);
+                        tabProviderConfig,
+                        tabModelName,
+                        createTokenListener(),
+                        includeTools,
+                        new LlmToolExecutionHandler(this));
         tabServiceToolsVersion = toolsVersion;
         tabServiceToolsEnabled = includeTools;
         if (tabService != null) {
@@ -622,6 +629,24 @@ public class LlmChatTabPanel extends JPanel {
                     }
                     setProcessing(false);
                     inputArea.requestFocusInWindow();
+                    if (tabbedPane != null) {
+                        tabbedPane.markActivity(tag);
+                    }
+                });
+    }
+
+    /**
+     * Appends a message to the chat area without ending the in-progress send (e.g. tool call /
+     * result lines shown while the assistant is still working).
+     */
+    public void appendIntermediateMessage(String key, String message) {
+        SwingUtilities.invokeLater(
+                () -> {
+                    appendMessage(
+                            Constant.messages.getString(
+                                    "llm.chat.panel.message.format",
+                                    Constant.messages.getString(key),
+                                    message));
                     if (tabbedPane != null) {
                         tabbedPane.markActivity(tag);
                     }

@@ -310,7 +310,7 @@ public class ExtensionLlmUnitTest extends TestUtils {
 
         // When
         LlmCommunicationService service =
-                ext.buildCommunicationService(config, "model1", null, true);
+                ext.buildCommunicationService(config, "model1", null, true, null);
 
         // Then
         assertThat(service, is(not(nullValue())));
@@ -328,7 +328,7 @@ public class ExtensionLlmUnitTest extends TestUtils {
 
         // When
         LlmCommunicationService service =
-                ext.buildCommunicationService(config, "model1", null, false);
+                ext.buildCommunicationService(config, "model1", null, false, null);
 
         // Then
         assertThat(service, is(not(nullValue())));
@@ -351,7 +351,7 @@ public class ExtensionLlmUnitTest extends TestUtils {
 
         // When
         LlmCommunicationService service =
-                ext.buildCommunicationService(config, "claude-sonnet-4-6", null, true);
+                ext.buildCommunicationService(config, "claude-sonnet-4-6", null, true, null);
 
         // Then
         assertThat(service, is(not(nullValue())));
