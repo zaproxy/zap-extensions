@@ -86,12 +86,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public static final String URL_ADDED_STATS = "openapi.urls.added";
 
-    /** Global: response received during an import (including redirect hops). */
-    public static final String CONNECTION_SUCCESS_STATS = "stats.import.connection.success";
-
-    /** Global: network/communication failure or failure to parse a definition. */
-    public static final String CONNECTION_FAILURE_STATS = "stats.import.connection.failure";
-
     private static final String THREAD_PREFIX = "ZAP-Import-OpenAPI-";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
@@ -288,7 +282,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             false,
                             maxMessages));
         } catch (IOException e) {
-            Stats.incCounter(CONNECTION_FAILURE_STATS);
+            Stats.incCounter(Requestor.CONNECTION_FAILURE_STATS);
             if (initViaUi) {
                 ThreadUtils.invokeAndWaitHandled(
                         () ->
@@ -428,7 +422,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             maxMessages);
             results.setErrors(errors);
         } catch (IOException e) {
-            Stats.incCounter(CONNECTION_FAILURE_STATS);
+            Stats.incCounter(Requestor.CONNECTION_FAILURE_STATS);
             if (initViaUi) {
                 ThreadUtils.invokeAndWaitHandled(
                         () ->
@@ -452,7 +446,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             boolean existsInDb,
             int maxMessages) {
         if (defn == null || defn.isEmpty()) {
-            Stats.incCounter(CONNECTION_FAILURE_STATS);
+            Stats.incCounter(Requestor.CONNECTION_FAILURE_STATS);
             throw new OpenApiExceptions.EmptyDefinitionException();
         }
 
@@ -490,7 +484,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             List<String> converterErrors = converter.getErrorMessages();
                             errors.addAll(converterErrors);
                             if (!converterErrors.isEmpty()) {
-                                Stats.incCounter(CONNECTION_FAILURE_STATS, converterErrors.size());
+                                Stats.incCounter(
+                                        Requestor.CONNECTION_FAILURE_STATS, converterErrors.size());
                             }
                             if (!errors.isEmpty()) {
                                 logErrors(errors, initViaUi);
@@ -537,7 +532,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                                                         "openapi.parse.trailer"));
                             }
                             errors.add(Constant.messages.getString("openapi.parse.error", e));
-                            Stats.incCounter(CONNECTION_FAILURE_STATS);
+                            Stats.incCounter(Requestor.CONNECTION_FAILURE_STATS);
                             logErrors(errors, initViaUi);
                             LOGGER.warn(e.getMessage(), e);
                         } finally {

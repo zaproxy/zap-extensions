@@ -85,11 +85,11 @@ public class AuthReportData implements Closeable {
     private Set<String> domainsOutOfScope;
 
     public void addSummaryItem(boolean passed, String key, String description) {
-        summaryItems.add(new SummaryItem(passed, key, description, null));
+        summaryItems.add(new SummaryItem(passed, key, description));
     }
 
     public void addSummaryItem(String key, long value, String description) {
-        summaryItems.add(new SummaryItem(false, key, description, value));
+        summaryItems.add(new SummaryItem(key, description, value));
     }
 
     public void addFailureDetail(FailureDetail detail) {
@@ -170,6 +170,10 @@ public class AuthReportData implements Closeable {
 
         public SummaryItem(boolean passed, String key, String description) {
             this(passed, key, description, null);
+        }
+
+        public SummaryItem(String key, String description, long value) {
+            this(false, key, description, value);
         }
     }
 

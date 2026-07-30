@@ -45,7 +45,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
-import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.Stats;
@@ -101,8 +100,8 @@ class RequestorUnitTest extends AbstractServerTest {
         assertThat(errors, is(empty()));
         assertThat(requestedMethods, hasSize(1));
         assertThat(requestedMethods.get(0), is(equalTo(expectedMethod)));
-        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_SUCCESS_STATS), is(equalTo(1L)));
-        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_FAILURE_STATS), is(nullValue()));
+        assertThat(stats.getStat(Requestor.CONNECTION_SUCCESS_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(Requestor.CONNECTION_FAILURE_STATS), is(nullValue()));
     }
 
     @Test
@@ -117,8 +116,8 @@ class RequestorUnitTest extends AbstractServerTest {
                                         RequestMethod.GET, "http://localhost:1/does-not-exist")));
         // Then
         assertThat(errors, hasSize(1));
-        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_SUCCESS_STATS), is(nullValue()));
-        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_FAILURE_STATS), is(equalTo(1L)));
+        assertThat(stats.getStat(Requestor.CONNECTION_SUCCESS_STATS), is(nullValue()));
+        assertThat(stats.getStat(Requestor.CONNECTION_FAILURE_STATS), is(equalTo(1L)));
     }
 
     @Test
@@ -164,7 +163,7 @@ class RequestorUnitTest extends AbstractServerTest {
         assertThat(messages.get(1), is(equalTo("GET /a A")));
         assertThat(messages.get(2), is(equalTo("GET /b B")));
         assertThat(messages.get(3), is(equalTo("GET /final Final")));
-        assertThat(stats.getStat(ExtensionOpenApi.CONNECTION_SUCCESS_STATS), is(equalTo(4L)));
+        assertThat(stats.getStat(Requestor.CONNECTION_SUCCESS_STATS), is(equalTo(4L)));
     }
 
     private static RequestModel requestModel(RequestMethod method, String url) {

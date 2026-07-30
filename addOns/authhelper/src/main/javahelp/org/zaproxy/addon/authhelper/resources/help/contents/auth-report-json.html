@@ -151,8 +151,7 @@
 		</tr>
 	</table>
 	<p>
-	When no authentication method is configured (for example API import diagnostics), the summary
-	uses the connection success and failure items with a numeric <code>value</code> instead of
+	The connection success and failure items use a numeric <code>value</code> instead of
 	<code>passed</code>. The success count is the number of responses received and may exceed the
 	number of imported operations when redirects occur. Failures include network or communication
 	problems and failures to parse a definition.
@@ -206,7 +205,10 @@
 	that can be used to recreate the context being tested.
 	<p>
 	If you have set the Session Management or Verification to "autodetect" and ZAP successfully detected them then the
-	environment will have been updated with the values that ZAP has detected. 
+	environment will have been updated with the values that ZAP has detected.
+	<p>
+	The environment reflects the context used for the report. If several contexts are available, ZAP uses the one most
+	relevant to the report; otherwise the first context is included.
 
 	<H3>Statistics</H3>
 	

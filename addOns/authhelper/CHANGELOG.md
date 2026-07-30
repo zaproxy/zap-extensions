@@ -8,8 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Automation Framework `diagnostics` job to start and stop plan-level recording of authentication related diagnostics.
 
 ### Changed
-- Auth report: when no authentication method is configured, include a summary with connection
-  success and failure counts (from import stats) for the API authentication use case.
+- Auth report: include a summary with connection success and failure counts (from import stats).
+- Auth report: include the Automation Framework environment and site from the report context.
 - Update dependency.
 - Include the Zest statement index in the authentication diagnostics' steps.
 - Include Origin header when doing authentication verification.

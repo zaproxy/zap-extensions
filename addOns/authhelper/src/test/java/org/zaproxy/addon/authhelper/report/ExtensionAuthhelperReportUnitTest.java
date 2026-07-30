@@ -829,6 +829,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
     @Test
     void shouldReportWithManualAuth() {
         // Given
+        String site = "https://www.example.com";
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
                 new ExtensionAuthhelperReport.AuthReportDataHandler();
         ReportData reportData = new ReportData("auth-report-test");
@@ -837,6 +838,10 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         ManualAuthenticationMethod authMethod =
                 new ManualAuthenticationMethodType().createAuthenticationMethod(0);
         given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getName()).willReturn("api-auth");
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        given(context.getExcludeFromContextRegexs()).willReturn(List.of());
+        given(context.getDataDrivenNodes()).willReturn(List.of());
 
         reportData.setContexts(List.of(context));
 
@@ -858,6 +863,8 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
         AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
         assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSite(), is(equalTo(site)));
+        assertThat(ard.getAfEnv(), containsString("api-auth"));
         assertThat(ard.getSummaryItems().size(), is(equalTo(2)));
         assertThat(
                 ard.getSummaryItems().get(0).key(),
@@ -885,6 +892,10 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         ManualAuthenticationMethod authMethod =
                 new ManualAuthenticationMethodType().createAuthenticationMethod(0);
         given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getName()).willReturn("api-auth");
+        given(context.getIncludeInContextRegexs()).willReturn(List.of());
+        given(context.getExcludeFromContextRegexs()).willReturn(List.of());
+        given(context.getDataDrivenNodes()).willReturn(List.of());
         reportData.setContexts(List.of(context));
 
         ExtensionLoader extensionLoader =
@@ -906,6 +917,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         // Then
         AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
         assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getAfEnv(), containsString("api-auth"));
         assertThat(ard.getSummaryItems().get(0).value(), is(equalTo(3L)));
         assertThat(ard.getSummaryItems().get(1).value(), is(equalTo(1L)));
     }
@@ -922,6 +934,10 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         ManualAuthenticationMethod authMethod =
                 new ManualAuthenticationMethodType().createAuthenticationMethod(0);
         given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getName()).willReturn("api-auth");
+        given(context.getIncludeInContextRegexs()).willReturn(List.of());
+        given(context.getExcludeFromContextRegexs()).willReturn(List.of());
+        given(context.getDataDrivenNodes()).willReturn(List.of());
         reportData.setContexts(List.of(context));
 
         ExtensionLoader extensionLoader =
@@ -940,6 +956,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
         assertThat(ard.isValidReport(), is(equalTo(false)));
         assertThat(ard.getSummaryItems().size(), is(equalTo(0)));
+        assertThat(ard.getAfEnv(), containsString("api-auth"));
     }
 
     @Test
