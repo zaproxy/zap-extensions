@@ -25,13 +25,17 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -45,6 +49,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.tree.DefaultTreeModel;
@@ -420,64 +426,55 @@ public class ExtensionReports extends ExtensionAdaptor {
             // Handle any resources
             File resourcesDir = template.getResourcesDir();
             if (resourcesDir.exists()) {
-                String subDirName;
-                int dotIndex = reportFilename.lastIndexOf(".");
-                if (dotIndex > 0) {
-                    subDirName = reportFilename.substring(0, dotIndex);
+                if (reportData.isZipReport()) {
+                    context.setVariable("resources", getResourcesEntryName(reportFilename));
                 } else {
-                    subDirName = reportFilename + "_d";
+                    File resourcesSubDir = getUniqueResourcesSubDir(reportFilename);
+                    context.setVariable("resources", resourcesSubDir.getName());
+                    LOGGER.debug(
+                            "Copying resources from {} to {}",
+                            resourcesDir.getAbsolutePath(),
+                            resourcesSubDir.getAbsolutePath());
+                    FileUtils.copyDirectory(resourcesDir, resourcesSubDir);
                 }
-                File subDir = new File(subDirName);
-                int i = 1;
-                while (subDir.exists()) {
-                    i += 1;
-                    subDir = new File(subDirName + i);
-                }
-                LOGGER.debug(
-                        "Copying resources from {} to {}",
-                        resourcesDir.getAbsolutePath(),
-                        subDir.getAbsolutePath());
-                FileUtils.copyDirectory(resourcesDir, subDir);
-                context.setVariable("resources", subDir.getName());
             }
 
-            File file = new File(reportFilename);
-            try (Writer writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-                templateEngine.process(
-                        template.getReportTemplateFile().getAbsolutePath(), context, writer);
-                Stats.incCounter("stats.reports.generated." + template.getConfigName());
-            }
+            File file;
+            if (reportData.isZipReport()) {
+                file =
+                        generateZippedReport(
+                                templateEngine, template, context, reportFilename, resourcesDir);
+            } else {
+                file = new File(reportFilename);
+                try (Writer writer =
+                        Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+                    templateEngine.process(
+                            template.getReportTemplateFile().getAbsolutePath(), context, writer);
+                    Stats.incCounter("stats.reports.generated." + template.getConfigName());
+                }
 
-            if ("PDF".equals(template.getFormat())) {
-                // Will have appended ".html" above
-                reportFilename = reportFilename.substring(0, reportFilename.length() - 5);
-                reportFilename += ".pdf";
-                File pdfFile = new File(reportFilename);
-                try (OutputStream outputStream = new FileOutputStream(pdfFile)) {
-                    ITextRenderer renderer = new ITextRenderer(file);
-                    renderer.layout();
-                    try {
-                        renderer.createPDF(outputStream);
-                    } catch (DocumentException e) {
-                        // Throw a standard exception so that add-ons using this method don't need
-                        // to
-                        // import it
-                        throw new IOException("Invalid template: " + template.getConfigName(), e);
+                if ("PDF".equals(template.getFormat())) {
+                    // Will have appended ".html" above
+                    reportFilename = reportFilename.substring(0, reportFilename.length() - 5);
+                    reportFilename += ".pdf";
+                    File pdfFile = new File(reportFilename);
+                    try (OutputStream outputStream = new FileOutputStream(pdfFile)) {
+                        writePdfFromHtml(
+                                file, outputStream, template.getConfigName(), PdfOutput.FILE);
                     }
+                    if (!file.delete()) {
+                        LOGGER.debug("Failed to delete interim report {}", file.getAbsolutePath());
+                    }
+                    file = pdfFile;
                 }
-                if (!file.delete()) {
-                    LOGGER.debug("Failed to delete interim report {}", file.getAbsolutePath());
-                }
-                file = pdfFile;
             }
 
             LOGGER.debug("Generated report {}", file.getAbsolutePath());
-            if (display) {
+            if (display && !reportData.isZipReport()) {
                 if ("HTML".equals(template.getFormat())) {
                     DesktopUtils.openUrlInBrowser(file.toURI());
                 } else {
-                    Desktop desktop = Desktop.getDesktop();
-                    desktop.open(file);
+                    Desktop.getDesktop().open(file);
                 }
             }
             return file;
@@ -499,6 +496,201 @@ public class ExtensionReports extends ExtensionAdaptor {
                                     LOGGER.error("Failed to close the report data:", ex);
                                 }
                             });
+        }
+    }
+
+    private File generateZippedReport(
+            TemplateEngine templateEngine,
+            Template template,
+            Context context,
+            String reportFilename,
+            File resourcesDir)
+            throws IOException {
+        File zipFile = new File(getZipFilePath(getFinalReportPath(reportFilename, template)));
+        String entryName =
+                Paths.get(
+                                "PDF".equals(template.getFormat())
+                                        ? getFinalReportPath(reportFilename, template)
+                                        : reportFilename)
+                        .getFileName()
+                        .toString();
+
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            if (resourcesDir.exists()) {
+                addDirectoryToZip(zos, resourcesDir, getResourcesEntryName(reportFilename) + "/");
+            }
+
+            if ("PDF".equals(template.getFormat())) {
+                addPdfReportToZip(zos, templateEngine, template, context, entryName);
+            } else {
+                addGeneratedReportToZip(zos, templateEngine, template, context, entryName);
+            }
+        }
+        Stats.incCounter("stats.reports.generated." + template.getConfigName());
+        Stats.incCounter("stats.reports.zipped");
+        return zipFile;
+    }
+
+    private void addGeneratedReportToZip(
+            ZipOutputStream zos,
+            TemplateEngine templateEngine,
+            Template template,
+            Context context,
+            String entryName)
+            throws IOException {
+        withZipEntry(
+                zos,
+                entryName,
+                entryStream -> {
+                    try (Writer writer =
+                            new OutputStreamWriter(entryStream, StandardCharsets.UTF_8)) {
+                        templateEngine.process(
+                                template.getReportTemplateFile().getAbsolutePath(),
+                                context,
+                                writer);
+                    }
+                });
+    }
+
+    private void addPdfReportToZip(
+            ZipOutputStream zos,
+            TemplateEngine templateEngine,
+            Template template,
+            Context context,
+            String entryName)
+            throws IOException {
+        Path tempHtml = Files.createTempFile("zap-report-", ".html");
+        try {
+            try (Writer writer = Files.newBufferedWriter(tempHtml, StandardCharsets.UTF_8)) {
+                templateEngine.process(
+                        template.getReportTemplateFile().getAbsolutePath(), context, writer);
+            }
+            withZipEntry(
+                    zos,
+                    entryName,
+                    entryStream ->
+                            writePdfFromHtml(
+                                    tempHtml.toFile(),
+                                    entryStream,
+                                    template.getConfigName(),
+                                    PdfOutput.ZIP_ENTRY));
+        } finally {
+            Files.deleteIfExists(tempHtml);
+        }
+    }
+
+    private enum PdfOutput {
+        FILE,
+        ZIP_ENTRY
+    }
+
+    private static void writePdfFromHtml(
+            File htmlSource, OutputStream output, String templateName, PdfOutput outputType)
+            throws IOException {
+        ITextRenderer renderer = new ITextRenderer(htmlSource);
+        renderer.layout();
+        try {
+            renderer.createPDF(output);
+        } catch (DocumentException e) {
+            String prefix =
+                    outputType == PdfOutput.FILE
+                            ? "Failed to write PDF report file"
+                            : "Failed to write PDF report to ZIP";
+            throw new IOException(prefix + " for template: " + templateName, e);
+        }
+    }
+
+    private static void withZipEntry(ZipOutputStream zos, String entryName, ZipEntryWriter writer)
+            throws IOException {
+        OutputStream entryStream = nonClosingZipEntryStream(zos, entryName);
+        try {
+            writer.write(entryStream);
+        } finally {
+            entryStream.close();
+            zos.closeEntry();
+        }
+    }
+
+    @FunctionalInterface
+    private interface ZipEntryWriter {
+        void write(OutputStream entryStream) throws IOException;
+    }
+
+    private static OutputStream nonClosingZipEntryStream(ZipOutputStream zos, String entryName)
+            throws IOException {
+        zos.putNextEntry(new ZipEntry(entryName));
+        return new FilterOutputStream(zos) {
+            @Override
+            public void close() throws IOException {
+                flush();
+            }
+        };
+    }
+
+    private static String getResourcesEntryName(String reportFilename) {
+        String fileName = Paths.get(reportFilename).getFileName().toString();
+        return stemBeforeExtension(fileName, fileName + "_d");
+    }
+
+    private static File getUniqueResourcesSubDir(String reportFilename) {
+        Path parent = Paths.get(reportFilename).getParent();
+        String resourcesEntryName = getResourcesEntryName(reportFilename);
+        File resourcesSubDir =
+                parent == null
+                        ? new File(resourcesEntryName)
+                        : parent.resolve(resourcesEntryName).toFile();
+        String baseName = resourcesSubDir.getName();
+        File parentDir = resourcesSubDir.getParentFile();
+        int i = 1;
+        while (resourcesSubDir.exists()) {
+            String collisionName = baseName + i;
+            resourcesSubDir =
+                    parentDir == null
+                            ? new File(collisionName)
+                            : new File(parentDir, collisionName);
+            i += 1;
+        }
+        return resourcesSubDir;
+    }
+
+    private static String getFinalReportPath(String reportFilename, Template template) {
+        if (!"PDF".equals(template.getFormat())) {
+            return reportFilename;
+        }
+        if (reportFilename.toLowerCase().endsWith(".html")) {
+            return reportFilename.substring(0, reportFilename.length() - 5) + ".pdf";
+        }
+        return reportFilename;
+    }
+
+    private String getZipFilePath(String reportFilename) {
+        Path path = Paths.get(reportFilename);
+        Path parent = path.getParent();
+        String fileName = path.getFileName().toString();
+        String zipFileName = stemBeforeExtension(fileName, fileName) + ".zip";
+        if (parent == null) {
+            return zipFileName;
+        }
+        return parent.resolve(zipFileName).toString();
+    }
+
+    private static String stemBeforeExtension(String fileName, String defaultIfNoExt) {
+        int dotIndex = fileName.lastIndexOf('.');
+        return dotIndex > 0 ? fileName.substring(0, dotIndex) : defaultIfNoExt;
+    }
+
+    private void addDirectoryToZip(ZipOutputStream zos, File dir, String basePath)
+            throws IOException {
+        Path root = dir.toPath();
+        try (var paths = Files.walk(root)) {
+            for (Path path : paths.filter(Files::isRegularFile).toList()) {
+                String entryName = basePath + root.relativize(path).toString().replace('\\', '/');
+                try (var inputStream = Files.newInputStream(path)) {
+                    zos.putNextEntry(new ZipEntry(entryName));
+                    inputStream.transferTo(zos);
+                    zos.closeEntry();
+                }
+            }
         }
     }
 
