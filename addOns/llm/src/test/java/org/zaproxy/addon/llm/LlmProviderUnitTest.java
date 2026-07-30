@@ -75,4 +75,18 @@ class LlmProviderUnitTest {
     void shouldReportEndpointNotSupported(LlmProvider provider) {
         assertThat(provider.supportsEndpoint(), is(false));
     }
+
+    @Test
+    void shouldTrustOllamaByDefault() {
+        assertThat(LlmProvider.OLLAMA.isTrustedByDefault(), is(true));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = LlmProvider.class,
+            mode = Mode.EXCLUDE,
+            names = {"OLLAMA"})
+    void shouldNotTrustNonLocalProvidersByDefault(LlmProvider provider) {
+        assertThat(provider.isTrustedByDefault(), is(false));
+    }
 }

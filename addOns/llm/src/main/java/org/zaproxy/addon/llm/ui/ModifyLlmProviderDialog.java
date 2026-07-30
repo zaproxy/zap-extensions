@@ -49,6 +49,7 @@ public class ModifyLlmProviderDialog extends AddLlmProviderDialog {
         apiKeyField.setText(providerConfig.getApiKey());
         endpointField.setText(providerConfig.getEndpoint());
         modelsArea.setText(String.join("\n", providerConfig.getModels()));
+        trustedCheckBox.setSelected(providerConfig.isTrusted());
         updateEndpointFieldState();
     }
 }

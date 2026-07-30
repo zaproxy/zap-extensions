@@ -38,7 +38,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.addon.llm.ui.LlmChatTabPanel;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
@@ -47,6 +49,9 @@ import org.zaproxy.zap.utils.Stats;
 public class LlmActionReviewAlert {
 
     public static final String AI_REVIEWED_TAG_KEY = "AI-Reviewed";
+
+    /** Characters of response body to include on each side of the evidence. */
+    static final int EVIDENCE_CONTEXT_CHARS = 500;
 
     private static final Logger LOGGER = LogManager.getLogger(LlmActionReviewAlert.class);
 
@@ -74,10 +79,20 @@ public class LlmActionReviewAlert {
 
             The alert is described as follows: {{description}}
 
+            {{evidenceSection}}
+            """;
+
+    private static final String ALERT_REVIEW_EVIDENCE =
+            """
             As evidence, the HTTP message contains:
             ---
             {{evidence}}
             ---
+            """;
+
+    private static final String ALERT_REVIEW_NO_EVIDENCE =
+            """
+            There was no evidence associated with this alert. This often indicates that expected content was missing from the HTTP message.
             """;
 
     private static final String ALERT_REVIEW_OTHER_INFO =
@@ -85,6 +100,30 @@ public class LlmActionReviewAlert {
             As alert other info contains:
             ---
             {{other}}
+            ---
+            """;
+
+    private static final String ALERT_REVIEW_REQUEST =
+            """
+            The HTTP request is:
+            ---
+            {{request}}
+            ---
+            """;
+
+    private static final String ALERT_REVIEW_RESPONSE_HEADERS =
+            """
+            The HTTP response headers are:
+            ---
+            {{responseHeaders}}
+            ---
+            """;
+
+    private static final String ALERT_REVIEW_EVIDENCE_CONTEXT =
+            """
+            Context around the evidence in the response:
+            ---
+            {{evidenceContext}}
             ---
             """;
 
@@ -134,15 +173,7 @@ public class LlmActionReviewAlert {
                                         .build())
                         .build();
 
-        String promptText =
-                ALERT_REVIEW_PROMPT
-                                .replace("{{title}}", alert.getName())
-                                .replace("{{description}}", alert.getDescription())
-                                .replace("{{evidence}}", alert.getEvidence())
-                        + (StringUtils.isNotBlank(alert.getOtherInfo())
-                                ? ALERT_REVIEW_OTHER_INFO.replace("{{other}}", alert.getOtherInfo())
-                                : "")
-                        + ALERT_REVIEW_GOAL;
+        String promptText = buildPrompt(alert, isDefaultProviderTrusted());
 
         UserMessage userMessage = UserMessage.from(promptText);
 
@@ -165,6 +196,11 @@ public class LlmActionReviewAlert {
         boolean success = false;
         try {
             ChatResponse resp = commsService.chat(chatRequest);
+            if (chatTab != null) {
+                // Alert review manages the chat UI itself (so uses a log listener), but still
+                // needs to accumulate token usage on the tab toolbar.
+                chatTab.addTokenUsage(resp.tokenUsage());
+            }
             AlertFeedback feedback = LlmCommunicationService.mapResponse(resp, AlertFeedback.class);
 
             if (chatTab != null) {
@@ -205,6 +241,86 @@ public class LlmActionReviewAlert {
                 SwingUtilities.invokeLater(() -> chatTab.setProcessing(false));
             }
         }
+    }
+
+    private boolean isDefaultProviderTrusted() {
+        LlmProviderConfig config = extLlm.getDefaultProviderConfig();
+        return config != null && config.isTrusted();
+    }
+
+    /**
+     * Builds the alert review prompt. When {@code trusted} is {@code true} and the alert has an
+     * associated HTTP message, also includes the full request, response headers, and (when the
+     * evidence appears in the response body) surrounding context.
+     */
+    static String buildPrompt(Alert alert, boolean trusted) {
+        String evidenceSection =
+                StringUtils.isBlank(alert.getEvidence())
+                        ? ALERT_REVIEW_NO_EVIDENCE
+                        : ALERT_REVIEW_EVIDENCE.replace("{{evidence}}", alert.getEvidence());
+        StringBuilder prompt =
+                new StringBuilder(
+                        ALERT_REVIEW_PROMPT
+                                .replace("{{title}}", alert.getName())
+                                .replace("{{description}}", alert.getDescription())
+                                .replace("{{evidenceSection}}", evidenceSection));
+
+        if (StringUtils.isNotBlank(alert.getOtherInfo())) {
+            prompt.append(ALERT_REVIEW_OTHER_INFO.replace("{{other}}", alert.getOtherInfo()));
+        }
+
+        if (trusted) {
+            appendTrustedMessageDetails(prompt, alert);
+        }
+
+        prompt.append(ALERT_REVIEW_GOAL);
+        return prompt.toString();
+    }
+
+    private static void appendTrustedMessageDetails(StringBuilder prompt, Alert alert) {
+        HttpMessage msg = alert.getMessage();
+        if (msg == null) {
+            return;
+        }
+
+        StringBuilder request = new StringBuilder(msg.getRequestHeader().toString());
+        if (msg.getRequestBody().length() > 0) {
+            request.append(msg.getRequestBody());
+        }
+        prompt.append(ALERT_REVIEW_REQUEST.replace("{{request}}", request.toString()));
+
+        if (!msg.getResponseHeader().isEmpty()) {
+            prompt.append(
+                    ALERT_REVIEW_RESPONSE_HEADERS.replace(
+                            "{{responseHeaders}}", msg.getResponseHeader().toString()));
+        }
+
+        String evidenceContext =
+                extractEvidenceContext(
+                        msg.getResponseBody().toString(),
+                        alert.getEvidence(),
+                        EVIDENCE_CONTEXT_CHARS);
+        if (evidenceContext != null) {
+            prompt.append(
+                    ALERT_REVIEW_EVIDENCE_CONTEXT.replace("{{evidenceContext}}", evidenceContext));
+        }
+    }
+
+    /**
+     * Returns a slice of {@code text} around the first occurrence of {@code evidence}, or {@code
+     * null} if the evidence is blank or not present.
+     */
+    static String extractEvidenceContext(String text, String evidence, int contextChars) {
+        if (StringUtils.isBlank(text) || StringUtils.isBlank(evidence)) {
+            return null;
+        }
+        int idx = text.indexOf(evidence);
+        if (idx < 0) {
+            return null;
+        }
+        int offset = Math.max(0, idx - contextChars);
+        int maxWidth = evidence.length() + 2 * contextChars;
+        return StringUtils.abbreviate(text, offset, Math.max(maxWidth, 4));
     }
 
     protected static boolean isPreviouslyReviewed(Alert alert) {

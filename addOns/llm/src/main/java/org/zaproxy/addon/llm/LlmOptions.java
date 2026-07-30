@@ -56,6 +56,7 @@ public class LlmOptions extends VersionedAbstractParam {
     private static final String PROVIDER_TYPE_KEY = "type";
     private static final String PROVIDER_APIKEY_KEY = "apikey";
     private static final String PROVIDER_ENDPOINT_KEY = "endpoint";
+    private static final String PROVIDER_TRUSTED_KEY = "trusted";
     private static final String PROVIDER_MODELS_KEY = "models.model";
 
     private List<LlmProviderConfig> providerConfigs = new ArrayList<>();
@@ -97,6 +98,7 @@ public class LlmOptions extends VersionedAbstractParam {
             }
             String apiKey = sub.getString(PROVIDER_APIKEY_KEY, "");
             String endpoint = sub.getString(PROVIDER_ENDPOINT_KEY, "");
+            boolean trusted = sub.getBoolean(PROVIDER_TRUSTED_KEY, provider.isTrustedByDefault());
 
             // Extract the models
             List<String> models = new ArrayList<>();
@@ -105,7 +107,7 @@ public class LlmOptions extends VersionedAbstractParam {
                     models.add(model.toString().trim());
                 }
             }
-            configs.add(new LlmProviderConfig(name, provider, apiKey, endpoint, models));
+            configs.add(new LlmProviderConfig(name, provider, apiKey, endpoint, models, trusted));
         }
         this.providerConfigs = configs;
         defaultProviderName = getString(DEFAULT_PROVIDER_PROPERTY, "");
@@ -204,6 +206,7 @@ public class LlmOptions extends VersionedAbstractParam {
                     .setProperty(elementBaseKey + PROVIDER_TYPE_KEY, config.getProvider().name());
             getConfig().setProperty(elementBaseKey + PROVIDER_APIKEY_KEY, config.getApiKey());
             getConfig().setProperty(elementBaseKey + PROVIDER_ENDPOINT_KEY, config.getEndpoint());
+            getConfig().setProperty(elementBaseKey + PROVIDER_TRUSTED_KEY, config.isTrusted());
             ((HierarchicalConfiguration) getConfig()).clearTree(elementBaseKey + "models");
             List<String> models = config.getModels();
             for (int j = 0; j < models.size(); ++j) {

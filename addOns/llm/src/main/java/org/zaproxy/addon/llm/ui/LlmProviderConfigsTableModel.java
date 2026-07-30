@@ -35,7 +35,8 @@ public class LlmProviderConfigsTableModel
         Constant.messages.getString("llm.options.providers.table.header.name"),
         Constant.messages.getString("llm.options.providers.table.header.provider"),
         Constant.messages.getString("llm.options.providers.table.header.models"),
-        Constant.messages.getString("llm.options.providers.table.header.endpoint")
+        Constant.messages.getString("llm.options.providers.table.header.endpoint"),
+        Constant.messages.getString("llm.options.providers.table.header.trusted")
     };
 
     private static final int COLUMN_COUNT = COLUMN_NAMES.length;
@@ -63,6 +64,19 @@ public class LlmProviderConfigsTableModel
     }
 
     @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        if (columnIndex == 4) {
+            return Boolean.class;
+        }
+        return String.class;
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return columnIndex == 4;
+    }
+
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         LlmProviderConfig config = getElement(rowIndex);
         switch (columnIndex) {
@@ -74,8 +88,18 @@ public class LlmProviderConfigsTableModel
                 return String.join(", ", config.getModels());
             case 3:
                 return config.getEndpoint();
+            case 4:
+                return config.isTrusted();
             default:
                 return null;
+        }
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if (columnIndex == 4 && aValue instanceof Boolean trusted) {
+            getElement(rowIndex).setTrusted(trusted);
+            fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
 

@@ -20,6 +20,8 @@
 package org.zaproxy.addon.llm;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -295,5 +297,86 @@ public class ExtensionLlmUnitTest extends TestUtils {
         // Then
         assertThat(comms1.getPconf().getProvider(), is(LlmProvider.OLLAMA));
         assertThat(comms2.getPconf().getProvider(), is(LlmProvider.AZURE_OPENAI));
+    }
+
+    @Test
+    void shouldIncludeToolProvidersWhenBuildingServiceWithToolsEnabled() {
+        // Given
+        LlmProviderConfig config =
+                new LlmProviderConfig(
+                        "ollama", LlmProvider.OLLAMA, null, "http://localhost", List.of("model1"));
+        ToolProvider provider = mock(ToolProvider.class);
+        ext.addToolProvider(provider);
+
+        // When
+        LlmCommunicationService service =
+                ext.buildCommunicationService(config, "model1", null, true);
+
+        // Then
+        assertThat(service, is(not(nullValue())));
+        assertThat(service.getToolProviders(), contains(provider));
+    }
+
+    @Test
+    void shouldOmitToolProvidersWhenBuildingServiceWithToolsDisabled() {
+        // Given
+        LlmProviderConfig config =
+                new LlmProviderConfig(
+                        "ollama", LlmProvider.OLLAMA, null, "http://localhost", List.of("model1"));
+        ToolProvider provider = mock(ToolProvider.class);
+        ext.addToolProvider(provider);
+
+        // When
+        LlmCommunicationService service =
+                ext.buildCommunicationService(config, "model1", null, false);
+
+        // Then
+        assertThat(service, is(not(nullValue())));
+        assertThat(service.getToolProviders(), is(empty()));
+    }
+
+    @Test
+    void shouldOmitToolProvidersWhenProviderIsUntrustedEvenIfToolsRequested() {
+        // Given
+        LlmProviderConfig config =
+                new LlmProviderConfig(
+                        "claude",
+                        LlmProvider.CLAUDE,
+                        "key",
+                        "",
+                        List.of("claude-sonnet-4-6"),
+                        false);
+        ToolProvider provider = mock(ToolProvider.class);
+        ext.addToolProvider(provider);
+
+        // When
+        LlmCommunicationService service =
+                ext.buildCommunicationService(config, "claude-sonnet-4-6", null, true);
+
+        // Then
+        assertThat(service, is(not(nullValue())));
+        assertThat(service.getToolProviders(), is(empty()));
+    }
+
+    @Test
+    void shouldDefaultNewConfigsTrustedBasedOnProviderType() {
+        assertThat(
+                new LlmProviderConfig(
+                                "ollama",
+                                LlmProvider.OLLAMA,
+                                null,
+                                "http://localhost",
+                                List.of("m1"))
+                        .isTrusted(),
+                is(true));
+        assertThat(
+                new LlmProviderConfig(
+                                "claude",
+                                LlmProvider.CLAUDE,
+                                "key",
+                                "",
+                                List.of("claude-sonnet-4-6"))
+                        .isTrusted(),
+                is(false));
     }
 }

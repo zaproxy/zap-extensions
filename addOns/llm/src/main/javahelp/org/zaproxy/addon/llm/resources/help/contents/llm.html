@@ -13,6 +13,9 @@ This optional add-on integrates LLM with ZAP. It allows you to configure ZAP to 
 and provides hooks for other add-ons to access the LLM.
 <p>
 ZAP will not share any data with LLMs unless you choose to install this add-on, and configure it to connect to a supported LLM.
+How much data ZAP shares depends on whether the model provider is marked as <a href="options.html">Trusted</a> —
+trusted providers may receive richer context (for example HTTP messages) and can use tools, while untrusted providers
+receive only the minimum data needed for the feature in use.
 <p>
 All communications with LLMs will be shown in a sub-tab of the main Output tab.
 <p>
