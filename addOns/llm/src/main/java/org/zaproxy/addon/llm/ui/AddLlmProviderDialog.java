@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
@@ -62,7 +63,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
     protected LlmProviderConfig providerConfig;
     protected String originalName;
     private String lastSuggestedName;
-    private HttpSender sender;
+    private final HttpSender sender;
 
     public AddLlmProviderDialog(Dialog owner, LlmProviderConfigsTableModel model) {
         super(owner, Constant.messages.getString("llm.options.providers.add.title"), false);
@@ -229,12 +230,22 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                             Constant.messages.getString("llm.options.providers.error.model.empty"));
             return false;
         }
-        if (provider.supportsEndpoint() && !endpoint.isEmpty() && !isEndpointReachable(endpoint)) {
-            View.getSingleton()
-                    .showWarningDialog(
-                            this,
-                            Constant.messages.getString("llm.options.endpoint.error.unreachable"));
-            return false;
+        if (provider.supportsEndpoint() && !endpoint.isEmpty()) {
+            if (!isValidHttpEndpoint(endpoint)) {
+                View.getSingleton()
+                        .showWarningDialog(
+                                this,
+                                Constant.messages.getString("llm.options.endpoint.error.invalid"));
+                return false;
+            }
+            if (!isEndpointReachable(endpoint)) {
+                View.getSingleton()
+                        .showWarningDialog(
+                                this,
+                                Constant.messages.getString(
+                                        "llm.options.endpoint.error.unreachable"));
+                return false;
+            }
         }
 
         return true;
@@ -335,14 +346,55 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         return false;
     }
 
-    private boolean isEndpointReachable(String endpoint) {
+    /** Absolute HTTP/HTTPS URL with a non-empty host (scheme is required). */
+    static boolean isValidHttpEndpoint(String endpoint) {
+        if (StringUtils.isBlank(endpoint)) {
+            return false;
+        }
         try {
-            sender.sendAndReceive(new HttpMessage(new URI(endpoint, true)));
+            URI uri = new URI(endpoint, true);
+            String scheme = uri.getScheme();
+            if (scheme == null
+                    || (!HttpHeader.HTTP.equalsIgnoreCase(scheme)
+                            && !HttpHeader.HTTPS.equalsIgnoreCase(scheme))) {
+                return false;
+            }
+            String host = uri.getHost();
+            return StringUtils.isNotBlank(host);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean isEndpointReachable(String endpoint) {
+        return isEndpointReachable(endpoint, sender);
+    }
+
+    /**
+     * Probes the endpoint with ZAP's {@link HttpSender} so upstream proxy and other connection
+     * options are honoured.
+     */
+    static boolean isEndpointReachable(String endpoint, HttpSender sender) {
+        try {
+            sender.sendAndReceive(new HttpMessage(toRequestUri(endpoint)));
+            return true;
         } catch (Exception e) {
             LOGGER.warn("Failed to reach the LLM endpoint: {}", e.getMessage());
             return false;
         }
-        return true;
+    }
+
+    /**
+     * Builds a URI suitable for {@link HttpMessage}, ensuring a path is present so the request has
+     * a usable host/authority for the HTTP sender.
+     */
+    static URI toRequestUri(String endpoint) throws Exception {
+        URI uri = new URI(endpoint, true);
+        if (uri.getPath() == null || uri.getPath().isEmpty()) {
+            String withSlash = endpoint.endsWith("/") ? endpoint : endpoint + "/";
+            uri = new URI(withSlash, true);
+        }
+        return uri;
     }
 
     private List<String> parseModels() {

@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `zap_get_history` tool to fetch selected history fields with body paging via `body_offset` / `max_body_chars`.
 
 ### Changed
+- Clarified `zap_info` tool description so models are less likely to use it for LLM identity questions.
 - Maintenance changes.
 
 ## [0.2.0] - 2026-06-12
