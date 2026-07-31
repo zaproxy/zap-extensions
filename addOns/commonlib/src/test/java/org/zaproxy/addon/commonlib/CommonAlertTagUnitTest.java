@@ -25,10 +25,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.testutils.UrlTests;
 
-class CommonAlertTagUnitTest {
+class CommonAlertTagUnitTest implements UrlTests {
 
     private static final Map<String, String> BASE_TAGS =
             CommonAlertTag.toMap(
@@ -85,5 +89,26 @@ class CommonAlertTagUnitTest {
         assertTrue(allTags.containsKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
         assertTrue(allTags.containsKey(cve));
         assertThat(link, is(equalTo("https://nvd.nist.gov/vuln/detail/CVE-2020-1234")));
+    }
+
+    @Test
+    void shouldHaveValidTagUrls() {
+        // Given
+        List<String> urls =
+                Stream.of(CommonAlertTag.values())
+                        .map(CommonAlertTag::getValue)
+                        .filter(Predicate.not(String::isBlank))
+                        .toList();
+        // When / Then
+        shouldHaveValidUrls(urls);
+    }
+
+    @Test
+    void shouldHaveValidCveUrl() {
+        // Given
+        Map<String, String> tags = new HashMap<>();
+        CommonAlertTag.putCve(tags, "CVE-2020-1234");
+        // When / Then
+        shouldHaveValidUrls(List.of(tags.get("CVE-2020-1234")));
     }
 }

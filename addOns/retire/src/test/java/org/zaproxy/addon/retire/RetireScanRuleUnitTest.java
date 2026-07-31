@@ -296,7 +296,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
                 alert.getReference(),
                 is(
                         equalTo(
-                                "https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/")));
+                                "https://owasp.org/Top10/2021/A06_2021-Vulnerable_and_Outdated_Components/")));
     }
 
     private static HttpMessage createMessage(String url, String body) {

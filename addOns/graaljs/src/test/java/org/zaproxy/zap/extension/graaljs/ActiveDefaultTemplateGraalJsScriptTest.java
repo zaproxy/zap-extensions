@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.zaproxy.zap.testutils.AlertReferenceError;
+import org.zaproxy.zap.testutils.UrlValidationError;
 
 class ActiveDefaultTemplateGraalJsScriptTest extends GraalJsActiveScriptScanRuleTestUtils {
     @Override
@@ -45,8 +45,8 @@ class ActiveDefaultTemplateGraalJsScriptTest extends GraalJsActiveScriptScanRule
     }
 
     @Override
-    public boolean isAllowedReferenceError(
-            AlertReferenceError.Cause cause, String reference, Object detail) {
+    public boolean isAllowedUrlValidationError(
+            UrlValidationError.Cause cause, String reference, Object detail) {
         // These are example.org references.
         return true;
     }
