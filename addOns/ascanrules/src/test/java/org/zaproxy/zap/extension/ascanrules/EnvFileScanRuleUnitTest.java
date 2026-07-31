@@ -40,6 +40,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.zap.testutils.UrlValidationError.Cause;
 
 /** Unit test for {@link EnvFileScanRule}. */
 class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanRule> {
@@ -77,6 +78,11 @@ class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanR
     @Override
     protected void setUpMessages() {
         mockMessages(new ExtensionAscanRules());
+    }
+
+    @Override
+    public boolean isAllowedUrlValidationError(Cause cause, String reference, Object detail) {
+        return cause == Cause.META_REFRESH && reference.startsWith("https://www.google.com/search");
     }
 
     @Override

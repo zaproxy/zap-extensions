@@ -52,29 +52,29 @@ public enum CommonAlertTag {
 
     // OWASP Top 10 2021
     OWASP_2021_A01_BROKEN_AC(
-            "OWASP_2021_A01", "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"),
+            "OWASP_2021_A01", "https://owasp.org/Top10/2021/A01_2021-Broken_Access_Control/"),
     OWASP_2021_A02_CRYPO_FAIL(
-            "OWASP_2021_A02", "https://owasp.org/Top10/A02_2021-Cryptographic_Failures/"),
-    OWASP_2021_A03_INJECTION("OWASP_2021_A03", "https://owasp.org/Top10/A03_2021-Injection/"),
+            "OWASP_2021_A02", "https://owasp.org/Top10/2021/A02_2021-Cryptographic_Failures/"),
+    OWASP_2021_A03_INJECTION("OWASP_2021_A03", "https://owasp.org/Top10/2021/A03_2021-Injection/"),
     OWASP_2021_A04_INSECURE_DESIGN(
-            "OWASP_2021_A04", "https://owasp.org/Top10/A04_2021-Insecure_Design/"),
+            "OWASP_2021_A04", "https://owasp.org/Top10/2021/A04_2021-Insecure_Design/"),
     OWASP_2021_A05_SEC_MISCONFIG(
-            "OWASP_2021_A05", "https://owasp.org/Top10/A05_2021-Security_Misconfiguration/"),
+            "OWASP_2021_A05", "https://owasp.org/Top10/2021/A05_2021-Security_Misconfiguration/"),
     OWASP_2021_A06_VULN_COMP(
             "OWASP_2021_A06",
-            "https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/"),
+            "https://owasp.org/Top10/2021/A06_2021-Vulnerable_and_Outdated_Components/"),
     OWASP_2021_A07_AUTH_FAIL(
             "OWASP_2021_A07",
-            "https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/"),
+            "https://owasp.org/Top10/2021/A07_2021-Identification_and_Authentication_Failures/"),
     OWASP_2021_A08_INTEGRITY_FAIL(
             "OWASP_2021_A08",
-            "https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/"),
+            "https://owasp.org/Top10/2021/A08_2021-Software_and_Data_Integrity_Failures/"),
     OWASP_2021_A09_LOGGING_FAIL(
             "OWASP_2021_A09",
-            "https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/"),
+            "https://owasp.org/Top10/2021/A09_2021-Security_Logging_and_Monitoring_Failures/"),
     OWASP_2021_A10_SSRF(
             "OWASP_2021_A10",
-            "https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/"),
+            "https://owasp.org/Top10/2021/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/"),
 
     // OWASP Top 10 2017
     OWASP_2017_A01_INJECTION(

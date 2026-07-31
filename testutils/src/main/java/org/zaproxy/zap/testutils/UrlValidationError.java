@@ -21,7 +21,7 @@ package org.zaproxy.zap.testutils;
 
 import java.util.function.Function;
 
-public class AlertReferenceError {
+public class UrlValidationError {
 
     public enum Cause {
         INVALID_URI(e -> "Invalid URI: '" + e.reference + "'. Reason: " + e.detail),
@@ -30,19 +30,20 @@ public class AlertReferenceError {
         UNEXPECTED_STATUS_CODE(
                 e -> "Unexpected status code, 200 != " + e.detail + ", for: " + e.reference),
         REDIRECTED(e -> "Redirected from " + e.reference + " to: " + e.detail),
+        META_REFRESH(e -> "Meta refresh in " + e.reference + " has url: " + e.detail),
         IO_EXCEPTION(e -> "I/O exception: " + e.detail + ", for: " + e.reference);
 
-        private final Function<AlertReferenceError, String> toString;
+        private final Function<UrlValidationError, String> toString;
 
-        private Cause(Function<AlertReferenceError, String> toString) {
+        private Cause(Function<UrlValidationError, String> toString) {
             this.toString = toString;
         }
 
-        AlertReferenceError create(String reference, Object detail) {
-            return new AlertReferenceError(this, reference, detail);
+        UrlValidationError create(String reference, Object detail) {
+            return new UrlValidationError(this, reference, detail);
         }
 
-        private String toString(AlertReferenceError error) {
+        private String toString(UrlValidationError error) {
             return toString.apply(error);
         }
     }
@@ -51,7 +52,7 @@ public class AlertReferenceError {
     private final String reference;
     private final Object detail;
 
-    private AlertReferenceError(Cause cause, String reference, Object detail) {
+    private UrlValidationError(Cause cause, String reference, Object detail) {
         this.cause = cause;
         this.reference = reference;
         this.detail = detail;
