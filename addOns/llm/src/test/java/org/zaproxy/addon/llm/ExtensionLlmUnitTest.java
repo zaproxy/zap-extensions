@@ -345,7 +345,8 @@ public class ExtensionLlmUnitTest extends TestUtils {
                         "key",
                         "",
                         List.of("claude-sonnet-4-6"),
-                        false);
+                        false,
+                        LlmProviderConfig.DEFAULT_TIMEOUT_SECONDS);
         ToolProvider provider = mock(ToolProvider.class);
         ext.addToolProvider(provider);
 

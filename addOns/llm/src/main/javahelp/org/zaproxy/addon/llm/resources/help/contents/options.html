@@ -70,6 +70,8 @@ custom endpoint.
         <li><strong>API Key</strong>: The API key, if required by the provider.
         <li><strong>Endpoint Base URL</strong>: The base URL for API requests, if supported by the provider.
         <li><strong>Models</strong>: One or more model/deployment names, one per line. At least one model must be specified for all providers.
+        <li><strong>Timeout (seconds)</strong>: How long to wait for a response from the provider before giving up.
+            The default is 60 seconds. Increase this for slower models or local inference.
         <li><strong>Trusted</strong>: Whether ZAP may share additional data with this provider and allow it to use tools.
             When a provider is trusted, ZAP features may include richer context in prompts (for example HTTP requests,
             response headers, and surrounding evidence) and may add tools (such as MCP tools) to the LLM context.

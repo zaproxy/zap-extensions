@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.anthropic.AnthropicChatModel;
@@ -44,6 +45,7 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,9 +67,21 @@ public class LlmCommunicationService {
     private static final Logger LOGGER = LogManager.getLogger(LlmCommunicationService.class);
     protected static final String AI_REVIEWED_TAG_KEY = "AI-Reviewed";
 
+    /**
+     * System guidance included in every conversation so the model knows it is running inside ZAP.
+     */
+    static final String ZAP_INTEGRATION_SYSTEM_MESSAGE =
+            """
+            You are an assistant integrated into ZAP (Zed Attack Proxy), a tool for finding
+            vulnerabilities in web applications. Help the user with web application
+            security testing, ZAP usage, and related tasks. When tools are available,
+            you may use them to interact with ZAP.
+            """;
+
     private LlmAssistant llmAssistant;
     private LlmChatAssistant chatAssistant;
     private ChatModelListener listener;
+    private LlmToolExecutionHandler toolExecutionHandler;
     @Getter private LlmProviderConfig pconf;
     @Getter private String modelName;
     @Getter private List<ToolProvider> toolProviders;
@@ -87,8 +101,30 @@ public class LlmCommunicationService {
         this.pconf = pconf;
         this.modelName = modelName;
         this.listener = listener;
+        this.toolExecutionHandler = toolExecutionHandler;
         this.toolProviders = toolProviders != null ? List.copyOf(toolProviders) : List.of();
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
+        chatMemory.add(SystemMessage.from(ZAP_INTEGRATION_SYSTEM_MESSAGE));
+        initialiseAssistants();
+        requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
+    }
+
+    /**
+     * Updates connection settings that should not reset conversation identity (for example
+     * timeout). Rebuilds the underlying models when needed while keeping chat memory.
+     */
+    public void applyConnectionSettings(LlmProviderConfig updatedConfig) {
+        if (updatedConfig == null) {
+            return;
+        }
+        boolean timeoutChanged = pconf.getTimeoutSeconds() != updatedConfig.getTimeoutSeconds();
+        this.pconf = updatedConfig;
+        if (timeoutChanged) {
+            initialiseAssistants();
+        }
+    }
+
+    private void initialiseAssistants() {
         model = buildModel(true);
 
         llmAssistant =
@@ -111,8 +147,6 @@ public class LlmCommunicationService {
                     .afterToolExecution(toolExecutionHandler::afterToolExecution);
         }
         chatAssistant = chatAssistantBuilder.build();
-
-        requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
     }
 
     /** For testing purposes only. */
@@ -126,7 +160,23 @@ public class LlmCommunicationService {
         this.chatMemory = chatMemory;
     }
 
+    /** For testing purposes only. */
+    LlmCommunicationService(
+            LlmProviderConfig pconf, String modelName, ChatModel model, ChatMemory chatMemory) {
+        this.pconf = pconf;
+        this.modelName = modelName;
+        this.model = model;
+        this.chatMemory = chatMemory;
+        this.toolProviders = List.of();
+    }
+
+    /** For testing purposes only. */
+    ChatMemory getChatMemory() {
+        return chatMemory;
+    }
+
     private ChatModel buildModel(boolean withJsonResponseFormat) {
+        Duration timeout = Duration.ofSeconds(pconf.getTimeoutSeconds());
 
         return switch (pconf.getProvider()) {
             case AZURE_OPENAI -> {
@@ -135,6 +185,7 @@ public class LlmCommunicationService {
                                 .apiKey(pconf.getApiKey())
                                 .deploymentName(modelName)
                                 .endpoint(pconf.getEndpoint())
+                                .timeout(timeout)
                                 .temperature(0.3)
                                 .listeners(listener != null ? List.of(listener) : List.of())
                                 .logRequestsAndResponses(true);
@@ -147,6 +198,7 @@ public class LlmCommunicationService {
                     OllamaChatModel.builder()
                             .baseUrl(pconf.getEndpoint())
                             .modelName(modelName)
+                            .timeout(timeout)
                             .temperature(0.3)
                             .listeners(listener != null ? List.of(listener) : List.of())
                             .logRequests(true)
@@ -157,6 +209,7 @@ public class LlmCommunicationService {
                             .apiKey(StringUtils.trimToNull(pconf.getApiKey()))
                             .baseUrl(pconf.getEndpoint())
                             .modelName(modelName)
+                            .timeout(timeout)
                             .temperature(0.3)
                             .listeners(listener == null ? List.of() : List.of(listener))
                             .build();
@@ -164,6 +217,7 @@ public class LlmCommunicationService {
                     GoogleAiGeminiChatModel.builder()
                             .apiKey(pconf.getApiKey())
                             .modelName(modelName)
+                            .timeout(timeout)
                             .temperature(0.3)
                             .listeners(listener != null ? List.of(listener) : List.of())
                             .logRequests(true)
@@ -173,6 +227,7 @@ public class LlmCommunicationService {
                     AnthropicChatModel.builder()
                             .apiKey(pconf.getApiKey())
                             .modelName(modelName)
+                            .timeout(timeout)
                             .temperature(0.3)
                             .listeners(listener != null ? List.of(listener) : List.of())
                             .logRequests(true)

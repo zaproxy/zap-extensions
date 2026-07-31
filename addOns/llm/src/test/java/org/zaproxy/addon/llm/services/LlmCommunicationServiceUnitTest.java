@@ -42,6 +42,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.zaproxy.addon.llm.LlmProvider;
+import org.zaproxy.addon.llm.LlmProviderConfig;
 
 /** Unit test for {@link LlmCommunicationService}. */
 class LlmCommunicationServiceUnitTest {
@@ -111,6 +113,68 @@ class LlmCommunicationServiceUnitTest {
         assertThat(followUp.get(1), is(equalTo(UserMessage.from("Please review this alert."))));
         assertThat(followUp.get(2), is(equalTo(AiMessage.from("reviewed"))));
         assertThat(followUp.get(3), is(equalTo(UserMessage.from("summarise that"))));
+    }
+
+    @Test
+    void shouldIncludeZapIntegrationSystemMessageInChatRequests() {
+        // Given
+        chatMemory.add(SystemMessage.from(LlmCommunicationService.ZAP_INTEGRATION_SYSTEM_MESSAGE));
+        given(model.chat(any(ChatRequest.class))).willReturn(aiResponse("ok"));
+
+        // When
+        service.chat(ChatRequest.builder().messages(UserMessage.from("hello")).build());
+
+        // Then
+        ArgumentCaptor<ChatRequest> captor = ArgumentCaptor.forClass(ChatRequest.class);
+        verify(model).chat(captor.capture());
+        List<ChatMessage> messages = captor.getValue().messages();
+        assertThat(messages, hasSize(2));
+        assertThat(
+                messages.get(0),
+                is(
+                        equalTo(
+                                SystemMessage.from(
+                                        LlmCommunicationService.ZAP_INTEGRATION_SYSTEM_MESSAGE))));
+        assertThat(messages.get(1), is(equalTo(UserMessage.from("hello"))));
+    }
+
+    @Test
+    void shouldPreserveChatMemoryWhenApplyingTimeoutChange() {
+        // Given
+        LlmProviderConfig initial =
+                new LlmProviderConfig(
+                        "ollama",
+                        LlmProvider.OLLAMA,
+                        "",
+                        "http://localhost:11434",
+                        List.of("llama3.2"),
+                        true,
+                        60);
+        ChatMemory memory = MessageWindowChatMemory.withMaxMessages(10);
+        memory.add(SystemMessage.from(LlmCommunicationService.ZAP_INTEGRATION_SYSTEM_MESSAGE));
+        memory.add(UserMessage.from("prior turn"));
+        LlmCommunicationService liveService =
+                new LlmCommunicationService(initial, "llama3.2", model, memory);
+
+        LlmProviderConfig updated =
+                new LlmProviderConfig(
+                        "ollama",
+                        LlmProvider.OLLAMA,
+                        "",
+                        "http://localhost:11434",
+                        List.of("llama3.2"),
+                        true,
+                        180);
+
+        // When
+        liveService.applyConnectionSettings(updated);
+
+        // Then
+        assertThat(liveService.getPconf().getTimeoutSeconds(), is(180));
+        assertThat(liveService.getChatMemory().messages(), hasSize(2));
+        assertThat(
+                liveService.getChatMemory().messages().get(1),
+                is(equalTo(UserMessage.from("prior turn"))));
     }
 
     private static ChatResponse aiResponse(String text) {

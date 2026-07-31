@@ -88,4 +88,30 @@ class LlmChatTabPanelUnitTest extends TestUtils {
         // Then
         assertThat(LlmChatTabPanel.sameTabComms(before, "m1", after, "m1"), is(false));
     }
+
+    @Test
+    void shouldTreatConfigsAsSameCommsWhenTimeoutChanges() {
+        // Given
+        LlmProviderConfig before =
+                new LlmProviderConfig(
+                        "ollama",
+                        LlmProvider.OLLAMA,
+                        null,
+                        "http://localhost",
+                        List.of("m1"),
+                        true,
+                        60);
+        LlmProviderConfig after =
+                new LlmProviderConfig(
+                        "ollama",
+                        LlmProvider.OLLAMA,
+                        null,
+                        "http://localhost",
+                        List.of("m1"),
+                        true,
+                        120);
+
+        // Then
+        assertThat(LlmChatTabPanel.sameTabComms(before, "m1", after, "m1"), is(true));
+    }
 }
