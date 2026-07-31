@@ -41,6 +41,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.addon.llm.services.LlmGuiResponseHandler;
 import org.zaproxy.addon.llm.services.LlmLogResponseHandler;
+import org.zaproxy.addon.llm.services.LlmToolExecutionHandler;
 import org.zaproxy.addon.llm.ui.LlmAppendAlertMenu;
 import org.zaproxy.addon.llm.ui.LlmAppendHttpMessageMenu;
 import org.zaproxy.addon.llm.ui.LlmChatPanel;
@@ -241,8 +242,11 @@ public class ExtensionLlm extends ExtensionAdaptor {
                 commsKey,
                 k -> {
                     ChatModelListener listener = null;
+                    LlmToolExecutionHandler toolHandler = null;
                     if (hasView() && outputTabName != null) {
-                        listener = new LlmGuiResponseHandler(getChatTab(commsKey, outputTabName));
+                        LlmChatTabPanel chatTab = getChatTab(commsKey, outputTabName);
+                        listener = new LlmGuiResponseHandler(chatTab);
+                        toolHandler = new LlmToolExecutionHandler(chatTab);
                     } else {
                         listener = new LlmLogResponseHandler(commsKey);
                     }
@@ -250,7 +254,8 @@ public class ExtensionLlm extends ExtensionAdaptor {
                             options.getDefaultProviderConfig(),
                             options.getDefaultModelName(),
                             listener,
-                            toolsFor(options.getDefaultProviderConfig()));
+                            toolsFor(options.getDefaultProviderConfig()),
+                            toolHandler);
                 });
     }
 
@@ -292,12 +297,14 @@ public class ExtensionLlm extends ExtensionAdaptor {
      *
      * @param includeTools if {@code true}, registered tool providers are added to the LLM context
      *     when the provider is trusted; otherwise the service is built without tools
+     * @param toolExecutionHandler optional handler that displays tool calls/results in the chat UI
      */
     public LlmCommunicationService buildCommunicationService(
             LlmProviderConfig providerConfig,
             String modelName,
             ChatModelListener listener,
-            boolean includeTools) {
+            boolean includeTools,
+            LlmToolExecutionHandler toolExecutionHandler) {
         if (providerConfig == null || LlmProvider.NONE.equals(providerConfig.getProvider())) {
             return null;
         }
@@ -314,7 +321,8 @@ public class ExtensionLlm extends ExtensionAdaptor {
                 providerConfig,
                 modelName,
                 listener,
-                includeTools ? toolsFor(providerConfig) : List.of());
+                includeTools ? toolsFor(providerConfig) : List.of(),
+                toolExecutionHandler);
     }
 
     private List<ToolProvider> toolsFor(LlmProviderConfig providerConfig) {

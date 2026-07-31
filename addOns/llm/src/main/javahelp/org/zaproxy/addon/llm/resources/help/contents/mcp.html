@@ -16,7 +16,8 @@ You can also turn tools off for an individual chat tab using the tools toggle in
 Each time you send a chat message with tools enabled, the LLM receives the full list of tools currently registered in the MCP add-on
 alongside your message. If the LLM decides a tool is needed to answer your request, it invokes that tool
 in-process (no HTTP round-trip to the MCP server is required), observes the result, and may invoke further
-tools before returning a final answer.
+tools before returning a final answer. Each tool call and its response are shown in the
+<a href="chat.html">LLM Chat</a> message area for that conversation.
 
 <p>
 Because tools are resolved per request, any tools registered after start-up - for example from scripts

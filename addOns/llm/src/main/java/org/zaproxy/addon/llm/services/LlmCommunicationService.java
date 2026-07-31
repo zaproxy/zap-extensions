@@ -82,7 +82,8 @@ public class LlmCommunicationService {
             LlmProviderConfig pconf,
             String modelName,
             ChatModelListener listener,
-            List<ToolProvider> toolProviders) {
+            List<ToolProvider> toolProviders,
+            LlmToolExecutionHandler toolExecutionHandler) {
         this.pconf = pconf;
         this.modelName = modelName;
         this.listener = listener;
@@ -96,15 +97,20 @@ public class LlmCommunicationService {
                         .chatMemory(chatMemory)
                         .build();
 
-        chatAssistant =
+        var chatAssistantBuilder =
                 AiServices.builder(LlmChatAssistant.class)
                         .chatModel(
                                 pconf.getProvider() == LlmProvider.AZURE_OPENAI
                                         ? buildModel(false)
                                         : model)
                         .chatMemory(chatMemory)
-                        .toolProviders(this.toolProviders)
-                        .build();
+                        .toolProviders(this.toolProviders);
+        if (toolExecutionHandler != null) {
+            chatAssistantBuilder
+                    .beforeToolExecution(toolExecutionHandler::beforeToolExecution)
+                    .afterToolExecution(toolExecutionHandler::afterToolExecution);
+        }
+        chatAssistant = chatAssistantBuilder.build();
 
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
     }
