@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.llm;
 
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 
 public enum LlmProvider {
@@ -28,7 +29,11 @@ public enum LlmProvider {
     AZURE_OPENAI("llm.provider.azure.openai"),
     GOOGLE_GEMINI("llm.provider.google.gemini"),
     CLAUDE("llm.provider.claude"),
+    JLAMA("llm.provider.jlama"),
     ;
+
+    /** Directory under the ZAP home used for locally downloaded Jlama models. */
+    public static final String LOCAL_MODELS_DIR = "llm-models";
 
     private final String messageKey;
 
@@ -42,7 +47,11 @@ public enum LlmProvider {
     }
 
     public boolean supportsEndpoint() {
-        return this != NONE && this != GOOGLE_GEMINI && this != CLAUDE;
+        return this != NONE && this != GOOGLE_GEMINI && this != CLAUDE && this != JLAMA;
+    }
+
+    public boolean supportsApiKey() {
+        return this != NONE && this != OLLAMA && this != JLAMA;
     }
 
     public boolean isEndpointRequired() {
@@ -58,7 +67,37 @@ public enum LlmProvider {
      * providers default to trusted; cloud based providers default to untrusted.
      */
     public boolean isTrustedByDefault() {
-        return this == OLLAMA;
+        return this == OLLAMA || this == JLAMA;
+    }
+
+    /**
+     * Returns {@code true} when the "model" value is a local filesystem path rather than a remote
+     * model name.
+     */
+    public boolean isLocalModelPath() {
+        return this == JLAMA;
+    }
+
+    /**
+     * Returns {@code true} when this provider is supplied by another add-on via {@link
+     * LlmChatModelFactory}.
+     */
+    public boolean requiresExternalFactory() {
+        return this == JLAMA;
+    }
+
+    /**
+     * Returns a short UI label for a configured model. For local-path providers this is the
+     * directory name only.
+     *
+     * @param model the configured model id or path
+     * @return the display name
+     */
+    public String toDisplayModelName(String model) {
+        if (!isLocalModelPath() || StringUtils.isBlank(model)) {
+            return model;
+        }
+        return LocalLlmModelPath.toDisplayName(model);
     }
 
     public String getDefaultEndpoint() {

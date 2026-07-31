@@ -24,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -158,6 +159,11 @@ public class LlmNumberedRenamableTabbedPane extends JTabbedPane {
         for (LlmChatTabPanel panel : taggedTabs.values()) {
             panel.initTabProvider();
         }
+    }
+
+    /** Returns the tags of currently open chat tabs. */
+    public Set<String> getChatTabTags() {
+        return Set.copyOf(taggedTabs.keySet());
     }
 
     public LlmChatTabPanel getSelectedChatPanel() {

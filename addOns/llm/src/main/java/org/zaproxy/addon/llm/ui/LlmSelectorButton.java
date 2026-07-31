@@ -88,7 +88,13 @@ public class LlmSelectorButton extends JButton {
             }
             for (String model : models) {
                 boolean isDefault = name.equals(defaultName) && model.equals(defaultModel);
-                addProviderModelItem(menu, group, name, model, isDefault);
+                addProviderModelItem(
+                        menu,
+                        group,
+                        name,
+                        model,
+                        config.getProvider().toDisplayModelName(model),
+                        isDefault);
             }
         }
         return menu;
@@ -100,9 +106,19 @@ public class LlmSelectorButton extends JButton {
             String providerName,
             String modelName,
             boolean isDefault) {
+        addProviderModelItem(menu, group, providerName, modelName, modelName, isDefault);
+    }
+
+    private void addProviderModelItem(
+            JPopupMenu menu,
+            ButtonGroup group,
+            String providerName,
+            String modelName,
+            String displayModelName,
+            boolean isDefault) {
         String label = providerName;
-        if (!modelName.isEmpty()) {
-            label += " - " + modelName;
+        if (!displayModelName.isEmpty()) {
+            label += " - " + displayModelName;
         } else {
             if (!providerName.equals(LlmProvider.NONE.toString())) {
                 label += " - " + Constant.messages.getString("llm.toolbar.model.empty");

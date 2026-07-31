@@ -21,14 +21,19 @@ package org.zaproxy.addon.llm.ui;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link LlmChatTabPanel}. */
 class LlmChatTabPanelUnitTest extends TestUtils {
@@ -87,5 +92,34 @@ class LlmChatTabPanelUnitTest extends TestUtils {
 
         // Then
         assertThat(LlmChatTabPanel.sameTabComms(before, "m1", after, "m1"), is(false));
+    }
+
+    @Test
+    void unusedTabShouldAdoptUpdatedDefaultOnRefresh() {
+        // Given
+        Control.initSingletonForTesting();
+        ExtensionLlmForTest ext = new ExtensionLlmForTest();
+        ext.hook(mock(ExtensionHook.class));
+        ext.loadOptions();
+
+        LlmChatTabPanel panel = new LlmChatTabPanel(ext, "CHAT-test");
+        assertThat(panel.isUnused(), is(true));
+        assertThat(panel.getTabProviderConfig(), nullValue());
+
+        // When — provider configured after the tab was created (e.g. -llmlocal)
+        ext.configureProvider(
+                new LlmProviderConfig("Local", LlmProvider.JLAMA, "", "", List.of("TinyLlama")),
+                true);
+        panel.initTabProvider();
+
+        // Then
+        assertThat(panel.getTabProviderConfig().getName(), is("Local"));
+        assertThat(panel.getTabProviderConfig().getProvider(), is(LlmProvider.JLAMA));
+    }
+
+    private static final class ExtensionLlmForTest extends ExtensionLlm {
+        void loadOptions() {
+            getOptions().load(new ZapXmlConfiguration());
+        }
     }
 }

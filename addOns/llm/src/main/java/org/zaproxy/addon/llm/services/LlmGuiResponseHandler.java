@@ -62,12 +62,13 @@ public class LlmGuiResponseHandler implements ChatModelListener {
 
     @Override
     public void onError(ChatModelErrorContext errorContext) {
-        LOGGER.error("LLM Error : {} ", errorContext.error().getMessage());
+        LOGGER.error("LLM Error", errorContext.error());
         if (chatPanel != null) {
             chatPanel.appendToOutput(
                     LlmChatTabPanel.ERROR_LABEL, errorContext.error().getMessage());
         }
         throw new RuntimeException(
-                String.format("LLM Error : %s", errorContext.error().getMessage()));
+                String.format("LLM Error : %s", errorContext.error().getMessage()),
+                errorContext.error());
     }
 }
