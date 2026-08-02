@@ -114,7 +114,7 @@ public class WSDLCustomParser {
     }
 
     /* Method called from external classes to import a WSDL file from an URL. */
-    public void extUrlWSDLImport(final String url, final String threadName) {
+    public void extUrlWSDLImport(final String url, final String threadName, int maxMessages) {
         if (url == null || url.trim().length() <= 0) return;
         // LOGGER.debug("Importing WSDL file from URL: {}", url);
         Thread t =
@@ -123,7 +123,7 @@ public class WSDLCustomParser {
                     public void run() {
                         // Thread name: THREAD_PREFIX + threadId++
                         this.setName(threadName);
-                        parseWSDLUrl(url, 0);
+                        parseWSDLUrl(url, maxMessages);
                     }
                 };
         t.start();
@@ -143,13 +143,13 @@ public class WSDLCustomParser {
     /*
      * Method called from external classes to import a WSDL file from a local file.
      */
-    public void extFileWSDLImport(final File file, final String threadName) {
+    public void extFileWSDLImport(final File file, final String threadName, int maxMessages) {
         Thread t =
                 new Thread() {
                     @Override
                     public void run() {
                         this.setName(threadName);
-                        parseWSDLFile(file, 0);
+                        parseWSDLFile(file, maxMessages);
                     }
                 };
         t.start();
