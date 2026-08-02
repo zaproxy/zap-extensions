@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Allow Automation Framework users to limit the number of SOAP messages to import (`maxMessages`). Ex: If testing authentication, access, etc.
+- Allow users to limit the number of SOAP messages to import (`maxMessages`) via the Automation Framework, Import dialogue, and API. Ex: If testing authentication, access, etc.
 
 ### Changed
 - Maintenance changes.

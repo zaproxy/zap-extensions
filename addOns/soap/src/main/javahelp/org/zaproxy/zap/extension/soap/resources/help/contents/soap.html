@@ -19,7 +19,11 @@ A menu item is added to the Import menu:
 <ul>
 <li>Import a WSDL File</li>
 </ul>
-Operations to import a WSDL file from the local filesystem or from a URL are also available via the API.
+The dialogue allows limiting the number of messages imported via the Max Messages field (0 is unlimited).
+Redirects are followed when importing, so this is a soft limit.
+<br><br>
+Operations to import a WSDL file from the local filesystem or from a URL are also available via the API
+(<code>importFile</code> / <code>importUrl</code>), including an optional <code>maxMessages</code> parameter.
 <br><br>
 <b>NOTE:</b> As of version 6 of this add-on, only encoded URLs are supported.
 
