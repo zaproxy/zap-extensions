@@ -110,6 +110,7 @@ public class HarImporter {
 
     private final DataSource dataSource;
     private final boolean sendRequests;
+    private final int maxMessages;
     private ProgressPaneListener progressListener;
     private SendContext sendContext;
     private boolean success;
@@ -119,8 +120,13 @@ public class HarImporter {
     }
 
     public HarImporter(String data, boolean sendRequests) {
+        this(data, sendRequests, 0);
+    }
+
+    public HarImporter(String data, boolean sendRequests, int maxMessages) {
         this.dataSource = DataSource.STRING;
         this.sendRequests = sendRequests;
+        this.maxMessages = maxMessages;
         importData(reader -> reader.readFromString(data));
     }
 
@@ -133,9 +139,15 @@ public class HarImporter {
     }
 
     public HarImporter(File file, ProgressPaneListener listener, boolean sendRequests) {
+        this(file, listener, sendRequests, 0);
+    }
+
+    public HarImporter(
+            File file, ProgressPaneListener listener, boolean sendRequests, int maxMessages) {
         dataSource = DataSource.FILE;
         this.progressListener = listener;
         this.sendRequests = sendRequests;
+        this.maxMessages = maxMessages;
         importData(reader -> reader.readFromFile(file));
     }
 
@@ -157,9 +169,15 @@ public class HarImporter {
     }
 
     public HarImporter(HarLog harLog, ProgressPaneListener listener, boolean sendRequests) {
+        this(harLog, listener, sendRequests, 0);
+    }
+
+    public HarImporter(
+            HarLog harLog, ProgressPaneListener listener, boolean sendRequests, int maxMessages) {
         dataSource = DataSource.FILE;
         this.progressListener = listener;
         this.sendRequests = sendRequests;
+        this.maxMessages = maxMessages;
         importHarLog(harLog);
         completed();
     }
@@ -184,7 +202,11 @@ public class HarImporter {
 
         List<HarEntry> entries = preProcessHarEntries(log, sendRequests);
         int count = 0;
+        int imported = 0;
         for (HarEntry entry : entries) {
+            if (maxMessages > 0 && imported >= maxMessages) {
+                break;
+            }
             HttpMessage msg = sendRequests ? getSendContext().send(entry) : getHttpMessage(entry);
             if (msg == null) {
                 updateProgress(
@@ -193,6 +215,7 @@ public class HarImporter {
             }
             persistMessage(msg);
             updateProgress(++count, msg.getRequestHeader().getURI().toString());
+            imported++;
         }
     }
 

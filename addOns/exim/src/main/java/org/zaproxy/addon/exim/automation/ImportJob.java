@@ -60,6 +60,7 @@ public class ImportJob extends AutomationJob {
     private static final String PARAM_TYPE = "type";
     private static final String PARAM_FILE_NAME = "fileName";
     private static final String PARAM_SEND_REQUESTS = "sendRequests";
+    private static final String PARAM_MAX_MESSAGES = "maxMessages";
 
     /** Import type ID for ModSecurity2 logs. */
     static final String MODSEC2_TYPE = "modsec2";
@@ -93,6 +94,14 @@ public class ImportJob extends AutomationJob {
                 this.getName(),
                 null,
                 progress);
+
+        if (getParameters().getMaxMessages() < 0) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "exim.automation.warn.maxMessages",
+                            getName(),
+                            getParameters().getMaxMessages()));
+        }
     }
 
     @Override
@@ -106,6 +115,7 @@ public class ImportJob extends AutomationJob {
         map.put(PARAM_TYPE, "");
         map.put(PARAM_FILE_NAME, "");
         map.put(PARAM_SEND_REQUESTS, "false");
+        map.put(PARAM_MAX_MESSAGES, "0");
         return map;
     }
 
@@ -129,6 +139,8 @@ public class ImportJob extends AutomationJob {
                                                     .setType(type)
                                                     .setInputFile(file.toPath())
                                                     .setSendRequests(sendRequests)
+                                                    .setMaxMessages(
+                                                            getParameters().getMaxMessages())
                                                     .setMessageHandler(
                                                             msg -> persistMessage(progress, msg))
                                                     .build());
@@ -300,5 +312,6 @@ public class ImportJob extends AutomationJob {
         private String type;
         private String fileName;
         private Boolean sendRequests = false;
+        private int maxMessages;
     }
 }

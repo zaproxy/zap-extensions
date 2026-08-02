@@ -76,6 +76,7 @@ public class ImportExportApi extends ApiImplementor {
     private static final String PARAM_FOLLOW_REDIRECTS = "followRedirects";
     private static final String PARAM_IDS = "ids";
     private static final String PARAM_SEND_REQUESTS = "sendRequests";
+    private static final String PARAM_MAX_MESSAGES = "maxMessages";
     private static final String PARAM_REQUEST = "request";
     private static final String PARAM_START = "start";
 
@@ -98,7 +99,11 @@ public class ImportExportApi extends ApiImplementor {
                 new ApiAction(
                         ACTION_IMPORT_HAR,
                         List.of(),
-                        List.of(PARAM_FILE_PATH, PARAM_DATA, PARAM_SEND_REQUESTS)));
+                        List.of(
+                                PARAM_FILE_PATH,
+                                PARAM_DATA,
+                                PARAM_SEND_REQUESTS,
+                                PARAM_MAX_MESSAGES)));
         this.addApiAction(new ApiAction(ACTION_IMPORT_URLS, new String[] {PARAM_FILE_PATH}));
         this.addApiAction(new ApiAction(ACTION_IMPORT_ZAP_LOGS, new String[] {PARAM_FILE_PATH}));
         this.addApiAction(
@@ -143,7 +148,7 @@ public class ImportExportApi extends ApiImplementor {
                                 "Only one of the parameters should be provided at the same time.");
                     }
 
-                    if (new HarImporter(data, sendRequests).isSuccess()) {
+                    if (new HarImporter(data, sendRequests, getMaxMessages(params)).isSuccess()) {
                         return ApiResponseElement.OK;
                     }
                     throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_DATA);
@@ -154,7 +159,8 @@ public class ImportExportApi extends ApiImplementor {
                 }
 
                 file = new File(filePath);
-                HarImporter harImporter = new HarImporter(file, null, sendRequests);
+                HarImporter harImporter =
+                        new HarImporter(file, null, sendRequests, getMaxMessages(params));
                 return handleFileImportResponse(harImporter.isSuccess(), file);
             case ACTION_IMPORT_URLS:
                 file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
@@ -310,6 +316,18 @@ public class ImportExportApi extends ApiImplementor {
         } else {
             throw new ApiException(ApiException.Type.BAD_OTHER);
         }
+    }
+
+    private static int getMaxMessages(JSONObject params) throws ApiException {
+        if (!params.containsKey(PARAM_MAX_MESSAGES)
+                || params.getString(PARAM_MAX_MESSAGES).isEmpty()) {
+            return 0;
+        }
+        int maxMessages = ApiUtils.getIntParam(params, PARAM_MAX_MESSAGES);
+        if (maxMessages < 0) {
+            throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_MAX_MESSAGES);
+        }
+        return maxMessages;
     }
 
     private ApiResponseElement handleFileImportResponse(boolean success, File file)
