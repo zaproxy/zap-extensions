@@ -1548,6 +1548,26 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability through `mce:protected` comments",
+          "githubID": "GHSA-v98h-vmpc-fpqv",
+          "CVE": [
+            "CVE-2026-47762"
+          ]
+        },
+        "info": [
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-v98h-vmpc-fpqv",
+          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
+          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "5.10.10",
+        "severity": "high",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
           "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability using media plugin `data-mce-object` injection",
           "githubID": "GHSA-vg35-5wq7-3x7w",
           "CVE": [
@@ -1611,26 +1631,6 @@
           "https://owasp.org/www-community/attacks/xss",
           "https://www.tiny.cloud/docs/tinymce/6/6.8.4-release-notes/#overview",
           "https://www.tiny.cloud/docs/tinymce/7/7.2-release-notes/#overview"
-        ]
-      },
-      {
-        "atOrAbove": "0",
-        "below": "5.11.1",
-        "severity": "high",
-        "cwe": [
-          "CWE-79"
-        ],
-        "identifiers": {
-          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability through `mce:protected` comments",
-          "githubID": "GHSA-v98h-vmpc-fpqv",
-          "CVE": [
-            "CVE-2026-47762"
-          ]
-        },
-        "info": [
-          "https://github.com/tinymce/tinymce/security/advisories/GHSA-v98h-vmpc-fpqv",
-          "https://www.tiny.cloud/docs/tinymce/7/7.9.3-release-notes/#overview",
-          "https://www.tiny.cloud/docs/tinymce/8/8.5.1-release-notes/#overview"
         ]
       },
       {
@@ -3423,6 +3423,30 @@
           "https://codepen.io/herodevs/full/bGPQgMp/8da9ce87e99403ee13a295c305ebfa0b",
           "https://github.com/angular/angular.js",
           "https://www.herodevs.com/vulnerability-directory/cve-2024-8373"
+        ]
+      },
+      {
+        "atOrAbove": "1.2.0-rc.3",
+        "below": "1.8.4",
+        "severity": "high",
+        "cwe": [
+          "CWE-79",
+          "CWE-791"
+        ],
+        "identifiers": {
+          "summary": "Angular's deprecated package has a Cross-Site Scripting issue",
+          "githubID": "GHSA-7x27-g8rg-x87w",
+          "CVE": [
+            "CVE-2026-11998"
+          ]
+        },
+        "info": [
+          "https://access.redhat.com/security/cve/CVE-2026-11998",
+          "https://bugzilla.redhat.com/show_bug.cgi?id=2492579",
+          "https://codepen.io/herodevs/pen/JobQdmz/5b3896f56fab66f20cd25e698cf3faa8",
+          "https://security.access.redhat.com/data/csaf/v2/vex/2026/cve-2026-11998.json",
+          "https://www.herodevs.com/vulnerability-directory/cve-2026-11998",
+          "https://www.herodevs.com/vulnerability-directory/cve-2026-11998?nes-for-angularjs"
         ]
       },
       {
@@ -5519,7 +5543,10 @@
         ],
         "identifiers": {
           "summary": "When USE_PROFILES is enabled, DOMPurify rebuilds ALLOWED_ATTR as a plain array whose properties are looked up by name, making it susceptible to prototype pollution. If Array.prototype has been polluted with an event handler attribute name (e.g. onclick), DOMPurify will allow that event handler to survive sanitization, resulting in DOM-based XSS.",
-          "githubID": "GHSA-cj63-jhhr-wcxv"
+          "githubID": "GHSA-cj63-jhhr-wcxv",
+          "CVE": [
+            "CVE-2026-65913"
+          ]
         },
         "info": [
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-cj63-jhhr-wcxv",
@@ -5535,7 +5562,10 @@
         ],
         "identifiers": {
           "summary": "DOMPurify's ADD_ATTR predicate function mechanism (via EXTRA_ELEMENT_HANDLING.attributeCheck) short-circuits URI validation when the predicate returns true. This allows unsafe protocols such as javascript: to survive sanitization in href and similar attributes, enabling DOM-based XSS when such links are activated.",
-          "githubID": "GHSA-cjmm-f4jc-qw8r"
+          "githubID": "GHSA-cjmm-f4jc-qw8r",
+          "CVE": [
+            "CVE-2026-65912"
+          ]
         },
         "info": [
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-cjmm-f4jc-qw8r",
@@ -5551,7 +5581,10 @@
         ],
         "identifiers": {
           "summary": "DOMPurify is vulnerable to mutation-XSS (mXSS) when sanitized HTML is embedded into special raw-text wrapper elements such as xmp, script, iframe, noembed, noframes, or noscript before being assigned via innerHTML. Attacker-controlled sequences like </xmp> inside attribute values close the raw-text context during the second parse, causing the sanitized output to mutate into executable markup.",
-          "githubID": "GHSA-h8r8-wccr-v5f2"
+          "githubID": "GHSA-h8r8-wccr-v5f2",
+          "CVE": [
+            "CVE-2026-65914"
+          ]
         },
         "info": [
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-h8r8-wccr-v5f2",
@@ -5587,7 +5620,10 @@
         ],
         "identifiers": {
           "summary": "DOMPurify has a logic inconsistency where FORBID_TAGS is not checked when a function-based ADD_TAGS (tagCheck) returns true. Due to short-circuit evaluation, the FORBID_TAGS check is never evaluated, allowing explicitly forbidden elements to pass through sanitization when EXTRA_ELEMENT_HANDLING.tagCheck is configured.",
-          "githubID": "GHSA-39q2-94rc-95cp"
+          "githubID": "GHSA-39q2-94rc-95cp",
+          "CVE": [
+            "CVE-2026-65903"
+          ]
         },
         "info": [
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-39q2-94rc-95cp"
@@ -5721,7 +5757,10 @@
         ],
         "identifiers": {
           "summary": "DOMPurify: Hook mutation of `data.allowedTags` / `data.allowedAttributes` permanently pollutes `DEFAULT_ALLOWED_TAGS` / `DEFAULT_ALLOWED_ATTR`",
-          "githubID": "GHSA-76mc-f452-cxcm"
+          "githubID": "GHSA-76mc-f452-cxcm",
+          "CVE": [
+            "CVE-2026-65902"
+          ]
         },
         "info": [
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-76mc-f452-cxcm"
@@ -5754,7 +5793,10 @@
         ],
         "identifiers": {
           "summary": "DOMPurify: `IN_PLACE` mode trusts attacker-controlled `nodeName` on live non-form nodes, allowing script retention and XSS via attacker-supplied DOM objects",
-          "githubID": "GHSA-x4vx-rjvf-j5p4"
+          "githubID": "GHSA-x4vx-rjvf-j5p4",
+          "CVE": [
+            "CVE-2026-65901"
+          ]
         },
         "info": [
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-x4vx-rjvf-j5p4"
@@ -5769,7 +5811,10 @@
         ],
         "identifiers": {
           "summary": "DOMPurify: SAFE_FOR_TEMPLATES bypass - template expressions survive sanitization inside <template> content when using DOM output modes",
-          "githubID": "GHSA-gvmj-g25r-r7wr"
+          "githubID": "GHSA-gvmj-g25r-r7wr",
+          "CVE": [
+            "CVE-2026-65900"
+          ]
         },
         "info": [
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-gvmj-g25r-r7wr"
@@ -5784,7 +5829,10 @@
         ],
         "identifiers": {
           "summary": "DOMPurify: Trusted Types policy survives `clearConfig()` and can poison later `RETURN_TRUSTED_TYPE` output",
-          "githubID": "GHSA-vxr8-fq34-vvx9"
+          "githubID": "GHSA-vxr8-fq34-vvx9",
+          "CVE": [
+            "CVE-2026-65899"
+          ]
         },
         "info": [
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-vxr8-fq34-vvx9"
@@ -5801,10 +5849,36 @@
         ],
         "identifiers": {
           "summary": "DOMPurify: Permanent `ALLOWED_ATTR` pollution via `setConfig()` bypassing the hook clone-guard (incomplete fix of the 3.4.7 hook-pollution patch)",
-          "githubID": "GHSA-cmwh-pvxp-8882"
+          "githubID": "GHSA-cmwh-pvxp-8882",
+          "CVE": [
+            "CVE-2026-65898"
+          ]
         },
         "info": [
           "https://github.com/cure53/DOMPurify/security/advisories/GHSA-cmwh-pvxp-8882"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "3.4.12",
+        "severity": "low",
+        "cwe": [
+          "CWE-184",
+          "CWE-693",
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "DOMPurify: `CUSTOM_ELEMENT_HANDLING` bypasses `afterSanitizeElements` for allowed custom elements.",
+          "githubID": "GHSA-c2j3-45gr-mqc4",
+          "CVE": [
+            "CVE-2026-66010"
+          ]
+        },
+        "info": [
+          "https://github.com/cure53/DOMPurify/security/advisories/GHSA-c2j3-45gr-mqc4",
+          "https://github.com/cure53/DOMPurify/pull/1537",
+          "https://github.com/cure53/DOMPurify/commit/a9ca1e537422319a557a9a2aa61f003b23b4a197",
+          "https://github.com/cure53/DOMPurify/releases/tag/3.4.12"
         ]
       }
     ],
@@ -8121,6 +8195,157 @@
         ]
       },
       {
+        "atOrAbove": "0.8.0",
+        "below": "0.33.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-1321"
+        ],
+        "identifiers": {
+          "summary": "Axios: Nested axios option objects can consume polluted prototype values",
+          "githubID": "GHSA-7q8q-rj6j-mhjq"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-7q8q-rj6j-mhjq",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "0.28.0",
+        "below": "0.33.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400",
+          "CWE-674"
+        ],
+        "identifiers": {
+          "summary": "Axios: Excessive recursion in formDataToJSON can cause denial of service",
+          "githubID": "GHSA-42h9-826w-cgv3"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-42h9-826w-cgv3",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "0.28.0",
+        "below": "0.33.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400",
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "Axios: Deep formToJSON Key Recursion Can Cause Denial of Service",
+          "githubID": "GHSA-pmv8-rq9r-6j72"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-pmv8-rq9r-6j72",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "0.31.0",
+        "below": "0.33.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-183",
+          "CWE-918"
+        ],
+        "identifiers": {
+          "summary": "Axios: NO_PROXY bypass for 0.0.0.0 local addresses in axios",
+          "githubID": "GHSA-f4gw-2p7v-4548"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-f4gw-2p7v-4548",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "0.31.1",
+        "below": "0.33.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-1321",
+          "CWE-200"
+        ],
+        "identifiers": {
+          "summary": "Axios Node HTTP adapter can use an inherited proxy after interceptor config cloning",
+          "githubID": "GHSA-gcfj-64vw-6mp9"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-gcfj-64vw-6mp9",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "0.31.1",
+        "below": "0.33.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-674"
+        ],
+        "identifiers": {
+          "summary": "Axios form serializer maxDepth bypass via {} metatoken",
+          "githubID": "GHSA-hcpx-6fm6-wx23"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-hcpx-6fm6-wx23",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.33.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-1321"
+        ],
+        "identifiers": {
+          "summary": "Axios: Prototype pollution gadgets can alter axios request construction",
+          "githubID": "GHSA-mmx7-hfxf-jppx"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-mmx7-hfxf-jppx",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
         "atOrAbove": "1.0.0",
         "below": "1.6.0",
         "cwe": [
@@ -8740,6 +8965,211 @@
         "info": [
           "https://github.com/axios/axios/security/advisories/GHSA-654m-c8p4-x5fp",
           "https://github.com/axios/axios/security/advisories/GHSA-q8qp-cvcw-x6jj"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
+        "below": "1.18.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400",
+          "CWE-674"
+        ],
+        "identifiers": {
+          "summary": "Axios: Excessive recursion in formDataToJSON can cause denial of service",
+          "githubID": "GHSA-42h9-826w-cgv3"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-42h9-826w-cgv3",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
+        "below": "1.18.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-1321"
+        ],
+        "identifiers": {
+          "summary": "Axios: Nested axios option objects can consume polluted prototype values",
+          "githubID": "GHSA-7q8q-rj6j-mhjq"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-7q8q-rj6j-mhjq",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
+        "below": "1.18.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-1321"
+        ],
+        "identifiers": {
+          "summary": "Axios: Prototype pollution gadgets can alter axios request construction",
+          "githubID": "GHSA-mmx7-hfxf-jppx"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-mmx7-hfxf-jppx",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
+        "below": "1.18.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400",
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "Axios: Deep formToJSON Key Recursion Can Cause Denial of Service",
+          "githubID": "GHSA-pmv8-rq9r-6j72"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-pmv8-rq9r-6j72",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.7.0",
+        "below": "1.18.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "Axios: Fetch adapter `ReadableStream` uploads bypass `maxBodyLength`",
+          "githubID": "GHSA-jqh4-m9w3-8hp9"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-jqh4-m9w3-8hp9",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.13.0",
+        "below": "1.18.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400"
+        ],
+        "identifiers": {
+          "summary": "Axios: HTTP/2 streamed uploads bypass `maxBodyLength`",
+          "githubID": "GHSA-mwf2-3pr3-8698"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-mwf2-3pr3-8698",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.15.0",
+        "below": "1.18.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-183",
+          "CWE-918"
+        ],
+        "identifiers": {
+          "summary": "Axios: NO_PROXY bypass for 0.0.0.0 local addresses in axios",
+          "githubID": "GHSA-f4gw-2p7v-4548"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-f4gw-2p7v-4548",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.15.1",
+        "below": "1.18.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-674"
+        ],
+        "identifiers": {
+          "summary": "Axios form serializer maxDepth bypass via {} metatoken",
+          "githubID": "GHSA-hcpx-6fm6-wx23"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-hcpx-6fm6-wx23",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.15.2",
+        "below": "1.18.0",
+        "severity": "high",
+        "cwe": [
+          "CWE-1321",
+          "CWE-200"
+        ],
+        "identifiers": {
+          "summary": "Axios Node HTTP adapter can use an inherited proxy after interceptor config cloning",
+          "githubID": "GHSA-gcfj-64vw-6mp9"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-gcfj-64vw-6mp9",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/pull/11001",
+          "https://github.com/axios/axios/commit/1417285c69344bbcc6420a021f67dee0c6fedb2d",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v0.33.0",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
+        ]
+      },
+      {
+        "atOrAbove": "1.15.2",
+        "below": "1.18.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-1321"
+        ],
+        "identifiers": {
+          "summary": "Axios: Prototype pollution auth subfields can inject Basic auth",
+          "githubID": "GHSA-xj6q-8x83-jv6g"
+        },
+        "info": [
+          "https://github.com/axios/axios/security/advisories/GHSA-xj6q-8x83-jv6g",
+          "https://github.com/axios/axios/pull/11000",
+          "https://github.com/axios/axios/commit/32fc489632377d214db55bfa4e2c48486a7d7ce2",
+          "https://github.com/axios/axios/releases/tag/v1.18.0"
         ]
       }
     ],
@@ -11313,6 +11743,182 @@
         ]
       },
       {
+        "atOrAbove": "12.0.0",
+        "below": "15.5.21",
+        "severity": "high",
+        "cwe": [
+          "CWE-918"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Server-Side Request Forgery in rewrites via attacker-controlled destination hostname",
+          "githubID": "GHSA-p9j2-gv94-2wf4",
+          "CVE": [
+            "CVE-2026-64645"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-p9j2-gv94-2wf4",
+          "https://github.com/vercel/next.js/commit/35f501357e9b0fe7c950b0d6aa8fcf5343f707e9",
+          "https://github.com/vercel/next.js/commit/d3033266c6dff23f7be71e19341fe3a8c6e2c599",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "13.0.0",
+        "below": "15.5.21",
+        "severity": "medium",
+        "cwe": [
+          "CWE-116"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Cache confusion of response bodies for requests with bodies containing invalid UTF-8 byte sequences",
+          "githubID": "GHSA-4633-3j49-mh5q",
+          "CVE": [
+            "CVE-2026-64647"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-4633-3j49-mh5q",
+          "https://github.com/vercel/next.js/pull/96008",
+          "https://github.com/vercel/next.js/commit/025bf4a5f7b47fb7758c4ebf1c931a61c451c082",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "13.0.0",
+        "below": "15.5.21",
+        "severity": "medium",
+        "cwe": [
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Unbounded Server Action payload in Edge runtime",
+          "githubID": "GHSA-4c39-4ccg-62r3",
+          "CVE": [
+            "CVE-2026-64646"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-4c39-4ccg-62r3",
+          "https://github.com/vercel/next.js/commit/57c31f724d746e86a9e8b92aa8be538a922446a4",
+          "https://github.com/vercel/next.js/commit/9a4651e754f70b12e397694ffc41f44c3ba8cc17",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "13.0.0",
+        "below": "15.5.21",
+        "severity": "medium",
+        "cwe": [
+          "CWE-524"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Cache confusion of response bodies for requests with bodies",
+          "githubID": "GHSA-68g3-v927-f742",
+          "CVE": [
+            "CVE-2026-64648"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-68g3-v927-f742",
+          "https://github.com/vercel/next.js/commit/062f66700b52a5d6bba2c0605d55577ab7ad262c",
+          "https://github.com/vercel/next.js/commit/73b94872bc343d09494b50394d8c08eb9fc8e56a",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "13.0.0",
+        "below": "15.5.21",
+        "severity": "medium",
+        "cwe": [
+          "CWE-201"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Unauthenticated disclosure of internal Server Function endpoints",
+          "githubID": "GHSA-955p-x3mx-jcvp",
+          "CVE": [
+            "CVE-2026-64643"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-955p-x3mx-jcvp",
+          "https://github.com/vercel/next.js/commit/1b0c3ae912a3ad925c60065cc8d55b070fa8bcd3",
+          "https://github.com/vercel/next.js/commit/ff12a6124e1504f17b62de948b8a553fdecaef7b",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "13.0.0",
+        "below": "15.5.21",
+        "severity": "high",
+        "cwe": [
+          "CWE-834"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Denial of Service in App Router using Server Actions",
+          "githubID": "GHSA-m99w-x7hq-7vfj",
+          "CVE": [
+            "CVE-2026-64641"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-m99w-x7hq-7vfj",
+          "https://github.com/vercel/next.js/pull/96013",
+          "https://github.com/vercel/next.js/commit/019628571641dec57aaf349ba0c360e3964e6f12",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "14.1.1",
+        "below": "15.5.21",
+        "severity": "high",
+        "cwe": [
+          "CWE-918"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Server-Side Request Forgery in Server Actions on custom servers",
+          "githubID": "GHSA-89xv-2m56-2m9x",
+          "CVE": [
+            "CVE-2026-64649"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-89xv-2m56-2m9x",
+          "https://github.com/vercel/next.js/commit/b51206321854193208c0805ba42acc49287f942b",
+          "https://github.com/vercel/next.js/commit/e3e5666ccead3a15162793d697af5e48b7cc0498",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "15.5.0",
+        "below": "15.5.21",
+        "severity": "medium",
+        "cwe": [
+          "CWE-407"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Denial of Service in the Image Optimization API using SVGs",
+          "githubID": "GHSA-q8wf-6r8g-63ch",
+          "CVE": [
+            "CVE-2026-64644"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-q8wf-6r8g-63ch",
+          "https://github.com/vercel/next.js/pull/96006",
+          "https://github.com/vercel/next.js/commit/93cb90891402fa4c47798d03cb9e05c13233766c",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
         "atOrAbove": "15.6.0-canary.0",
         "below": "15.6.0-canary.59",
         "severity": "high",
@@ -11996,6 +12602,203 @@
           "https://github.com/vercel/next.js/security/advisories/GHSA-26hh-7cqf-hhc6",
           "https://github.com/vercel/next.js/releases/tag/v15.5.18",
           "https://github.com/vercel/next.js/releases/tag/v16.2.6"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0",
+        "below": "16.2.11",
+        "severity": "medium",
+        "cwe": [
+          "CWE-116"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Cache confusion of response bodies for requests with bodies containing invalid UTF-8 byte sequences",
+          "githubID": "GHSA-4633-3j49-mh5q",
+          "CVE": [
+            "CVE-2026-64647"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-4633-3j49-mh5q",
+          "https://github.com/vercel/next.js/pull/96008",
+          "https://github.com/vercel/next.js/commit/025bf4a5f7b47fb7758c4ebf1c931a61c451c082",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0",
+        "below": "16.2.11",
+        "severity": "medium",
+        "cwe": [
+          "CWE-770"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Unbounded Server Action payload in Edge runtime",
+          "githubID": "GHSA-4c39-4ccg-62r3",
+          "CVE": [
+            "CVE-2026-64646"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-4c39-4ccg-62r3",
+          "https://github.com/vercel/next.js/commit/57c31f724d746e86a9e8b92aa8be538a922446a4",
+          "https://github.com/vercel/next.js/commit/9a4651e754f70b12e397694ffc41f44c3ba8cc17",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0",
+        "below": "16.2.11",
+        "severity": "medium",
+        "cwe": [
+          "CWE-524"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Cache confusion of response bodies for requests with bodies",
+          "githubID": "GHSA-68g3-v927-f742",
+          "CVE": [
+            "CVE-2026-64648"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-68g3-v927-f742",
+          "https://github.com/vercel/next.js/commit/062f66700b52a5d6bba2c0605d55577ab7ad262c",
+          "https://github.com/vercel/next.js/commit/73b94872bc343d09494b50394d8c08eb9fc8e56a",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0",
+        "below": "16.2.11",
+        "severity": "high",
+        "cwe": [
+          "CWE-285"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Middleware / Proxy bypass in App Router applications using Turbopack and single locale",
+          "githubID": "GHSA-6gpp-xcg3-4w24",
+          "CVE": [
+            "CVE-2026-64642"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-6gpp-xcg3-4w24",
+          "https://github.com/vercel/next.js/pull/96014",
+          "https://github.com/vercel/next.js/commit/6bf4df14508ad6c0cd46af50c6051ee42f2d9151",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0",
+        "below": "16.2.11",
+        "severity": "high",
+        "cwe": [
+          "CWE-918"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Server-Side Request Forgery in Server Actions on custom servers",
+          "githubID": "GHSA-89xv-2m56-2m9x",
+          "CVE": [
+            "CVE-2026-64649"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-89xv-2m56-2m9x",
+          "https://github.com/vercel/next.js/commit/b51206321854193208c0805ba42acc49287f942b",
+          "https://github.com/vercel/next.js/commit/e3e5666ccead3a15162793d697af5e48b7cc0498",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0",
+        "below": "16.2.11",
+        "severity": "medium",
+        "cwe": [
+          "CWE-201"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Unauthenticated disclosure of internal Server Function endpoints",
+          "githubID": "GHSA-955p-x3mx-jcvp",
+          "CVE": [
+            "CVE-2026-64643"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-955p-x3mx-jcvp",
+          "https://github.com/vercel/next.js/commit/1b0c3ae912a3ad925c60065cc8d55b070fa8bcd3",
+          "https://github.com/vercel/next.js/commit/ff12a6124e1504f17b62de948b8a553fdecaef7b",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0",
+        "below": "16.2.11",
+        "severity": "high",
+        "cwe": [
+          "CWE-834"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Denial of Service in App Router using Server Actions",
+          "githubID": "GHSA-m99w-x7hq-7vfj",
+          "CVE": [
+            "CVE-2026-64641"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-m99w-x7hq-7vfj",
+          "https://github.com/vercel/next.js/pull/96013",
+          "https://github.com/vercel/next.js/commit/019628571641dec57aaf349ba0c360e3964e6f12",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0",
+        "below": "16.2.11",
+        "severity": "high",
+        "cwe": [
+          "CWE-918"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Server-Side Request Forgery in rewrites via attacker-controlled destination hostname",
+          "githubID": "GHSA-p9j2-gv94-2wf4",
+          "CVE": [
+            "CVE-2026-64645"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-p9j2-gv94-2wf4",
+          "https://github.com/vercel/next.js/commit/35f501357e9b0fe7c950b0d6aa8fcf5343f707e9",
+          "https://github.com/vercel/next.js/commit/d3033266c6dff23f7be71e19341fe3a8c6e2c599",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
+        ]
+      },
+      {
+        "atOrAbove": "16.0.0",
+        "below": "16.2.11",
+        "severity": "medium",
+        "cwe": [
+          "CWE-407"
+        ],
+        "identifiers": {
+          "summary": "Next.js: Denial of Service in the Image Optimization API using SVGs",
+          "githubID": "GHSA-q8wf-6r8g-63ch",
+          "CVE": [
+            "CVE-2026-64644"
+          ]
+        },
+        "info": [
+          "https://github.com/vercel/next.js/security/advisories/GHSA-q8wf-6r8g-63ch",
+          "https://github.com/vercel/next.js/pull/96006",
+          "https://github.com/vercel/next.js/commit/93cb90891402fa4c47798d03cb9e05c13233766c",
+          "https://github.com/vercel/next.js/releases/tag/v15.5.21",
+          "https://github.com/vercel/next.js/releases/tag/v16.2.11"
         ]
       }
     ],
@@ -12788,7 +13591,7 @@
         "atOrAbove": "0.7.29",
         "below": "0.7.30",
         "cwe": [
-          "CWE-829",
+          "CWE-506",
           "CWE-912"
         ],
         "severity": "high",
@@ -12835,7 +13638,7 @@
         "atOrAbove": "0.8.0",
         "below": "0.8.1",
         "cwe": [
-          "CWE-829",
+          "CWE-506",
           "CWE-912"
         ],
         "severity": "high",
@@ -12858,7 +13661,7 @@
         "atOrAbove": "1.0.0",
         "below": "1.0.1",
         "cwe": [
-          "CWE-829",
+          "CWE-506",
           "CWE-912"
         ],
         "severity": "high",
@@ -14246,6 +15049,29 @@
         ]
       },
       {
+        "atOrAbove": "7.5.0",
+        "below": "7.6.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-835"
+        ],
+        "identifiers": {
+          "summary": "protobufjs: Denial of Service via infinite loop in .proto option parsing",
+          "githubID": "GHSA-j3f2-48v5-ccww",
+          "CVE": [
+            "CVE-2026-59877"
+          ]
+        },
+        "info": [
+          "https://github.com/protobufjs/protobuf.js/security/advisories/GHSA-j3f2-48v5-ccww",
+          "https://github.com/protobufjs/protobuf.js/pull/2352",
+          "https://github.com/protobufjs/protobuf.js/commit/10fba6d54815ceecca8a06b9a6db490c8f5d2217",
+          "https://github.com/protobufjs/protobuf.js/commit/fa5c73add738ceb471e74da8cc2f3727c3d0a69f",
+          "https://github.com/protobufjs/protobuf.js/releases/tag/protobufjs-v7.6.5",
+          "https://github.com/protobufjs/protobuf.js/releases/tag/protobufjs-v8.6.6"
+        ]
+      },
+      {
         "atOrAbove": "8.0.0",
         "below": "8.0.1",
         "severity": "critical",
@@ -14479,6 +15305,50 @@
         },
         "info": [
           "https://github.com/protobufjs/protobuf.js/security/advisories/GHSA-f38q-mgvj-vph7"
+        ]
+      },
+      {
+        "atOrAbove": "8.2.0",
+        "below": "8.6.5",
+        "severity": "medium",
+        "cwe": [
+          "CWE-1321"
+        ],
+        "identifiers": {
+          "summary": "protobufjs: Text Format string map parsing can mutate returned map object prototype",
+          "githubID": "GHSA-jfj6-75fj-8934",
+          "CVE": [
+            "CVE-2026-59876"
+          ]
+        },
+        "info": [
+          "https://github.com/protobufjs/protobuf.js/security/advisories/GHSA-jfj6-75fj-8934",
+          "https://github.com/protobufjs/protobuf.js/pull/2335",
+          "https://github.com/protobufjs/protobuf.js/commit/9f97fe413072d3beb52c74e62d88ea8adc9444d8",
+          "https://github.com/protobufjs/protobuf.js/releases/tag/protobufjs-v8.6.5"
+        ]
+      },
+      {
+        "atOrAbove": "8.0.0",
+        "below": "8.6.6",
+        "severity": "medium",
+        "cwe": [
+          "CWE-835"
+        ],
+        "identifiers": {
+          "summary": "protobufjs: Denial of Service via infinite loop in .proto option parsing",
+          "githubID": "GHSA-j3f2-48v5-ccww",
+          "CVE": [
+            "CVE-2026-59877"
+          ]
+        },
+        "info": [
+          "https://github.com/protobufjs/protobuf.js/security/advisories/GHSA-j3f2-48v5-ccww",
+          "https://github.com/protobufjs/protobuf.js/pull/2352",
+          "https://github.com/protobufjs/protobuf.js/commit/10fba6d54815ceecca8a06b9a6db490c8f5d2217",
+          "https://github.com/protobufjs/protobuf.js/commit/fa5c73add738ceb471e74da8cc2f3727c3d0a69f",
+          "https://github.com/protobufjs/protobuf.js/releases/tag/protobufjs-v7.6.5",
+          "https://github.com/protobufjs/protobuf.js/releases/tag/protobufjs-v8.6.6"
         ]
       }
     ],
