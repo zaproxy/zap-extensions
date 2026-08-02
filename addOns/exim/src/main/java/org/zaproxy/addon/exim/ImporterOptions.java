@@ -37,18 +37,21 @@ public class ImporterOptions {
     private final Path inputFile;
     private final MessageHandler messageHandler;
     private final boolean sendRequests;
+    private final int maxMessages;
 
     private ImporterOptions(
             Context context,
             String type,
             Path inputFile,
             MessageHandler messageHandler,
-            boolean sendRequests) {
+            boolean sendRequests,
+            int maxMessages) {
         this.context = context;
         this.type = type;
         this.inputFile = inputFile;
         this.messageHandler = messageHandler;
         this.sendRequests = sendRequests;
+        this.maxMessages = maxMessages;
     }
 
     public Context getContext() {
@@ -77,6 +80,15 @@ public class ImporterOptions {
     }
 
     /**
+     * Returns the maximum number of messages to import.
+     *
+     * @return the maximum number of messages, {@code 0} for no limit.
+     */
+    public int getMaxMessages() {
+        return maxMessages;
+    }
+
+    /**
      * Returns a new builder.
      *
      * @return the options builder.
@@ -97,6 +109,7 @@ public class ImporterOptions {
         private Path inputFile;
         private MessageHandler messageHandler;
         private boolean sendRequests;
+        private int maxMessages;
 
         private Builder() {
             type = HarImporterType.ID;
@@ -172,6 +185,19 @@ public class ImporterOptions {
         }
 
         /**
+         * Sets the maximum number of messages to import.
+         *
+         * <p>Default value: {@code 0} (no limit).
+         *
+         * @param maxMessages the maximum number of messages, {@code 0} for no limit.
+         * @return the builder for chaining.
+         */
+        public Builder setMaxMessages(int maxMessages) {
+            this.maxMessages = maxMessages;
+            return this;
+        }
+
+        /**
          * Builds the options from the specified data.
          *
          * @return the options with specified data.
@@ -185,7 +211,8 @@ public class ImporterOptions {
             if (messageHandler == null) {
                 throw new IllegalStateException("The messageHandler must be set.");
             }
-            return new ImporterOptions(context, type, inputFile, messageHandler, sendRequests);
+            return new ImporterOptions(
+                    context, type, inputFile, messageHandler, sendRequests, maxMessages);
         }
     }
 
