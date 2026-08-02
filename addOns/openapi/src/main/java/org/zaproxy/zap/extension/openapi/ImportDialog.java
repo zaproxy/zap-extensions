@@ -53,6 +53,7 @@ import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 
 @SuppressWarnings("serial")
@@ -63,6 +64,7 @@ public class ImportDialog extends AbstractDialog {
 
     private JTextField fieldDefinition;
     private JTextField fieldTarget;
+    private ZapNumberSpinner fieldMaxMessages;
     private JComboBox<String> contextsComboBox;
     private JComboBox<String> usersComboBox;
     private ContextsChangedListenerImpl contextsChangedListener;
@@ -117,6 +119,13 @@ public class ImportDialog extends AbstractDialog {
                     getUsersComboBox(),
                     LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 0, 0)));
         }
+        fieldsRow++;
+        fieldsPanel.add(
+                new JLabel(Constant.messages.getString(MESSAGE_PREFIX + "labelMaxMessages")),
+                LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(4, 0, 0, 4)));
+        fieldsPanel.add(
+                getMaxMessagesField(),
+                LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 0, 0)));
 
         int row = 0;
         add(fieldsPanel, LayoutHelper.getGBC(0, row, 2, 1.0, new Insets(8, 8, 4, 8)));
@@ -178,6 +187,13 @@ public class ImportDialog extends AbstractDialog {
         return fieldTarget;
     }
 
+    private ZapNumberSpinner getMaxMessagesField() {
+        if (fieldMaxMessages == null) {
+            fieldMaxMessages = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
+        }
+        return fieldMaxMessages;
+    }
+
     private int getSelectedContextId() {
         if (contextsComboBox.getSelectedItem() == null) {
             return -1;
@@ -226,6 +242,7 @@ public class ImportDialog extends AbstractDialog {
     void clearFields() {
         getDefinitionField().setText("");
         getTargetField().setText("");
+        getMaxMessagesField().changeToDefaultValue();
     }
 
     public void unload() {
@@ -314,6 +331,7 @@ public class ImportDialog extends AbstractDialog {
         getImportButton().setEnabled(!show);
         getDefinitionField().setEnabled(!show);
         getTargetField().setEnabled(!show);
+        getMaxMessagesField().setEnabled(!show);
         getChooseFileButton().setEnabled(!show);
         getContextsComboBox().setEnabled(!show);
     }
@@ -331,6 +349,7 @@ public class ImportDialog extends AbstractDialog {
             return false;
         }
 
+        int maxMessages = getMaxMessagesField().getValue();
         try {
             UriUtils.isValid(definitionLocation);
             var uri = new URI(definitionLocation, true);
@@ -339,7 +358,8 @@ public class ImportDialog extends AbstractDialog {
                             getTargetField().getText(),
                             true,
                             getSelectedContextId(),
-                            getSelectedUser())
+                            getSelectedUser(),
+                            maxMessages)
                     == null;
         } catch (ZapUriException | URIException ignored) {
             // Not a valid URI, try to import as a file
@@ -370,7 +390,12 @@ public class ImportDialog extends AbstractDialog {
         }
         try {
             return extOpenApi.importOpenApiDefinition(
-                            file, getTargetField().getText(), true, getSelectedContextId())
+                            file,
+                            getTargetField().getText(),
+                            true,
+                            getSelectedContextId(),
+                            null,
+                            maxMessages)
                     == null;
         } catch (InvalidUrlException e) {
             ThreadUtils.invokeAndWaitHandled(
