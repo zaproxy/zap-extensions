@@ -227,6 +227,20 @@ class OpenApiAPIUnitTest extends AbstractServerTest {
         }
     }
 
+    @Test
+    void shouldThrowApiExceptionIfMaxMessagesNegative() throws Exception {
+        // Given
+        File importFile = Files.createTempFile("openapi", "").toFile();
+        JSONObject params =
+                params(param("file", importFile.getAbsolutePath()), param("maxMessages", "-1"));
+        // When / Then
+        ApiException exception =
+                assertThrows(
+                        ApiException.class, () -> openApiAPI.handleApiAction("importFile", params));
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+        assertThat(exception.toString(), containsString("(illegal_parameter): maxMessages"));
+    }
+
     @Nested
     class ApiImportFile extends BaseImportTests {
 
@@ -256,34 +270,58 @@ class OpenApiAPIUnitTest extends AbstractServerTest {
             userExtensionEnabled();
             defaultContext();
             userIdsDefaultContext(1);
+            OpenApiResults results = resultsWithErrors(List.of());
             given(
-                            extension.importOpenApiDefinition(
+                            extension.importOpenApiDefinitionV2(
                                     any(File.class),
                                     any(String.class),
                                     anyBoolean(),
                                     anyInt(),
-                                    any(User.class)))
-                    .willReturn(List.of());
+                                    any(User.class),
+                                    anyInt()))
+                    .willReturn(results);
             // When
             openApiAPI.handleApiAction(ACTION, params);
             // Then
             verify(extension)
-                    .importOpenApiDefinition(
+                    .importOpenApiDefinitionV2(
                             importFile,
                             "",
                             false,
                             1,
-                            extensionUserManagement.getContextUserAuthManager(1).getUserById(1));
+                            extensionUserManagement.getContextUserAuthManager(1).getUserById(1),
+                            0);
+        }
+
+        @Test
+        void shouldPassMaxMessages() throws Exception {
+            // Given
+            JSONObject params = params(getImportParam(), param("maxMessages", "1"));
+            OpenApiResults results = resultsWithErrors(List.of());
+            given(
+                            extension.importOpenApiDefinitionV2(
+                                    any(File.class),
+                                    any(String.class),
+                                    anyBoolean(),
+                                    anyInt(),
+                                    eq(null),
+                                    anyInt()))
+                    .willReturn(results);
+            // When
+            openApiAPI.handleApiAction(ACTION, params);
+            // Then
+            verify(extension).importOpenApiDefinitionV2(importFile, "", false, -1, null, 1);
         }
 
         @Test
         void shouldThrowApiExceptionIfUnableToParseFile() {
             // Given
             JSONObject params = params(getImportParam());
+            OpenApiResults results = resultsWithErrors(null);
             given(
-                            extension.importOpenApiDefinition(
-                                    any(File.class), eq(""), eq(false), eq(-1), eq(null)))
-                    .willReturn(null);
+                            extension.importOpenApiDefinitionV2(
+                                    any(File.class), eq(""), eq(false), eq(-1), eq(null), eq(0)))
+                    .willReturn(results);
             // When / Then
             ApiException exception =
                     assertThrows(
@@ -316,34 +354,60 @@ class OpenApiAPIUnitTest extends AbstractServerTest {
             userExtensionEnabled();
             defaultContext();
             userIdsDefaultContext(1);
+            OpenApiResults results = resultsWithErrors(List.of());
             given(
-                            extension.importOpenApiDefinition(
+                            extension.importOpenApiDefinitionV2(
                                     any(URI.class),
                                     any(String.class),
                                     anyBoolean(),
                                     anyInt(),
-                                    any(User.class)))
-                    .willReturn(List.of());
+                                    any(User.class),
+                                    anyInt()))
+                    .willReturn(results);
             // When
             openApiAPI.handleApiAction(ACTION, params);
             // Then
             verify(extension)
-                    .importOpenApiDefinition(
+                    .importOpenApiDefinitionV2(
                             new URI("http://example.com", true),
                             "",
                             false,
                             1,
-                            extensionUserManagement.getContextUserAuthManager(1).getUserById(1));
+                            extensionUserManagement.getContextUserAuthManager(1).getUserById(1),
+                            0);
+        }
+
+        @Test
+        void shouldPassMaxMessages() throws Exception {
+            // Given
+            JSONObject params = params(getImportParam(), param("maxMessages", "2"));
+            OpenApiResults results = resultsWithErrors(List.of());
+            given(
+                            extension.importOpenApiDefinitionV2(
+                                    any(URI.class),
+                                    any(String.class),
+                                    anyBoolean(),
+                                    anyInt(),
+                                    eq(null),
+                                    anyInt()))
+                    .willReturn(results);
+            // When
+            openApiAPI.handleApiAction(ACTION, params);
+            // Then
+            verify(extension)
+                    .importOpenApiDefinitionV2(
+                            new URI("http://example.com", false), "", false, -1, null, 2);
         }
 
         @Test
         void shouldThrowIllegalParameterIfFailedToAccessTarget() {
             // Given
             JSONObject params = params(getImportParam());
+            OpenApiResults results = resultsWithErrors(null);
             given(
-                            extension.importOpenApiDefinition(
-                                    any(URI.class), eq(""), eq(false), eq(-1), eq(null)))
-                    .willReturn(null);
+                            extension.importOpenApiDefinitionV2(
+                                    any(URI.class), eq(""), eq(false), eq(-1), eq(null), eq(0)))
+                    .willReturn(results);
             // When / Then
             ApiException exception =
                     assertThrows(
@@ -352,6 +416,12 @@ class OpenApiAPIUnitTest extends AbstractServerTest {
             assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
             assertThat(exception.toString(), containsString("Failed to access the target."));
         }
+    }
+
+    private static OpenApiResults resultsWithErrors(List<String> errors) {
+        OpenApiResults results = new OpenApiResults();
+        results.setErrors(errors);
+        return results;
     }
 
     private static JSONObject params(NameValuePair... params) {
