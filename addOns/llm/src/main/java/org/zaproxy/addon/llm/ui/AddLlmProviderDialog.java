@@ -19,10 +19,13 @@
  */
 package org.zaproxy.addon.llm.ui;
 
+import java.awt.Component;
 import java.awt.Dialog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -36,11 +39,15 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.JXComboBox;
+import org.jdesktop.swingx.decorator.AbstractHighlighter;
+import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.llm.LlmProvider;
+import org.zaproxy.addon.llm.LlmProvider.SuggestedEndpoint;
 import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
@@ -55,7 +62,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
     protected final JTextField nameTextField;
     protected final JComboBox<LlmProvider> providerComboBox;
     protected final JPasswordField apiKeyField;
-    protected final JTextField endpointField;
+    protected final JComboBox<SuggestedEndpoint> endpointComboBox;
     protected final JTextArea modelsArea;
     protected final JCheckBox trustedCheckBox;
 
@@ -107,8 +114,23 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
 
         JLabel endpointLabel =
                 new JLabel(Constant.messages.getString("llm.options.providers.field.endpoint"));
-        endpointField = new JTextField(30);
-        endpointLabel.setLabelFor(endpointField);
+        JXComboBox endpointCombo = new JXComboBox();
+        endpointCombo.setEditable(true);
+        endpointCombo.addHighlighter(
+                new AbstractHighlighter() {
+                    @Override
+                    protected Component doHighlight(Component component, ComponentAdapter adapter) {
+                        if (component instanceof JLabel label
+                                && adapter.getValue() instanceof SuggestedEndpoint suggested) {
+                            label.setText(suggested.getLabel());
+                        }
+                        return component;
+                    }
+                });
+        @SuppressWarnings("unchecked")
+        JComboBox<SuggestedEndpoint> typedEndpointCombo = endpointCombo;
+        endpointComboBox = typedEndpointCombo;
+        endpointLabel.setLabelFor(endpointComboBox);
 
         JLabel modelNameLabel =
                 new JLabel(Constant.messages.getString("llm.options.providers.field.models"));
@@ -139,7 +161,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                                                         .addComponent(nameTextField)
                                                         .addComponent(providerComboBox)
                                                         .addComponent(apiKeyField)
-                                                        .addComponent(endpointField)
+                                                        .addComponent(endpointComboBox)
                                                         .addComponent(modelsScrollPane)
                                                         .addComponent(trustedCheckBox))));
 
@@ -160,7 +182,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(endpointLabel)
-                                        .addComponent(endpointField))
+                                        .addComponent(endpointComboBox))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(modelNameLabel)
@@ -187,13 +209,14 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         providerComboBox.setSelectedIndex(0);
         lastSuggestedName = providerComboBox.getSelectedItem().toString();
         apiKeyField.setText("");
-        endpointField.setText("");
+        setEndpointText("");
         modelsArea.setText("");
         providerConfig = null;
         originalName = null;
         updateEndpointFieldState();
         updateSuggestedName();
         updateSuggestedEndpoint();
+        updateSuggestedTrusted();
     }
 
     @Override
@@ -221,7 +244,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
             return false;
         }
 
-        String endpoint = StringUtils.trimToEmpty(endpointField.getText());
+        String endpoint = getEndpointText();
         if (provider.isEndpointRequired() && endpoint.isEmpty()) {
             View.getSingleton()
                     .showWarningDialog(
@@ -251,7 +274,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
     @Override
     protected void performAction() {
         LlmProvider provider = (LlmProvider) providerComboBox.getSelectedItem();
-        String endpoint = StringUtils.trimToEmpty(endpointField.getText());
+        String endpoint = getEndpointText();
         if (provider != null && !provider.supportsEndpoint()) {
             endpoint = "";
         }
@@ -274,7 +297,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
 
     protected void updateEndpointFieldState() {
         LlmProvider provider = (LlmProvider) providerComboBox.getSelectedItem();
-        endpointField.setEnabled(provider == null || provider.supportsEndpoint());
+        endpointComboBox.setEnabled(provider == null || provider.supportsEndpoint());
     }
 
     protected void updateSuggestedName() {
@@ -294,18 +317,25 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         if (provider == null) {
             return;
         }
+
+        String currentEndpoint = getEndpointText();
+        endpointComboBox.setModel(
+                new DefaultComboBoxModel<>(
+                        provider.getSuggestedEndpoints().toArray(SuggestedEndpoint[]::new)));
+
         if (!provider.supportsEndpoint()) {
-            endpointField.setText("");
+            setEndpointText("");
             return;
         }
 
+        String nextEndpoint = currentEndpoint;
         String suggestedEndpoint = endpointValueOnSelect(provider);
-        String currentEndpoint = StringUtils.defaultString(endpointField.getText());
         if (currentEndpoint.isEmpty()
-                || (isAnyProviderDefaultEndpoint(currentEndpoint)
+                || (isSuggestedEndpoint(currentEndpoint)
                         && !currentEndpoint.equals(suggestedEndpoint))) {
-            endpointField.setText(suggestedEndpoint);
+            nextEndpoint = suggestedEndpoint;
         }
+        setEndpointText(nextEndpoint);
     }
 
     protected void updateSuggestedTrusted() {
@@ -319,27 +349,31 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         if (provider == null || !provider.supportsEndpoint()) {
             return "";
         }
-        return provider.getDefaultEndpoint();
+        List<SuggestedEndpoint> suggested = provider.getSuggestedEndpoints();
+        return suggested.size() == 1 ? suggested.get(0).url() : "";
     }
 
-    private static boolean isAnyProviderDefaultEndpoint(String endpoint) {
-        if (endpoint == null || endpoint.isEmpty()) {
-            return false;
-        }
+    private static boolean isSuggestedEndpoint(String endpoint) {
+        return Stream.of(LlmProvider.values())
+                .flatMap(provider -> provider.getSuggestedEndpoints().stream())
+                .anyMatch(suggested -> suggested.url().equals(endpoint));
+    }
 
-        for (LlmProvider provider : LlmProvider.values()) {
-            if (provider == null || !provider.supportsEndpoint()) {
-                continue;
-            }
+    protected String getEndpointText() {
+        Object item = endpointComboBox.getSelectedItem();
+        return item == null ? "" : StringUtils.trimToEmpty(item.toString());
+    }
 
-            String defaultEndpoint = provider.getDefaultEndpoint();
-            if (defaultEndpoint != null
-                    && !defaultEndpoint.isEmpty()
-                    && defaultEndpoint.equals(endpoint)) {
-                return true;
+    protected void setEndpointText(String endpoint) {
+        String url = StringUtils.defaultString(endpoint);
+        for (int i = 0; i < endpointComboBox.getItemCount(); i++) {
+            SuggestedEndpoint suggested = endpointComboBox.getItemAt(i);
+            if (suggested.url().equals(url)) {
+                endpointComboBox.setSelectedIndex(i);
+                return;
             }
         }
-        return false;
+        endpointComboBox.setSelectedItem(url);
     }
 
     protected boolean isDuplicateName(String name) {

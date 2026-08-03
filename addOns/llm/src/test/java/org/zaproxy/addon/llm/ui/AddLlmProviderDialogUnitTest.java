@@ -40,12 +40,12 @@ class AddLlmProviderDialogUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldApplyDefaultForOpenRouter() {
+    void shouldApplyDefaultForOllama() {
         // Given / When
-        String endpoint = AddLlmProviderDialog.endpointValueOnSelect(LlmProvider.OPENROUTER);
+        String endpoint = AddLlmProviderDialog.endpointValueOnSelect(LlmProvider.OLLAMA);
 
         // Then
-        assertThat(endpoint, is("https://openrouter.ai/api/v1"));
+        assertThat(endpoint, is("http://localhost:11434/"));
     }
 
     @ParameterizedTest
@@ -53,8 +53,8 @@ class AddLlmProviderDialogUnitTest extends TestUtils {
     @EnumSource(
             value = LlmProvider.class,
             mode = Mode.EXCLUDE,
-            names = {"OPENROUTER"})
-    void shouldClearValueForProvidersWithoutDefaultEndpoint(LlmProvider provider) {
+            names = {"OLLAMA"})
+    void shouldClearValueForProvidersWithoutSingleSuggestedEndpoint(LlmProvider provider) {
         // Given / When
         String endpoint = AddLlmProviderDialog.endpointValueOnSelect(provider);
         // Then
