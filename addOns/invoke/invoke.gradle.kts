@@ -21,4 +21,6 @@ zapAddOn {
 
 dependencies {
     zapAddOn("commonlib")
+
+    testImplementation(project(":testutils"))
 }
