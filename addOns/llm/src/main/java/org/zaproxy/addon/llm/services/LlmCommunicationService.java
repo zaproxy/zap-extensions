@@ -70,6 +70,7 @@ public class LlmCommunicationService {
     private ChatModelListener listener;
     @Getter private LlmProviderConfig pconf;
     @Getter private String modelName;
+    @Getter private List<ToolProvider> toolProviders;
     private Requestor requestor;
 
     private ChatModel model;
@@ -81,10 +82,12 @@ public class LlmCommunicationService {
             LlmProviderConfig pconf,
             String modelName,
             ChatModelListener listener,
-            List<ToolProvider> toolProviders) {
+            List<ToolProvider> toolProviders,
+            LlmToolExecutionHandler toolExecutionHandler) {
         this.pconf = pconf;
         this.modelName = modelName;
         this.listener = listener;
+        this.toolProviders = toolProviders != null ? List.copyOf(toolProviders) : List.of();
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
         model = buildModel(true);
 
@@ -94,15 +97,20 @@ public class LlmCommunicationService {
                         .chatMemory(chatMemory)
                         .build();
 
-        chatAssistant =
+        var chatAssistantBuilder =
                 AiServices.builder(LlmChatAssistant.class)
                         .chatModel(
                                 pconf.getProvider() == LlmProvider.AZURE_OPENAI
                                         ? buildModel(false)
                                         : model)
                         .chatMemory(chatMemory)
-                        .toolProviders(toolProviders)
-                        .build();
+                        .toolProviders(this.toolProviders);
+        if (toolExecutionHandler != null) {
+            chatAssistantBuilder
+                    .beforeToolExecution(toolExecutionHandler::beforeToolExecution)
+                    .afterToolExecution(toolExecutionHandler::afterToolExecution);
+        }
+        chatAssistant = chatAssistantBuilder.build();
 
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
     }
@@ -144,19 +152,14 @@ public class LlmCommunicationService {
                             .logRequests(true)
                             .logResponses(true)
                             .build();
-            case OPENROUTER -> {
-                String baseUrl = StringUtils.trimToEmpty(pconf.getEndpoint());
-                if (baseUrl.isEmpty()) {
-                    baseUrl = pconf.getProvider().getDefaultEndpoint();
-                }
-                yield OpenAiChatModel.builder()
-                        .apiKey(pconf.getApiKey())
-                        .baseUrl(baseUrl)
-                        .modelName(modelName)
-                        .temperature(0.3)
-                        .listeners(listener != null ? List.of(listener) : List.of())
-                        .build();
-            }
+            case OPENAI_COMPATIBLE ->
+                    OpenAiChatModel.builder()
+                            .apiKey(StringUtils.trimToNull(pconf.getApiKey()))
+                            .baseUrl(pconf.getEndpoint())
+                            .modelName(modelName)
+                            .temperature(0.3)
+                            .listeners(listener == null ? List.of() : List.of(listener))
+                            .build();
             case GOOGLE_GEMINI ->
                     GoogleAiGeminiChatModel.builder()
                             .apiKey(pconf.getApiKey())

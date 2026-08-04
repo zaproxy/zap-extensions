@@ -59,15 +59,19 @@ import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.addon.llm.LlmProviderConfig;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.services.LlmToolExecutionHandler;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 @SuppressWarnings("serial")
 public class LlmChatTabPanel extends JPanel {
 
     public static final String ASSISTANT_LABEL = "llm.chat.panel.assistant.label";
     public static final String ERROR_LABEL = "llm.chat.panel.error.label";
+    public static final String TOOL_CALL_LABEL = "llm.chat.panel.tool.call.label";
+    public static final String TOOL_RESULT_LABEL = "llm.chat.panel.tool.result.label";
     public static final String USER_LABEL = "llm.chat.panel.user.label";
 
     private static final long serialVersionUID = 1L;
@@ -105,11 +109,14 @@ public class LlmChatTabPanel extends JPanel {
     private JComboBox<ProviderEntry> providerCombo;
     private boolean updatingCombo = false;
     private JLabel tokenLabel;
+    private ZapToggleButton toolsButton;
+    private boolean toolsEnabled = true;
 
     /** Kept on the tab so conversation memory survives ExtensionLlm cache clears. */
     private LlmCommunicationService tabService;
 
     private int tabServiceToolsVersion = -1;
+    private boolean tabServiceToolsEnabled;
 
     private static final class ProviderEntry {
         final LlmProviderConfig config;
@@ -233,6 +240,20 @@ public class LlmChatTabPanel extends JPanel {
 
         toolbar.addSeparator();
 
+        toolsButton = new ZapToggleButton();
+        ImageIcon toolsIcon =
+                DisplayUtils.getScaledIcon(
+                        LlmChatTabPanel.class.getResource(
+                                "/org/zaproxy/addon/llm/resources/drill.png"));
+        toolsButton.setIcon(toolsIcon);
+        toolsButton.setSelectedIcon(toolsIcon);
+        toolsButton.setSelected(toolsEnabled);
+        toolsButton.addActionListener(e -> setToolsEnabled(toolsButton.isSelected()));
+        updateToolsButtonState();
+        toolbar.add(toolsButton);
+
+        toolbar.addSeparator();
+
         tokenLabel = new JLabel(Constant.messages.getString("llm.chat.toolbar.tokens", "0"));
         toolbar.add(tokenLabel);
 
@@ -243,8 +264,7 @@ public class LlmChatTabPanel extends JPanel {
                 Constant.messages.getString("llm.chat.toolbar.options.tooltip"));
         optionsButton.setIcon(
                 DisplayUtils.getScaledIcon(
-                        new ImageIcon(
-                                LlmChatTabPanel.class.getResource("/resource/icon/16/041.png"))));
+                        LlmChatTabPanel.class.getResource("/resource/icon/16/041.png")));
         optionsButton.addActionListener(
                 e ->
                         Control.getSingleton()
@@ -253,6 +273,53 @@ public class LlmChatTabPanel extends JPanel {
         toolbar.add(optionsButton);
 
         return toolbar;
+    }
+
+    private void setToolsEnabled(boolean enabled) {
+        if (!isProviderTrusted()) {
+            updateToolsButtonState();
+            return;
+        }
+        if (toolsEnabled == enabled) {
+            return;
+        }
+        toolsEnabled = enabled;
+        clearTabService();
+        SwingUtilities.invokeLater(
+                () ->
+                        appendMessage(
+                                Constant.messages.getString(
+                                        enabled
+                                                ? "llm.chat.toolbar.tools.enabled"
+                                                : "llm.chat.toolbar.tools.disabled")));
+    }
+
+    private boolean isProviderTrusted() {
+        return tabProviderConfig != null && tabProviderConfig.isTrusted();
+    }
+
+    private boolean isToolsEffectivelyEnabled() {
+        return toolsEnabled && isProviderTrusted();
+    }
+
+    private void updateToolsButtonState() {
+        boolean trusted = isProviderTrusted();
+        toolsButton.setEnabled(trusted);
+        if (!trusted) {
+            toolsButton.setSelected(false);
+            String untrustedTooltip =
+                    Constant.messages.getString("llm.chat.toolbar.tools.untrusted.tooltip");
+            toolsButton.setToolTipText(untrustedTooltip);
+            toolsButton.setSelectedToolTipText(untrustedTooltip);
+            toolsButton.setDisabledToolTipText(untrustedTooltip);
+        } else {
+            toolsButton.setSelected(toolsEnabled);
+            toolsButton.setToolTipText(
+                    Constant.messages.getString("llm.chat.toolbar.tools.disabled.tooltip"));
+            toolsButton.setSelectedToolTipText(
+                    Constant.messages.getString("llm.chat.toolbar.tools.enabled.tooltip"));
+            toolsButton.setDisabledToolTipText(null);
+        }
     }
 
     LlmProviderConfig getTabProviderConfig() {
@@ -323,13 +390,19 @@ public class LlmChatTabPanel extends JPanel {
                         previousConfig != null
                                 && !sameTabComms(
                                         previousConfig, previousModel, sel.config, sel.model);
+                boolean toolsInclusionChanged =
+                        previousConfig != null
+                                && (previousConfig.isTrusted() && toolsEnabled)
+                                        != (sel.config.isTrusted() && toolsEnabled);
                 boolean previousModelUnavailable = previousConfig != null && !exactFound;
                 tabProviderConfig = sel.config;
                 tabModelName = sel.model;
-                if (commsChanged) {
+                if (commsChanged || toolsInclusionChanged) {
                     clearTabService();
-                    totalTokensUsed.set(0);
-                    updateTokenLabel();
+                    if (commsChanged) {
+                        totalTokensUsed.set(0);
+                        updateTokenLabel();
+                    }
                 }
                 if (previousModelUnavailable) {
                     String previousLabel =
@@ -357,6 +430,7 @@ public class LlmChatTabPanel extends JPanel {
                                                 previousLabel)));
             }
             providerCombo.setEnabled(providerCombo.getItemCount() > 0);
+            updateToolsButtonState();
         } finally {
             updatingCombo = false;
         }
@@ -366,7 +440,14 @@ public class LlmChatTabPanel extends JPanel {
         if (sameTabComms(tabProviderConfig, tabModelName, config, modelName)) {
             // Keep conversation memory; just refresh the config reference (e.g. after options
             // reload).
+            boolean toolsInclusionChanged =
+                    (tabProviderConfig.isTrusted() && toolsEnabled)
+                            != (config.isTrusted() && toolsEnabled);
             tabProviderConfig = config;
+            updateToolsButtonState();
+            if (toolsInclusionChanged) {
+                clearTabService();
+            }
             return;
         }
         tabProviderConfig = config;
@@ -374,6 +455,7 @@ public class LlmChatTabPanel extends JPanel {
         clearTabService();
         totalTokensUsed.set(0);
         updateTokenLabel();
+        updateToolsButtonState();
 
         SwingUtilities.invokeLater(
                 () ->
@@ -386,13 +468,16 @@ public class LlmChatTabPanel extends JPanel {
     private void clearTabService() {
         tabService = null;
         tabServiceToolsVersion = -1;
+        tabServiceToolsEnabled = false;
         extension.removeCommunicationService(tag);
     }
 
     private LlmCommunicationService getOrCreateTabService() {
         int toolsVersion = extension.getToolProvidersVersion();
+        boolean includeTools = isToolsEffectivelyEnabled();
         if (tabService != null
                 && tabServiceToolsVersion == toolsVersion
+                && tabServiceToolsEnabled == includeTools
                 && sameTabComms(
                         tabService.getPconf(),
                         tabService.getModelName(),
@@ -402,8 +487,13 @@ public class LlmChatTabPanel extends JPanel {
         }
         tabService =
                 extension.buildCommunicationService(
-                        tabProviderConfig, tabModelName, createTokenListener());
+                        tabProviderConfig,
+                        tabModelName,
+                        createTokenListener(),
+                        includeTools,
+                        new LlmToolExecutionHandler(this));
         tabServiceToolsVersion = toolsVersion;
+        tabServiceToolsEnabled = includeTools;
         if (tabService != null) {
             extension.cacheTabCommunicationService(tag, tabService);
         } else {
@@ -539,6 +629,24 @@ public class LlmChatTabPanel extends JPanel {
                     }
                     setProcessing(false);
                     inputArea.requestFocusInWindow();
+                    if (tabbedPane != null) {
+                        tabbedPane.markActivity(tag);
+                    }
+                });
+    }
+
+    /**
+     * Appends a message to the chat area without ending the in-progress send (e.g. tool call /
+     * result lines shown while the assistant is still working).
+     */
+    public void appendIntermediateMessage(String key, String message) {
+        SwingUtilities.invokeLater(
+                () -> {
+                    appendMessage(
+                            Constant.messages.getString(
+                                    "llm.chat.panel.message.format",
+                                    Constant.messages.getString(key),
+                                    message));
                     if (tabbedPane != null) {
                         tabbedPane.markActivity(tag);
                     }

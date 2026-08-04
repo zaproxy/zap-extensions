@@ -807,7 +807,7 @@
       "dcAPIKey": ""
     },
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/(?:dc\\/)?)?dc(?:\\.leaflet)?\\.js\\;version:\\1"
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:dc\\/)?)?(?:/|-)dc(?:\\.leaflet)?\\.js\\;version:\\1"
     ],
     "website": "https://dc-js.github.io/dc.js/"
   },

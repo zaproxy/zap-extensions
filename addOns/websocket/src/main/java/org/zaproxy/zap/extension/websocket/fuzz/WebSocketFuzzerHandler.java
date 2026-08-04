@@ -35,8 +35,8 @@ import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacemen
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacer;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacers;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationsReplacementStrategy;
-import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsBreadthFirstReplacer;
-import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsDepthFirstReplacer;
+import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsClusterBombReplacer;
+import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsPitchforkReplacer;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MultipleMessageLocationsReplacer;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
@@ -158,11 +158,11 @@ public class WebSocketFuzzerHandler implements FuzzerHandler<WebSocketMessageDTO
         replacer.init(message);
 
         MultipleMessageLocationsReplacer<WebSocketMessageDTO> multipleMessageLocationsReplacer;
-        if (MessageLocationsReplacementStrategy.DEPTH_FIRST
+        if (MessageLocationsReplacementStrategy.CLUSTER_BOMB
                 == options.getPayloadsReplacementStrategy()) {
-            multipleMessageLocationsReplacer = new MultipleMessageLocationsDepthFirstReplacer<>();
+            multipleMessageLocationsReplacer = new MultipleMessageLocationsClusterBombReplacer<>();
         } else {
-            multipleMessageLocationsReplacer = new MultipleMessageLocationsBreadthFirstReplacer<>();
+            multipleMessageLocationsReplacer = new MultipleMessageLocationsPitchforkReplacer<>();
         }
         SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators =
                 new TreeSet<>();

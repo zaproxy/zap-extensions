@@ -24,10 +24,8 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assumptions.assumingThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,20 +36,13 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
-import org.parosproxy.paros.network.HttpHeader;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
-import org.zaproxy.zap.network.HttpRequestConfig;
-import org.zaproxy.zap.testutils.AlertReferenceError.Cause;
 
-interface ScanRuleTests {
+interface ScanRuleTests extends UrlTests {
 
     Object getScanRule();
 
@@ -106,83 +97,7 @@ interface ScanRuleTests {
     }
 
     default void shouldHaveValidReferences() {
-        // Given / When
-        Set<String> references = getAllReferences(getScanRule());
-        // Then
-        if (references.isEmpty()) {
-            return;
-        }
-
-        List<AlertReferenceError> errors = new ArrayList<>();
-        for (String reference : references) {
-            if (!reference.startsWith(HttpHeader.HTTP)) {
-                errors.add(AlertReferenceError.Cause.NOT_LINK.create(reference, ""));
-                continue;
-            }
-
-            URI uri;
-            try {
-                uri = new URI(reference, true);
-            } catch (Exception e) {
-                errors.add(AlertReferenceError.Cause.INVALID_URI.create(reference, e));
-                continue;
-            }
-
-            if (!HttpHeader.HTTPS.equals(uri.getScheme())) {
-                errors.add(AlertReferenceError.Cause.NOT_HTTPS.create(reference, ""));
-            } else {
-                assumingThat(
-                        "1".equals(System.getenv("ZAP_REMOTE_TESTS")),
-                        () -> fetchUrl(uri, reference, errors));
-            }
-        }
-
-        assertThat(errors.toString(), errors, is(empty()));
-    }
-
-    default boolean isAllowedReferenceError(
-            AlertReferenceError.Cause cause, String reference, Object detail) {
-        return false;
-    }
-
-    private void fetchUrl(URI uri, String reference, List<AlertReferenceError> errors) {
-        try {
-            HttpMessage message = new HttpMessage(uri);
-            List<URI> redirections = new ArrayList<>();
-            new HttpSender(0)
-                    .sendAndReceive(
-                            message,
-                            HttpRequestConfig.builder()
-                                    .setRedirectionValidator(redirections::add)
-                                    .build());
-            var responseHeader = message.getResponseHeader();
-            int statusCode = responseHeader.getStatusCode();
-            if (statusCode == 429) {
-                // Assume exists.
-            } else if (statusCode != HttpStatusCode.OK) {
-                addErrorIfNotAllowed(
-                        errors,
-                        AlertReferenceError.Cause.UNEXPECTED_STATUS_CODE,
-                        reference,
-                        statusCode);
-            } else if (!redirections.isEmpty()) {
-                addErrorIfNotAllowed(
-                        errors,
-                        AlertReferenceError.Cause.REDIRECTED,
-                        reference,
-                        redirections.get(redirections.size() - 1));
-            }
-        } catch (IOException e) {
-            addErrorIfNotAllowed(errors, AlertReferenceError.Cause.IO_EXCEPTION, reference, e);
-        }
-    }
-
-    private void addErrorIfNotAllowed(
-            List<AlertReferenceError> errors, Cause cause, String reference, Object detail) {
-        if (isAllowedReferenceError(cause, reference, detail)) {
-            return;
-        }
-        errors.add(cause.create(reference, detail));
+        shouldHaveValidUrls(getAllReferences(getScanRule()));
     }
 
     private static Set<String> getAllReferences(Object scanRule) {

@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Basic stats
-- Support for Ollama, Azure OpenAI, Google Gemini, Claude (Anthropic), and OpenRouter.
+- Support for Ollama, Azure OpenAI, Google Gemini, Claude (Anthropic), and OpenAI Compatible endpoints.
 - Integration points for other add-ons.
 - A tabbed LLM Chat panel.
 - Integration with the MCP add-on.

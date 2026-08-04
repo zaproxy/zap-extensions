@@ -19,21 +19,37 @@
  */
 package org.zaproxy.addon.llm;
 
+import java.util.List;
 import org.parosproxy.paros.Constant;
 
 public enum LlmProvider {
     NONE("llm.provider.none"),
-    OLLAMA("llm.provider.ollama"),
-    OPENROUTER("llm.provider.openrouter"),
+    OLLAMA("llm.provider.ollama", List.of(new SuggestedEndpoint("http://localhost:11434/", ""))),
+    OPENAI_COMPATIBLE(
+            "llm.provider.openai.compatible",
+            List.of(
+                    new SuggestedEndpoint(
+                            "https://openrouter.ai/api/v1", "llm.endpoint.label.openrouter"),
+                    new SuggestedEndpoint("https://api.openai.com/v1", "llm.endpoint.label.openai"),
+                    new SuggestedEndpoint(
+                            "http://localhost:1234/v1", "llm.endpoint.label.lmstudio"),
+                    new SuggestedEndpoint(
+                            "http://localhost:8080/v1", "llm.endpoint.label.llamacpp"))),
     AZURE_OPENAI("llm.provider.azure.openai"),
     GOOGLE_GEMINI("llm.provider.google.gemini"),
     CLAUDE("llm.provider.claude"),
     ;
 
     private final String messageKey;
+    private final List<SuggestedEndpoint> suggestedEndpoints;
 
     LlmProvider(String messageKey) {
+        this(messageKey, List.of());
+    }
+
+    LlmProvider(String messageKey, List<SuggestedEndpoint> suggestedEndpoints) {
         this.messageKey = messageKey;
+        this.suggestedEndpoints = suggestedEndpoints;
     }
 
     @Override
@@ -46,17 +62,55 @@ public enum LlmProvider {
     }
 
     public boolean isEndpointRequired() {
-        return this == OLLAMA || this == AZURE_OPENAI;
+        return this == OLLAMA || this == AZURE_OPENAI || this == OPENAI_COMPATIBLE;
     }
 
     public boolean isModelRequired() {
         return this != NONE;
     }
 
-    public String getDefaultEndpoint() {
-        if (this == OPENROUTER) {
-            return "https://openrouter.ai/api/v1";
+    /**
+     * Whether providers of this type should be treated as trusted by default. Non cloud based
+     * providers default to trusted; cloud based providers default to untrusted.
+     */
+    public boolean isTrustedByDefault() {
+        return this == OLLAMA;
+    }
+
+    /**
+     * Known endpoint base URLs for this provider.
+     *
+     * @return suggested endpoints, possibly empty
+     */
+    public List<SuggestedEndpoint> getSuggestedEndpoints() {
+        return suggestedEndpoints;
+    }
+
+    /**
+     * A suggested endpoint base URL for an LLM provider, with an optional UI label.
+     *
+     * @param url the endpoint base URL
+     * @param labelKey i18n key for the display label, may be blank
+     */
+    public record SuggestedEndpoint(String url, String labelKey) {
+
+        @Override
+        public String toString() {
+            return url;
         }
-        return "";
+
+        /**
+         * Returns the URL with an optional label, e.g. {@code http://localhost:1234/v1 (LM
+         * Studio)}.
+         *
+         * @return the label
+         */
+        public String getLabel() {
+            if (labelKey.isEmpty()) {
+                return url;
+            }
+            return Constant.messages.getString(
+                    "llm.endpoint.display", url, Constant.messages.getString(labelKey));
+        }
     }
 }

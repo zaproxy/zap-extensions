@@ -22,6 +22,8 @@ package org.zaproxy.addon.network.internal.handlers;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
@@ -33,6 +35,8 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import org.apache.logging.log4j.Level;
@@ -42,6 +46,8 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.network.TestLogAppender;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
@@ -89,11 +95,16 @@ class ServerExceptionHandlerUnitTest {
         assertThat(logEvents, hasItem(startsWith("DEBUG Timed out while reading")));
     }
 
-    @Test
-    void shouldLogSslHandshakeExceptionAsWarn() throws Exception {
+    static Stream<UnaryOperator<Exception>> exceptionsSource() {
+        return Stream.of(DecoderException::new, e -> e);
+    }
+
+    @ParameterizedTest
+    @MethodSource("exceptionsSource")
+    void shouldLogSslHandshakeExceptionAsWarn(UnaryOperator<Exception> source) throws Exception {
         // Given
         Exception cause = new SSLHandshakeException("missing protocol");
-        Exception exception = new DecoderException(cause);
+        Exception exception = source.apply(cause);
         // When
         serverExceptionHandler.exceptionCaught(ctx, exception);
         // Then
@@ -104,11 +115,13 @@ class ServerExceptionHandlerUnitTest {
                                 "WARN Failed while establishing secure connection, cause: missing protocol")));
     }
 
-    @Test
-    void shouldLogUnknownCaSslHandshakeExceptionAsDebug() throws Exception {
+    @ParameterizedTest
+    @MethodSource("exceptionsSource")
+    void shouldLogUnknownCaSslHandshakeExceptionAsDebug(UnaryOperator<Exception> source)
+            throws Exception {
         // Given
         Exception cause = new SSLHandshakeException("unknown_ca");
-        Exception exception = new DecoderException(cause);
+        Exception exception = source.apply(cause);
         // When
         serverExceptionHandler.exceptionCaught(ctx, exception);
         // Then
@@ -119,11 +132,12 @@ class ServerExceptionHandlerUnitTest {
                                 "DEBUG Failed while establishing secure connection, cause: the client does not trust ZAP's Root CA Certificate.")));
     }
 
-    @Test
-    void shouldLogUnknownCaSslExceptionAsDebug() throws Exception {
+    @ParameterizedTest
+    @MethodSource("exceptionsSource")
+    void shouldLogUnknownCaSslExceptionAsDebug(UnaryOperator<Exception> source) throws Exception {
         // Given
         Exception cause = new SSLException("unknown_ca");
-        Exception exception = new DecoderException(cause);
+        Exception exception = source.apply(cause);
         // When
         serverExceptionHandler.exceptionCaught(ctx, exception);
         // Then
@@ -134,11 +148,14 @@ class ServerExceptionHandlerUnitTest {
                                 "DEBUG Failed while establishing secure connection, cause: the client does not trust ZAP's Root CA Certificate.")));
     }
 
-    @Test
-    void shouldLogGenerationExceptionAsWarn() throws Exception {
+    @ParameterizedTest
+    @MethodSource("exceptionsSource")
+    void shouldLogGenerationExceptionAsWarnWithMessage(UnaryOperator<Exception> source)
+            throws Exception {
         // Given
+        logEvents = registerLogEvents(Level.INFO);
         Exception cause = new GenerationException(new Exception("Cause"));
-        Exception exception = new DecoderException(cause);
+        Exception exception = source.apply(cause);
         // When
         serverExceptionHandler.exceptionCaught(ctx, exception);
         // Then
@@ -147,6 +164,25 @@ class ServerExceptionHandlerUnitTest {
                 hasItem(
                         startsWith(
                                 "WARN Failed while creating certificate, cause: java.lang.Exception: Cause")));
+    }
+
+    @ParameterizedTest
+    @MethodSource("exceptionsSource")
+    void shouldLogGenerationExceptionAsDebugWithException(UnaryOperator<Exception> source)
+            throws Exception {
+        // Given
+        Exception cause = new GenerationException(new Exception("Cause"));
+        Exception exception = source.apply(cause);
+        // When
+        serverExceptionHandler.exceptionCaught(ctx, exception);
+        // Then
+        assertThat(
+                logEvents,
+                hasItem(
+                        allOf(
+                                startsWith(
+                                        "DEBUG Failed while creating certificate, cause: java.lang.Exception: Cause"),
+                                containsString("Caused by: java.lang.Exception: Cause"))));
     }
 
     @Test
@@ -207,13 +243,17 @@ class ServerExceptionHandlerUnitTest {
     }
 
     private static List<String> registerLogEvents() {
+        return registerLogEvents(Level.ALL);
+    }
+
+    private static List<String> registerLogEvents(Level level) {
         List<String> logEvents = new ArrayList<>();
         TestLogAppender logAppender = new TestLogAppender("%p %m%n", logEvents::add);
         LoggerContext context = LoggerContext.getContext();
         LoggerConfig rootLoggerconfig = context.getConfiguration().getRootLogger();
         rootLoggerconfig.getAppenders().values().forEach(context.getRootLogger()::removeAppender);
         rootLoggerconfig.addAppender(logAppender, null, null);
-        rootLoggerconfig.setLevel(Level.ALL);
+        rootLoggerconfig.setLevel(level);
         context.updateLoggers();
         return logEvents;
     }

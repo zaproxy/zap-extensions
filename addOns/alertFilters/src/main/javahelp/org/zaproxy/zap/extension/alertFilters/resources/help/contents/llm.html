@@ -16,6 +16,11 @@ The add-on adds a right click menu item "Review using LLM/AI" that is enabled fo
 The alert review will instruct the configured LLM to examine the selected alert and determine the confidence level based on evidence from ZAP, complete with an explanation for the updated confidence level.
 The full prompt and the LLM response are shown in a dedicated <b>LLM: Alert Review</b> tab in the LLM Chat panel.
 <p>
+The prompt always includes the alert title, description, evidence, and other info.
+If the selected default model provider is marked as <b>Trusted</b> in the LLM Options, ZAP also shares the
+full HTTP request, the response headers, and a block of text around the evidence when that evidence appears in the
+response body.
+<p>
 The review will potentially change the confidence level of the alert.
 A new <code>LLM Explanation</code> will be added to the "Other Info" explaining why the change was made.
 The tag <code>AI-Reviewed</code> will always be added to any alert reviewed.

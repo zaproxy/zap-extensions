@@ -30,7 +30,7 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.testutils.AlertReferenceError;
+import org.zaproxy.zap.testutils.UrlValidationError;
 
 class PassiveDefaultTemplateGraalJsScriptTest extends GraalJsPassiveScriptScanRuleTestUtils {
     @Override
@@ -43,8 +43,8 @@ class PassiveDefaultTemplateGraalJsScriptTest extends GraalJsPassiveScriptScanRu
     }
 
     @Override
-    public boolean isAllowedReferenceError(
-            AlertReferenceError.Cause cause, String reference, Object detail) {
+    public boolean isAllowedUrlValidationError(
+            UrlValidationError.Cause cause, String reference, Object detail) {
         // These are example.org references.
         return true;
     }

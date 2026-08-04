@@ -10,7 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add option to control how browser background requests should be handled, default to hide.
 
 ### Changed
+- Improve server exception handling.
 - Update dependencies.
+
+### Fixed
+- Correct the generation of server certificates for domain names with more than 64 characters.
 
 ## [0.28.0] - 2026-05-21
 ### Changed
