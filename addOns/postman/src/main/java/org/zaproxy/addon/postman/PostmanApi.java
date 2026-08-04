@@ -27,6 +27,7 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.utils.ApiUtils;
 
 public class PostmanApi extends ApiImplementor {
     private static final String PREFIX = "postman";
@@ -34,10 +35,14 @@ public class PostmanApi extends ApiImplementor {
     private static final String ACTION_IMPORT_URL = "importUrl";
     private static final String PARAM_URL = "url";
     private static final String PARAM_FILE = "file";
+    private static final String PARAM_MAX_MESSAGES = "maxMessages";
 
     public PostmanApi() {
-        this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, List.of(PARAM_FILE), List.of()));
-        this.addApiAction(new ApiAction(ACTION_IMPORT_URL, List.of(PARAM_URL), List.of()));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_IMPORT_FILE, List.of(PARAM_FILE), List.of(PARAM_MAX_MESSAGES)));
+        this.addApiAction(
+                new ApiAction(ACTION_IMPORT_URL, List.of(PARAM_URL), List.of(PARAM_MAX_MESSAGES)));
     }
 
     @Override
@@ -47,19 +52,24 @@ public class PostmanApi extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        PostmanParser parser = new PostmanParser();
-
         switch (name) {
             case ACTION_IMPORT_FILE:
                 try {
-                    parser.importFromFile(params.getString(PARAM_FILE), "", false);
+                    new PostmanParser()
+                            .importFromFile(
+                                    params.getString(PARAM_FILE),
+                                    "",
+                                    false,
+                                    getMaxMessages(params));
                 } catch (IllegalArgumentException | IOException e) {
                     throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA);
                 }
                 break;
             case ACTION_IMPORT_URL:
                 try {
-                    parser.importFromUrl(params.getString(PARAM_URL), "", false);
+                    new PostmanParser()
+                            .importFromUrl(
+                                    params.getString(PARAM_URL), "", false, getMaxMessages(params));
                 } catch (IllegalArgumentException | IOException e) {
                     throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA);
                 }
@@ -70,5 +80,17 @@ public class PostmanApi extends ApiImplementor {
         }
 
         return ApiResponseElement.OK;
+    }
+
+    private static int getMaxMessages(JSONObject params) throws ApiException {
+        if (!params.containsKey(PARAM_MAX_MESSAGES)
+                || params.getString(PARAM_MAX_MESSAGES).isEmpty()) {
+            return 0;
+        }
+        int maxMessages = ApiUtils.getIntParam(params, PARAM_MAX_MESSAGES);
+        if (maxMessages < 0) {
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_MAX_MESSAGES);
+        }
+        return maxMessages;
     }
 }
