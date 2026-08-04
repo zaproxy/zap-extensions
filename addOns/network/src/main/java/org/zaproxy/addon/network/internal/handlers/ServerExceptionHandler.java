@@ -76,6 +76,10 @@ public class ServerExceptionHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
+        if (handleSslRelatedException(cause)) {
+            return;
+        }
+
         if (cause instanceof IOException) {
             LOGGER.debug(cause, cause);
             return;
@@ -92,30 +96,68 @@ public class ServerExceptionHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        if (nestedCause instanceof SSLHandshakeException
-                || (nestedCause instanceof SSLException && isUnknownCa(nestedCause))) {
-            Level level = Level.WARN;
-            String causeMessage = nestedCause.getMessage();
-            if (isUnknownCa(nestedCause)) {
-                causeMessage = "the client does not trust ZAP's Root CA Certificate.";
-                level = Level.DEBUG;
-            }
-
-            LOGGER.log(
-                    level, "Failed while establishing secure connection, cause: {}", causeMessage);
-            return;
-        }
-
-        if (nestedCause instanceof GenerationException) {
-            LOGGER.warn("Failed while creating certificate, cause: {}", nestedCause.getMessage());
+        if (handleSslRelatedException(nestedCause)) {
             return;
         }
 
         LOGGER.error(nestedCause, nestedCause);
     }
 
-    private static boolean isUnknownCa(Throwable nestedCause) {
+    private static boolean handleSslRelatedException(Throwable cause) {
+        if (cause instanceof SSLHandshakeException
+                || (cause instanceof SSLException && isUnknownCa(cause))) {
+            Level level = Level.WARN;
+            String causeMessage = cause.getMessage();
+            if (isUnknownCa(cause)) {
+                causeMessage = "the client does not trust ZAP's Root CA Certificate.";
+                level = Level.DEBUG;
+            }
+
+            LOGGER.log(
+                    level, "Failed while establishing secure connection, cause: {}", causeMessage);
+            return true;
+        }
+
+        if (cause instanceof SSLException && isInternalError(cause)) {
+            Throwable nestedCause = cause.getCause();
+            if (nestedCause != null && handleGenerationException(nestedCause)) {
+                return true;
+            }
+
+            LOGGER.warn("SSL/TLS internal error:", cause);
+            return true;
+        }
+
+        if (handleGenerationException(cause)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean handleGenerationException(Throwable cause) {
+        if (cause instanceof GenerationException) {
+            String message = "Failed while creating certificate, cause: {}";
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(message, cause.getMessage(), cause);
+            } else {
+                LOGGER.warn(message, cause.getMessage());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isUnknownCa(Throwable cause) {
+        return containsMessage(cause, "unknown_ca");
+    }
+
+    private static boolean isInternalError(Throwable cause) {
+        return containsMessage(cause, "internal_error");
+    }
+
+    private static boolean containsMessage(Throwable nestedCause, String value) {
         String causeMessage = nestedCause.getMessage();
-        return causeMessage != null && causeMessage.contains("unknown_ca");
+        return causeMessage != null && causeMessage.contains(value);
     }
 }
