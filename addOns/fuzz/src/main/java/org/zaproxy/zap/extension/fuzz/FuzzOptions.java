@@ -44,7 +44,7 @@ public class FuzzOptions extends VersionedAbstractParam {
      *
      * <p>It only needs to be updated for configurations changes (not releases of the add-on).
      */
-    private static final int CURRENT_VERSION = 2;
+    private static final int CURRENT_VERSION = 3;
 
     /** The base configuration key for all "fuzz" configurations. */
     private static final String BASE_KEY = "fuzz";
@@ -110,7 +110,7 @@ public class FuzzOptions extends VersionedAbstractParam {
                 MessageLocationsReplacementStrategy.getValue(
                         getString(
                                 DEFAULT_PAYLOAD_REPLACEMENT_STRATEGY_KEY,
-                                MessageLocationsReplacementStrategy.DEPTH_FIRST.getConfigId()));
+                                MessageLocationsReplacementStrategy.CLUSTER_BOMB.getConfigId()));
         defaultThreadsPerFuzzer =
                 getInt(DEFAULT_THREADS_PER_FUZZER_KEY, Constants.getDefaultThreadCount());
         defaultFuzzDelayInMs = getInt(DEFAULT_FUZZ_DELAY_IN_MS_KEY, DEFAULT_FUZZ_DELAY_IN_MS);
@@ -150,6 +150,23 @@ public class FuzzOptions extends VersionedAbstractParam {
                 if (getInt(DEFAULT_THREADS_PER_FUZZER_KEY, 5) == 5) {
                     // the old default
                     this.setDefaultThreadsPerFuzzer(Constants.getDefaultThreadCount());
+                }
+            // Fallthrough
+            case 2:
+                String strategy =
+                        getString(
+                                DEFAULT_PAYLOAD_REPLACEMENT_STRATEGY_KEY,
+                                MessageLocationsReplacementStrategy.CLUSTER_BOMB.getConfigId());
+                if ("depth".equals(strategy)) {
+                    getConfig()
+                            .setProperty(
+                                    DEFAULT_PAYLOAD_REPLACEMENT_STRATEGY_KEY,
+                                    MessageLocationsReplacementStrategy.CLUSTER_BOMB.getConfigId());
+                } else if ("breadth".equals(strategy)) {
+                    getConfig()
+                            .setProperty(
+                                    DEFAULT_PAYLOAD_REPLACEMENT_STRATEGY_KEY,
+                                    MessageLocationsReplacementStrategy.PITCHFORK.getConfigId());
                 }
         }
     }

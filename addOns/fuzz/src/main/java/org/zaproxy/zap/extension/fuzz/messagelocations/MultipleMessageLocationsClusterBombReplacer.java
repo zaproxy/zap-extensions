@@ -29,11 +29,11 @@ import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.InvalidMessageException;
 
-public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
+public class MultipleMessageLocationsClusterBombReplacer<T extends Message>
         implements MultipleMessageLocationsReplacer<T> {
 
     private static final Logger LOGGER =
-            LogManager.getLogger(MultipleMessageLocationsDepthFirstReplacer.class);
+            LogManager.getLogger(MultipleMessageLocationsClusterBombReplacer.class);
 
     private MessageLocationReplacer<T> replacer;
     private List<MessageLocationReplacementGenerator<?, ?>> replacementGenerators;
@@ -102,7 +102,7 @@ public class MultipleMessageLocationsDepthFirstReplacer<T extends Message>
     }
 
     @Override
-    public T next() throws ReplacementException, InvalidMessageException {
+    public T next() throws InvalidMessageException {
         if (setup) {
             setup();
             setup = false;

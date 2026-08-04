@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.parosproxy.paros.Constant;
@@ -37,6 +38,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationsReplacementStrategy;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -119,5 +121,23 @@ class FuzzOptionsUnitTest {
             // Then
             assertThat(options.getDefaultThreadsPerFuzzer(), is(equalTo(3)));
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource({"depth, CLUSTER_BOMB, clusterBomb", "breadth, PITCHFORK, pitchfork"})
+    void shouldMigrateLegacyPayloadReplacementStrategy(
+            String legacyConfigId,
+            MessageLocationsReplacementStrategy expectedStrategy,
+            String expectedConfigId) {
+        // Given
+        configuration.setProperty("fuzz[@version]", 2);
+        configuration.setProperty("fuzz.defaultPayloadReplacementStrategy", legacyConfigId);
+        // When
+        options.load(configuration);
+        // Then
+        assertThat(options.getDefaultPayloadReplacementStrategy(), is(equalTo(expectedStrategy)));
+        assertThat(
+                configuration.getString("fuzz.defaultPayloadReplacementStrategy"),
+                is(equalTo(expectedConfigId)));
     }
 }
