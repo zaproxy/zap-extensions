@@ -25,6 +25,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -160,6 +164,18 @@ public class ScriptsListPanel extends AbstractPanel {
 
             panelToolbar.add(getNewScriptButton());
             panelToolbar.add(getLoadButton());
+
+            JButton loadFromClipboardButton = new JButton();
+            loadFromClipboardButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    ScriptsListPanel.class.getResource(
+                                            "/org/zaproxy/zap/extension/scripts/resources/icons/clipboard-sign.png"))));
+            loadFromClipboardButton.setToolTipText(
+                    Constant.messages.getString("scripts.list.toolbar.button.loadclipboard"));
+            loadFromClipboardButton.addActionListener(e -> loadFromClipboard());
+            panelToolbar.add(loadFromClipboardButton);
+
             panelToolbar.add(Box.createHorizontalGlue());
             panelToolbar.add(getOptionsButton());
         }
@@ -403,6 +419,30 @@ public class ScriptsListPanel extends AbstractPanel {
             }
             // TODO Not ideal, but will require some core changes to do properly
             showLoadScriptDialog(script);
+        }
+    }
+
+    private void loadFromClipboard() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        if (!clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
+            View.getSingleton()
+                    .showWarningDialog(
+                            Constant.messages.getString(
+                                    "scripts.list.toolbar.button.loadclipboard.notext"));
+            return;
+        }
+
+        try {
+            ScriptWrapper script = new ScriptWrapper();
+            script.setContents((String) clipboard.getData(DataFlavor.stringFlavor));
+            showLoadScriptDialog(script);
+        } catch (UnsupportedFlavorException | IOException e) {
+            LOGGER.warn(e.getMessage(), e);
+            View.getSingleton()
+                    .showWarningDialog(
+                            Constant.messages.getString(
+                                    "scripts.list.toolbar.button.loadclipboard.error",
+                                    e.getLocalizedMessage()));
         }
     }
 
