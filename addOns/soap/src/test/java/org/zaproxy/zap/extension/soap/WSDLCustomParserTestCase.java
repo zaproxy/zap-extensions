@@ -397,13 +397,14 @@ class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
-    void shouldSkipAttributeDeclaredByRefWithNullName() throws Exception {
+    void shouldPopulateAttributeDeclaredByRef() throws Exception {
         // Given / When – valid XSD uses <xs:attribute ref="tns:globalRefKey"/>; predic8 leaves
-        // Attribute.getName() null until resolved, and fillFromComplexType skips it
+        // Attribute.getName() null until the ref is resolved
         Map<String, String> params = parseWsdlParams();
         // Then
         assertThat(params, hasEntry("xpath:/Request/attrRefWrapper/@inlineKey", MOCK_FILL_VALUE));
-        assertThat(params, not(hasKey("xpath:/Request/attrRefWrapper/@globalRefKey")));
+        assertThat(
+                params, hasEntry("xpath:/Request/attrRefWrapper/@globalRefKey", MOCK_FILL_VALUE));
     }
 
     private Map<String, String> parseWsdlParams() throws Exception {

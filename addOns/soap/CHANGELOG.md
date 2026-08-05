@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Resolve `xs:attribute` elements that use `ref` when importing WSDLs so referenced attributes are included in generated requests.
+
 ## [31] - 2026-06-12
 ### Changed
 - Update dependency.
