@@ -475,17 +475,34 @@ public class WSDLCustomParser {
         List<Attribute> attrs = ct.getAllAttributes();
         if (attrs != null) {
             for (Attribute attr : attrs) {
-                String attrName = attr.getName();
-                if (attrName == null) {
+                Attribute resolved = resolveAttribute(attr);
+                if (resolved == null) {
                     continue;
                 }
-                String attrType = attr.getType() != null ? attr.getType().getLocalPart() : "string";
-                String attrValue = resolveAttributeValue(attr);
+                String attrName = resolved.getName();
+                String attrType =
+                        resolved.getType() != null ? resolved.getType().getLocalPart() : "string";
+                String attrValue = resolveAttributeValue(resolved);
                 formParams.putAll(
                         addParameter(xpath + "/@" + attrName, attrType, attrName, attrValue));
             }
         }
         return formParams;
+    }
+
+    private static Attribute resolveAttribute(Attribute attr) {
+        if (attr.getName() != null) {
+            return attr;
+        }
+        if (attr.getRef() == null) {
+            return null;
+        }
+        Attribute resolved = attr.getSchema().getAttribute(attr.getRef());
+        if (resolved == null || resolved.getName() == null) {
+            LOGGER.warn("Could not resolve ref attribute {} from WSDL file.", attr.getRef());
+            return null;
+        }
+        return resolved;
     }
 
     private Map<String, String> fillFromSequence(Sequence seq, String xpath) {
