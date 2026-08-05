@@ -81,6 +81,7 @@ env:                                   # The environment, mandatory
     failOnWarning: false               # If set exit on a warning
     continueOnFailure: false           # Continue running all jobs, even if one fails
     progressToStdout: true             # If set will write job progress to stdout
+    maxDuration: 0                     # The max time, in seconds, the plan is allowed to run, default: 0 unlimited
   proxy:                               # Optional upstream proxy settings
     hostname:                          # String, the proxy host
     port:                              # Int, the proxy port

@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to define for how long a plan can run.
+
 ### Changed
 - Adjust columns in plan display after loading a plan.
 - Include cause of invalid URL in error message.
