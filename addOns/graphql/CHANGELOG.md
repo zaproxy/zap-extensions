@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 - Update dependency.
 - Maintenance changes.
+- Simplify tab names in the Automation Framework job dialogue (Issue 9408).
 
 ## [0.33.0] - 2026-04-14
 ### Changed
