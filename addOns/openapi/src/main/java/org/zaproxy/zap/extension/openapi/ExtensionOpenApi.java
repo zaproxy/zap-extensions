@@ -76,6 +76,7 @@ import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -281,6 +282,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             false,
                             maxMessages));
         } catch (IOException e) {
+            Stats.incCounter(Requestor.CONNECTION_FAILURE_STATS);
             if (initViaUi) {
                 ThreadUtils.invokeAndWaitHandled(
                         () ->
@@ -420,6 +422,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             maxMessages);
             results.setErrors(errors);
         } catch (IOException e) {
+            Stats.incCounter(Requestor.CONNECTION_FAILURE_STATS);
             if (initViaUi) {
                 ThreadUtils.invokeAndWaitHandled(
                         () ->
@@ -443,6 +446,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             boolean existsInDb,
             int maxMessages) {
         if (defn == null || defn.isEmpty()) {
+            Stats.incCounter(Requestor.CONNECTION_FAILURE_STATS);
             throw new OpenApiExceptions.EmptyDefinitionException();
         }
 
@@ -477,7 +481,12 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             errors.addAll(requestor.run(requestModels));
                             // Needs to be called after converter.getRequestModels() to get loop
                             // errors
-                            errors.addAll(converter.getErrorMessages());
+                            List<String> converterErrors = converter.getErrorMessages();
+                            errors.addAll(converterErrors);
+                            if (!converterErrors.isEmpty()) {
+                                Stats.incCounter(
+                                        Requestor.CONNECTION_FAILURE_STATS, converterErrors.size());
+                            }
                             if (!errors.isEmpty()) {
                                 logErrors(errors, initViaUi);
                                 if (initViaUi) {
@@ -523,6 +532,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                                                         "openapi.parse.trailer"));
                             }
                             errors.add(Constant.messages.getString("openapi.parse.error", e));
+                            Stats.incCounter(Requestor.CONNECTION_FAILURE_STATS);
                             logErrors(errors, initViaUi);
                             LOGGER.warn(e.getMessage(), e);
                         } finally {

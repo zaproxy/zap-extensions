@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -215,12 +216,39 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
         return Constant.messages.getString("authhelper.authreport.name");
     }
 
+    private static final String CONNECTION_SUCCESS_STATS = "stats.import.connection.success";
+    private static final String CONNECTION_FAILURE_STATS = "stats.import.connection.failure";
+
     private static void addSummaryItem(AuthReportData ard, String key, boolean pass) {
         ard.addSummaryItem(
                 pass,
                 "auth.summary." + key,
                 Constant.messages.getString(
                         "authhelper.authreport.summary." + key + (pass ? ".pass" : ".fail")));
+    }
+
+    private static void addConnectionSummaryItems(AuthReportData ard) {
+        InMemoryStats inMemoryStats =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionStats.class)
+                        .getInMemoryStats();
+        long successes = 0;
+        long failures = 0;
+        if (inMemoryStats != null) {
+            successes =
+                    Objects.requireNonNullElse(inMemoryStats.getStat(CONNECTION_SUCCESS_STATS), 0L);
+            failures =
+                    Objects.requireNonNullElse(inMemoryStats.getStat(CONNECTION_FAILURE_STATS), 0L);
+        }
+        ard.addSummaryItem(
+                "auth.summary.connection_successes",
+                successes,
+                Constant.messages.getString("authhelper.authreport.summary.connection_successes"));
+        ard.addSummaryItem(
+                "auth.summary.connection_failures",
+                failures,
+                Constant.messages.getString("authhelper.authreport.summary.connection_failures"));
     }
 
     private static Context getFirstAuthConfiguredContext(ReportData reportData) {
@@ -255,6 +283,23 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
 
             Context authContext = getFirstAuthConfiguredContext(reportData);
             if (authContext == null) {
+                if (reportData.getSections().isEmpty() || reportData.isIncludeSection("summary")) {
+                    ard.setValidReport(true);
+                    addConnectionSummaryItems(ard);
+                }
+                List<Context> contexts = reportData.getContexts();
+                if (!contexts.isEmpty()) {
+                    Context context = contexts.get(0);
+                    List<String> incRegexes = context.getIncludeInContextRegexs();
+                    if (incRegexes != null && !incRegexes.isEmpty()) {
+                        try {
+                            ard.setSite(getHostName(incRegexes.get(0)));
+                        } catch (Exception e) {
+                            LOGGER.warn(e.getMessage(), e);
+                        }
+                    }
+                    setAfEnvFromContext(ard, context);
+                }
                 return;
             }
             ard.setValidReport(true);
@@ -418,9 +463,13 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             addSummaryItem(ard, "session", sessionPassed);
             addSummaryItem(ard, "verif", verificationUrlIdentified);
 
+            setAfEnvFromContext(ard, authContext);
+        }
+
+        private static void setAfEnvFromContext(AuthReportData ard, Context context) {
             AutomationProgress progress = new AutomationProgress();
             AutomationEnvironment env = new AutomationEnvironment(progress);
-            env.addContext(authContext);
+            env.addContext(context);
             AutomationPlan plan = new AutomationPlan(env, new ArrayList<>(), progress);
             try {
                 ard.setAfEnv(plan.toYaml());

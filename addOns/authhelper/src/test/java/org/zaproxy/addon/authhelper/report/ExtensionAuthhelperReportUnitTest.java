@@ -189,6 +189,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         ard.setAfEnv(afEnv);
         ard.addSummaryItem(true, "summary.1", "First Item");
         ard.addSummaryItem(false, "summary.2", "Second Item");
+        ard.addSummaryItem("auth.summary.connection_successes", 1, "Responses received");
         ard.addFailureDetail(FailureDetail.NO_SUCCESSFUL_LOGINS);
         ard.addStatsItem("stats.auth.1", "global", 123);
         ard.addStatsItem("stats.other.1", "site", 456);
@@ -205,7 +206,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         // Then
         assertThat(json.getString("site"), is(equalTo("https://www.example.com")));
         assertThat(json.getString("afEnv"), is(equalTo(afEnv)));
-        assertThat(summaryItems.size(), is(equalTo(2)));
+        assertThat(summaryItems.size(), is(equalTo(3)));
         assertThat(summaryItems.getJSONObject(0), is(notNullValue()));
         assertThat(summaryItems.getJSONObject(0).getBoolean("passed"), is(equalTo(true)));
         assertThat(summaryItems.getJSONObject(0).getString("key"), is(equalTo("summary.1")));
@@ -216,6 +217,14 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         assertThat(summaryItems.getJSONObject(1).getString("key"), is(equalTo("summary.2")));
         assertThat(
                 summaryItems.getJSONObject(1).getString("description"), is(equalTo("Second Item")));
+        assertThat(summaryItems.getJSONObject(2).has("passed"), is(equalTo(false)));
+        assertThat(
+                summaryItems.getJSONObject(2).getString("key"),
+                is(equalTo("auth.summary.connection_successes")));
+        assertThat(summaryItems.getJSONObject(2).getLong("value"), is(equalTo(1L)));
+        assertThat(
+                summaryItems.getJSONObject(2).getString("description"),
+                is(equalTo("Responses received")));
 
         assertThat(failureReasons.size(), is(equalTo(1)));
         assertThat(
@@ -479,14 +488,24 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         ReportData reportData = new ReportData("auth-report-test");
         reportData.setContexts(List.of());
 
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+        given(extStats.getInMemoryStats()).willReturn(new InMemoryStats());
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
         // When
         dataHandler.handle(reportData);
 
         // Then
         assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
         AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
-        assertThat(ard.isValidReport(), is(equalTo(false)));
-        assertThat(ard.getSummaryItems().size(), is(equalTo(0)));
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(2)));
+        assertThat(ard.getSummaryItems().get(0).value(), is(equalTo(0L)));
+        assertThat(ard.getSummaryItems().get(1).value(), is(equalTo(0L)));
     }
 
     @Test
@@ -810,6 +829,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
     @Test
     void shouldReportWithManualAuth() {
         // Given
+        String site = "https://www.example.com";
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
                 new ExtensionAuthhelperReport.AuthReportDataHandler();
         ReportData reportData = new ReportData("auth-report-test");
@@ -818,6 +838,10 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         ManualAuthenticationMethod authMethod =
                 new ManualAuthenticationMethodType().createAuthenticationMethod(0);
         given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getName()).willReturn("api-auth");
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        given(context.getExcludeFromContextRegexs()).willReturn(List.of());
+        given(context.getDataDrivenNodes()).willReturn(List.of());
 
         reportData.setContexts(List.of(context));
 
@@ -838,8 +862,101 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         // Then
         assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
         AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSite(), is(equalTo(site)));
+        assertThat(ard.getAfEnv(), containsString("api-auth"));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(2)));
+        assertThat(
+                ard.getSummaryItems().get(0).key(),
+                is(equalTo("auth.summary.connection_successes")));
+        assertThat(ard.getSummaryItems().get(0).value(), is(equalTo(0L)));
+        assertThat(ard.getSummaryItems().get(0).description(), is(equalTo("Responses received")));
+        assertThat(
+                ard.getSummaryItems().get(1).key(),
+                is(equalTo("auth.summary.connection_failures")));
+        assertThat(ard.getSummaryItems().get(1).value(), is(equalTo(0L)));
+        assertThat(
+                ard.getSummaryItems().get(1).description(),
+                is(equalTo("Communication or network failures")));
+    }
+
+    @Test
+    void shouldReportConnectionCountsFromStatsWithoutAuthConfig() {
+        // Given
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        reportData.setSections(List.of("summary"));
+        Context context = mock(Context.class);
+
+        ManualAuthenticationMethod authMethod =
+                new ManualAuthenticationMethodType().createAuthenticationMethod(0);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getName()).willReturn("api-auth");
+        given(context.getIncludeInContextRegexs()).willReturn(List.of());
+        given(context.getExcludeFromContextRegexs()).willReturn(List.of());
+        given(context.getDataDrivenNodes()).willReturn(List.of());
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+
+        InMemoryStats stats = new InMemoryStats();
+        stats.counterInc("stats.import.connection.success", 3);
+        stats.counterInc("stats.import.connection.failure", 1);
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getAfEnv(), containsString("api-auth"));
+        assertThat(ard.getSummaryItems().get(0).value(), is(equalTo(3L)));
+        assertThat(ard.getSummaryItems().get(1).value(), is(equalTo(1L)));
+    }
+
+    @Test
+    void shouldSkipConnectionSummaryWhenSummarySectionNotRequested() {
+        // Given
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        reportData.setSections(List.of("diagnostics"));
+        Context context = mock(Context.class);
+
+        ManualAuthenticationMethod authMethod =
+                new ManualAuthenticationMethodType().createAuthenticationMethod(0);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getName()).willReturn("api-auth");
+        given(context.getIncludeInContextRegexs()).willReturn(List.of());
+        given(context.getExcludeFromContextRegexs()).willReturn(List.of());
+        given(context.getDataDrivenNodes()).willReturn(List.of());
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+        given(extStats.getInMemoryStats()).willReturn(new InMemoryStats());
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
         assertThat(ard.isValidReport(), is(equalTo(false)));
         assertThat(ard.getSummaryItems().size(), is(equalTo(0)));
+        assertThat(ard.getAfEnv(), containsString("api-auth"));
     }
 
     @Test

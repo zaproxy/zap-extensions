@@ -5,11 +5,15 @@
 	"site":  [[(${rptData.getSite()})]]
 	[#th:block th:if="${reportData.isIncludeSection('summary')}"]
 	,"summaryItems": [[#th:block th:each="sumItem, sumState: ${rptData.getSummaryItems()}"][#th:block th:if="${! sumState.first}"],[/th:block]
-		{
+		[#th:block th:if="${sumItem.value != null}"]{
+			"description": [[${sumItem.description}]],
+			"key": [[${sumItem.key}]],
+			"value": [[${sumItem.value}]]
+		}[/th:block][#th:block th:unless="${sumItem.value != null}"]{
 			"description": [[${sumItem.description}]],
 			"passed": [[${sumItem.passed}]],
 			"key": [[${sumItem.key}]]
-		}[/th:block]
+		}[/th:block][/th:block]
 	]
 	[#th:block th:if="${rptData.hasFailureDetails()}"]
 	,"failureReasons": [[#th:block th:each="failureItem, failureState: ${rptData.getFailureDetails()}"][#th:block th:if="${!failureState.first}"],[/th:block]

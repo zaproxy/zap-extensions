@@ -32,8 +32,15 @@ import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Stats;
 
 public class Requestor {
+
+    /** Global: response received during an import (including redirect hops). */
+    public static final String CONNECTION_SUCCESS_STATS = "stats.import.connection.success";
+
+    /** Global: network/communication failure or failure to parse a definition. */
+    public static final String CONNECTION_FAILURE_STATS = "stats.import.connection.failure";
 
     private final int initiator;
     private List<RequesterListener> listeners = new ArrayList<>();
@@ -73,6 +80,7 @@ public class Requestor {
 
                     sender.sendAndReceive(httpRequest, requestConfig);
                 } catch (IOException e) {
+                    Stats.incCounter(CONNECTION_FAILURE_STATS);
                     errors.add(
                             Constant.messages.getString(
                                     "openapi.import.error",
@@ -83,6 +91,7 @@ public class Requestor {
                 }
             }
         } catch (IOException e) {
+            Stats.incCounter(CONNECTION_FAILURE_STATS);
             errors.add(e.getMessage());
             LOGGER.error(e.getMessage(), e);
         }
@@ -120,6 +129,7 @@ public class Requestor {
 
         @Override
         public void notifyMessageReceived(HttpMessage message) {
+            Stats.incCounter(CONNECTION_SUCCESS_STATS);
             for (RequesterListener listener : listeners) {
                 try {
                     listener.handleMessage(message, initiator);
