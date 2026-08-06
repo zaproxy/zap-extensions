@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -1170,6 +1172,184 @@ class ExtensionAutomationUnitTest extends TestUtils {
         assertThat(stats.getStat(ExtensionAutomation.ERROR_COUNT_STATS), is(equalTo(1L)));
         assertThat(stats.getStat(ExtensionAutomation.PLANS_RUN_STATS), is(equalTo(1L)));
         assertThat(stats.getStat(ExtensionAutomation.TOTAL_JOBS_RUN_STATS), is(2L));
+    }
+
+    @Test
+    @Timeout(10)
+    void shouldStopPlanOnMaxDurationAndRunAlwaysRunJobs() {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        AutomationJobImpl job1 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return "job1";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+                };
+        AutomationJobImpl job2 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return "job2";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+
+                    @Override
+                    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+                        super.runJob(env, progress);
+                        try {
+                            latch.await(5, TimeUnit.SECONDS);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+
+                    @Override
+                    public void stop() {
+                        latch.countDown();
+                    }
+                };
+        AutomationJobImpl job3 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return "job3";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+                };
+        AutomationJobImpl job4 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return "job4";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+                };
+        extAuto.registerAutomationJob(job1);
+        extAuto.registerAutomationJob(job2);
+        extAuto.registerAutomationJob(job3);
+        extAuto.registerAutomationJob(job4);
+        Path filePath = getResourcePath("resources/testplan-maxduration.yaml");
+
+        // When
+        AutomationProgress progress =
+                extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+        // Then
+        assertThat(job1.wasRun(), is(equalTo(true)));
+        assertThat(job2.wasRun(), is(equalTo(true)));
+        assertThat(job3.wasRun(), is(equalTo(false)));
+        assertThat(job4.wasRun(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().get(0), is(equalTo("!automation.warn.maxduration!")));
+    }
+
+    @Test
+    @Timeout(10)
+    void shouldInterruptPlanThreadOnMaxDuration() {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        AtomicBoolean job2WasInterrupted = new AtomicBoolean();
+        AtomicBoolean job4InterruptFlagOnStart = new AtomicBoolean();
+
+        AutomationJobImpl job1 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return "job1";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+                };
+        AutomationJobImpl job2 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return "job2";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+
+                    @Override
+                    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+                        super.runJob(env, progress);
+                        try {
+                            Thread.sleep(Long.MAX_VALUE);
+                        } catch (InterruptedException e) {
+                            job2WasInterrupted.set(true);
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                };
+        AutomationJobImpl job3 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return "job3";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+                };
+        AutomationJobImpl job4 =
+                new AutomationJobImpl(true) {
+                    @Override
+                    public String getType() {
+                        return "job4";
+                    }
+
+                    @Override
+                    public Order getOrder() {
+                        return Order.REPORT;
+                    }
+
+                    @Override
+                    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+                        job4InterruptFlagOnStart.set(Thread.currentThread().isInterrupted());
+                        super.runJob(env, progress);
+                    }
+                };
+        extAuto.registerAutomationJob(job1);
+        extAuto.registerAutomationJob(job2);
+        extAuto.registerAutomationJob(job3);
+        extAuto.registerAutomationJob(job4);
+        Path filePath = getResourcePath("resources/testplan-maxduration.yaml");
+
+        // When
+        extAuto.runAutomationFile(filePath.toAbsolutePath().toString());
+
+        // Then
+        assertThat(job2WasInterrupted.get(), is(equalTo(true)));
+        assertThat(job3.wasRun(), is(equalTo(false)));
+        assertThat(job4.wasRun(), is(equalTo(true)));
+        assertThat(job4InterruptFlagOnStart.get(), is(equalTo(false)));
     }
 
     @Test

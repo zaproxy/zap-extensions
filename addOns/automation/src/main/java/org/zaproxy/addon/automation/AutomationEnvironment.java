@@ -466,6 +466,10 @@ public class AutomationEnvironment {
                         || (isFailOnWarning() && progress.hasWarnings()));
     }
 
+    public int getMaxDuration() {
+        return this.getData().getParameters().getMaxDuration();
+    }
+
     public void showDialog() {
         new EnvironmentDialog(this).setVisible(true);
     }
@@ -544,6 +548,7 @@ public class AutomationEnvironment {
         private boolean failOnWarning;
         private boolean progressToStdout = true;
         private boolean continueOnFailure = false;
+        private int maxDuration;
 
         public Parameters() {}
 
@@ -575,6 +580,10 @@ public class AutomationEnvironment {
             return progressToStdout;
         }
 
+        public int getMaxDuration() {
+            return maxDuration;
+        }
+
         public void setFailOnError(boolean failOnError) {
             this.failOnError = failOnError;
         }
@@ -589,6 +598,10 @@ public class AutomationEnvironment {
 
         public void setProgressToStdout(boolean progressToStdout) {
             this.progressToStdout = progressToStdout;
+        }
+
+        public void setMaxDuration(int maxDuration) {
+            this.maxDuration = Math.max(0, maxDuration);
         }
     }
 
