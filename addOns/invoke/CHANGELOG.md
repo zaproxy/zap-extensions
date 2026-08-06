@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 ### Changed
-- Use title capitalization for the Run Application menu.
+- Use title capitalization for the Run Application menu (Issue 2000).
 
 ## [17] - 2025-12-15
 ### Changed
