@@ -30,12 +30,16 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class LlmProviderConfig {
 
+    /** Default request timeout in seconds. */
+    public static final int DEFAULT_TIMEOUT_SECONDS = 60;
+
     private String name;
     private LlmProvider provider;
     private String apiKey;
     private String endpoint;
     private List<String> models;
     private boolean trusted;
+    private int timeoutSeconds;
 
     public LlmProviderConfig(
             String name,
@@ -49,7 +53,8 @@ public class LlmProviderConfig {
                 apiKey,
                 endpoint,
                 models,
-                provider != null && provider.isTrustedByDefault());
+                provider != null && provider.isTrustedByDefault(),
+                DEFAULT_TIMEOUT_SECONDS);
     }
 
     public LlmProviderConfig(
@@ -58,16 +63,29 @@ public class LlmProviderConfig {
             String apiKey,
             String endpoint,
             List<String> models,
-            boolean trusted) {
+            boolean trusted,
+            int timeoutSeconds) {
         this.name = name;
         this.provider = provider;
         this.apiKey = apiKey;
         this.endpoint = endpoint;
         this.models = new ArrayList<>(models);
         this.trusted = trusted;
+        setTimeoutSeconds(timeoutSeconds);
     }
 
     public LlmProviderConfig(LlmProviderConfig other) {
-        this(other.name, other.provider, other.apiKey, other.endpoint, other.models, other.trusted);
+        this(
+                other.name,
+                other.provider,
+                other.apiKey,
+                other.endpoint,
+                other.models,
+                other.trusted,
+                other.timeoutSeconds);
+    }
+
+    public void setTimeoutSeconds(int timeoutSeconds) {
+        this.timeoutSeconds = timeoutSeconds > 0 ? timeoutSeconds : DEFAULT_TIMEOUT_SECONDS;
     }
 }

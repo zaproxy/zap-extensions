@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.llm.ui;
 
+import java.awt.Insets;
 import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -26,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToolBar;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.llm.ExtensionLlm;
@@ -33,27 +35,45 @@ import org.zaproxy.addon.llm.LlmOptions;
 import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.addon.llm.LlmProviderConfig;
 
+/** Main toolbar control for selecting the default LLM provider. */
 @SuppressWarnings("serial")
-public class LlmSelectorButton extends JButton {
+public class LlmSelectorButton extends JToolBar {
 
     private static final long serialVersionUID = 1L;
-    private ExtensionLlm ext;
-    private LlmOptions options;
+
+    private final ExtensionLlm ext;
+    private final LlmOptions options;
+    private final JButton selectButton;
+    private final JButton dropdownButton;
 
     public LlmSelectorButton(ExtensionLlm ext, LlmOptions options) {
         this.ext = ext;
         this.options = options;
-        setIcon(
-                new ImageIcon(
-                        ExtensionLlm.class.getResource(
-                                "/org/zaproxy/addon/llm/resources/agent.png")));
-        setToolTipText(Constant.messages.getString("llm.toolbar.button.tooltip"));
-        addActionListener(e -> showProvidersPopup());
+        setFloatable(false);
+        setBorderPainted(false);
+        setOpaque(false);
+
+        selectButton =
+                new JButton(
+                        new ImageIcon(
+                                ExtensionLlm.class.getResource(
+                                        "/org/zaproxy/addon/llm/resources/agent.png")));
+        selectButton.setMargin(new Insets(2, 2, 2, 0));
+        selectButton.setToolTipText(Constant.messages.getString("llm.toolbar.button.tooltip"));
+        selectButton.addActionListener(e -> showProvidersPopup(selectButton));
+
+        dropdownButton = new JButton("▾");
+        dropdownButton.setToolTipText(Constant.messages.getString("llm.toolbar.button.tooltip"));
+        dropdownButton.setMargin(new Insets(2, 0, 2, 2));
+        dropdownButton.addActionListener(e -> showProvidersPopup(dropdownButton));
+
+        add(selectButton);
+        add(dropdownButton);
     }
 
-    private void showProvidersPopup() {
+    private void showProvidersPopup(JButton invoker) {
         JPopupMenu menu = buildProvidersMenu();
-        menu.show(this, 0, this.getHeight());
+        menu.show(invoker, 0, invoker.getHeight());
     }
 
     private JPopupMenu buildProvidersMenu() {

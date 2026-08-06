@@ -194,7 +194,8 @@ class LlmActionReviewAlertUnitTest extends TestUtils {
                                 "",
                                 "http://localhost",
                                 List.of("model"),
-                                true));
+                                true,
+                                LlmProviderConfig.DEFAULT_TIMEOUT_SECONDS));
         LlmCommunicationService comms = mockCommsReturning("{}");
         ArgumentCaptor<ChatRequest> argument = ArgumentCaptor.forClass(ChatRequest.class);
 

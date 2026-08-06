@@ -483,6 +483,7 @@ public class LlmChatTabPanel extends JPanel {
                         tabService.getModelName(),
                         tabProviderConfig,
                         tabModelName)) {
+            tabService.applyConnectionSettings(tabProviderConfig);
             return tabService;
         }
         tabService =
@@ -504,8 +505,8 @@ public class LlmChatTabPanel extends JPanel {
 
     /**
      * Whether two provider selections should share the same communication service / chat memory.
-     * Compares connection identity and selected model, but not the full models list — that list
-     * changes when models are added/removed in options and must not wipe conversation history.
+     * Compares connection identity and selected model, but not things that we want to be changed
+     * without wiping the conversation.
      */
     static boolean sameTabComms(
             LlmProviderConfig a, String modelA, LlmProviderConfig b, String modelB) {
