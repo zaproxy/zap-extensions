@@ -115,7 +115,10 @@ public class TechPanel extends AbstractPanel {
         this.setName(Constant.messages.getString("wappalyzer.panel.title"));
         this.setIcon(
                 new ImageIcon(
-                        getClass().getResource(ExtensionWappalyzer.RESOURCE + "/wappalyzer.png")));
+                        getClass()
+                                .getResource(
+                                        ExtensionWappalyzer.RESOURCE
+                                                + "/fingerprint-recognition.png")));
         this.setDefaultAccelerator(
                 this.extension
                         .getView()
