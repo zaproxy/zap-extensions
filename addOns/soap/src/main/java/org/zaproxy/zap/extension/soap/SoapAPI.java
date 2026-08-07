@@ -24,9 +24,11 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
+import org.zaproxy.zap.extension.api.ApiException.Type;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.utils.ApiUtils;
 
 public class SoapAPI extends ApiImplementor {
 
@@ -35,6 +37,7 @@ public class SoapAPI extends ApiImplementor {
     private static final String ACTION_IMPORT_URL = "importUrl";
     private static final String PARAM_URL = "url";
     private static final String PARAM_FILE = "file";
+    private static final String PARAM_MAX_MESSAGES = "maxMessages";
     private final ExtensionImportWSDL extension;
 
     /** Provided only for API client generator usage. */
@@ -44,8 +47,16 @@ public class SoapAPI extends ApiImplementor {
 
     public SoapAPI(ExtensionImportWSDL ext) {
         extension = ext;
-        this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, new String[] {PARAM_FILE}));
-        this.addApiAction(new ApiAction(ACTION_IMPORT_URL, new String[] {PARAM_URL}));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_IMPORT_FILE,
+                        new String[] {PARAM_FILE},
+                        new String[] {PARAM_MAX_MESSAGES}));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_IMPORT_URL,
+                        new String[] {PARAM_URL},
+                        new String[] {PARAM_MAX_MESSAGES}));
     }
 
     @Override
@@ -61,7 +72,7 @@ public class SoapAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.DOES_NOT_EXIST, file.getAbsolutePath());
             }
 
-            extension.syncImportWsdlFile(file);
+            extension.syncImportWsdlFile(file, getMaxMessages(params));
 
             return ApiResponseElement.OK;
 
@@ -73,15 +84,23 @@ public class SoapAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
             }
 
-            try {
-                extension.syncImportWsdlUrl(url);
-                return ApiResponseElement.OK;
-            } catch (Exception e) {
-                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
-            }
+            extension.syncImportWsdlUrl(url, getMaxMessages(params));
+            return ApiResponseElement.OK;
 
         } else {
             throw new ApiException(ApiException.Type.BAD_ACTION);
         }
+    }
+
+    private static int getMaxMessages(JSONObject params) throws ApiException {
+        if (!params.containsKey(PARAM_MAX_MESSAGES)
+                || params.getString(PARAM_MAX_MESSAGES).isEmpty()) {
+            return 0;
+        }
+        int maxMessages = ApiUtils.getIntParam(params, PARAM_MAX_MESSAGES);
+        if (maxMessages < 0) {
+            throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_MAX_MESSAGES);
+        }
+        return maxMessages;
     }
 }
