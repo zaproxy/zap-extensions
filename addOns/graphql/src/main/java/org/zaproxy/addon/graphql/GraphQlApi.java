@@ -30,6 +30,7 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiView;
+import org.zaproxy.zap.utils.ApiUtils;
 
 public class GraphQlApi extends ApiImplementor {
 
@@ -39,6 +40,7 @@ public class GraphQlApi extends ApiImplementor {
     private static final String PARAM_FILE = "file";
     private static final String PARAM_URL = "url";
     private static final String PARAM_ENDPOINT = "endurl";
+    private static final String PARAM_MAX_MESSAGES = "maxMessages";
 
     private static final String OPTION_ARGS_TYPE = "optionArgsType";
     private static final String OPTION_CYCLE_DETECTION_MODE = "optionCycleDetectionMode";
@@ -59,12 +61,15 @@ public class GraphQlApi extends ApiImplementor {
      */
     public GraphQlApi(GraphQlParam options) {
         this.addApiAction(
-                new ApiAction(ACTION_IMPORT_FILE, new String[] {PARAM_ENDPOINT, PARAM_FILE}));
+                new ApiAction(
+                        ACTION_IMPORT_FILE,
+                        new String[] {PARAM_ENDPOINT, PARAM_FILE},
+                        new String[] {PARAM_MAX_MESSAGES}));
         this.addApiAction(
                 new ApiAction(
                         ACTION_IMPORT_URL,
                         new String[] {PARAM_ENDPOINT},
-                        new String[] {PARAM_URL}));
+                        new String[] {PARAM_URL, PARAM_MAX_MESSAGES}));
         this.addApiView(new ApiView(OPTION_ARGS_TYPE));
         this.addApiView(new ApiView(OPTION_CYCLE_DETECTION_MODE));
         this.addApiView(new ApiView(OPTION_QUERY_SPLIT_TYPE));
@@ -122,6 +127,7 @@ public class GraphQlApi extends ApiImplementor {
                             params.getString(PARAM_ENDPOINT),
                             HttpSender.MANUAL_REQUEST_INITIATOR,
                             true);
+            parser.setMaxMessages(getMaxMessages(params));
             parser.importFile(params.getString(PARAM_FILE));
         } catch (URIException e) {
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
@@ -139,6 +145,7 @@ public class GraphQlApi extends ApiImplementor {
                             params.getString(PARAM_ENDPOINT),
                             HttpSender.MANUAL_REQUEST_INITIATOR,
                             true);
+            parser.setMaxMessages(getMaxMessages(params));
             parser.addRequesterListener(new HistoryPersister());
             if (params.optString(PARAM_URL, "").isEmpty()) {
                 parser.introspect();
@@ -148,5 +155,17 @@ public class GraphQlApi extends ApiImplementor {
         } catch (IOException e) {
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
+    }
+
+    private static int getMaxMessages(JSONObject params) throws ApiException {
+        if (!params.containsKey(PARAM_MAX_MESSAGES)
+                || params.getString(PARAM_MAX_MESSAGES).isEmpty()) {
+            return 0;
+        }
+        int maxMessages = ApiUtils.getIntParam(params, PARAM_MAX_MESSAGES);
+        if (maxMessages < 0) {
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_MAX_MESSAGES);
+        }
+        return maxMessages;
     }
 }
