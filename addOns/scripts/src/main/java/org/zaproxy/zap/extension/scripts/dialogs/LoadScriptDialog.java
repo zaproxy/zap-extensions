@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.scripts.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -160,24 +161,32 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 
     public void reset(ScriptWrapper script) {
         this.script = script;
-        this.setFieldValue(FIELD_NAME, script.getFile().getName());
-        int dotIndex = script.getFile().getName().lastIndexOf(".");
+        File scriptFile = script.getFile();
+        String fileName = scriptFile != null ? scriptFile.getName() : "";
+        this.setFieldValue(FIELD_NAME, fileName);
+        int dotIndex = fileName.lastIndexOf(".");
         if (dotIndex > 0) {
             // Work out the type based on the extension
-            String extn = script.getFile().getName().substring(dotIndex + 1);
+            String extn = fileName.substring(dotIndex + 1);
             String name = extension.getExtScript().getEngineNameForExtension(extn);
             if (name != null) {
                 this.setFieldValue(FIELD_ENGINE, name);
             }
         }
-        // Use the type from the parent dir, if its a valid one
-        String parentDir = script.getFile().getParentFile().getName();
-        ScriptType type = extension.getExtScript().getScriptType(parentDir);
+        this.setFieldValue(
+                FIELD_TYPE, Constant.messages.getString(getScriptType(scriptFile).getI18nKey()));
+
+        this.setFieldValue(FIELD_DESC, "");
+    }
+
+    private ScriptType getScriptType(File scriptFile) {
+        ScriptType type = null;
+        if (scriptFile != null) {
+            type = extension.getExtScript().getScriptType(scriptFile.getParentFile().getName());
+        }
         if (type == null) {
             type = extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE);
         }
-        this.setFieldValue(FIELD_TYPE, Constant.messages.getString(type.getI18nKey()));
-
-        this.setFieldValue(FIELD_DESC, "");
+        return type;
     }
 }
