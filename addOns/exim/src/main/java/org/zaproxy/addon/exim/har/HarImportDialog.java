@@ -44,11 +44,12 @@ public class HarImportDialog extends StandardFieldsDialog {
     private static final String TITLE = "exim.har.importDialog.title";
     private static final String FILE_PARAM = "exim.har.importDialog.labelFile";
     private static final String SEND_REQUESTS_PARAM = "exim.har.importDialog.sendRequests";
+    private static final String MAX_MESSAGES_PARAM = "exim.har.importDialog.labelMaxMessages";
 
     private static int threadId = 1;
 
     public HarImportDialog() {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 180));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 220));
         addFileSelectField(
                 FILE_PARAM,
                 null,
@@ -56,6 +57,7 @@ public class HarImportDialog extends StandardFieldsDialog {
                 new FileNameExtensionFilter(
                         Constant.messages.getString("exim.har.file.description"), "har"));
         addCheckBoxField(SEND_REQUESTS_PARAM, false);
+        addNumberField(MAX_MESSAGES_PARAM, 0, Integer.MAX_VALUE, 0);
         addPadding();
     }
 
@@ -80,6 +82,7 @@ public class HarImportDialog extends StandardFieldsDialog {
     public void save() {
         File file = new File(getStringValue(FILE_PARAM));
         boolean sendRequests = getBoolValue(SEND_REQUESTS_PARAM);
+        int maxMessages = getIntValue(MAX_MESSAGES_PARAM);
         new Thread(
                         () -> {
                             int tasks = 0;
@@ -104,7 +107,8 @@ public class HarImportDialog extends StandardFieldsDialog {
                                     new HarImporter(
                                             log,
                                             new ProgressPaneListener(currentImportPane),
-                                            sendRequests);
+                                            sendRequests,
+                                            maxMessages);
                             if (!harImporter.isSuccess()) {
                                 showImportError(file);
                             }

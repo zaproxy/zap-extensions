@@ -89,10 +89,11 @@ class ImportJobUnitTest extends TestUtils {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(3)));
+        assertThat(params.size(), is(equalTo(4)));
         assertThat(params.get("type"), is(equalTo("")));
         assertThat(params.get("fileName"), is(equalTo("")));
         assertThat(params.get("sendRequests"), is(equalTo("false")));
+        assertThat(params.get("maxMessages"), is(equalTo("0")));
     }
 
     @Test
@@ -101,6 +102,7 @@ class ImportJobUnitTest extends TestUtils {
         AutomationProgress progress = new AutomationProgress();
         String type = HarImporterType.ID;
         String fileName = "C:\\Users\\ZAPBot\\Documents\\test file.har";
+        int maxMessages = 1;
         String yamlStr =
                 "parameters:\n"
                         + "  type: "
@@ -109,7 +111,9 @@ class ImportJobUnitTest extends TestUtils {
                         + "  fileName: "
                         + fileName
                         + "\n"
-                        + "  sendRequests: true";
+                        + "  sendRequests: true\n"
+                        + "  maxMessages: "
+                        + maxMessages;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
@@ -124,7 +128,30 @@ class ImportJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getType(), is(equalTo(type)));
         assertThat(job.getParameters().getFileName(), is(equalTo(fileName)));
         assertThat(job.getParameters().getSendRequests(), is(equalTo(true)));
+        assertThat(job.getParameters().getMaxMessages(), is(equalTo(maxMessages)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldWarnIfMaxMessagesNegative() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        String yamlStr = "parameters:\n" + "  maxMessages: -1";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        ImportJob job = new ImportJob(extExim);
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(equalTo("Job import maxMessages must be zero or greater, was: -1")));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 

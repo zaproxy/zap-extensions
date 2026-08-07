@@ -35,6 +35,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
@@ -299,6 +300,22 @@ class HarImporterUnitTest extends TestUtils {
         assertThat(hit.get(), equalTo(true));
         verify(listener).completed();
         verify(statsListener).counterInc("stats.exim.import.har.file.message");
+    }
+
+    @Test
+    void shouldLimitMessagesWhenMaxMessagesSet() throws Exception {
+        // Given
+        HttpMessage msg1 =
+                new HttpMessage("GET /1 HTTP/1.1", EMPTY_BODY, "HTTP/1.1 200 OK", EMPTY_BODY);
+        HttpMessage msg2 =
+                new HttpMessage("GET /2 HTTP/1.1", EMPTY_BODY, "HTTP/1.1 200 OK", EMPTY_BODY);
+        HarLogBuilder harLog = HarUtils.createZapHarLog();
+        harLog.entries(List.of(HarUtils.createHarEntry(msg1), HarUtils.createHarEntry(msg2)));
+        // When
+        HarImporter importer = new HarImporter(harLog.build(), null, false, 1);
+        // Then
+        assertThat(importer.isSuccess(), equalTo(true));
+        verify(statsListener, times(1)).counterInc("stats.exim.import.har.file.message");
     }
 
     @Test
