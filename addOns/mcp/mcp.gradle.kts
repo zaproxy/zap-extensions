@@ -5,6 +5,8 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/mcp-integration/")
+
         extensions {
             register("org.zaproxy.addon.mcp.ExtensionMcp")
             register("org.zaproxy.addon.mcp.spider.ExtensionMcpSpider") {
