@@ -241,7 +241,18 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     List<String> importOpenApiDefinition(
             final URI uri, final String targetUrl, boolean initViaUi, int contextId, User user) {
-        return importOpenApiDefinitionV2(uri, targetUrl, initViaUi, contextId, user).getErrors();
+        return importOpenApiDefinition(uri, targetUrl, initViaUi, contextId, user, 0);
+    }
+
+    List<String> importOpenApiDefinition(
+            final URI uri,
+            final String targetUrl,
+            boolean initViaUi,
+            int contextId,
+            User user,
+            int maxMessages) {
+        return importOpenApiDefinitionV2(uri, targetUrl, initViaUi, contextId, user, maxMessages)
+                .getErrors();
     }
 
     public OpenApiResults importOpenApiDefinitionV2(
@@ -347,7 +358,17 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     List<String> importOpenApiDefinition(
             final File file, final String targetUrl, boolean initViaUi, int contextId, User user) {
-        return this.importOpenApiDefinitionV2(file, targetUrl, initViaUi, contextId, user)
+        return importOpenApiDefinition(file, targetUrl, initViaUi, contextId, user, 0);
+    }
+
+    List<String> importOpenApiDefinition(
+            final File file,
+            final String targetUrl,
+            boolean initViaUi,
+            int contextId,
+            User user,
+            int maxMessages) {
+        return importOpenApiDefinitionV2(file, targetUrl, initViaUi, contextId, user, maxMessages)
                 .getErrors();
     }
 
