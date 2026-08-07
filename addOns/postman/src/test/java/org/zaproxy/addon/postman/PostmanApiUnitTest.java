@@ -20,18 +20,25 @@
 package org.zaproxy.addon.postman;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.api.ApiElement;
+import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiParameter;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -53,6 +60,38 @@ class PostmanApiUnitTest extends TestUtils {
         String prefix = api.getPrefix();
         // Then
         assertThat(prefix, is(equalTo("postman")));
+    }
+
+    @Test
+    void shouldThrowApiExceptionIfMaxMessagesNegative() {
+        // Given
+        JSONObject params = new JSONObject();
+        params.put("url", "http://example.com");
+        params.put("maxMessages", "-1");
+        try (MockedConstruction<PostmanParser> mocked = mockConstruction(PostmanParser.class)) {
+            // When / Then
+            ApiException exception =
+                    assertThrows(
+                            ApiException.class, () -> api.handleApiAction("importUrl", params));
+            assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+            assertThat(exception.toString(), containsString("(illegal_parameter): maxMessages"));
+            assertThat(mocked.constructed(), is(not(empty())));
+        }
+    }
+
+    @Test
+    void shouldPassMaxMessagesForFile() throws Exception {
+        // Given
+        JSONObject params = new JSONObject();
+        params.put("file", "/tmp/collection.json");
+        params.put("maxMessages", "1");
+        try (MockedConstruction<PostmanParser> mocked = mockConstruction(PostmanParser.class)) {
+            // When
+            api.handleApiAction("importFile", params);
+            // Then
+            verify(mocked.constructed().get(0))
+                    .importFromFile("/tmp/collection.json", "", false, 1);
+        }
     }
 
     @Test
