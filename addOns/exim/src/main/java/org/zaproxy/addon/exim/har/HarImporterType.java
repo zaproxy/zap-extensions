@@ -45,16 +45,17 @@ public class HarImporterType extends ImporterType {
 
     @Override
     public void importData(Reader reader, MessageHandler handler) throws Exception {
-        importData(reader, handler, false);
+        importData(reader, handler, false, 0);
     }
 
     @Override
     public void importData(Reader reader, MessageHandler handler, ImporterOptions options)
             throws Exception {
-        importData(reader, handler, options.isSendRequests());
+        importData(reader, handler, options.isSendRequests(), options.getMaxMessages());
     }
 
-    private void importData(Reader reader, MessageHandler handler, boolean sendRequests)
+    private void importData(
+            Reader reader, MessageHandler handler, boolean sendRequests, int maxMessages)
             throws Exception {
         JsonParser parser = HarUtils.JSON_MAPPER.createParser(reader);
 
@@ -72,11 +73,16 @@ public class HarImporterType extends ImporterType {
         HarImporter.SendContext sendContext =
                 sendRequests ? HarImporter.SendContext.create() : null;
         HarEntry entry;
+        int imported = 0;
         while ((entry = parser.readValueAs(HarEntry.class)) != null) {
+            if (maxMessages > 0 && imported >= maxMessages) {
+                break;
+            }
             HttpMessage message =
                     sendRequests ? sendContext.send(entry) : HarUtils.createHttpMessage(entry);
             if (message != null) {
                 handler.handle(message);
+                imported++;
             }
         }
     }

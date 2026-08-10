@@ -3,3 +3,4 @@
       type:                            # String: One of ['har', 'modsec2', 'url', 'zap_messages']
       fileName:                        # String: Name of the file containing the data
       sendRequests:                    # Bool: If true and type is har, send the requests instead of importing recorded responses, default: false
+      maxMessages:                     # Int: Maximum number of messages to import (har), default: 0, import all messages

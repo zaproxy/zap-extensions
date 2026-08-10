@@ -96,6 +96,7 @@ class ImporterOptionsUnitTest extends TestUtils {
         assertThat(options.getInputFile(), is(equalTo(inputFile)));
         assertThat(options.getMessageHandler(), is(equalTo(messageHandler)));
         assertThat(options.isSendRequests(), is(equalTo(false)));
+        assertThat(options.getMaxMessages(), is(equalTo(0)));
     }
 
     @Test
@@ -106,6 +107,16 @@ class ImporterOptionsUnitTest extends TestUtils {
         ImporterOptions options = builder.setSendRequests(true).build();
         // Then
         assertThat(options.isSendRequests(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldSetMaxMessages() {
+        // Given
+        ImporterOptions.Builder builder = builderWithInputFileAndMessageHandler();
+        // When
+        ImporterOptions options = builder.setMaxMessages(1).build();
+        // Then
+        assertThat(options.getMaxMessages(), is(equalTo(1)));
     }
 
     @Test
