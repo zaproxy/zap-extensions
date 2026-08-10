@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Include cause of invalid URL in error message of Client Spider job.
+- Updated Chrome and Firefox extensions to v0.2.1.
 
 ## [0.30.0] - 2026-07-06
 ### Changed
