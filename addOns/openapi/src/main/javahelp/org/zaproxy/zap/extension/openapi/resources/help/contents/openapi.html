@@ -24,6 +24,11 @@ A menu item is added to the Import menu:
 The dialogue allows overriding the server URL present in the OpenAPI definition (or specify one if not present) through the Target URL field.
 The import progress is shown in the progress tab.
 
+<H3>Max Messages</H3>
+The dialogue allows users to limit the number of messages imported.
+A value of <code>0</code> (the default) imports all messages.
+Note that redirects are followed when importing, so this is a soft limit and the number of messages stored may exceed the value set.
+
 <H3>Context</H3>
 The dialogues also allow selecting a Context, optionally. If a context is selected,
 <ul>
@@ -51,10 +56,11 @@ Following some examples, overriding:
 <H2>API</H2>
 The following operations are added to the API:
 <ul>
-<li>ACTION importFile (file, target, contextId, userId)</li>
-<li>ACTION importUrl (url, hostOverride, contextId, userId)</li>
+<li>ACTION importFile (file, target, contextId, userId, maxMessages)</li>
+<li>ACTION importUrl (url, hostOverride, contextId, userId, maxMessages)</li>
 </ul>
 Both <code>target</code> and <code>hostOverride</code> support the <code>Target URL</code> format explained earlier.
+The optional <code>maxMessages</code> parameter limits the number of messages imported; omit or use <code>0</code> to import all.
 
 The definitions will be imported synchronously and any warnings will be returned.
 

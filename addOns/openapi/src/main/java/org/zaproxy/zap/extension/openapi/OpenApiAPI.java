@@ -50,6 +50,7 @@ public class OpenApiAPI extends ApiImplementor {
     private static final String PARAM_TARGET = "target";
     private static final String PARAM_CONTEXT_ID = "contextId";
     private static final String PARAM_USER_ID = "userId";
+    private static final String PARAM_MAX_MESSAGES = "maxMessages";
 
     private static final String PARAM_HOST_OVERRIDE = "hostOverride";
     private ExtensionOpenApi extension = null;
@@ -65,12 +66,16 @@ public class OpenApiAPI extends ApiImplementor {
                 new ApiAction(
                         ACTION_IMPORT_FILE,
                         new String[] {PARAM_FILE},
-                        new String[] {PARAM_TARGET, PARAM_CONTEXT_ID, PARAM_USER_ID}));
+                        new String[] {
+                            PARAM_TARGET, PARAM_CONTEXT_ID, PARAM_USER_ID, PARAM_MAX_MESSAGES
+                        }));
         this.addApiAction(
                 new ApiAction(
                         ACTION_IMPORT_URL,
                         new String[] {PARAM_URL},
-                        new String[] {PARAM_HOST_OVERRIDE, PARAM_CONTEXT_ID, PARAM_USER_ID}));
+                        new String[] {
+                            PARAM_HOST_OVERRIDE, PARAM_CONTEXT_ID, PARAM_USER_ID, PARAM_MAX_MESSAGES
+                        }));
     }
 
     @Override
@@ -94,7 +99,11 @@ public class OpenApiAPI extends ApiImplementor {
             int ctxId = getContextId(params);
             User user = getUser(ctxId, params);
             try {
-                errors = extension.importOpenApiDefinition(file, target, false, ctxId, user);
+                errors =
+                        extension
+                                .importOpenApiDefinitionV2(
+                                        file, target, false, ctxId, user, getMaxMessages(params))
+                                .getErrors();
             } catch (InvalidUrlException e) {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_TARGET);
             } catch (EmptyDefinitionException | InvalidDefinitionException e) {
@@ -121,12 +130,15 @@ public class OpenApiAPI extends ApiImplementor {
                 int ctxId = getContextId(params);
                 User user = getUser(ctxId, params);
                 List<String> errors =
-                        extension.importOpenApiDefinition(
-                                new URI(params.getString(PARAM_URL), false),
-                                override,
-                                false,
-                                ctxId,
-                                user);
+                        extension
+                                .importOpenApiDefinitionV2(
+                                        new URI(params.getString(PARAM_URL), false),
+                                        override,
+                                        false,
+                                        ctxId,
+                                        user,
+                                        getMaxMessages(params))
+                                .getErrors();
 
                 if (errors == null) {
                     throw new ApiException(
@@ -161,6 +173,18 @@ public class OpenApiAPI extends ApiImplementor {
             return contexts.get(0).getId();
         }
         return -1;
+    }
+
+    private static int getMaxMessages(JSONObject params) throws ApiException {
+        if (!params.containsKey(PARAM_MAX_MESSAGES)
+                || params.getString(PARAM_MAX_MESSAGES).isEmpty()) {
+            return 0;
+        }
+        int maxMessages = ApiUtils.getIntParam(params, PARAM_MAX_MESSAGES);
+        if (maxMessages < 0) {
+            throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_MAX_MESSAGES);
+        }
+        return maxMessages;
     }
 
     private static User getUser(int ctxId, JSONObject params) throws ApiException {
