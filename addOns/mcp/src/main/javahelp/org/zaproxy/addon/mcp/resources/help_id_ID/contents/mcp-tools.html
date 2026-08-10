@@ -71,10 +71,32 @@ Get the passive scan queue status. Returns the number of HTTP records waiting to
 <p>
 No parameters.
 
+<H2>zap_get_history</H2>
+Get selected parts of a ZAP history entry. Prefer this over <code>zap://history/{id}</code> when response or request bodies may be large.
+<p>
+Parameters:
+<ul>
+<li><code>id</code> - history entry ID (e.g. <code>123</code>)
+<li><code>fields</code> - optional list of <code>requestHeader</code>, <code>requestBody</code>, <code>responseHeader</code>, <code>responseBody</code> (defaults to both headers)
+<li><code>body_offset</code> - optional start index into each included body (0-based; negative values count from the end)
+<li><code>max_body_chars</code> - optional maximum characters per included body (default 4000)
+</ul>
+When a body field is included the result also provides <code>*Length</code>, <code>*Offset</code>, <code>*Returned</code>, and <code>*Truncated</code> metadata (e.g. <code>responseBodyTruncated</code>, <code>requestBodyTruncated</code>).
+
 <H2>zap_generate_report</H2>
 Generate a ZAP report. Use the <code>zap://report-templates</code> resource to discover available template names. Requires the reports add-on.
 <p>
 Parameters: <code>file_path</code> - full path for the output file (e.g. <code>/tmp/report.html</code>), <code>template</code> - template config name (e.g. <code>traditional-html</code>), optionally <code>title</code> - report title
+
+<H2>zap_list_resources</H2>
+List available ZAP MCP resources (URI, name, description). Useful for clients that only support tools; clients that support the resources capability can use <code>resources/list</code> instead.
+<p>
+No parameters. Use <code>zap_read_resource</code> to read a listed resource.
+
+<H2>zap_read_resource</H2>
+Read a ZAP MCP resource by URI. Use <code>zap_list_resources</code> to discover available URIs (including templates such as <code>zap://history/{id}</code>). Clients that support the resources capability can use <code>resources/read</code> instead.
+<p>
+Parameters: <code>uri</code> - the resource URI (e.g. <code>zap://alerts</code> or <code>zap://history/123</code>)
 
 <H2>See Also</H2>
 
