@@ -9,4 +9,5 @@
 	<indexitem text="コンテキストアラートフィルター" target="addon.contextAlertFilter" />
 	<indexitem text="グローバルアラートフィルター" target="addon.globalAlertFilter" />
 	<indexitem text="自動化" target="addon.automation" />
+	<indexitem text="LLM Support" target="addon.llm" />
 </index>

@@ -9,4 +9,5 @@
 	<indexitem text="Фильтры контекстных предупреждений " target="addon.contextAlertFilter" />
 	<indexitem text="Глобальные Фильтры Предупреждений " target="addon.globalAlertFilter" />
 	<indexitem text="Автоматизация " target="addon.automation" />
+	<indexitem text="LLM Support" target="addon.llm" />
 </index>
