@@ -40,6 +40,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 
 @SuppressWarnings("serial")
@@ -50,6 +51,7 @@ public class ImportDialog extends AbstractDialog {
 
     private JTextField fieldSchema;
     private JTextField fieldEndpoint;
+    private ZapNumberSpinner fieldMaxMessages;
     private GraphQlParser parser;
     private JButton buttonCancel;
     private JButton buttonChooseFile;
@@ -80,9 +82,16 @@ public class ImportDialog extends AbstractDialog {
                                 + Constant.messages.getString(MESSAGE_PREFIX + "labelEndpoint")
                                 + "<font color=red>*</font></html>");
         fieldsPanel.add(
-                endpointLabel, LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(4, 0, 0, 4)));
+                endpointLabel, LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(4, 0, 4, 4)));
         fieldsPanel.add(
                 getEndpointField(),
+                LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 4, 0)));
+        fieldsRow++;
+        fieldsPanel.add(
+                new JLabel(Constant.messages.getString(MESSAGE_PREFIX + "labelMaxMessages")),
+                LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(4, 0, 0, 4)));
+        fieldsPanel.add(
+                getMaxMessagesField(),
                 LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 0, 0)));
 
         int row = 0;
@@ -120,6 +129,13 @@ public class ImportDialog extends AbstractDialog {
             setContextMenu(fieldEndpoint);
         }
         return fieldEndpoint;
+    }
+
+    private ZapNumberSpinner getMaxMessagesField() {
+        if (fieldMaxMessages == null) {
+            fieldMaxMessages = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
+        }
+        return fieldMaxMessages;
     }
 
     private JButton getImportButton() {
@@ -170,6 +186,7 @@ public class ImportDialog extends AbstractDialog {
         getImportButton().setEnabled(!show);
         getSchemaField().setEnabled(!show);
         getEndpointField().setEnabled(!show);
+        getMaxMessagesField().setEnabled(!show);
         getChooseFileButton().setEnabled(!show);
     }
 
@@ -178,6 +195,7 @@ public class ImportDialog extends AbstractDialog {
             parser =
                     new GraphQlParser(
                             fieldEndpoint.getText(), HttpSender.MANUAL_REQUEST_INITIATOR, false);
+            parser.setMaxMessages(getMaxMessagesField().getValue());
             parser.addRequesterListener(new HistoryPersister());
             return true;
         } catch (URIException e) {
@@ -269,5 +287,6 @@ public class ImportDialog extends AbstractDialog {
     void clearFields() {
         getSchemaField().setText("");
         getEndpointField().setText("");
+        getMaxMessagesField().changeToDefaultValue();
     }
 }
