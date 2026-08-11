@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Move script types from core (Issue 8027).
 
+### Changed
+- Show script output/errors asynchronously in the GUI to not block the running script.
+
 ## [45.20.0] - 2026-07-13
 ### Added
 - GUI support for Zest script chains and failure level in the Automation Framework Script job dialog (via the Use Script Chain checkbox, and Chains tab).

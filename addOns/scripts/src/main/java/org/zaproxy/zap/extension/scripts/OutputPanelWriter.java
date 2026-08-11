@@ -51,7 +51,7 @@ public class OutputPanelWriter extends Writer {
 
     @Override
     public void flush() {
-        outputPanel.append(buffer.toString(), sourceName);
+        outputPanel.appendAsync(buffer.toString(), sourceName);
         buffer.setLength(0);
     }
 
