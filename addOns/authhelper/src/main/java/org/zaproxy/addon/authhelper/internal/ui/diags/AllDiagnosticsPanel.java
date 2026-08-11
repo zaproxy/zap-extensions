@@ -35,6 +35,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -373,6 +374,7 @@ public class AllDiagnosticsPanel extends AbstractPanel {
                 return;
             }
 
+            AtomicInteger messageCount = new AtomicInteger();
             for (Map<String, Object> diagnosticData : diagnostics) {
                 Diagnostic diagnostic = new Diagnostic();
 
@@ -401,7 +403,9 @@ public class AllDiagnosticsPanel extends AbstractPanel {
                             readWebElement((Map<String, Object>) stepData.get("webElement")));
                     readScreenshot(diagnosticStep, (String) stepData.get("screenshot"));
                     readMessages(
-                            diagnosticStep, (List<Map<String, Object>>) stepData.get("messages"));
+                            messageCount,
+                            diagnosticStep,
+                            (List<Map<String, Object>>) stepData.get("messages"));
                     readWebElements(
                             diagnosticStep,
                             (List<Map<String, Object>>) stepData.get("webElements"));
@@ -533,7 +537,9 @@ public class AllDiagnosticsPanel extends AbstractPanel {
     }
 
     private void readMessages(
-            DiagnosticStep diagnosticStep, List<Map<String, Object>> messagesData) {
+            AtomicInteger messageCount,
+            DiagnosticStep diagnosticStep,
+            List<Map<String, Object>> messagesData) {
         if (messagesData == null) {
             return;
         }
@@ -568,7 +574,10 @@ public class AllDiagnosticsPanel extends AbstractPanel {
                 ref.setTags(
                         List.of(
                                 Constant.messages.getString(
-                                        "authhelper.authdiags.message.tag.initiator", initiator)));
+                                        "authhelper.authdiags.message.tag.initiator", initiator),
+                                Constant.messages.getString(
+                                        "authhelper.authdiags.message.tag.id",
+                                        messageCount.incrementAndGet())));
 
                 if (extensionHistory != null) {
                     EventQueue.invokeLater(
