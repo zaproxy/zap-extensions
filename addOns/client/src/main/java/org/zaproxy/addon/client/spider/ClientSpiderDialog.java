@@ -75,6 +75,8 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_SHUTDOWN_TIME = "client.options.label.shutdowntime";
     private static final String FIELD_LOGOUT_AVOIDANCE = "client.scandialog.label.logoutAvoidance";
     private static final String FIELD_ACTION_WAIT_TIME = "client.options.label.actionwaittime";
+    private static final String FIELD_CACHE_STATIC_RESOURCES =
+            "client.scandialog.label.cacheStaticResources";
 
     private static final Logger LOGGER = LogManager.getLogger(ClientSpiderDialog.class);
     private static final long serialVersionUID = 1L;
@@ -188,6 +190,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
                 1, FIELD_SHUTDOWN_TIME, 0, Integer.MAX_VALUE, params.getShutdownTimeInSecs());
         this.addNumberField(1, FIELD_DURATION, 0, Integer.MAX_VALUE, params.getMaxDuration());
         addCheckBoxField(1, FIELD_LOGOUT_AVOIDANCE, params.isLogoutAvoidance());
+        addCheckBoxField(1, FIELD_CACHE_STATIC_RESOURCES, params.isCacheStaticResources());
 
         this.addPadding(1);
 
@@ -367,6 +370,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
             clientParams.setMaxDuration(this.getIntValue(FIELD_DURATION));
             clientParams.setActionWaitTimeInSecs(this.getIntValue(FIELD_ACTION_WAIT_TIME));
             clientParams.setLogoutAvoidance(getBoolValue(FIELD_LOGOUT_AVOIDANCE));
+            clientParams.setCacheStaticResources(getBoolValue(FIELD_CACHE_STATIC_RESOURCES));
         }
 
         subtreeOnlyPreviousCheckedState = getBoolValue(FIELD_SUBTREE_ONLY);
