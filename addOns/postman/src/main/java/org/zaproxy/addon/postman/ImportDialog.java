@@ -43,6 +43,7 @@ import org.zaproxy.addon.commonlib.ZapUriException;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class ImportDialog extends AbstractDialog {
@@ -52,6 +53,7 @@ public class ImportDialog extends AbstractDialog {
     private JTextField fieldCollection;
     private JTextField fieldTarget;
     private JTextField fieldVariables;
+    private ZapNumberSpinner fieldMaxMessages;
     private JButton buttonChooseFile;
     private JButton buttonCancel;
     private JButton buttonImport;
@@ -98,6 +100,13 @@ public class ImportDialog extends AbstractDialog {
         fieldsPanel.add(
                 getVariablesField(),
                 LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 4, 0)));
+        fieldsRow++;
+        fieldsPanel.add(
+                new JLabel(Constant.messages.getString("postman.importDialog.labelMaxMessages")),
+                LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(4, 0, 0, 4)));
+        fieldsPanel.add(
+                getMaxMessagesField(),
+                LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 0, 0)));
 
         int row = 0;
         add(fieldsPanel, LayoutHelper.getGBC(0, row, 2, 1.0, new Insets(8, 8, 4, 8)));
@@ -142,6 +151,13 @@ public class ImportDialog extends AbstractDialog {
             setContextMenu(fieldVariables);
         }
         return fieldVariables;
+    }
+
+    private ZapNumberSpinner getMaxMessagesField() {
+        if (fieldMaxMessages == null) {
+            fieldMaxMessages = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
+        }
+        return fieldMaxMessages;
     }
 
     private static void setContextMenu(JTextField field) {
@@ -234,12 +250,16 @@ public class ImportDialog extends AbstractDialog {
 
         PostmanParser parser = new PostmanParser();
         boolean importedWithoutErrors = false;
+        int maxMessages = getMaxMessagesField().getValue();
 
         try {
             UriUtils.isValid(collectionLocation);
             importedWithoutErrors =
                     parser.importFromUrl(
-                            getCollectionField().getText(), getVariablesField().getText(), true);
+                            getCollectionField().getText(),
+                            getVariablesField().getText(),
+                            true,
+                            maxMessages);
         } catch (ZapUriException e1) {
             // Not a valid URI, try to import as a file
             var file = new File(collectionLocation);
@@ -256,7 +276,8 @@ public class ImportDialog extends AbstractDialog {
                         parser.importFromFile(
                                 getCollectionField().getText(),
                                 getVariablesField().getText(),
-                                true);
+                                true,
+                                maxMessages);
             } catch (IOException e2) {
                 handleParseException(e2);
                 return false;
@@ -301,6 +322,7 @@ public class ImportDialog extends AbstractDialog {
         getCollectionField().setEnabled(!show);
         getTargetField().setEnabled(!show);
         getVariablesField().setEditable(!show);
+        getMaxMessagesField().setEnabled(!show);
         getChooseFileButton().setEnabled(!show);
     }
 
@@ -348,5 +370,6 @@ public class ImportDialog extends AbstractDialog {
         getCollectionField().setText("");
         getTargetField().setText("");
         getVariablesField().setText("");
+        getMaxMessagesField().changeToDefaultValue();
     }
 }
