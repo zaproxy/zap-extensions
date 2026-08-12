@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.22.0] - 2026-08-12
 ### Added
 - Option to send requests when importing a HAR file, including via the Automation Framework and API.
 - Allow users to limit the number of HAR messages to import (`maxMessages`). Ex: If testing authentication, access, etc.
@@ -162,6 +162,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.19.0
