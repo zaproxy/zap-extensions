@@ -5,8 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-### Changed
-- Use title capitalization for WebSocket menu items and session panel.
 
 ## [38] - 2026-08-07
 ### Changed
