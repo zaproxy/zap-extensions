@@ -14,6 +14,7 @@
 				<tocitem text="検証の特定" target="authhelper.verification-id"/>
 				<tocitem text="認証テスターダイアログ" target="authhelper.auth-tester"/>
 				<tocitem text="レポートテンプレート" target="authhelper.report-templates"/>
+				<tocitem text="自動化フレームワーク対応" target="authhelper.automation"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

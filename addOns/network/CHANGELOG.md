@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.29.0] - 2026-08-07
 ### Added
 - Option to support client certificates programmatically.
 - Add option to control how browser background requests should be handled, default to hide.
@@ -286,6 +289,7 @@ would not be cleared when reusing the same message.
   - Options panel to manage the root CA certificate and issued certificates.
   - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
 
+[0.29.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.26.0

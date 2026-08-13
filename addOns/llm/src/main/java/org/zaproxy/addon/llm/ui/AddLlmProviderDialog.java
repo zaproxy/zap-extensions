@@ -49,6 +49,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.addon.llm.LlmProvider.SuggestedEndpoint;
 import org.zaproxy.addon.llm.LlmProviderConfig;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
 @SuppressWarnings("serial")
@@ -64,6 +65,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
     protected final JPasswordField apiKeyField;
     protected final JComboBox<SuggestedEndpoint> endpointComboBox;
     protected final JTextArea modelsArea;
+    protected final ZapNumberSpinner timeoutSpinner;
     protected final JCheckBox trustedCheckBox;
 
     protected final LlmProviderConfigsTableModel model;
@@ -140,6 +142,13 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         JScrollPane modelsScrollPane = new JScrollPane(modelsArea);
         modelNameLabel.setLabelFor(modelsArea);
 
+        JLabel timeoutLabel =
+                new JLabel(Constant.messages.getString("llm.options.providers.field.timeout"));
+        timeoutSpinner =
+                new ZapNumberSpinner(
+                        1, LlmProviderConfig.DEFAULT_TIMEOUT_SECONDS, Integer.MAX_VALUE);
+        timeoutLabel.setLabelFor(timeoutSpinner);
+
         trustedCheckBox =
                 new JCheckBox(Constant.messages.getString("llm.options.providers.field.trusted"));
 
@@ -154,7 +163,8 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                                                         .addComponent(providerLabel)
                                                         .addComponent(apiKeyLabel)
                                                         .addComponent(endpointLabel)
-                                                        .addComponent(modelNameLabel))
+                                                        .addComponent(modelNameLabel)
+                                                        .addComponent(timeoutLabel))
                                         .addGroup(
                                                 layout.createParallelGroup(
                                                                 GroupLayout.Alignment.LEADING)
@@ -163,6 +173,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                                                         .addComponent(apiKeyField)
                                                         .addComponent(endpointComboBox)
                                                         .addComponent(modelsScrollPane)
+                                                        .addComponent(timeoutSpinner)
                                                         .addComponent(trustedCheckBox))));
 
         layout.setVerticalGroup(
@@ -187,6 +198,10 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(modelNameLabel)
                                         .addComponent(modelsScrollPane))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(timeoutLabel)
+                                        .addComponent(timeoutSpinner))
                         .addComponent(trustedCheckBox));
 
         initView();
@@ -211,6 +226,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         apiKeyField.setText("");
         setEndpointText("");
         modelsArea.setText("");
+        timeoutSpinner.setValue(LlmProviderConfig.DEFAULT_TIMEOUT_SECONDS);
         providerConfig = null;
         originalName = null;
         updateEndpointFieldState();
@@ -286,7 +302,8 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
                         new String(apiKeyField.getPassword()),
                         endpoint,
                         parseModels(),
-                        trustedCheckBox.isSelected());
+                        trustedCheckBox.isSelected(),
+                        timeoutSpinner.getValue());
     }
 
     public LlmProviderConfig getProviderConfig() {

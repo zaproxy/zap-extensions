@@ -43,13 +43,14 @@ public class ImportJobDialog extends StandardFieldsDialog {
     private static final String TYPE_PARAM = "exim.automation.dialog.type";
     private static final String FILE_NAME_PARAM = "exim.automation.dialog.filename";
     private static final String SEND_REQUESTS_PARAM = "exim.automation.import.dialog.sendrequests";
+    private static final String MAX_MESSAGES_PARAM = "exim.automation.import.dialog.maxmessages";
 
     private ImportJob job;
 
     private DefaultComboBoxModel<ImportTypeOption> typeOptionModel;
 
     public ImportJobDialog(ImportJob job) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 230));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 270));
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
@@ -76,6 +77,8 @@ public class ImportJobDialog extends StandardFieldsDialog {
         this.addCheckBoxField(
                 SEND_REQUESTS_PARAM,
                 Boolean.TRUE.equals(this.job.getParameters().getSendRequests()));
+        this.addNumberField(
+                MAX_MESSAGES_PARAM, 0, Integer.MAX_VALUE, job.getParameters().getMaxMessages());
         this.addPadding();
     }
 
@@ -106,6 +109,7 @@ public class ImportJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setType(typeOption.id().toLowerCase(Locale.ROOT));
         this.job.getParameters().setFileName(getStringValue(FILE_NAME_PARAM));
         this.job.getParameters().setSendRequests(getBoolValue(SEND_REQUESTS_PARAM));
+        this.job.getParameters().setMaxMessages(getIntValue(MAX_MESSAGES_PARAM));
         this.job.resetAndSetChanged();
     }
 

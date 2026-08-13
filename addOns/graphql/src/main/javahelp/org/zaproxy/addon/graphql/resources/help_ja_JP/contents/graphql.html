@@ -19,6 +19,10 @@ GraphQL サポート
 <li>GraphQLスキーマのインポート</li>
 </ul>
 
+<H3>Max Messages</H3>
+The dialogue allows users to limit the number of messages imported.
+A value of <code>0</code> (the default) imports all messages.
+
 <h3>エンドポイントURLの形式</h3>
 エンドポイントURLは次の形式を取ります：<br>
 <code>scheme://authority/path</code><br>
@@ -43,8 +47,8 @@ APIに以下の操作が追加されます：
 
 <h3> アクション </h3>
 <ul>
-<li> importFile (endurl*, file*) </li>
-<li> importUrl (endurl*, url) </li>
+<li> importFile (endurl*, file*, maxMessages) </li>
+<li> importUrl (endurl*, url, maxMessages) </li>
 <li> setOptionArgsType (String*) </li>
 <li> setOptionMaxArgsDepth (Integer*) </li>
 <li> setOptionMaxQueryDepth (Integer*) </li>
@@ -54,6 +58,7 @@ APIに以下の操作が追加されます：
 <li> setOptionRequestMethod (String*) </li>
 </ul>
 <code>endurl</code> は、前述の<code>エンドポイントURL</code>形式をサポートします。
+The optional <code>maxMessages</code> parameter limits the number of messages imported; omit or use <code>0</code> to import all.
 
 定義は同期的にインポートされ、警告は返されます。
 

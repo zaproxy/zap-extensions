@@ -7,7 +7,7 @@ pluginManagement {
 }
 
 plugins {
-    id("io.github.ben-manes.versions.settings") version "0.59.0"
+    id("io.github.ben-manes.versions.settings") version "0.60.0"
 }
 
 rootProject.name = "zap-extensions"

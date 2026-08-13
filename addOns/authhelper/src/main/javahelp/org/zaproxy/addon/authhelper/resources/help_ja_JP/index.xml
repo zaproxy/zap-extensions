@@ -13,4 +13,5 @@
 	<indexitem text="検証の特定" target="authhelper.verification-id"/>
 	<indexitem text="認証テスターダイアログ" target="authhelper.auth-tester"/>
 	<indexitem text="レポートテンプレート" target="authhelper.report-templates"/>
+	<indexitem text="認証ヘルパー – 自動化フレームワーク" target="authhelper.automation"/>
 </index>

@@ -50,6 +50,7 @@ public class ModifyLlmProviderDialog extends AddLlmProviderDialog {
         updateSuggestedEndpoint();
         setEndpointText(providerConfig.getEndpoint());
         modelsArea.setText(String.join("\n", providerConfig.getModels()));
+        timeoutSpinner.setValue(providerConfig.getTimeoutSeconds());
         trustedCheckBox.setSelected(providerConfig.isTrusted());
         updateEndpointFieldState();
     }

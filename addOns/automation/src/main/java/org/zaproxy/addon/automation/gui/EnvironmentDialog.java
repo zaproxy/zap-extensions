@@ -54,6 +54,7 @@ public class EnvironmentDialog extends StandardFieldsDialog {
     private static final String FAIL_ON_WARNING_PARAM = "automation.dialog.env.failonwarning";
     private static final String CONTINUE_ON_FAILURE_PARAM = "automation.dialog.env.continueonfail";
     private static final String PROGRESS_TO_STDOUT_PARAM = "automation.dialog.env.progresstostdout";
+    private static final String MAX_DURATION_PARAM = "automation.dialog.env.maxduration";
 
     private static final String PROXY_HOSTNAME = "automation.dialog.env.proxyhost";
     private static final String PROXY_PORT = "automation.dialog.env.proxyport";
@@ -107,6 +108,12 @@ public class EnvironmentDialog extends StandardFieldsDialog {
                 1, CONTINUE_ON_FAILURE_PARAM, env.getData().getParameters().getContinueOnFailure());
         this.addCheckBoxField(
                 1, PROGRESS_TO_STDOUT_PARAM, env.getData().getParameters().getProgressToStdout());
+        this.addNumberField(
+                1,
+                MAX_DURATION_PARAM,
+                0,
+                Integer.MAX_VALUE,
+                env.getData().getParameters().getMaxDuration());
         this.addPadding(1);
 
         Proxy proxy = this.env.getData().getProxy(true);
@@ -146,6 +153,7 @@ public class EnvironmentDialog extends StandardFieldsDialog {
                 .getData()
                 .getParameters()
                 .setProgressToStdout(this.getBoolValue(PROGRESS_TO_STDOUT_PARAM));
+        env.getData().getParameters().setMaxDuration(getIntValue(MAX_DURATION_PARAM));
 
         this.env.setContexts(this.getContextsModel().getContexts());
         this.env.getData().setVars(this.getEnvVarsModel().getEnvVarMap());

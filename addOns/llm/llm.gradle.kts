@@ -5,6 +5,7 @@ zapAddOn {
 
     manifest {
         author.set("Abdessamad TEMMAR and the ZAP Core Team")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/llm-support/")
 
         dependencies {
             addOns {

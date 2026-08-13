@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [15] - 2026-08-07
 ### Fixed
 - Handle read timeouts.
 
@@ -90,6 +93,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/sse-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/sse-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/sse-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/sse-v12

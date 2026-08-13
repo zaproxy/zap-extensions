@@ -18,13 +18,19 @@ Postman サポート
 </ul>
 コレクション内で定義された変数は、それぞれ定義された値に置き換えられます。 また、ダイアログでは <code>key1=value1,key2=value2,...</code> の形式で、カンマ区切りのキーと値のペアを指定できます。これらの変数は、コレクション内の変数よりも優先的に使用されます。
 
+<H3>Max Messages</H3>
+The dialogue allows users to limit the number of messages imported.
+A value of <code>0</code> (the default) imports all messages.
+Note that redirects are followed when importing, so this is a soft limit and the number of messages stored may exceed the value set.
+
 <H2>API</H2>
 APIに以下の操作が追加されます：
 
 <ul>
-<li>ACTION importFile (file)</li>
-<li>ACTION importUrl (url)</li>
+<li>ACTION importFile (file, maxMessages)</li>
+<li>ACTION importUrl (url, maxMessages)</li>
 </ul>
+The optional <code>maxMessages</code> parameter limits the number of messages imported; omit or use <code>0</code> to import all.
 
 <H2>コマンドライン</H2>
 以下のコマンドラインオプションが追加されます：

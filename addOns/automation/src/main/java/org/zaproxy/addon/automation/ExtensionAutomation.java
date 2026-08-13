@@ -40,6 +40,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
@@ -583,11 +585,54 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             }
         }
 
+        ScheduledExecutorService durationTimer = null;
+        int maxDuration = env.getMaxDuration();
+        if (maxDuration > 0) {
+            Thread planThread = Thread.currentThread();
+            durationTimer =
+                    Executors.newSingleThreadScheduledExecutor(
+                            r -> new Thread(r, "ZAP-Automation-DurationTimer"));
+            durationTimer.schedule(
+                    () -> {
+                        if (plan.isStopping() || plan.getFinished() != null) {
+                            return;
+                        }
+
+                        progress.warn(
+                                Constant.messages.getString(
+                                        "automation.warn.maxduration", maxDuration));
+                        plan.stopPlan(false);
+                        planThread.interrupt();
+                    },
+                    maxDuration,
+                    TimeUnit.SECONDS);
+        }
+
+        try {
+            runJobs(plan, env, progress, jobsToRun);
+        } finally {
+            if (durationTimer != null) {
+                durationTimer.shutdownNow();
+            }
+        }
+        setPlanFinished(plan);
+        return progress;
+    }
+
+    private void runJobs(
+            AutomationPlan plan,
+            AutomationEnvironment env,
+            AutomationProgress progress,
+            List<AutomationJob> jobsToRun) {
         for (AutomationJob job : jobsToRun) {
 
             if ((plan.isStopping() || env.isTimeToQuit())
                     && (plan.isHardStopping() || !job.isAlwaysRun())) {
                 continue;
+            }
+
+            if (job.isAlwaysRun()) {
+                Thread.interrupted();
             }
 
             if (!job.isEnabled()) {
@@ -635,8 +680,6 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                             "automation.info.jobend", job.getType(), job.getFormattedTimeTaken()));
             progress.addRunJob(job);
         }
-        setPlanFinished(plan);
-        return progress;
     }
 
     public void runPlanAsync(AutomationPlan plan) {

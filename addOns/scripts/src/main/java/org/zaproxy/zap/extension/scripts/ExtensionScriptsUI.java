@@ -797,15 +797,13 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     @Override
     public void scriptError(ScriptWrapper script) {
         if (hasView()) {
-            if (script.getLastException() != null) {
-                getView()
-                        .getOutputPanel()
-                        .append(
-                                extractScriptExceptionMessage(script.getLastException()),
-                                script.getName());
-            } else {
-                getView().getOutputPanel().append(script.getLastErrorDetails(), script.getName());
-            }
+            getView()
+                    .getOutputPanel()
+                    .appendAsync(
+                            script.getLastException() != null
+                                    ? extractScriptExceptionMessage(script.getLastException())
+                                    : script.getLastErrorDetails(),
+                            script.getName());
         }
     }
 

@@ -4,8 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [58] - 2026-08-12
 ### Changed
-- Allow Automation Framework users to limit the number of OpenAPI messages to import (`maxMessages`). Ex: If testing authentication, access, etc.
+- Allow users to limit the number of OpenAPI messages to import (`maxMessages`). Ex: If testing authentication, access, etc.
+- Dependency update.
+
+### Fixed
+- Import dialogue file functionality now uses the selected User (previously only URL import did).
 
 ## [57] - 2026-07-06
 ### Changed
@@ -415,6 +422,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[58]: https://github.com/zaproxy/zap-extensions/releases/openapi-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/openapi-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/openapi-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/openapi-v55

@@ -155,16 +155,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         return menuImportWsdl;
     }
 
-    public void syncImportWsdlUrl(final String url) {
-        syncImportWsdlUrl(url, 0);
-    }
-
     public void syncImportWsdlUrl(final String url, int maxMessages) {
         parser.syncImportWsdlUrl(url, maxMessages);
-    }
-
-    public void syncImportWsdlFile(final File file) {
-        syncImportWsdlFile(file, 0);
     }
 
     public void syncImportWsdlFile(final File file, int maxMessages) {
@@ -172,12 +164,12 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     }
 
     /* Called from external classes in a threaded mode. */
-    public void extUrlWSDLImport(final String url) {
-        parser.extUrlWSDLImport(url, THREAD_PREFIX + threadId++);
+    public void extUrlWSDLImport(final String url, int maxMessages) {
+        parser.extUrlWSDLImport(url, THREAD_PREFIX + threadId++, maxMessages);
     }
 
-    public void fileUrlWSDLImport(final File file) {
-        parser.extFileWSDLImport(file, THREAD_PREFIX + threadId++);
+    public void fileUrlWSDLImport(final File file, int maxMessages) {
+        parser.extFileWSDLImport(file, THREAD_PREFIX + threadId++, maxMessages);
     }
 
     @Override

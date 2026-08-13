@@ -24,6 +24,11 @@ This add-on allows you to spider and import OpenAPI (Swagger) definitions, versi
 このダイアログでは、ターゲットURLフィールドを通じて、OpenAPI定義に存在するサーバーURLを上書き (または存在しない場合は指定) できます。
 インポートの進捗は進行状況タブに表示されます。
 
+<h3>Max Messages</h3>
+The dialogue allows users to limit the number of messages imported.
+A value of <code>0</code> (the default) imports all messages.
+Note that redirects are followed when importing, so this is a soft limit and the number of messages stored may exceed the value set.
+
 <h3>コンテキスト</h3>
 ダイアログでは、オプションでコンテキストを選択することもできます。コンテキストが選択されている場合：
 <ul>
@@ -51,10 +56,13 @@ This add-on allows you to spider and import OpenAPI (Swagger) definitions, versi
 <h2>API</h2>
 APIに以下の操作が追加されます：
 <ul>
-<li>ACTION importFile (file, target, contextId, userId)</li>
-<li>ACTION importUrl (url, hostOverride, contextId, userId)</li>
+<li>ACTION importFile (file, target, contextId, userId, maxMessages)</li>
+<li>ACTION importUrl (url, hostOverride, contextId, userId, maxMessages)</li>
 </ul>
- <code>target</code> と <code>hostOverride</code> の両方とも、前述の <code>ターゲットURL</code> 形式をサポートします。 定義は同期的にインポートされ、警告があれば返されます。
+ <code>target</code> と <code>hostOverride</code> の両方とも、前述の <code>ターゲットURL</code> format explained earlier.
+The optional <code>maxMessages</code> parameter limits the number of messages imported; omit or use <code>0</code> to import all.
+
+The definitions will be imported synchronously and any warnings will be returned.
 
 <h2>データ駆動型ノード</h2>
 OpenAPI定義にパスパラメーターが含まれており、インポート時にコンテキストが指定されている場合、アドオンは自動的にデータ駆動ノードを生成します。 コンテキストが指定されていない場合、データ駆動型ノードは生成されません。

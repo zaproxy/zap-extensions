@@ -119,9 +119,8 @@ public class ExtensionLlm extends ExtensionAdaptor {
         if (hasView()) {
             llmChatPanel = new LlmChatPanel(this);
             extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel());
-            extensionHook
-                    .getHookView()
-                    .addMainToolBarComponent(new LlmSelectorButton(this, options));
+            LlmSelectorButton selectorButton = new LlmSelectorButton(this, options);
+            extensionHook.getHookView().addMainToolBarComponent(selectorButton);
             extensionHook.getHookView().addWorkPanel(llmChatPanel);
             extensionHook.getHookMenu().addPopupMenuItem(new LlmAppendAlertMenu(llmChatPanel));
             extensionHook

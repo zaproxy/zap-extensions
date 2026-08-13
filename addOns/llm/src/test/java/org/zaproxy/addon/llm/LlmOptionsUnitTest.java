@@ -136,14 +136,16 @@ class LlmOptionsUnitTest extends TestUtils {
                                 "key",
                                 "",
                                 List.of("claude-sonnet-4-6"),
-                                true),
+                                true,
+                                LlmProviderConfig.DEFAULT_TIMEOUT_SECONDS),
                         new LlmProviderConfig(
                                 "ollama",
                                 LlmProvider.OLLAMA,
                                 "",
                                 "http://localhost:11434",
                                 List.of("llama3.2"),
-                                false)));
+                                false,
+                                LlmProviderConfig.DEFAULT_TIMEOUT_SECONDS)));
 
         // When
         LlmOptions reloaded = new LlmOptions();
@@ -152,6 +154,56 @@ class LlmOptionsUnitTest extends TestUtils {
         // Then
         assertThat(reloaded.getProviderConfig("claude").isTrusted(), is(true));
         assertThat(reloaded.getProviderConfig("ollama").isTrusted(), is(false));
+    }
+
+    @Test
+    void shouldPersistAndRestoreTimeout() {
+        // Given
+        options.setProviderConfigs(
+                List.of(
+                        new LlmProviderConfig(
+                                "claude",
+                                LlmProvider.CLAUDE,
+                                "key",
+                                "",
+                                List.of("claude-sonnet-4-6"),
+                                false,
+                                120),
+                        new LlmProviderConfig(
+                                "ollama",
+                                LlmProvider.OLLAMA,
+                                "",
+                                "http://localhost:11434",
+                                List.of("llama3.2"),
+                                true,
+                                300)));
+
+        // When
+        LlmOptions reloaded = new LlmOptions();
+        reloaded.load(options.getConfig());
+
+        // Then
+        assertThat(reloaded.getProviderConfig("claude").getTimeoutSeconds(), is(120));
+        assertThat(reloaded.getProviderConfig("ollama").getTimeoutSeconds(), is(300));
+    }
+
+    @Test
+    void shouldDefaultTimeoutWhenMissingFromConfig() {
+        // Given
+        options.getConfig().setProperty("llm.providers.provider(0).name", "claude");
+        options.getConfig().setProperty("llm.providers.provider(0).type", "CLAUDE");
+        options.getConfig().setProperty("llm.providers.provider(0).apikey", "key");
+        options.getConfig()
+                .setProperty("llm.providers.provider(0).models.model(0)", "claude-sonnet-4-6");
+
+        // When
+        LlmOptions loaded = new LlmOptions();
+        loaded.load(options.getConfig());
+
+        // Then
+        assertThat(
+                loaded.getProviderConfig("claude").getTimeoutSeconds(),
+                is(LlmProviderConfig.DEFAULT_TIMEOUT_SECONDS));
     }
 
     @Test

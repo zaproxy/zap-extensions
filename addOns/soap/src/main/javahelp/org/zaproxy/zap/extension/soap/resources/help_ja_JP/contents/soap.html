@@ -19,7 +19,12 @@ SOAP サポート
 <ul>
 <li>WSDLファイルをインポート</li>
 </ul>
-ローカルファイルシステムまたはURLからWSDLファイルをインポートする操作は、API経由でも利用可能です。
+The dialogue allows users to limit the number of messages imported.
+A value of <code>0</code> (the default) imports all messages.
+Redirects are followed when importing, so this is a soft limit.
+<br><br>
+Operations to import a WSDL file from the local filesystem or from a URL are also available as API actions
+(<code>importFile</code> / <code>importUrl</code>), including an optional <code>maxMessages</code> parameter.
 <br><br>
 <b>注意:</b> このアドオンのバージョン 6以降では、エンコードされたURLのみがサポートされます。
 

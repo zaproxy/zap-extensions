@@ -42,6 +42,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -666,6 +668,62 @@ class AutomationEnvironmentUnitTest extends TestUtils {
         assertThat(ae.isFailOnWarning(), is(equalTo(true)));
         assertThat(ae.isContinueOnFailure(), is(equalTo(true)));
         assertThat(ae.isTimeToQuit(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldHaveDefaultMaxDurationParam() {
+        // Given
+        String contextStr =
+                """
+                env:
+                 contexts:
+                   - name: context 1
+                     urls:
+                     - https://www.example.com
+                """;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment ae = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(ae.getMaxDuration(), is(equalTo(0)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-1, 0", "0, 0", "1, 1"})
+    void shouldSetMaxDurationParam(int value, int expected) {
+        // Given
+        String contextStr =
+                """
+                env:
+                  contexts:
+                    - name: context 1
+                      urls:
+                      - https://www.example.com
+                  parameters:
+                    maxDuration: %s
+                """
+                        .formatted(value);
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment ae = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(ae.getMaxDuration(), is(equalTo(expected)));
     }
 
     @Test

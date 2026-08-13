@@ -57,6 +57,7 @@ public class LlmOptions extends VersionedAbstractParam {
     private static final String PROVIDER_APIKEY_KEY = "apikey";
     private static final String PROVIDER_ENDPOINT_KEY = "endpoint";
     private static final String PROVIDER_TRUSTED_KEY = "trusted";
+    private static final String PROVIDER_TIMEOUT_KEY = "timeout";
     private static final String PROVIDER_MODELS_KEY = "models.model";
 
     private List<LlmProviderConfig> providerConfigs = new ArrayList<>();
@@ -99,6 +100,8 @@ public class LlmOptions extends VersionedAbstractParam {
             String apiKey = sub.getString(PROVIDER_APIKEY_KEY, "");
             String endpoint = sub.getString(PROVIDER_ENDPOINT_KEY, "");
             boolean trusted = sub.getBoolean(PROVIDER_TRUSTED_KEY, provider.isTrustedByDefault());
+            int timeoutSeconds =
+                    sub.getInt(PROVIDER_TIMEOUT_KEY, LlmProviderConfig.DEFAULT_TIMEOUT_SECONDS);
 
             // Extract the models
             List<String> models = new ArrayList<>();
@@ -107,7 +110,9 @@ public class LlmOptions extends VersionedAbstractParam {
                     models.add(model.toString().trim());
                 }
             }
-            configs.add(new LlmProviderConfig(name, provider, apiKey, endpoint, models, trusted));
+            configs.add(
+                    new LlmProviderConfig(
+                            name, provider, apiKey, endpoint, models, trusted, timeoutSeconds));
         }
         this.providerConfigs = configs;
         defaultProviderName = getString(DEFAULT_PROVIDER_PROPERTY, "");
@@ -207,6 +212,8 @@ public class LlmOptions extends VersionedAbstractParam {
             getConfig().setProperty(elementBaseKey + PROVIDER_APIKEY_KEY, config.getApiKey());
             getConfig().setProperty(elementBaseKey + PROVIDER_ENDPOINT_KEY, config.getEndpoint());
             getConfig().setProperty(elementBaseKey + PROVIDER_TRUSTED_KEY, config.isTrusted());
+            getConfig()
+                    .setProperty(elementBaseKey + PROVIDER_TIMEOUT_KEY, config.getTimeoutSeconds());
             ((HierarchicalConfiguration) getConfig()).clearTree(elementBaseKey + "models");
             List<String> models = config.getModels();
             for (int j = 0; j < models.size(); ++j) {
