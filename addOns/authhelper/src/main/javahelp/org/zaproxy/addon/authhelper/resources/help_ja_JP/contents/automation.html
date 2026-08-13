@@ -3,29 +3,25 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Authentication Helper Automation Framework Support
+認証ヘルパー – 自動化フレームワーク対応
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Authentication Helper Automation Framework Support</H1>
-This add-on supports the Automation Framework.
+<H1>認証ヘルパー – 自動化フレームワーク対応</H1>
+このアドオンは自動化フレームワークに対応しています。
 
-<H2>Job: diagnostics</H2>
-The diagnostics job starts or stops plan-level recording of authentication related diagnostics.
-Recorded diagnostics appear in the Authentication Diagnostics UI and can be included in the
-<a href="reports.html">Authentication Report</a>.
+<H2>ジョブ: diagnostics</H2>
+diagnostics ジョブは、プランレベルでの認証関連診断の記録を開始または停止します。
+記録された診断データは認証診断UIに表示され、<a href="reports.html">認証レポート</a>に含めることができます。
 <p>
-A plan may include multiple diagnostics jobs. Recording starts when <code>enabled</code> is <code>true</code>
-and stops (and is persisted) when <code>enabled</code> is <code>false</code>.
-If recording is still on at plan finish, it is stopped and persisted automatically.
+1つのプランに複数の diagnostics ジョブを含めることができます。 記録は <code>enabled</code> が <code>true</code> の場合に開始され、<code>enabled</code> が <code>false</code> の場合に停止（および永続化）されます。
+プラン終了時に記録がオンのままになっている場合、自動的に停止され、永続化されます。
 <pre>
-  - type: diagnostics                  # Enable or disable plan-level diagnostics recording
+  - type: diagnostics                  # プランレベルの診断記録を有効または無効にします
     parameters:
-      enabled:                         # Bool: If true, start diagnostics recording, default: false
+      enabled:                         # Bool: true の場合、診断記録を開始します。デフォルト: false
 </pre>
 <p>
-Enabling both this job and <code>env</code> authentication diagnostics (browser/client
-<code>authentication.parameters.diagnostics</code>) in the same plan is not recommended and may cause
-duplicate diagnostic records. Prefer using one diagnostics mechanism per plan.
+同一プラン内でこのジョブと <code>env</code> 認証診断（ブラウザ/クライアントの <code>authentication.parameters.diagnostics</code>）の両方を有効にすることは推奨されず、診断レコードが重複する可能性があります。 1つのプランにつき1つの診断メカニズムを使用することを推奨します。
 </BODY>
 </HTML>

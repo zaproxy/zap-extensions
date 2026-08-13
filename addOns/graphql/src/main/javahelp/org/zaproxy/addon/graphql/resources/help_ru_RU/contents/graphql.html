@@ -19,6 +19,10 @@ A menu item is added to the Import menu:
 <li>Import a GraphQL schema</li>
 </ul>
 
+<H3>Max Messages</H3>
+The dialogue allows users to limit the number of messages imported.
+A value of <code>0</code> (the default) imports all messages.
+
 <h3>Формат URL-адреса конечной точки </h3>
 URL конечной точки имеет следующий формат: <br>
 <code>scheme://authority/path</code><br>
@@ -43,8 +47,8 @@ URL конечной точки имеет следующий формат: <br>
 
 <h3> Действия </h3>
 <ul>
-<li> importFile (endurl*, file*) </li>
-<li> importUrl (endurl*, url) </li>
+<li> importFile (endurl*, file*, maxMessages) </li>
+<li> importUrl (endurl*, url, maxMessages) </li>
 <li> setOptionArgsType (String*) </li>
 <li> setOptionMaxArgsDepth (Integer*) </li>
 <li> setOptionMaxQueryDepth (Integer*) </li>
@@ -54,6 +58,7 @@ URL конечной точки имеет следующий формат: <br>
 <li> setOptionRequestMethod (String*) </li>
 </ul>
 <code>endurl</code> supports the <code>Endpoint URL</code> формат, описанный ранее. 
+The optional <code>maxMessages</code> parameter limits the number of messages imported; omit or use <code>0</code> to import all.
 
 Определения будут импортированы синхронно, и будут возвращены все предупреждения. 
 

@@ -25,8 +25,10 @@ openapi ジョブを使用すると、URLまたはファイル経由でOpenAPI�
       apiUrl:                          # 文字列: OpenAPI定義を含むURL、デフォルト: null (定義はインポートされません)
       context:                         # 文字列: OpenAPI定義をインポートする際に使用するコンテキスト、デフォルト: 最初のコンテキスト
       user:                            # 文字列: 認証に使用するオプションのユーザー (自動化フレームワークの環境設定で定義されている必要があります)
-      targetUrl:                       # 文字列: 定義内で指定されたターゲットを上書きするURL、デフォルト: null (上書きなし)
+      targetUrl:                       # String: URL which overrides the target defined in the definition, default: null, the target will not be overridden
+      maxMessages:                     # Int: Maximum number of messages to import, default: 0, import all messages
 </pre>
+Note that redirects are followed when importing, so <code>maxMessages</code> is a soft limit and the number of messages stored may exceed the value set.
 
 </BODY>
 </HTML>
