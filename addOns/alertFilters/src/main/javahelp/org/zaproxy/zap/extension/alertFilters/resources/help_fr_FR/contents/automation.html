@@ -3,35 +3,36 @@
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>
-Alert Filter Automation Framework Support
+Prise en charge du framework d’automatisation pour les filtres d’alertes
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Alert Filter Automation Framework Support</H1>
-This add-on supports the Automation Framework.
+<H1>Prise en charge du framework d’automatisation pour les filtres d’alertes</H1>
+Cette extension prend en charge le framework d’automatisation.
 
-<H2>Job: alertFilter</H2>
-The alertFilter job allows you to define global and context specific alert filters.
+<H2>Tâche : alertFilter</H2>
+La tâche alertFilter vous permet de définir des filtres d’alertes globaux et spécifiques à un contexte.
+
 <p>
-It is covered in the video: <a href="https://youtu.be/1fcpU54N-mA">ZAP Chat 08 Automation Framework Part 2 - Environment</a>.
+Cette fonctionnalité est présentée dans la vidéo : <a href="https://youtu.be/1fcpU54N-mA">ZAP Chat 08 Automation Framework Part 2 - Environment</a>.
 <pre>
-  - type: alertFilter                  # Used to change the risk levels of alerts
-    parameters:
-      deleteGlobalAlerts: true         # Boolean, if true then will delete all existing global alerts, default false
-    alertFilters:                      # A list of alertFilters to be applied
-      - ruleId:                        # Int/String: Mandatory, the scan rule ID or the alert reference
-        ruleName:                      # String: Optional, the name of the rule
-        newRisk:                       # String: Mandatory new risk level, one of 'False Positive', 'Info', 'Low', 'Medium', 'High'
-        context:                       # String: Optional context name, if empty then a global alert filter will be created
-        url:                           # String: Optional string to match against the alert, supports environment vars
-        urlRegex:                      # Boolean: Optional, if true then the url is a regex
-        parameter:                     # String: Optional string to match against the alert parameter field
-        parameterRegex:                # Boolean: Optional, if true then the parameter is a regex, supports environment vars
-        attack:                        # String: Optional string to match against the alert attack field
-        attackRegex:                   # Boolean: Optional, if true then the attack is a regex
-        evidence:                      # String: Optional string to match against the alert evidence field
-        evidenceRegex:                 # Boolean: Optional, if true then the evidence is a regex
-        methods:                       # List: Optional, the HTTP methods
+  - type: alertFilter                  # Utilisé pour modifier les niveaux de risque des alertes
+  parameters:
+    deleteGlobalAlerts: true         # Booléen : si true, supprime toutes les alertes globales existantes ; false par défaut
+    alertFilters:                    # Liste des filtres d’alertes à appliquer
+      - ruleId:                      # Entier/chaîne : obligatoire, ID de la règle d’analyse ou référence de l’alerte
+        ruleName:                    # Chaîne : facultatif, nom de la règle
+        newRisk:                     # Chaîne : obligatoire, nouveau niveau de risque parmi 'False Positive', 'Info', 'Low', 'Medium', 'High'
+        context:                     # Chaîne : facultatif, nom du contexte ; si vide, un filtre d’alertes global est créé
+        url:                         # Chaîne : facultatif, chaîne à rechercher dans l’alerte ; prend en charge les variables d’environnement
+        urlRegex:                    # Booléen : facultatif, si true, l’URL est une expression régulière
+        parameter:                   # Chaîne : facultatif, chaîne à rechercher dans le champ de paramètre de l’alerte
+        parameterRegex:              # Booléen : facultatif, si true, le paramètre est une expression régulière ; prend en charge les variables d’environnement
+        attack:                      # Chaîne : facultatif, chaîne à rechercher dans le champ d’attaque de l’alerte
+        attackRegex:                 # Booléen : facultatif, si true, l’attaque est une expression régulière
+        evidence:                    # Chaîne : facultatif, chaîne à rechercher dans le champ de preuve de l’alerte
+        evidenceRegex:               # Booléen : facultatif, si true, la preuve est une expression régulière
+        methods:                     # Liste : facultatif, méthodes HTTP
 </pre>
 
 </BODY>

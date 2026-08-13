@@ -12,64 +12,64 @@ Cette boîte de dialogue s’affiche lorsque vous ajoutez ou modifiez un <a href
 <p>
 Elle comporte les champs suivants : 
 
-<H3>Scope</H3>
-This can either be 'Global' for a Global Alert Filter or the name of an existing context.
-It is only editable when you create an Alert Filter from an existing Alert.
+<H3>Portée</H3>
+Il peut s’agir soit de « Global » pour un filtre d’alertes global, soit du nom d’un contexte existant.
+Il n’est modifiable que lorsque vous créez un filtre d’alertes à partir d’une alerte existante.
 
-<H3>Alert Type</H3>
-The first pull down lists all of the active and passive alert rules currently installed along with their (known) alert references.
-The second pull down lists all known IDs (scan rules and alert references). It also allows to manually specify one, if not listed (e.g. custom rule or not yet installed).
+<H3>Type d’alerte</H3>
+La première liste déroulante répertorie toutes les règles d’alertes actives et passives actuellement installées, ainsi que leurs références d’alertes connues.
+La seconde liste déroulante répertorie tous les identifiants connus (règles d’analyse et références d’alertes). Elle permet également d’en spécifier une manuellement si elle n’est pas répertoriée (par exemple, une règle personnalisée ou qui n’est pas encore installée).
 
-<H3>New Risk Level</H3>
-The new risk level to be assigned to any alerts raised that match the criteria defined by the rule.
+<H3>Nouveau niveau de risque</H3>
+Le nouveau niveau de risque à attribuer à toute alerte déclenchée correspondant aux critères définis par la règle.
  
 <H3>URL</H3>
-An optional URL.<br>
-If specified then this rule will be applied if the URL matches the URL of a raised alert.<br>
+Une URL facultative. <br>
+Si elle est spécifiée, cette règle sera appliquée si l’URL correspond à celle d’une alerte déclenchée.<br>
 
-<H3>URL is Regex?</H3>
-If set and a URL is specified then the URL will be treated as a regex expression when compared with the URL of the alert.<br>
-If it is not set then any specified URL must exactly match the URL of the alert.
+<H3>L'URL est une Regex?</H3>
+Si cette option est activée et qu’une URL est spécifiée, celle-ci sera traitée comme une regex lors de sa comparaison avec l’URL de l’alerte.<br>
+Si cette option n’est pas activée, toute URL spécifiée devra correspondre exactement à l’URL de l’alerte.
 
-<H3>Parameter</H3>
-An optional parameter.<br>
-If specified then this rule will be applied if the parameter exactly matches the parameter of a raised alert.<br>
+<H3>Paramètre</H3>
+Un paramètre facultatif.<br>
+S'il est spécifiée, cette règle sera appliquée si le paramètre correspond exactement à celui d’une alerte déclenchée.<br>
 
-<H3>Parameter is Regex?</H3>
-If set and a parameter is specified then the parameter will be treated as a regex expression when compared with the parameter of the alert.<br>
-If it is not set then any specified parameter must exactly match the parameter of the alert.
+<H3>Le paramètre est une Regex ?</H3>
+Si cette option est activée et qu’un paramètre est spécifié, celui-ci sera traité comme une regex lors de sa comparaison avec le paramètre de l’alerte.<br>
+Si cette option n’est pas activée, tout paramètre spécifié devra correspondre exactement au paramètre de l’alerte.
 
-<H3>Attack</H3>
-An optional attack.<br>
-If specified then this rule will be applied if the attack exactly matches the attack of a raised alert.<br>
+<H3>Attaque</H3>
+Un paramètre facultatif.<br>
+Si elle est spécifiée, cette règle sera appliquée si l’attaque correspond exactement à celle d’une alerte déclenchée.<br>
 
-<H3>Attack is Regex?</H3>
-If set and a attack is specified then the attack will be treated as a regex expression when compared with the attack of the alert.<br>
-If it is not set then any specified attack must exactly match the attack of the alert.
+<H3>L'attaque est une Regex ?</H3>
+Si cette option est activée et qu’une attaque est spécifiée, celle-ci sera traitée comme une regex lors de sa comparaison avec l’attaque de l’alerte.<br>
+Si cette option n’est pas activée, toute attaque spécifiée devra correspondre exactement à l’attaque de l’alerte.
 
-<H3>Evidence</H3>
-An optional evidence.<br>
-If specified then this rule will be applied if the evidence exactly matches the evidence of a raised alert.<br>
+<H3>Preuve</H3>
+Une preuve facultative.<br>
+Si elle est spécifiée, cette règle sera appliquée si la preuve correspond exactement à celle d’une alerte déclenchée.<br>
 
-<H3>Evidence is Regex?</H3>
-If set and a evidence is specified then the evidence will be treated as a regex expression when compared with the evidence of the alert.<br>
-If it is not set then any specified evidence must exactly match the evidence of the alert.
+<H3>La preuve est une Regex ?</H3>
+Si cette option est activée et qu’une preuve est spécifiée, celle-ci sera traitée comme une regex lors de sa comparaison avec la preuve de l’alerte.<br>
+Si cette option n’est pas activée, toute preuve spécifiée devra correspondre exactement à la preuve de l’alerte.
 
-<H3>Method</H3>
-An optional method.<br>
-If specified then this rule will be applied if the method matches (case insensitive) the method of a raised alert.<br>
+<H3>Méthode</H3>
+Une méthode facultative.<br>
+Si elle est spécifiée, cette règle sera appliquée si la méthode correspond, sans tenir compte de la casse, à celle d’une alerte déclenchée.<br>
 
-<H3>Enabled</H3>
-If set then this rule will be applied to all alerts raise against the given context.
+<H3>Activé</H3>
+Si cette option est activée, cette règle sera appliquée à toutes les alertes déclenchées dans le contexte spécifié.
 
-<H3>Test Filter</H3>
-The 'Test' button will show a count of how many existing alerts the filter will apply to. 
-It is disabled if the filter is disabled.
+<H3>Filtre de test</H3>
+Le bouton « Test » affichera le nombre d’alertes existantes auxquelles le filtre s’appliquera. 
+Il est désactivé si le filtre est désactivé.
 
-<H3>Apply Filter</H3>
-The 'Apply' button will actually apply the filter to all of the existing alerts that it applies to. 
-It will then show a count of the number of alerts iit changed. 
-It is disabled if the filter is disabled.
+<H3>Appliquer le filtre</H3>
+Le bouton « Appliquer » appliquera effectivement le filtre à toutes les alertes existantes auxquelles il s’applique. 
+Il affichera ensuite le nombre d’alertes qu’il a modifiées. 
+Il est désactivé si le filtre est désactivé.
 
 </BODY>
 </HTML>
