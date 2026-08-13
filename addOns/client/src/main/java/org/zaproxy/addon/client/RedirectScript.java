@@ -19,14 +19,32 @@
  */
 package org.zaproxy.addon.client;
 
+import java.time.Duration;
 import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
+import org.zaproxy.zap.utils.Stats;
 
 public class RedirectScript implements BrowserHook {
 
     static final int ZEST_CLIENT_RECORDER_INITIATOR = -73;
+
+    private static final Logger LOGGER = LogManager.getLogger(RedirectScript.class);
+
+    /**
+     * The zapconfigured localStorage item will be set by the ZAP browser extension when it has been
+     * successfully configured.
+     */
+    static final String EXTENSION_CONFIGURED_SCRIPT =
+            "return localStorage.getItem('localzapconfigured')";
+
+    static Duration extensionConfigureTimeout = Duration.ofSeconds(5);
+    static Duration extensionConfigurePollInterval = Duration.ofMillis(200);
 
     private ClientIntegrationAPI api;
 
@@ -55,8 +73,36 @@ public class RedirectScript implements BrowserHook {
         ssutils.getWebDriver().get(zapurl);
         JavascriptExecutor jsExecutor = (JavascriptExecutor) ssutils.getWebDriver();
         jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + apiurl + "')");
-        // The second refresh seems to be needed sometimes - could be a browser timing issue?
-        ssutils.getWebDriver().get(zapurl);
+        String browserName = ClientUtils.getBrowserName(ssutils.getWebDriver());
+        if (!waitForExtensionConfigured(ssutils.getWebDriver())) {
+            // Content script did not run on first navigation — retry
+            ssutils.getWebDriver().get(zapurl);
+            if (!waitForExtensionConfigured(ssutils.getWebDriver())) {
+                LOGGER.warn("Failed to configure ZAP extension on browser launch");
+                Stats.incCounter("stats.client.launch.fail." + browserName);
+                return;
+            }
+            Stats.incCounter("stats.client.launch.retry." + browserName);
+        } else {
+            Stats.incCounter("stats.client.launch.pass." + browserName);
+        }
         api.browserLaunched(new ClientCallBackUtils(ssutils, uuid));
+    }
+
+    private static boolean waitForExtensionConfigured(WebDriver driver) {
+        try {
+            new WebDriverWait(driver, extensionConfigureTimeout)
+                    .pollingEvery(extensionConfigurePollInterval)
+                    .until(
+                            d ->
+                                    "true"
+                                            .equals(
+                                                    ((JavascriptExecutor) d)
+                                                            .executeScript(
+                                                                    EXTENSION_CONFIGURED_SCRIPT)));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

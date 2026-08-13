@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.HasCapabilities;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.zap.model.NameValuePair;
 import org.zaproxy.zap.model.ParameterParser;
@@ -134,5 +136,17 @@ public class ClientUtils {
             return url.substring(0, fragmentOffset);
         }
         return url;
+    }
+
+    /**
+     * Returns the name of the browser, but not whether it is headless or not. Intended only for
+     * logging purposes.
+     */
+    public static String getBrowserName(WebDriver wd) {
+        if (wd instanceof HasCapabilities hasCap) {
+            return hasCap.getCapabilities().getBrowserName();
+        }
+        // will happen in tests that mock the WebDriver
+        return "unknown";
     }
 }
