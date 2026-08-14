@@ -531,14 +531,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## 31 - 2018-03-05
 
-- Issue 1852: Fix reflected XSS false negative with poor quality HTML filtering.<br/>
-- Issue 1640: Fix reflected XSS false negative with double decoded output.<br/>
-- Issue 2290: Fix SQLi false negative with ODBC error message.<br/>
+- Issue 1852: Fix reflected XSS false negative with poor quality HTML filtering.
+- Issue 1640: Fix reflected XSS false negative with double decoded output.
+- Issue 2290: Fix SQLi false negative with ODBC error message.
 
 ## 30 - 2018-02-06
 
-- Issue 1366: Allow SSI detection patterns to include new lines, and pre-check the original response for detection patterns to reduce false positives.<br/>
-- Issue 4168 and 4230: Pre-check the original response for detection patterns.<br/>
+- Issue 1366: Allow SSI detection patterns to include new lines, and pre-check the original response for detection patterns to reduce false positives.
+- Issue 4168 and 4230: Pre-check the original response for detection patterns.
 
 ## 29 - 2018-01-19
 
