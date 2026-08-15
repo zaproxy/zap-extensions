@@ -327,20 +327,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## 18 - 2018-01-19
 
-- Minor code changes to address deprecation.<br/>
-- At HIGH threshold only perform CSRF checks for in scope messages (Issue 1354).<br/>
-- Exclude JavaScript response types from the InformationDisclosureDebugErrors scanner unless threshold is Low (Issue 4210).<br/>
+- Minor code changes to address deprecation.
+- At HIGH threshold only perform CSRF checks for in scope messages (Issue 1354).
+- Exclude JavaScript response types from the InformationDisclosureDebugErrors scanner unless threshold is Low (Issue 4210).
 
 ## 17 - 2017-11-24
 
-- Minor changes to InsecureJFSViewStatePassiveScanner (check response contains JSF viewstate or if it's server stored).<br/>
-- Improve the domain matching in CookieLooselyScopedScanner.<br/>
-- Issue 3449: CSRFcountermeasures passive scanner now raises alerts on a per-form basis on pages with multiple forms.<br/>
-- Issue 3937: Update ServletParameterPollutionScanner reference.<br/>
+- Minor changes to InsecureJFSViewStatePassiveScanner (check response contains JSF viewstate or if it's server stored).
+- Improve the domain matching in CookieLooselyScopedScanner.
+- Issue 3449: CSRFcountermeasures passive scanner now raises alerts on a per-form basis on pages with multiple forms.
+- Issue 3937: Update ServletParameterPollutionScanner reference.
 
 ## 16 - 2017-04-25
 
-- Added some keywords to the list of suspicious comments. <br/>
+- Added some keywords to the list of suspicious comments.
 
 ## 15 - 2017-01-18
 

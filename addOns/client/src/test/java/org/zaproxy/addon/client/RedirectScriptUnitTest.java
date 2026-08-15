@@ -22,11 +22,18 @@ package org.zaproxy.addon.client;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,8 +59,16 @@ class RedirectScriptUnitTest {
         given(ssutils.getWebDriver()).willReturn(wd);
         api = mock(ClientIntegrationAPI.class);
         given(api.getCallbackUrl()).willReturn("callback-url");
+        // Simulate extension writing the 'zapconfigured' flag after a successful sync storage write
+        given(wd.executeScript(RedirectScript.EXTENSION_CONFIGURED_SCRIPT)).willReturn("true");
 
         script = new RedirectScript(api);
+    }
+
+    @AfterEach
+    void tearDown() {
+        RedirectScript.extensionConfigureTimeout = Duration.ofSeconds(5);
+        RedirectScript.extensionConfigurePollInterval = Duration.ofMillis(200);
     }
 
     @ParameterizedTest
@@ -65,7 +80,7 @@ class RedirectScriptUnitTest {
         // When
         script.browserLaunched(ssutils);
         // Then
-        verify(wd, times(2)).get(urlCaptor.capture());
+        verify(wd, times(1)).get(urlCaptor.capture());
         assertUrlsHavePrefixAndValidZapid(urlCaptor, "callback-url?zapenable=true&zapid=");
     }
 
@@ -77,7 +92,7 @@ class RedirectScriptUnitTest {
         // When
         script.browserLaunched(ssutils);
         // Then
-        verify(wd, times(2)).get(urlCaptor.capture());
+        verify(wd, times(1)).get(urlCaptor.capture());
         assertUrlsHavePrefixAndValidZapid(
                 urlCaptor, "callback-url?zapenable=true&zaprecord=true&zapid=");
     }
@@ -94,12 +109,58 @@ class RedirectScriptUnitTest {
         script.browserLaunched(ssutils);
 
         // Then
-        verify(wd, times(2)).get(urlCaptor.capture());
+        verify(wd, times(1)).get(urlCaptor.capture());
         verify(api).browserLaunched(ccbuCaptor.capture());
 
         String url = urlCaptor.getAllValues().get(0);
         String uuidInUrl = url.substring(url.indexOf("zapid=") + "zapid=".length());
         assertThat(ccbuCaptor.getValue().getUuid().toString(), is(uuidInUrl));
+    }
+
+    @Test
+    void shouldInvokeCallbackWhenExtensionConfiguresAfterRetryNavigation() {
+        // Given
+        RedirectScript.extensionConfigureTimeout = Duration.ofMillis(50);
+        RedirectScript.extensionConfigurePollInterval = Duration.ofMillis(10);
+        given(ssutils.getRequester()).willReturn(HttpSender.PROXY_INITIATOR);
+        AtomicInteger navigationCount = new AtomicInteger();
+        doAnswer(
+                        invocation -> {
+                            navigationCount.incrementAndGet();
+                            return null;
+                        })
+                .when(wd)
+                .get(anyString());
+        // Only report as configured once the retry navigation has happened.
+        given(wd.executeScript(RedirectScript.EXTENSION_CONFIGURED_SCRIPT))
+                .willAnswer(invocation -> navigationCount.get() >= 2 ? "true" : null);
+
+        // When
+        script.browserLaunched(ssutils);
+
+        // Then
+        ArgumentCaptor<String> urlCaptor = ArgumentCaptor.captor();
+        verify(wd, times(2)).get(urlCaptor.capture());
+        assertUrlsHavePrefixAndValidZapid(urlCaptor, "callback-url?zapenable=true&zapid=");
+        verify(api).browserLaunched(any());
+    }
+
+    @Test
+    void shouldNotInvokeCallbackWhenExtensionNeverConfigures() {
+        // Given
+        RedirectScript.extensionConfigureTimeout = Duration.ofMillis(50);
+        RedirectScript.extensionConfigurePollInterval = Duration.ofMillis(10);
+        given(ssutils.getRequester()).willReturn(HttpSender.PROXY_INITIATOR);
+        given(wd.executeScript(RedirectScript.EXTENSION_CONFIGURED_SCRIPT)).willReturn(null);
+
+        // When
+        script.browserLaunched(ssutils);
+
+        // Then
+        ArgumentCaptor<String> urlCaptor = ArgumentCaptor.captor();
+        verify(wd, times(2)).get(urlCaptor.capture());
+        assertUrlsHavePrefixAndValidZapid(urlCaptor, "callback-url?zapenable=true&zapid=");
+        verify(api, never()).browserLaunched(any());
     }
 
     private static void assertUrlsHavePrefixAndValidZapid(
