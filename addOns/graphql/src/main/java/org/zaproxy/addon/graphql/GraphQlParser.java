@@ -172,7 +172,7 @@ public class GraphQlParser {
         }
     }
 
-    public void parse(String sdl) {
+    public void parse(String sdl) throws IOException {
         GraphQLSchema schema =
                 UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
         var generator =
@@ -185,11 +185,13 @@ public class GraphQlParser {
         if (syncParse) {
             if (maxMessages <= 0) {
                 fingerprint();
+                requestor.throwIfRequestFailed();
             }
             detectCycles(schema, generator);
             if (param.getQueryGenEnabled()) {
                 generate(generator);
             }
+            requestor.throwIfRequestFailed();
             return;
         }
         ParserThread t =
