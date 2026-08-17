@@ -432,6 +432,58 @@ class GraphQlJobUnitTest extends TestUtils {
         assertThat(progress.getErrors().get(0), is(equalTo("!graphql.automation.error!")));
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1})
+    void shouldFailIfEndpointCannotBeReached(int maxMessages, @TempDir Path dir)
+            throws IOException {
+        // Given
+        when(extGraphQl.getParam()).thenReturn(defaultGraphQlParam());
+        String endpoint = serverWithGraphQl();
+        stopServer();
+        Path schemaFile = dir.resolve("schema.graphql");
+        Files.writeString(schemaFile, "type Query { name: String }", StandardCharsets.UTF_8);
+        GraphQlJob job =
+                createGraphQlJob(
+                        "parameters:\n"
+                                + "  endpoint: "
+                                + endpoint
+                                + "\n"
+                                + "  schemaFile: "
+                                + schemaFile
+                                + "\n"
+                                + "  maxMessages: "
+                                + maxMessages);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        job.setPlan(plan);
+        env.setPlan(plan);
+        job.verifyParameters(progress);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(progress.getErrors().get(0), is(equalTo("!graphql.automation.error!")));
+    }
+
+    private static GraphQlParam defaultGraphQlParam() {
+        return new GraphQlParam(
+                GraphQlParam.DEFAULT_QUERY_GEN_ENABLED,
+                GraphQlParam.DEFAULT_MAX_QUERY_DEPTH,
+                GraphQlParam.DEFAULT_LENIENT_MAX_QUERY_DEPTH,
+                GraphQlParam.DEFAULT_MAX_ADDITIONAL_QUERY_DEPTH,
+                GraphQlParam.DEFAULT_MAX_ARGS_DEPTH,
+                GraphQlParam.DEFAULT_OPTIONAL_ARGS,
+                GraphQlParam.DEFAULT_ARGS_TYPE,
+                GraphQlParam.DEFAULT_QUERY_SPLIT_TYPE,
+                GraphQlParam.DEFAULT_REQUEST_METHOD,
+                GraphQlParam.DEFAULT_CYCLE_DETECTION_MODE,
+                GraphQlParam.DEFAULT_MAX_CYCLE_DETECTION_ALERTS);
+    }
+
     private String serverWithGraphQl() throws IOException {
         startServer();
         nano.addHandler(graphQlServer);
