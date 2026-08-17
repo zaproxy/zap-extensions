@@ -75,6 +75,22 @@ public class ComparableResponse {
                     "unknown",
                     "token");
 
+    // SQL injection specific keywords for error-based and expression-based detection
+    private static final List<String> SQL_ERROR_KEYWORDS =
+            Arrays.asList(
+                    "sql",
+                    "database",
+                    "query",
+                    "syntax",
+                    "column",
+                    "table",
+                    "constraint",
+                    "mysql",
+                    "oracle",
+                    "postgresql",
+                    "sqlserver",
+                    "jdbc");
+
     private static final String CONTENT_TYPE_HTML = "text/html";
     private static final String CONTENT_TYPE_JSON = "json";
     private static final Pattern CRLF_SPLIT_PATTERN = Pattern.compile("\r\n|\r|\n");
@@ -97,6 +113,9 @@ public class ComparableResponse {
     private float numberWordsWeight = NUMBER_WORDS_WEIGHT;
     private float reflectionWeight = REFLECTION_WEIGHT;
     private float relevantKeywordsWeight = RELEVANT_KEYWORDS_WEIGHT;
+
+    // Response stability tracking for adaptive thresholds
+    private float measuredVariance = 0.5f; // 0=highly stable, 1=highly variable
 
     public ComparableResponse(
             int statusCode, String body, Map<String, String> headers, String valueSent) {
@@ -573,4 +592,199 @@ public class ComparableResponse {
                 ? CONTENT_TYPE_SPLIT_PATTERN.split(ctHeader.toLowerCase(Locale.ROOT))[0]
                 : null;
     }
+
+    /**
+     * Calculates an adaptive similarity threshold based on measured response variance. Stable
+     * responses (low variance) get stricter thresholds; variable responses get looser thresholds.
+     * This enables fuzzy matching to work well on both deterministic test pages (WAVSEP) and
+     * real apps with dynamic content (timestamps, sessions, etc).
+     *
+     * @param variance normalized variance score (0=stable, 1=highly variable)
+     * @return adaptive threshold in range [0.88, 0.98]
+     */
+    public static float adaptiveThreshold(float variance) {
+        // Clamp variance to [0, 1]
+        variance = Math.max(0f, Math.min(1f, variance));
+        // Range: 0.98 (stable) down to 0.88 (variable)
+        // Each 0.1 variance unit reduces threshold by 0.01
+        return 0.98f - (variance * 0.10f);
+    }
+
+    /**
+     * Records the measured stability of this response based on multiple baseline replays. Lower
+     * variance (stable responses) allow stricter matching; higher variance allows looser matching.
+     *
+     * @param variance normalized variance (0=stable, 1=variable)
+     */
+    public void setMeasuredVariance(float variance) {
+        this.measuredVariance = Math.max(0f, Math.min(1f, variance));
+    }
+
+    /**
+     * Gets the measured variance of this response (0=stable, 1=variable). Used for adaptive
+     * threshold calculation in fuzzy matching.
+     */
+    public float getMeasuredVariance() {
+        return measuredVariance;
+    }
+
+    /**
+     * Gets the adaptive threshold for this response based on its measured variance.
+     *
+     * @return threshold in range [0.88, 0.98]
+     */
+    public float getAdaptiveThreshold() {
+        return adaptiveThreshold(measuredVariance);
+    }
+
+    /**
+     * SQL-injection-specific heuristic: compares presence/absence of SQL error keywords. For
+     * error-based SQLi, this is more relevant than generic "error" keyword (which appears in many
+     * contexts). Returns 1.0 if both responses have same SQL error keyword pattern, 0.0 if
+     * different.
+     *
+     * @param response1 first response
+     * @param response2 second response
+     * @return 1.0 if both have SQL errors or both don't, 0.0 if mismatch
+     */
+    public static float sqlErrorHeuristic(ComparableResponse response1, ComparableResponse response2) {
+        boolean r1HasSqlError = hasSqlErrorKeywords(response1.body.toLowerCase());
+        boolean r2HasSqlError = hasSqlErrorKeywords(response2.body.toLowerCase());
+        return (r1HasSqlError == r2HasSqlError) ? 1.0f : 0.0f;
+    }
+
+    /**
+     * SQL-injection-specific heuristic: compares result set size as proxy for query success.
+     * Counts table rows, list items, etc. For boolean-blind SQLi, size differences indicate
+     * injection success. Returns similarity ratio (0-1).
+     *
+     * @param response1 first response
+     * @param response2 second response
+     * @return size similarity ratio: 1.0 if equal, 0.0 if completely different
+     */
+    public static float resultSetSizeHeuristic(ComparableResponse response1, ComparableResponse response2) {
+        int rows1 = countTableRows(response1.body);
+        int rows2 = countTableRows(response2.body);
+
+        // If both empty, they're similar
+        if (rows1 == 0 && rows2 == 0) {
+            return 1.0f;
+        }
+
+        // If one is empty and other isn't, they're different
+        if ((rows1 == 0) != (rows2 == 0)) {
+            return 0.0f;
+        }
+
+        // Both have data; compute similarity ratio
+        int minRows = Math.min(rows1, rows2);
+        int maxRows = Math.max(rows1, rows2);
+        float ratio = (float) minRows / maxRows;
+
+        // Similarity: >90% same size = similar, <50% = very different, in between = partial
+        if (ratio > 0.9f) return 1.0f;
+        if (ratio > 0.7f) return 0.8f;
+        if (ratio > 0.5f) return 0.5f;
+        return 0.0f;
+    }
+
+    private static boolean hasSqlErrorKeywords(String text) {
+        for (String keyword : SQL_ERROR_KEYWORDS) {
+            if (text.contains(keyword)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int countTableRows(String body) {
+        // Count <tr> tags as proxy for table rows
+        int count = 0;
+        int index = 0;
+        while ((index = body.indexOf("<tr", index)) != -1) {
+            count++;
+            index += 3;
+        }
+        // Also count list items
+        index = 0;
+        while ((index = body.indexOf("<li>", index)) != -1) {
+            count++;
+            index += 4;
+        }
+        return count;
+    }
+
+    /**
+     * Measures response variance (stability) from multiple baseline responses.
+     * Calculates pairwise similarity and returns standard deviation.
+     * 0.0 = highly stable (deterministic), 1.0 = highly variable (noisy)
+     *
+     * @param baselineResponses List of responses from identical requests (at least 2)
+     * @return variance score [0.0, 1.0]
+     */
+    public static float measureResponseVariance(List<ComparableResponse> baselineResponses) {
+        if (baselineResponses == null || baselineResponses.size() < 2) {
+            return 0.5f; // Default to moderate variance if insufficient data
+        }
+
+        // Calculate pairwise similarities
+        List<Float> similarities = new ArrayList<>();
+        for (int i = 0; i < baselineResponses.size(); i++) {
+            for (int j = i + 1; j < baselineResponses.size(); j++) {
+                float similarity = baselineResponses.get(i).compareWith(baselineResponses.get(j));
+                similarities.add(similarity);
+            }
+        }
+
+        if (similarities.isEmpty()) {
+            return 0.5f;
+        }
+
+        // Calculate mean similarity
+        float mean = 0;
+        for (float sim : similarities) {
+            mean += sim;
+        }
+        mean /= similarities.size();
+
+        // Calculate standard deviation (inverse: lower similarity = higher variance)
+        float variance = 0;
+        for (float sim : similarities) {
+            variance += (sim - mean) * (sim - mean);
+        }
+        variance = (float) Math.sqrt(variance / similarities.size());
+
+        // Normalize to [0, 1]: variance of 0.0 = stable, 1.0 = unstable
+        // If mean similarity is 0.95+, variance is low (stable)
+        // If mean similarity is 0.80-, variance is high (unstable)
+        return Math.min(1.0f, 1.0f - mean);
+    }
+
+    /**
+     * Compares two responses with adaptive threshold based on measured baseline variance.
+     * Higher variance → lower threshold (more permissive).
+     * Lower variance → higher threshold (stricter).
+     *
+     * @param baseline The baseline/reference response (measured once)
+     * @param test The response to compare
+     * @param measuredVariance Variance score from measureResponseVariance() [0.0, 1.0]
+     * @return true if similarity meets variance-adaptive threshold
+     */
+    public static boolean compareWithVarianceAdaptiveThreshold(
+            ComparableResponse baseline, ComparableResponse test, float measuredVariance) {
+        // Clamp variance to valid range
+        measuredVariance = Math.max(0f, Math.min(1f, measuredVariance));
+
+        // Calculate adaptive threshold
+        // Variance 0.0 (stable): threshold = 1.00 (exact match)
+        // Variance 0.1 (very stable): threshold = 0.98
+        // Variance 0.3 (moderate): threshold = 0.94
+        // Variance 0.7 (high): threshold = 0.86
+        // Variance 1.0 (very noisy): threshold = 0.80
+        float adaptiveThreshold = 1.0f - (measuredVariance * 0.20f);
+
+        float similarity = baseline.compareWith(test);
+        return similarity >= adaptiveThreshold;
+    }
+
 }
