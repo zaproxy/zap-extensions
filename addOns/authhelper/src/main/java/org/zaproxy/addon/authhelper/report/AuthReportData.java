@@ -88,6 +88,10 @@ public class AuthReportData implements Closeable {
         summaryItems.add(new SummaryItem(passed, key, description));
     }
 
+    public void addSummaryItem(String key, long value, String description) {
+        summaryItems.add(new SummaryItem(key, description, value));
+    }
+
     public void addFailureDetail(FailureDetail detail) {
         if (failureDetails == null) {
             failureDetails = new ArrayList<>();
@@ -162,7 +166,16 @@ public class AuthReportData implements Closeable {
         }
     }
 
-    public record SummaryItem(boolean passed, String key, String description) {}
+    public record SummaryItem(boolean passed, String key, String description, Long value) {
+
+        public SummaryItem(boolean passed, String key, String description) {
+            this(passed, key, description, null);
+        }
+
+        public SummaryItem(String key, String description, long value) {
+            this(false, key, description, value);
+        }
+    }
 
     public record StatsItem(String key, String scope, String site, long value) {
 

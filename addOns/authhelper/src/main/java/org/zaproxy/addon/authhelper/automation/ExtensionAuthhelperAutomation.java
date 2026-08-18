@@ -25,6 +25,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 
@@ -50,10 +51,12 @@ public class ExtensionAuthhelperAutomation extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
         diagnosticsJob = new DiagnosticsJob();
-        extAuto.registerAutomationJob(diagnosticsJob);
+        Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionAutomation.class)
+                .registerAutomationJob(diagnosticsJob);
+        AuthenticationDiagnostics.setFlushHook(this::flushRunningPlans);
     }
 
     @Override
@@ -63,9 +66,19 @@ public class ExtensionAuthhelperAutomation extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
-        extAuto.unregisterAutomationJob(diagnosticsJob);
+        AuthenticationDiagnostics.setFlushHook(null);
+        Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionAutomation.class)
+                .unregisterAutomationJob(diagnosticsJob);
+    }
+
+    private void flushRunningPlans() {
+        Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionAutomation.class)
+                .getRunningPlans()
+                .forEach(DiagnosticsJob::flush);
     }
 
     @Override

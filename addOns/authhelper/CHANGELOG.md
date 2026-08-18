@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Tag diagnostic HTTP messages with an internal ID, to make it easier to cross reference them.
 - Obtain the minimal authentication diagnostics when aborting the authentication.
+- Authentication report: include summary with connection success and failure counts.
 
 ## [0.41.0] - 2026-08-07
 ### Added

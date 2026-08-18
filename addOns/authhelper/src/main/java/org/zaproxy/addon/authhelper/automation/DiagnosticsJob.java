@@ -92,14 +92,7 @@ public class DiagnosticsJob extends AutomationJob {
                                 getName()));
                 return;
             }
-            recordings.put(
-                    plan,
-                    new AuthenticationDiagnostics(
-                            true,
-                            Constant.messages.getString(
-                                    "authhelper.automation.diagnostics.authmethod"),
-                            env.getDefaultContext().getName(),
-                            ""));
+            startRecording(plan, env.getDefaultContext().getName());
             progress.info(
                     Constant.messages.getString(
                             "authhelper.automation.diagnostics.info.enabled", getName()));
@@ -117,6 +110,29 @@ public class DiagnosticsJob extends AutomationJob {
     @Override
     public void planFinished() {
         stopRecording(getPlan());
+    }
+
+    /**
+     * Persists any traffic already recorded for the given plan and immediately starts a new
+     * recording, so a report generated mid-plan can see it without waiting for an explicit {@code
+     * enabled: false} job or plan finish. No-op if the plan has no active recording.
+     */
+    public static void flush(AutomationPlan plan) {
+        if (plan == null || !recordings.containsKey(plan)) {
+            return;
+        }
+        stopRecording(plan);
+        startRecording(plan, plan.getEnv().getDefaultContext().getName());
+    }
+
+    private static void startRecording(AutomationPlan plan, String contextName) {
+        recordings.put(
+                plan,
+                new AuthenticationDiagnostics(
+                        true,
+                        Constant.messages.getString("authhelper.automation.diagnostics.authmethod"),
+                        contextName,
+                        ""));
     }
 
     private static boolean stopRecording(AutomationPlan plan) {
