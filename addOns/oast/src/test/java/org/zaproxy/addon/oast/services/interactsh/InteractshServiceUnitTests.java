@@ -186,12 +186,12 @@ class InteractshServiceUnitTests extends TestUtils {
 
         // Generate AES key and encrypt event with it
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(128);
+        keyGenerator.init(256);
         SecretKey key = keyGenerator.generateKey();
         byte[] ivBytes = new byte[16];
         new SecureRandom().nextBytes(ivBytes);
         IvParameterSpec iv = new IvParameterSpec(ivBytes);
-        Cipher eventEncryptor = Cipher.getInstance("AES/CFB/NoPadding");
+        Cipher eventEncryptor = Cipher.getInstance("AES/CTR/NoPadding");
         eventEncryptor.init(Cipher.ENCRYPT_MODE, key, iv);
         byte[] encryptedEvent = eventEncryptor.doFinal(event.getBytes());
 
