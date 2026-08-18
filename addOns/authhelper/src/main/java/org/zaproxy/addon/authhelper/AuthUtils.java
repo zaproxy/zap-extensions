@@ -78,6 +78,7 @@ import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
@@ -696,6 +697,7 @@ public class AuthUtils {
                             "Auto updating HTTP auth verification for context {}",
                             context.getName());
                     authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+                    setPollMethod(context, HttpRequestHeader.GET);
                     authMethod.setPollUrl(loginPageUrl);
                     authMethod.setPollFrequencyUnits(AuthPollFrequencyUnits.SECONDS);
                     authMethod.setLoggedInIndicatorPattern(passStr);
@@ -1444,6 +1446,17 @@ public class AuthUtils {
         contextVerifMap.put(contextId, details);
     }
 
+    public static void setPollMethod(Context context, String method) {
+        try {
+            Class<?> clazz = Class.forName("org.zaproxy.zap.authentication.VerificationMethod");
+            Object verificationMethod =
+                    context.getClass().getMethod("getVerificationMethod").invoke(context);
+            clazz.getMethod("setPollMethod", String.class).invoke(verificationMethod, method);
+        } catch (Exception e) {
+            LOGGER.debug("Failed to set pollMethod via reflection:", e);
+        }
+    }
+
     public static SessionManagementRequestDetails getSessionManagementDetailsForContext(
             int contextId) {
         return contextSessionMgmtMap.get(contextId);
@@ -1691,8 +1704,10 @@ public class AuthUtils {
                     link,
                     logoutLink);
 
-            AuthenticationMethod authMethod = user.getContext().getAuthenticationMethod();
+            Context context = user.getContext();
+            AuthenticationMethod authMethod = context.getAuthenticationMethod();
             authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+            setPollMethod(context, HttpRequestHeader.GET);
             authMethod.setPollUrl(testUri.toString());
             authMethod.setLoggedInIndicatorPattern(Pattern.quote(logoutLink));
             authMethod.setLoggedOutIndicatorPattern(Pattern.quote(link));
