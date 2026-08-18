@@ -76,6 +76,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
@@ -694,6 +695,7 @@ public class AuthUtils {
                             "Auto updating HTTP auth verification for context {}",
                             context.getName());
                     authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+                    setPollMethod(authMethod, HttpRequestHeader.GET);
                     authMethod.setPollUrl(loginPageUrl);
                     authMethod.setPollFrequencyUnits(AuthPollFrequencyUnits.SECONDS);
                     authMethod.setLoggedInIndicatorPattern(passStr);
@@ -1370,6 +1372,17 @@ public class AuthUtils {
         contextVerifMap.put(contextId, details);
     }
 
+    public static void setPollMethod(AuthenticationMethod authMethod, String method) {
+        try {
+            authMethod
+                    .getClass()
+                    .getMethod("setPollMethod", String.class)
+                    .invoke(authMethod, method);
+        } catch (Exception e) {
+            LOGGER.debug("Failed to set pollMethod via reflection:", e);
+        }
+    }
+
     public static SessionManagementRequestDetails getSessionManagementDetailsForContext(
             int contextId) {
         return contextSessionMgmtMap.get(contextId);
@@ -1619,6 +1632,7 @@ public class AuthUtils {
 
             AuthenticationMethod authMethod = user.getContext().getAuthenticationMethod();
             authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+            setPollMethod(authMethod, HttpRequestHeader.GET);
             authMethod.setPollUrl(testUri.toString());
             authMethod.setLoggedInIndicatorPattern(Pattern.quote(logoutLink));
             authMethod.setLoggedOutIndicatorPattern(Pattern.quote(link));

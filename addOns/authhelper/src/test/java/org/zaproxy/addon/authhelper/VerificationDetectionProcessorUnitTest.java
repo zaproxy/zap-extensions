@@ -38,6 +38,7 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -178,6 +179,32 @@ class VerificationDetectionProcessorUnitTest extends TestUtils {
         // Then
         verify(authenticationMethod)
                 .setPollHeaders(argThat(s -> s.contains(headerName + ": " + headerValue)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"GET", "POST"})
+    @Disabled("Requires newer core")
+    void shouldUpdateContextWithPollMethod(String httpMethod) throws Exception {
+        // Given
+        authenticationMethod = mock();
+        given(context.getAuthenticationMethod()).willReturn(authenticationMethod);
+        alertBuilder = mock();
+        given(rule.getAlert(any())).willReturn(alertBuilder);
+        missingSessionResponse =
+                () ->
+                        newFixedLengthResponse(
+                                Response.Status.REDIRECT_SEE_OTHER, NanoHTTPD.MIME_HTML, "");
+        verificationMessage.getRequestHeader().setMethod(httpMethod);
+        VerificationRequestDetails details =
+                new VerificationRequestDetails(verificationMessage, SESSION_TOKEN, context);
+        processor = new VerificationDetectionProcessor(context, details, rule);
+
+        // When
+        processor.run();
+
+        // Then
+        // TODO uncomment with newer core
+        // verify(authenticationMethod).setPollMethod(httpMethod);
     }
 
     @Test

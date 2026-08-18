@@ -31,6 +31,7 @@ import static org.mockito.Mockito.mock;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -120,6 +121,46 @@ class VerificationDataUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(progressWarning)));
         assertThat(verificationData.getPollFrequency(), is(equalTo(frequency)));
         assertThat(httpAuthMethod.getPollFrequency(), is(equalTo(authFreq)));
+    }
+
+    @Test
+    void shouldParsePollMethodFromYaml() {
+        // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
+        AutomationProgress progress = new AutomationProgress();
+        LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+        data.put("method", "poll");
+        data.put("pollMethod", "POST");
+
+        // When
+        VerificationData verificationData = new VerificationData(data, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(false));
+        assertThat(verificationData.getPollMethod(), is("POST"));
+    }
+
+    @Test
+    @Disabled("Requires newer core")
+    void shouldApplyPollMethodToAuthMethod() {
+        // Given
+        HttpAuthenticationMethod httpAuthMethod = new HttpAuthenticationMethod();
+        Constant.messages = new I18N(Locale.ENGLISH);
+        Context context = mock(Context.class);
+        AutomationProgress progress = new AutomationProgress();
+        LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+        given(context.getAuthenticationMethod()).willReturn(httpAuthMethod);
+        data.put("method", "poll");
+        data.put("pollMethod", "POST");
+        VerificationData verificationData = new VerificationData(data, progress);
+
+        // When
+        verificationData.initAuthenticationVerification(context, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(false));
+        // TODO uncomment with newer core
+        // assertThat(httpAuthMethod.getPollMethod(), is("POST"));
     }
 
     @Test
