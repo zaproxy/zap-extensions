@@ -20,6 +20,10 @@
 package org.zaproxy.addon.authhelper.internal.ui.diags;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -43,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
@@ -79,6 +84,8 @@ public class DiagnosticPanel extends AbstractPanel {
     private static final String STEP_CLIENT_PROPERTY_KEY = "zap.stepUi";
 
     private static final long serialVersionUID = 1L;
+
+    private record ScreenshotView(JLabel label, ImageIcon originalIcon, JScrollPane scrollPane) {}
 
     private final List<StepUi> steps;
 
@@ -227,6 +234,21 @@ public class DiagnosticPanel extends AbstractPanel {
                 });
         toolBar.add(exportButton);
 
+        List<ScreenshotView> screenshotViews = new ArrayList<>();
+
+        JToggleButton scaleToFitButton =
+                new JToggleButton(
+                        Constant.messages.getString("authhelper.authdiags.panel.button.scaletofit"),
+                        DisplayUtils.getScaledIcon(
+                                DiagnosticPanel.class.getResource(
+                                        ExtensionAuthhelper.RESOURCES_DIR + "images/picture.png")));
+        scaleToFitButton.addActionListener(
+                e -> {
+                    screenshotViews.forEach(
+                            view -> updateScreenshotIcon(view, scaleToFitButton.isSelected()));
+                });
+        toolBar.add(scaleToFitButton);
+
         for (StepUi step : steps) {
             if (!step.hasScreenshot()) {
                 continue;
@@ -238,18 +260,66 @@ public class DiagnosticPanel extends AbstractPanel {
             JLabel screenshotLabel = new JLabel();
             screenshotLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             screenshotLabel.setVerticalAlignment(SwingConstants.TOP);
-            screenshotLabel.setIcon(new ImageIcon(step.getScreenshotData()));
+            ImageIcon originalIcon = new ImageIcon(step.getScreenshotData());
+            screenshotLabel.setIcon(originalIcon);
             screen.add(screenshotLabel);
 
             JScrollPane scrollPane = new JScrollPane(screen);
             scrollPane.putClientProperty(STEP_CLIENT_PROPERTY_KEY, step);
             tabbedPane.addTab(step.getLabel(), scrollPane);
+
+            ScreenshotView view = new ScreenshotView(screenshotLabel, originalIcon, scrollPane);
+            screenshotViews.add(view);
+            scrollPane
+                    .getViewport()
+                    .addComponentListener(
+                            new ComponentAdapter() {
+                                @Override
+                                public void componentResized(ComponentEvent e) {
+                                    if (scaleToFitButton.isSelected()) {
+                                        updateScreenshotIcon(view, true);
+                                    }
+                                }
+                            });
         }
 
         panel.add(tabbedPane);
 
         mainTabbedPane.addTab(
                 Constant.messages.getString("authhelper.authdiags.panel.tab.screenshots"), panel);
+    }
+
+    private static void updateScreenshotIcon(ScreenshotView view, boolean scaleToFit) {
+        ImageIcon originalIcon = view.originalIcon();
+        if (!scaleToFit) {
+            view.label().setIcon(originalIcon);
+            return;
+        }
+
+        Dimension available = view.scrollPane().getViewport().getExtentSize();
+        int imageWidth = originalIcon.getIconWidth();
+        int imageHeight = originalIcon.getIconHeight();
+        if (available.width <= 0 || available.height <= 0 || imageWidth <= 0 || imageHeight <= 0) {
+            view.label().setIcon(originalIcon);
+            return;
+        }
+
+        double scale =
+                Math.min(
+                        (double) available.width / imageWidth,
+                        (double) available.height / imageHeight);
+        if (scale >= 1.0) {
+            view.label().setIcon(originalIcon);
+            return;
+        }
+
+        int scaledWidth = Math.max(1, (int) (imageWidth * scale));
+        int scaledHeight = Math.max(1, (int) (imageHeight * scale));
+        Image scaledImage =
+                originalIcon
+                        .getImage()
+                        .getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+        view.label().setIcon(new ImageIcon(scaledImage));
     }
 
     private static void exportScreenshot(Path path, StepUi step) {
