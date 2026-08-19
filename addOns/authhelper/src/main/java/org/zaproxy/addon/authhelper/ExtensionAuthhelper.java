@@ -100,6 +100,9 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
     private static final AutoDetectAuthenticationMethodType AUTO_DETECT_AUTH_TYPE =
             new AutoDetectAuthenticationMethodType();
 
+    protected static final OAuth2AuthenticationMethodType OAUTH2_AUTH_TYPE =
+            new OAuth2AuthenticationMethodType();
+
     private static final Integer[] HISTORY_TYPES =
             new Integer[] {
                 HistoryReference.TYPE_PROXIED, HistoryReference.TYPE_ZAP_USER,
@@ -177,6 +180,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
         if (extAuth != null) {
             extAuth.getAuthenticationMethodTypes().add(BROWSER_BASED_AUTH_TYPE);
             extAuth.getAuthenticationMethodTypes().add(AUTO_DETECT_AUTH_TYPE);
+            extAuth.getAuthenticationMethodTypes().add(OAUTH2_AUTH_TYPE);
         }
     }
 
@@ -191,6 +195,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
         if (extAuth != null) {
             extAuth.getAuthenticationMethodTypes().remove(BROWSER_BASED_AUTH_TYPE);
             extAuth.getAuthenticationMethodTypes().remove(AUTO_DETECT_AUTH_TYPE);
+            extAuth.getAuthenticationMethodTypes().remove(OAUTH2_AUTH_TYPE);
         }
         AuthUtils.disableBrowserAuthentication();
         BrowserBasedAuthenticationMethodType.stopProxies();

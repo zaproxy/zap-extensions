@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Allow to define for how long a plan can run.
 - Add support for the HTTP method in the authentication verification (on newer ZAP versions).
+- Support the authhelper add-on's `oauth2` authentication method.
 
 ### Changed
 - Adjust columns in plan display after loading a plan.
