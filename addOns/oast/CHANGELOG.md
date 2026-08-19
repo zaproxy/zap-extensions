@@ -10,6 +10,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Maintenance changes.
 - Formatted JavaScript files for consistency.
 
+### Fixed
+- Decrypt Interactsh interactions using AES-CTR, to support Interactsh server 1.3.0 and later (which changed the cipher from AES-CFB). Older servers are no longer supported.
+
 ## [0.24.0] - 2025-12-15
 ### Changed
 - Update minimum ZAP version to 2.17.0.

@@ -451,7 +451,7 @@ public class InteractshService extends OastService implements OptionsChangedList
             byte[] decodedDecryptedKey = decryptionCipher.doFinal(decodedEncryptedKey);
 
             byte[] decodedEncryptedMsg = Base64.getDecoder().decode(encodedEncryptedMsg);
-            decryptionCipher = Cipher.getInstance("AES/CFB/NoPadding");
+            decryptionCipher = Cipher.getInstance("AES/CTR/NoPadding");
             SecretKey aesKey = new SecretKeySpec(decodedDecryptedKey, "AES");
             IvParameterSpec iv =
                     new IvParameterSpec(
