@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Move script types from core (Issue 8027).
+- Add button to load script from clipboard in the Scripts tab toolbar.
 
 ### Changed
 - Show script output/errors asynchronously in the GUI to not block the running script.
