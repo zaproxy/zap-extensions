@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Adjust columns in plan display after loading a plan.
 - Include cause of invalid URL in error message.
 
+### Fixed
+- Correct technology related warning message.
+
 ### Removed
 - The Params automation support was moved into the Params add-on (Issue 9210).
 

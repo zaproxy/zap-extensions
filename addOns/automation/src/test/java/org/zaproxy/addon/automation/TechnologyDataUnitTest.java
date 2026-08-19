@@ -31,19 +31,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.parosproxy.paros.CommandLine;
-import org.parosproxy.paros.Constant;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
-import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class TechnologyDataUnitTest {
+class TechnologyDataUnitTest extends TestUtils {
+
+    @BeforeAll
+    static void beforeAll() {
+        mockMessages(new ExtensionAutomation());
+    }
 
     @Test
     void shouldInitWithNoExcludes() {
@@ -123,7 +124,6 @@ class TechnologyDataUnitTest {
     @Test
     void shouldParseValidTech() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
@@ -156,8 +156,6 @@ class TechnologyDataUnitTest {
     @Test
     void shouldFailBadTech() {
         // Given
-        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        Constant.messages = new I18N(Locale.ENGLISH);
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
@@ -174,12 +172,10 @@ class TechnologyDataUnitTest {
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
-        mockedCmdLine.close();
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badtech!")));
+        assertThat(progress.getErrors(), contains("Context technology should be a map: ArrayList"));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
@@ -189,8 +185,6 @@ class TechnologyDataUnitTest {
     @Test
     void shouldFailBadTechType() {
         // Given
-        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        Constant.messages = new I18N(Locale.ENGLISH);
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
@@ -207,15 +201,14 @@ class TechnologyDataUnitTest {
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
-        mockedCmdLine.close();
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(
                 progress.getErrors(),
                 contains(
-                        "!automation.error.context.badtechtype!",
-                        "!automation.error.context.badtechtype!"));
+                        "Context exclude technology should be a list: String",
+                        "Context include technology should be a list: String"));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
@@ -226,8 +219,6 @@ class TechnologyDataUnitTest {
     @Test
     void shouldHandleListVars() {
         // Given
-        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        Constant.messages = new I18N(Locale.ENGLISH);
         String contextStr =
                 "env:\n"
                         + "  vars:\n"
@@ -248,7 +239,6 @@ class TechnologyDataUnitTest {
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
-        mockedCmdLine.close();
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -262,8 +252,6 @@ class TechnologyDataUnitTest {
     @Test
     void shouldErrorOnNonListVars() {
         // Given
-        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        Constant.messages = new I18N(Locale.ENGLISH);
         String contextStr =
                 "env:\n"
                         + "  vars:\n"
@@ -283,15 +271,14 @@ class TechnologyDataUnitTest {
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
-        mockedCmdLine.close();
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(
                 progress.getErrors(),
                 contains(
-                        "!automation.error.context.badtechtype!",
-                        "!automation.error.context.badtechtype!"));
+                        "Context exclude technology should be a list: String",
+                        "Context include technology should be a list: String"));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
@@ -302,8 +289,6 @@ class TechnologyDataUnitTest {
     @Test
     void shouldWarnAndErrorOnMissingListVars() {
         // Given
-        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        Constant.messages = new I18N(Locale.ENGLISH);
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
@@ -320,19 +305,20 @@ class TechnologyDataUnitTest {
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
-        mockedCmdLine.close();
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(
                 progress.getErrors(),
                 contains(
-                        "!automation.error.context.badtechtype!",
-                        "!automation.error.context.badtechtype!"));
+                        "Context exclude technology should be a list: String",
+                        "Context include technology should be a list: String"));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(
                 progress.getWarnings(),
-                contains("!automation.error.env.novar!", "!automation.error.env.novar!"));
+                contains(
+                        "Variable EXCLUDE used but not specified",
+                        "Variable INCLUDE used but not specified"));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
         assertThat(techData.getInclude().size(), is(equalTo(0)));
@@ -342,8 +328,6 @@ class TechnologyDataUnitTest {
     @Test
     void shouldWarnOnUnknownTech() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
-        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
@@ -364,7 +348,6 @@ class TechnologyDataUnitTest {
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
-        mockedCmdLine.close();
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -372,8 +355,8 @@ class TechnologyDataUnitTest {
         assertThat(
                 progress.getWarnings(),
                 contains(
-                        "!automation.error.context.unknowntech!",
-                        "!automation.error.context.unknowntech!"));
+                        "Unrecognised technology: UnknownInclude",
+                        "Unrecognised technology: JABA"));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
         assertThat(techData.getInclude(), contains("OS", "UnknownInclude"));
@@ -383,8 +366,6 @@ class TechnologyDataUnitTest {
     @Test
     void shouldWarnOnUnknownElement() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
-        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
         String contextStr =
                 "env:\n"
                         + "  contexts:\n"
@@ -405,14 +386,13 @@ class TechnologyDataUnitTest {
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
-        mockedCmdLine.close();
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
-                progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
+                progress.getWarnings(),
+                contains("Unrecognised parameter for job Automation Context : unknown"));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
         assertThat(techData.getInclude(), contains("OS"));
