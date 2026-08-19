@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -48,8 +49,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthenticationMethod;
@@ -58,13 +62,17 @@ import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType.JsonBase
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.AuthenticationScriptV2;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.ScriptBasedAuthenticationMethod;
+import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.session.SessionManagementMethod;
+import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.users.User;
 
 class AuthenticationDataUnitTest extends TestUtils {
 
@@ -461,6 +469,86 @@ class AuthenticationDataUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldInitContextWithOAuth2Auth() {
+        // Given
+        Context context = new Context(null, -1);
+        ExtensionAuthentication extAuth = mock(ExtensionAuthentication.class);
+        given(extensionLoader.getExtension(ExtensionAuthentication.class)).willReturn(extAuth);
+        AuthenticationMethodType oauth2Type = mock(AuthenticationMethodType.class);
+        TestOAuth2Method testMethod = new TestOAuth2Method(oauth2Type);
+        given(oauth2Type.createAuthenticationMethod(anyInt())).willReturn(testMethod);
+        given(extAuth.getAuthenticationMethodTypeForIdentifier(9)).willReturn(oauth2Type);
+
+        AuthenticationData data = new AuthenticationData();
+        data.setMethod("oauth2");
+        data.getParameters().put(AuthenticationData.PARAM_GRANT_TYPE, "refresh_token");
+        data.getParameters()
+                .put(AuthenticationData.PARAM_TOKEN_ENDPOINT, "https://example.com/token");
+        data.getParameters().put(AuthenticationData.PARAM_CLIENT_ID, "my-client");
+        data.getParameters().put(AuthenticationData.PARAM_CLIENT_SECRET, "my-secret");
+        data.getParameters()
+                .put(
+                        AuthenticationData.PARAM_EXTRA_TOKEN_PARAMS,
+                        Map.of("audience", "https://api.example.com"));
+        data.getParameters().put(AuthenticationData.PARAM_DIAGNOSTICS, true);
+
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+
+        // When
+        data.initContextAuthentication(context, progress, env);
+
+        // Then
+        assertThat(context.getAuthenticationMethod(), is(sameInstance(testMethod)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(
+                JobUtils.getPrivateField(testMethod, AuthenticationData.PARAM_GRANT_TYPE),
+                is(equalTo("refresh_token")));
+        assertThat(
+                JobUtils.getPrivateField(testMethod, AuthenticationData.PARAM_TOKEN_ENDPOINT),
+                is(equalTo("https://example.com/token")));
+        assertThat(
+                JobUtils.getPrivateField(testMethod, AuthenticationData.PARAM_CLIENT_ID),
+                is(equalTo("my-client")));
+        assertThat(
+                JobUtils.getPrivateField(testMethod, AuthenticationData.PARAM_CLIENT_SECRET),
+                is(equalTo("my-secret")));
+        assertThat(
+                JobUtils.getPrivateField(testMethod, AuthenticationData.PARAM_EXTRA_TOKEN_PARAMS),
+                is(equalTo(Map.of("audience", "https://api.example.com"))));
+        assertThat(JobUtils.getPrivateField(testMethod, "diagnostics"), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldKeepDefaultOAuth2GrantTypeWhenNotSpecified() {
+        // Given
+        Context context = new Context(null, -1);
+        ExtensionAuthentication extAuth = mock(ExtensionAuthentication.class);
+        given(extensionLoader.getExtension(ExtensionAuthentication.class)).willReturn(extAuth);
+        AuthenticationMethodType oauth2Type = mock(AuthenticationMethodType.class);
+        TestOAuth2Method testMethod = new TestOAuth2Method(oauth2Type);
+        given(oauth2Type.createAuthenticationMethod(anyInt())).willReturn(testMethod);
+        given(extAuth.getAuthenticationMethodTypeForIdentifier(9)).willReturn(oauth2Type);
+
+        AuthenticationData data = new AuthenticationData();
+        data.setMethod("oauth2");
+        // Intentionally not setting grantType, relying on the method's built-in default.
+        data.getParameters()
+                .put(AuthenticationData.PARAM_TOKEN_ENDPOINT, "https://example.com/token");
+
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+
+        // When
+        data.initContextAuthentication(context, progress, env);
+
+        // Then
+        assertThat(
+                JobUtils.getPrivateField(testMethod, AuthenticationData.PARAM_GRANT_TYPE),
+                is(equalTo("client_credentials")));
+    }
+
+    @Test
     void shouldFailOnInvalidAuthData() {
         // Given
         AutomationProgress progress = new AutomationProgress();
@@ -538,5 +626,66 @@ class AuthenticationDataUnitTest extends TestUtils {
         assertThat(
                 progress.getErrors().get(0),
                 is("Invalid authentication port: {parameters={port=not a num}}"));
+    }
+
+    /**
+     * Stand-in for {@code OAuth2AuthenticationMethod}, which lives in the authhelper add-on and
+     * isn't available as a dependency here. Field names mirror the real class so that {@link
+     * JobUtils#setPrivateField(Object, String, Object)} reflection behaves the same way.
+     */
+    private static class TestOAuth2Method extends AuthenticationMethod {
+
+        private final AuthenticationMethodType type;
+
+        private String grantType = "client_credentials";
+        private String tokenEndpoint;
+        private String clientId;
+        private String clientSecret;
+        private String clientAuthMethod;
+        private String scope;
+        private String accessTokenField;
+        private String refreshTokenField;
+        private Map<String, String> extraTokenParams = new LinkedHashMap<>();
+        private boolean diagnostics;
+
+        TestOAuth2Method(AuthenticationMethodType type) {
+            this.type = type;
+        }
+
+        @Override
+        public boolean isConfigured() {
+            return true;
+        }
+
+        @Override
+        protected AuthenticationMethod duplicate() {
+            return this;
+        }
+
+        @Override
+        public AuthenticationCredentials createAuthenticationCredentials() {
+            return null;
+        }
+
+        @Override
+        public AuthenticationMethodType getType() {
+            return type;
+        }
+
+        @Override
+        public WebSession authenticate(
+                SessionManagementMethod sessionManagementMethod,
+                AuthenticationCredentials credentials,
+                User user) {
+            return null;
+        }
+
+        @Override
+        public ApiResponse getApiResponseRepresentation() {
+            return null;
+        }
+
+        @Override
+        public void replaceUserDataInPollRequest(HttpMessage msg, User user) {}
     }
 }

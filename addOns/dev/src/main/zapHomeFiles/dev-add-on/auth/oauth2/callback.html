@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Mock OAuth2 Relying Party App</H1>
+	<h2>Callback</h2>
+	<div id="message">Processing...</div>
+</div>
+<script>
+async function handleCallback() {
+	const messageDiv = document.getElementById("message");
+	const params = new URLSearchParams(location.search);
+
+	const error = params.get("error");
+	if (error) {
+		messageDiv.textContent =
+			"Authorization failed: " + error + " - " + (params.get("error_description") || "");
+		return;
+	}
+
+	const code = params.get("code");
+	if (!code) {
+		messageDiv.textContent = "No authorization code received.";
+		return;
+	}
+
+	const state = params.get("state");
+	const expectedState = sessionStorage.getItem("oauth2_state");
+	if (state !== expectedState) {
+		messageDiv.textContent = "State mismatch - possible CSRF, aborting.";
+		return;
+	}
+
+	const body = new URLSearchParams({
+		grant_type: "authorization_code",
+		code: code,
+		redirect_uri: "https://app.oauth2.zap/callback.html",
+		client_id: "test-public-client"
+	});
+	const verifier = sessionStorage.getItem("oauth2_code_verifier");
+	if (verifier) {
+		body.set("code_verifier", verifier);
+	}
+
+	const res = await fetch("https://authserver.oauth2.zap/token", {
+		method: "POST",
+		headers: {"Content-Type": "application/x-www-form-urlencoded"},
+		body: body.toString()
+	});
+	const json = await res.json();
+	if (!res.ok) {
+		messageDiv.textContent = "Token exchange failed: " + JSON.stringify(json);
+		return;
+	}
+
+	messageDiv.innerHTML =
+		"Logged in!<br>" +
+		"Access token: " + json.access_token + "<br>" +
+		"Refresh token: " + (json.refresh_token || "(none)") + "<br>" +
+		"<button id=\"userinfo\" type=\"button\">Call /userinfo</button>" +
+		"<div id=\"userinfo-result\"></div>";
+	document.getElementById("userinfo").addEventListener("click", async () => {
+		const uiRes = await fetch("https://api.oauth2.zap/userinfo", {
+			headers: {"Authorization": "Bearer " + json.access_token}
+		});
+		const uiJson = await uiRes.json();
+		document.getElementById("userinfo-result").textContent = JSON.stringify(uiJson);
+	});
+}
+
+window.addEventListener("load", handleCallback);
+</script>
+</body>
+</html>

@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Login using HTTP basic authentication.
  - A mock MS online login which uses a popup window.
  - A login which requires a client certificate.
+ - A mock OAuth2 authorization server, supporting all four grant types (authorization code with PKCE, client credentials, password, and refresh token), plus a demo relying-party app.
 - A "full" app section with a simple form-based authenticated app containing injection vulnerabilities.
 - Random pages (/rnd/simple) for testing spider scalability — configurable number of pages and links per page, generated on the fly.
 

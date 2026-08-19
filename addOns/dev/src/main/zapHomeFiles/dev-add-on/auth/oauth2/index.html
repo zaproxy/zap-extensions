@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Mock OAuth2 Authorization Server</H1>
+	<p>
+	A mock OAuth2 Authorization Server (and a demo relying-party app), for testing the authhelper
+	add-on's OAuth2 authentication methods against all four grant types, including PKCE.
+	<p>
+	<a href="https://app.oauth2.zap/">Try the demo app</a> (drives the full
+	<code>authorization_code</code> + PKCE flow in a real browser, independently of ZAP).
+
+	<h2>Endpoints</h2>
+	<ul>
+		<li>Authorization Endpoint: <code>https://authserver.oauth2.zap/authorize</code>
+		<li>Token Endpoint: <code>https://authserver.oauth2.zap/token</code>
+		<li>Protected resource (for verification/poll URL testing): <code>https://api.oauth2.zap/userinfo</code>
+			(expects <code>Authorization: Bearer &lt;token&gt;</code>)
+	</ul>
+
+	<h2>Test clients</h2>
+	<ul>
+		<li>Confidential client (use with <code>client_secret_basic</code> or <code>client_secret_post</code>):
+			<code>client_id=test-client</code>, <code>client_secret=test-secret</code>
+		<li>Public client (use with <code>client_auth_method: none</code>, typically with PKCE):
+			<code>client_id=test-public-client</code>, no secret
+	</ul>
+
+	<h2>Test user</h2>
+	<ul>
+		<li>username = test@test.com
+		<li>password = password123
+	</ul>
+
+	<h2>Testing non-standard token field names</h2>
+	<p>
+	Add <code>field_style: custom</code> to the token request (e.g. via <code>extraTokenParams</code>)
+	to have the token endpoint return <code>accessToken</code>/<code>refreshToken</code> instead of
+	the standard <code>access_token</code>/<code>refresh_token</code> - useful for testing the
+	<code>accessTokenField</code>/<code>refreshTokenField</code> normalization.
+
+	<h2>Example ZAP Automation Framework configuration</h2>
+
+	<h3>client_credentials</h3>
+	<pre>
+authentication:
+  method: "oauth2"
+  parameters:
+    grantType: "client_credentials"
+    tokenEndpoint: "https://authserver.oauth2.zap/token"
+    clientId: "test-client"
+    clientSecret: "test-secret"
+sessionManagement:
+  method: "header"
+  parameters:
+    headers: "Authorization: Bearer {%json:access_token%}"
+	</pre>
+
+	<h3>password</h3>
+	<pre>
+authentication:
+  method: "oauth2"
+  parameters:
+    grantType: "password"
+    tokenEndpoint: "https://authserver.oauth2.zap/token"
+    clientId: "test-client"
+    clientSecret: "test-secret"
+sessionManagement:
+  method: "header"
+  parameters:
+    headers: "Authorization: Bearer {%json:access_token%}"
+users:
+- name: "Test User"
+  credentials:
+    username: "test@test.com"
+    password: "password123"
+	</pre>
+
+	<h3>refresh_token</h3>
+	<p>
+	First obtain a refresh token via the <code>client_credentials</code>/<code>password</code>/
+	<code>authorization_code</code> examples above (it's in the JSON response), then:
+	<pre>
+authentication:
+  method: "oauth2"
+  parameters:
+    grantType: "refresh_token"
+    tokenEndpoint: "https://authserver.oauth2.zap/token"
+    clientId: "test-client"
+    clientSecret: "test-secret"
+sessionManagement:
+  method: "header"
+  parameters:
+    headers: "Authorization: Bearer {%json:access_token%}"
+users:
+- name: "Test User"
+  credentials:
+    refreshToken: "<paste the refresh_token value here>"
+	</pre>
+
+	<h3>authorization_code (with PKCE)</h3>
+	<pre>
+authentication:
+  method: "oauth2AuthorizationCode"
+  parameters:
+    authorizationEndpoint: "https://authserver.oauth2.zap/authorize"
+    tokenEndpoint: "https://authserver.oauth2.zap/token"
+    redirectUri: "http://localhost:8080/callback"
+    clientId: "test-public-client"
+    clientAuthMethod: "none"
+    usePkce: true
+sessionManagement:
+  method: "header"
+  parameters:
+    headers: "Authorization: Bearer {%json:access_token%}"
+users:
+- name: "Test User"
+  credentials:
+    username: "test@test.com"
+    password: "password123"
+	</pre>
+
+</div>
+</body>
+</html>

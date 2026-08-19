@@ -65,6 +65,7 @@ public class AuthenticationData extends AutomationData {
     public static final String METHOD_BROWSER = "browser";
     public static final String METHOD_AUTO = "autodetect";
     public static final String METHOD_CLIENT = "client";
+    public static final String METHOD_OAUTH2 = "oauth2";
 
     public static final String PARAM_HOSTNAME = "hostname";
     public static final String PARAM_REALM = "realm";
@@ -80,12 +81,23 @@ public class AuthenticationData extends AutomationData {
     public static final String PARAM_SCRIPT_INLINE = "scriptInline";
     public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
     public static final String PARAM_STEP_DELAY = "stepDelay";
+    public static final String PARAM_GRANT_TYPE = "grantType";
+    public static final String PARAM_TOKEN_ENDPOINT = "tokenEndpoint";
+    public static final String PARAM_CLIENT_ID = "clientId";
+    public static final String PARAM_CLIENT_SECRET = "clientSecret";
+    public static final String PARAM_CLIENT_AUTH_METHOD = "clientAuthMethod";
+    public static final String PARAM_SCOPE = "scope";
+    public static final String PARAM_ACCESS_TOKEN_FIELD = "accessTokenField";
+    public static final String PARAM_REFRESH_TOKEN_FIELD = "refreshTokenField";
+    public static final String PARAM_EXTRA_TOKEN_PARAMS = "extraTokenParams";
 
     // TODO: Plan to change once the core supports dynamic methods better
     protected static final String CLIENT_SCRIPT_BASED_AUTH_METHOD_CLASSNAME =
             "org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod";
     protected static final String BROWSER_BASED_AUTH_METHOD_CLASSNAME =
             "org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod";
+    protected static final String OAUTH2_AUTH_METHOD_CLASSNAME =
+            "org.zaproxy.addon.authhelper.OAuth2AuthenticationMethodType.OAuth2AuthenticationMethod";
 
     /** Field name in the underlying PostBasedAuthenticationMethod class * */
     protected static final String FIELD_LOGIN_REQUEST_URL = "loginRequestURL";
@@ -103,7 +115,8 @@ public class AuthenticationData extends AutomationData {
                     METHOD_SCRIPT,
                     METHOD_BROWSER,
                     METHOD_AUTO,
-                    METHOD_CLIENT);
+                    METHOD_CLIENT,
+                    METHOD_OAUTH2);
 
     private String method;
     private Map<String, Object> parameters = new LinkedHashMap<>();
@@ -316,6 +329,7 @@ public class AuthenticationData extends AutomationData {
                         }
                         break;
                     case PARAM_DIAGNOSTICS:
+                    case PARAM_EXTRA_TOKEN_PARAMS:
                     case "steps":
                         break;
                     default:
@@ -547,6 +561,56 @@ public class AuthenticationData extends AutomationData {
                                         "automation.error.env.auth.type.bad", getMethod()));
                     }
                     break;
+
+                case AuthenticationData.METHOD_OAUTH2:
+                    // This should be handled dynamically, but that required core changes
+                    AuthenticationMethodType oauth2Type =
+                            extAuth.getAuthenticationMethodTypeForIdentifier(9);
+
+                    if (oauth2Type != null) {
+                        AuthenticationMethod am =
+                                oauth2Type.createAuthenticationMethod(context.getId());
+
+                        setPrivateStringIfPresent(am, AuthenticationData.PARAM_GRANT_TYPE, env);
+                        setPrivateStringIfPresent(am, AuthenticationData.PARAM_TOKEN_ENDPOINT, env);
+                        setPrivateStringIfPresent(am, AuthenticationData.PARAM_CLIENT_ID, env);
+                        setPrivateStringIfPresent(am, AuthenticationData.PARAM_CLIENT_SECRET, env);
+                        setPrivateStringIfPresent(
+                                am, AuthenticationData.PARAM_CLIENT_AUTH_METHOD, env);
+                        setPrivateStringIfPresent(am, AuthenticationData.PARAM_SCOPE, env);
+                        setPrivateStringIfPresent(
+                                am, AuthenticationData.PARAM_ACCESS_TOKEN_FIELD, env);
+                        setPrivateStringIfPresent(
+                                am, AuthenticationData.PARAM_REFRESH_TOKEN_FIELD, env);
+
+                        Object extraTokenParamsObj =
+                                getParameters().get(AuthenticationData.PARAM_EXTRA_TOKEN_PARAMS);
+                        if (extraTokenParamsObj instanceof Map<?, ?> rawMap) {
+                            Map<String, String> extraTokenParams = new LinkedHashMap<>();
+                            rawMap.forEach(
+                                    (k, v) ->
+                                            extraTokenParams.put(k.toString(), env.replaceVars(v)));
+                            JobUtils.setPrivateField(
+                                    am,
+                                    AuthenticationData.PARAM_EXTRA_TOKEN_PARAMS,
+                                    extraTokenParams);
+                        }
+
+                        JobUtils.setPrivateField(
+                                am,
+                                "diagnostics",
+                                parameters.getOrDefault(PARAM_DIAGNOSTICS, false));
+
+                        reloadAuthenticationMethod(am, progress);
+                        context.setAuthenticationMethod(am);
+
+                    } else {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.auth.type.bad", getMethod()));
+                    }
+                    break;
+
                 default:
                     progress.error(
                             Constant.messages.getString(
@@ -620,6 +684,14 @@ public class AuthenticationData extends AutomationData {
             if (i >= 0) {
                 JobUtils.setPrivateField(method, fieldName, i);
             }
+        }
+    }
+
+    private void setPrivateStringIfPresent(
+            Object method, String fieldName, AutomationEnvironment env) {
+        Object value = getParameters().get(fieldName);
+        if (value != null) {
+            JobUtils.setPrivateField(method, fieldName, env.replaceVars(value));
         }
     }
 
