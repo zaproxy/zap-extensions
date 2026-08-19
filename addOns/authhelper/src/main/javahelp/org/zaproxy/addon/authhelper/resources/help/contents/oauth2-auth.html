@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+OAuth2 Authentication
+</TITLE>
+</HEAD>
+<BODY>
+<H1>OAuth2 Authentication</H1>
+
+This <a href="authhelper.html">add-on</a> adds a new authentication method which obtains an OAuth2 access token directly from
+a token endpoint, without using a browser. It supports the following non-interactive grant types:
+
+<ul>
+<li><code>client_credentials</code>
+<li><code>password</code> (Resource Owner Password Credentials)
+</ul>
+
+<p>
+The Client ID, Client Secret, Grant Type and Token Endpoint are configured on the authentication method itself (they are typically
+shared by all of the users of a context). The following are configured per user, via the user's credentials, as applicable to the
+configured grant type:
+
+<ul>
+<li><code>username</code> and <code>password</code> - required for the <code>password</code> grant type
+</ul>
+
+No per-user credentials are required for the <code>client_credentials</code> grant type.
+
+<h3>Refresh Tokens</h3>
+If the token endpoint returns a <code>refresh_token</code> alongside the access token, it is captured and stored automatically -
+there is no user configuration for it. On the next authentication attempt for that user, ZAP tries a <code>refresh_token</code>
+grant first using the stored value (falling back to the configured grant type, e.g. <code>password</code>, if it's rejected), and
+keeps the stored value up to date, so IdPs that rotate refresh tokens on every use are handled transparently.
+
+<h3>Client Authentication</h3>
+The Client Authentication Method controls how the Client ID and Client Secret are sent to the token endpoint:
+<table>
+  <tr><th>Value</th><th>Description</th></tr>
+  <tr><td><code>client_secret_basic</code></td><td>Client ID and Secret are sent using HTTP Basic Authentication. This is the default.</td></tr>
+  <tr><td><code>client_secret_post</code></td><td>Client ID and Secret are sent as parameters in the request body.</td></tr>
+  <tr><td><code>none</code></td><td>Only the Client ID is sent, in the request body - for public clients that do not have a secret.</td></tr>
+</table>
+
+<h3>Session Identification</h3>
+The token endpoint's JSON response is passed to the configured Session Management Method, so the access and refresh
+tokens are always available for use in <a href="session-header.html">Header Based Session Management</a> placeholders as
+<code>{%json:access_token%}</code> and <code>{%json:refresh_token%}</code> - this is the case even if the IdP's token endpoint
+uses different field names, as long as the Access Token Field / Refresh Token Field parameters are configured accordingly, since
+they are copied to the standard <code>access_token</code> / <code>refresh_token</code> JSON keys before being handed off to
+session management.
+
+<h3>Session Management / Verification Autodetection</h3>
+If Session Management and/or Authentication Verification are explicitly set to <code>autodetect</code>,
+they are resolved automatically as soon as authentication succeeds, without needing any traffic beyond the
+token request itself (they do <em>not</em> default to autodetect if simply left unconfigured - the
+Automation Framework's own defaults apply in that case, as for any other method). Session Management is
+always set to Header Based, using <code>Authorization: Bearer {%json:access_token%}</code>. Verification
+depends on whether <code>verificationUrl</code> is configured:
+<ul>
+<li>Not set (default): response-based checking of the HTTP status line - <code>200 OK</code> means logged
+in, <code>401 Unauthorized</code> means logged out (the RFC 6750 convention for a bearer-token-protected
+resource rejecting a missing/invalid/expired token). This is a reasonable default but says nothing about
+the specific target application.
+<li>Set to an <a href="https://www.rfc-editor.org/rfc/rfc7662">RFC 7662 OAuth 2.0 Token Introspection</a>
+endpoint: ZAP polls it - authenticating as the OAuth2 client, the same way as at the token endpoint, POSTing
+<code>token=&lt;current access token&gt;</code> - and checks the standard <code>active</code> field instead.
+This is a precise, purpose-built signal that doesn't depend on the target application's own conventions at
+all, and is the recommended option whenever the IdP exposes an introspection endpoint.
+</ul>
+This is all done directly by the authentication method itself, since - unlike browser-driven methods - it
+already knows exactly what its own token/introspection responses look like; the generic autodetection
+mechanism (which watches proxied/spidered traffic for session tokens being reused) doesn't apply here, as
+there's no such follow-up traffic for it to observe.
+
+<h3>Diagnostics</h3>
+Ticking "Record Diagnostics" on the authentication method records the token request/response for each authentication
+attempt, viewable afterwards via the add-on's Diagnostics panel - useful for troubleshooting a failing token exchange.
+
+<H2>Automation Framework</H2>
+
+OAuth2 Authentication can be configured in the environment section of an Automation Framework plan using:
+<pre>
+      authentication:
+        method: "oauth2"
+        parameters:
+          grantType:                   # String, one of: client_credentials, password. Default: client_credentials
+          tokenEndpoint:               # String, the URL of the token endpoint, mandatory
+          clientId:                    # String, the OAuth2 Client ID
+          clientSecret:                # String, the OAuth2 Client Secret
+          clientAuthMethod:            # String, one of: client_secret_basic, client_secret_post, none. Default: client_secret_basic
+          scope:                       # String, the OAuth2 scope(s) to request
+          accessTokenField:            # String, the JSON field name of the access token in the token response. Default: access_token
+          refreshTokenField:           # String, the JSON field name of the refresh token in the token response. Default: refresh_token
+          extraTokenParams:            # Map, extra parameters to send in the token request, e.g. { audience: "https://api.example.com" }
+          diagnostics:                 # Boolean, record diagnostics for troubleshooting. Default: false
+          verificationUrl:             # String, an RFC 7662 introspection endpoint, for autodetected Verification (see below)
+      sessionManagement:
+        method: "headers"
+        parameters:
+          Authorization: "Bearer {%json:access_token%}"
+</pre>
+
+<p>
+Credentials for the <code>password</code> grant type are defined as usual under the user credentials, for example:
+<pre>
+      credentials:
+        username: …
+        password: …
+</pre>
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/OAuth2AuthenticationMethodType.java">OAuth2AuthenticationMethodType.java</a>
+
+</BODY>
+</HTML>

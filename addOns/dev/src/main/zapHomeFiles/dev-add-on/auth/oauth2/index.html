@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Mock OAuth2 Authorization Server</H1>
+	<p>
+	A mock OAuth2 Authorization Server (and a demo relying-party app), supporting all four grant types
+	(<code>client_credentials</code>, <code>password</code>, <code>refresh_token</code> and
+	<code>authorization_code</code> with PKCE), for testing the authhelper add-on's direct/non-interactive
+	OAuth2 authentication method (<code>client_credentials</code>/<code>password</code>, with
+	<code>refresh_token</code> handled automatically).
+	<p>
+	<code>authorization_code</code> is inherently a browser-redirect flow, so it isn't exercised by that
+	method - <a href="https://app.oauth2.zap/">try the demo app</a> to drive it manually in a real browser,
+	independently of ZAP, or use ZAP's Browser-Based/Client Script Based Authentication against it.
+
+	<h2>Endpoints</h2>
+	<ul>
+		<li>Authorization Endpoint: <code>https://authserver.oauth2.zap/authorize</code>
+		<li>Token Endpoint: <code>https://authserver.oauth2.zap/token</code>
+		<li>Introspection Endpoint (RFC 7662, for verification): <code>https://authserver.oauth2.zap/introspect</code>
+			(client-authenticated the same way as the Token Endpoint; POST <code>token=&lt;value&gt;</code>,
+			returns <code>{"active": true|false, ...}</code>)
+		<li>Protected resource (for verification/poll URL testing): <code>https://api.oauth2.zap/userinfo</code>
+			(expects <code>Authorization: Bearer &lt;token&gt;</code>)
+	</ul>
+
+	<h2>Test clients</h2>
+	<ul>
+		<li>Confidential client (use with <code>client_secret_basic</code> or <code>client_secret_post</code>):
+			<code>client_id=test-client</code>, <code>client_secret=test-secret</code>
+		<li>Public client (use with <code>client_auth_method: none</code>, typically with PKCE):
+			<code>client_id=test-public-client</code>, no secret
+	</ul>
+
+	<h2>Test user</h2>
+	<ul>
+		<li>username = test@test.com
+		<li>password = password123
+	</ul>
+
+	<h2>Testing non-standard token field names</h2>
+	<p>
+	Add <code>field_style: custom</code> to the token request (e.g. via <code>extraTokenParams</code>)
+	to have the token endpoint return <code>accessToken</code>/<code>refreshToken</code> instead of
+	the standard <code>access_token</code>/<code>refresh_token</code> - useful for testing the
+	<code>accessTokenField</code>/<code>refreshTokenField</code> normalization.
+
+	<h2>Example ZAP Automation Framework configuration</h2>
+
+	<h3>client_credentials</h3>
+	<pre>
+authentication:
+  method: "oauth2"
+  parameters:
+    grantType: "client_credentials"
+    tokenEndpoint: "https://authserver.oauth2.zap/token"
+    clientId: "test-client"
+    clientSecret: "test-secret"
+sessionManagement:
+  method: "headers"
+  parameters:
+    Authorization: "Bearer {%json:access_token%}"
+	</pre>
+
+	<h3>password</h3>
+	<pre>
+authentication:
+  method: "oauth2"
+  parameters:
+    grantType: "password"
+    tokenEndpoint: "https://authserver.oauth2.zap/token"
+    clientId: "test-client"
+    clientSecret: "test-secret"
+sessionManagement:
+  method: "headers"
+  parameters:
+    Authorization: "Bearer {%json:access_token%}"
+users:
+- name: "Test User"
+  credentials:
+    username: "test@test.com"
+    password: "password123"
+	</pre>
+
+	<h3>refresh_token</h3>
+	<p>
+	Not user-configurable - the authhelper add-on's OAuth2 method captures the <code>refresh_token</code>
+	returned by the <code>password</code> example above automatically (the mock server's <code>client_credentials</code>
+	grant deliberately does not issue one, matching common IdP practice), and
+	reuses it on subsequent authentications without needing a <code>refresh_token</code> grantType or a
+	<code>refreshToken</code> credential. This mock server rotates the refresh token on every use (an old,
+	already-used token is rejected with <code>invalid_grant</code>), so it can be used to exercise that
+	behaviour end-to-end.
+
+	<h3>Verification</h3>
+	<p>
+	Session Management and Verification must both be explicitly set to <code>autodetect</code> for ZAP to
+	resolve them automatically (they don't default to it if omitted): Session Management becomes Header
+	Based (<code>Authorization: Bearer {%json:access_token%}</code>), and Verification becomes response-based
+	checking of the HTTP status line (<code>200 OK</code> vs <code>401 Unauthorized</code>) by default. For a
+	more precise, target-independent signal, set <code>verificationUrl</code> to
+	<code>https://authserver.oauth2.zap/introspect</code>: ZAP polls it with the current access token and
+	checks the standard <code>active</code> field instead, which this mock server implements per RFC 7662,
+	e.g.:
+	<pre>
+authentication:
+  method: "oauth2"
+  parameters:
+    grantType: "password"
+    tokenEndpoint: "https://authserver.oauth2.zap/token"
+    clientId: "test-client"
+    clientSecret: "test-secret"
+    verificationUrl: "https://authserver.oauth2.zap/introspect"
+  verification:
+    method: "autodetect"
+sessionManagement:
+  method: "autodetect"
+users:
+- name: "Test User"
+  credentials:
+    username: "test@test.com"
+    password: "password123"
+	</pre>
+
+	<h3>authorization_code (with PKCE)</h3>
+	<p>
+	There is no Automation Framework <code>authentication</code> method for driving this flow directly -
+	it requires a real browser redirect to the <code>/authorize</code> endpoint and its login/consent page,
+	which is what <a href="https://app.oauth2.zap/">the demo app</a> is for (manually, independently of
+	ZAP). To exercise it under ZAP/the Automation Framework instead, use Browser-Based Authentication or
+	Client Script Based Authentication configured to drive a real browser to
+	<code>https://app.oauth2.zap/</code> and click through the login form.
+
+</div>
+</body>
+</html>
