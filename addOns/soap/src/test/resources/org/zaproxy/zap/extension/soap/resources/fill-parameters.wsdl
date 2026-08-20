@@ -34,6 +34,16 @@
       </xs:complexType>
 
       <xs:attribute name="globalRefKey" type="xs:string"/>
+      <xs:attribute name="globalRefKeyWithDefault" type="xs:string" default="GLOBAL-DEFAULT-VAL"/>
+      <xs:attribute name="globalRefKeyWithFixed" type="xs:string" fixed="GLOBAL-FIXED-VAL"/>
+      <xs:attribute name="globalRefKeyWithEnum">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="ENUM-VAL-1"/>
+            <xs:enumeration value="ENUM-VAL-2"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
 
       <xs:element name="Request">
         <xs:complexType>
@@ -174,6 +184,25 @@
               <xs:complexType>
                 <xs:attribute ref="tns:globalRefKey"/>
                 <xs:attribute name="inlineKey" type="xs:string"/>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="attrRefLocalFixedWrapper" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:attribute ref="tns:globalRefKeyWithDefault" fixed="LOCAL-FIXED-VAL"/>
+                <xs:attribute name="siblingKey" type="xs:string"/>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="attrRefGlobalFixedWrapper" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:attribute ref="tns:globalRefKeyWithFixed"/>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="attrRefGlobalEnumWrapper" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:attribute ref="tns:globalRefKeyWithEnum"/>
               </xs:complexType>
             </xs:element>
 
