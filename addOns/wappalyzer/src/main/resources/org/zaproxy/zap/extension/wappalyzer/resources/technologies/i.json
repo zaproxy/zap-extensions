@@ -111,6 +111,20 @@
     "saas": true,
     "website": "https://www.ibexa.co"
   },
+  "IBM": {
+    "cats": [
+      19
+    ],
+    "description": "IBM enterprise domain claim, used by IBMid to verify ownership of a domain for IBM Cloud and IBM account management.",
+    "dns": {
+      "TXT": [
+        "^ibmid="
+      ]
+    },
+    "icon": "IBM.svg",
+    "saas": true,
+    "website": "https://www.ibm.com"
+  },
   "IBM Carbon Design System": {
     "cats": [
       66

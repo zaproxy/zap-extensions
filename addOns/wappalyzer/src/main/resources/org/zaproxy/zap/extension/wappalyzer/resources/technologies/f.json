@@ -1337,6 +1337,20 @@
     "saas": true,
     "website": "https://www.fieldstack.com/platform/omnichannel-ecommerce-software"
   },
+  "Figma": {
+    "cats": [
+      19
+    ],
+    "description": "Figma is a collaborative interface design and prototyping platform.",
+    "dns": {
+      "TXT": [
+        "figma-domain-verification="
+      ]
+    },
+    "icon": "Figma.png",
+    "saas": true,
+    "website": "https://www.figma.com"
+  },
   "Filamentphp": {
     "cats": [
       47
@@ -2287,6 +2301,20 @@
       "generator": "^FlexCMP"
     },
     "website": "https://www.flexcmp.com/cms/home"
+  },
+  "Flexera": {
+    "cats": [
+      19
+    ],
+    "description": "Flexera provides IT asset management and software spend optimisation.",
+    "dns": {
+      "TXT": [
+        "flexera-domain-verification-"
+      ]
+    },
+    "icon": "Flexera.png",
+    "saas": true,
+    "website": "https://www.flexera.com"
   },
   "FlexiFunnels": {
     "cats": [
@@ -4602,6 +4630,24 @@
     "pricing": [],
     "saas": true,
     "website": "https://freewebstore.com"
+  },
+  "FreeWheel": {
+    "cats": [
+      36
+    ],
+    "description": "FreeWheel (Comcast) is a video ad-serving and ad-management platform whose ad/user-sync calls are made to FreeWheel ad servers such as fwmrm.net.",
+    "dom": [
+      "img[src*=\"fwmrm.net\"]",
+      "iframe[src*=\"fwmrm.net\"]"
+    ],
+    "icon": "FreeWheel.png",
+    "scriptSrc": [
+      "fwmrm\\.net"
+    ],
+    "website": "https://www.freewheel.com",
+    "xhr": [
+      "fwmrm\\.net"
+    ]
   },
   "Frequenceo": {
     "cats": [

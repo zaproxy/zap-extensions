@@ -490,6 +490,20 @@
     ],
     "website": "https://www.palbin.com"
   },
+  "Palo Alto Networks": {
+    "cats": [
+      16
+    ],
+    "description": "Palo Alto Networks is a network and cloud security vendor.",
+    "dns": {
+      "TXT": [
+        "paloaltonetworks-site-verification="
+      ]
+    },
+    "icon": "Palo Alto Networks.svg",
+    "saas": true,
+    "website": "https://www.paloaltonetworks.com"
+  },
   "Palo Alto Networks - GlobalProtect": {
     "cats": [
       46
@@ -805,6 +819,20 @@
       "(?:((?:\\d+\\.)+\\d+)\\/)?parallax(?:\\/assets\\/js)?(?:\\/jquery)?(?:\\/scripts)?(?:\\/wow)?(?:[_\\.]move)?(?:\\.inview)?(?:\\.pkgd)?(?:\\.scrolling)?(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://github.com/pixelcog/parallax.js"
+  },
+  "Parallels": {
+    "cats": [
+      46
+    ],
+    "description": "Parallels provides virtualization and remote application delivery software, including Parallels Desktop and Parallels RAS.",
+    "dns": {
+      "TXT": [
+        "parallels-domain-verification="
+      ]
+    },
+    "icon": "Parallels.png",
+    "saas": true,
+    "website": "https://www.parallels.com"
   },
   "parcel": {
     "cats": [
@@ -2236,6 +2264,11 @@
       58
     ],
     "description": "Pendo is a product analytics platform used in release to enrich the product experience and provide insights to the product management team.",
+    "dns": {
+      "TXT": [
+        "pendo-domain-verification="
+      ]
+    },
     "icon": "Pendo.svg",
     "js": {
       "pendo.HOST": "\\.pendo\\.io",
@@ -5274,6 +5307,20 @@
     ],
     "website": "https://www.pocus.com"
   },
+  "Podbean": {
+    "cats": [
+      88
+    ],
+    "website": "https://podbean.com",
+    "description": "Podbean is a podcast hosting platform whose players and media are embedded on sites via podbean.com domains.",
+    "scriptSrc": [
+      "\\.podbean\\.com/"
+    ],
+    "dom": [
+      "iframe[src*='podbean.com']"
+    ],
+    "icon": "Podbean.png"
+  },
   "Podia": {
     "cats": [
       21,
@@ -6142,6 +6189,20 @@
       "scripts\\.postie\\.com/"
     ],
     "website": "https://postie.com"
+  },
+  "Postman": {
+    "cats": [
+      47
+    ],
+    "description": "Postman is an API development and testing platform.",
+    "dns": {
+      "TXT": [
+        "postman-domain-verification="
+      ]
+    },
+    "icon": "PostmanAPIDocumentation.svg",
+    "saas": true,
+    "website": "https://www.postman.com"
   },
   "Postman API Documentation": {
     "cats": [
@@ -7201,6 +7262,24 @@
     ],
     "website": "https://www.printful.com/"
   },
+  "Printify": {
+    "cats": [
+      6
+    ],
+    "description": "Printify is a print-on-demand and dropshipping platform integrated into e-commerce stores that serves product assets from Printify domains.",
+    "dom": [
+      "img[src*=\"printify.com\"]",
+      "img[src*=\"images-api.printify.com\"]"
+    ],
+    "icon": "Printify.png",
+    "scriptSrc": [
+      "printify\\.com"
+    ],
+    "website": "https://printify.com",
+    "xhr": [
+      "printify\\.com"
+    ]
+  },
   "Printlane": {
     "cats": [
       76
@@ -8054,6 +8133,21 @@
     ],
     "saas": true,
     "website": "https://www.proprofs.com/quiz-school"
+  },
+  "Proserve": {
+    "cats": [
+      88
+    ],
+    "description": "Proserve is a Dutch managed-hosting group; hosted sites use its nameserver brands dn-s.nl, appserved.nl and firstfind.nl.",
+    "dns": {
+      "NS": [
+        "dn-s\\.nl",
+        "appserved\\.nl",
+        "firstfind\\.n(?:l|et)"
+      ]
+    },
+    "icon": "Proserve.png",
+    "website": "https://proserve.nl"
   },
   "ProSites": {
     "cats": [

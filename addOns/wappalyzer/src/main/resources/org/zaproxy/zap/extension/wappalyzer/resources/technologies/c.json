@@ -652,6 +652,11 @@
       51
     ],
     "description": "Canva is an online graphic design platform that allows users to create various visual content using pre-designed templates and a library of elements.",
+    "dns": {
+      "TXT": [
+        "canva-site-verification="
+      ]
+    },
     "icon": "Canva.svg",
     "js": {
       "canva_debounceResize": "",
@@ -3556,6 +3561,21 @@
     "saas": true,
     "website": "https://circle.so"
   },
+  "Cisco": {
+    "cats": [
+      37
+    ],
+    "description": "Cisco networking, collaboration and security services domain verification.",
+    "dns": {
+      "TXT": [
+        "cisco-ci-domain-verification=",
+        "ciscocidomainverification="
+      ]
+    },
+    "icon": "Cisco.svg",
+    "saas": true,
+    "website": "https://www.cisco.com"
+  },
   "Citizen Space": {
     "cats": [
       1
@@ -5231,6 +5251,9 @@
       ],
       "SOA": [
         "\\.cloudflare\\.com"
+      ],
+      "TXT": [
+        "cloudflare_dashboard_sso="
       ]
     },
     "dom": [
@@ -5279,6 +5302,22 @@
       "static\\.cloudflareinsights\\.com/beacon(?:\\.min)?\\.js"
     ],
     "website": "https://www.cloudflare.com"
+  },
+  "Cloudflare DNS": {
+    "cats": [
+      88
+    ],
+    "description": "Cloudflare DNS is Cloudflare's authoritative DNS service; domains using it are served by *.ns.cloudflare.com nameservers.",
+    "dns": {
+      "NS": [
+        "\\.ns\\.cloudflare\\.com"
+      ],
+      "SOA": [
+        "\\.ns\\.cloudflare\\.com"
+      ]
+    },
+    "icon": "CloudFlare.svg",
+    "website": "https://www.cloudflare.com/application-services/products/dns/"
   },
   "Cloudflare Rocket Loader": {
     "cats": [

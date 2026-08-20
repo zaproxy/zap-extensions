@@ -425,7 +425,8 @@
     "description": "Salesforce is a cloud computing service software (SaaS) that specializes in customer relationship management (CRM).",
     "dns": {
       "TXT": [
-        "salesforce\\.com"
+        "salesforce\\.com",
+        "^00D[A-Za-z0-9]{12}="
       ]
     },
     "html": [
@@ -7954,6 +7955,20 @@
     ],
     "website": "https://get.slaask.com"
   },
+  "Slack": {
+    "cats": [
+      19
+    ],
+    "description": "Slack is a team messaging and collaboration platform.",
+    "dns": {
+      "TXT": [
+        "slack-domain-verification="
+      ]
+    },
+    "icon": "Slack.svg",
+    "saas": true,
+    "website": "https://slack.com"
+  },
   "Slapform": {
     "cats": [
       110
@@ -8463,6 +8478,33 @@
     ],
     "website": "https://smarterclick.com"
   },
+  "SmartFront": {
+    "cats": [
+      108,
+      6
+    ],
+    "description": "SmartFront is a multi-tenant headless storefront and admin platform that runs on top of an existing commerce backend such as Magento, Shopify, WooCommerce, Shopware, BigCommerce, PrestaShop, OpenCart, Sylius or Medusa, or on its own native commerce.",
+    "dom": [
+      "[data-sf-shell-page-head]",
+      "style#sf-theme-vars",
+      "div#sf-tenant-css"
+    ],
+    "icon": "SmartFront.svg",
+    "implies": [
+      "Next.js"
+    ],
+    "meta": {
+      "generator": "^SmartFront(?: ([\\d.]+))?$\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "freemium",
+      "recurring",
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://smartfront.io"
+  },
   "SmartHint": {
     "cats": [
       76
@@ -8568,6 +8610,20 @@
       "\\.smartrecruiters\\.com/"
     ],
     "website": "https://www.smartrecruiters.com"
+  },
+  "Smartsheet": {
+    "cats": [
+      19
+    ],
+    "description": "Smartsheet is a work management and collaborative spreadsheet platform.",
+    "dns": {
+      "TXT": [
+        "smartsheet-site-validation="
+      ]
+    },
+    "icon": "Smartsheet.png",
+    "saas": true,
+    "website": "https://www.smartsheet.com"
   },
   "SmartSite": {
     "cats": [
@@ -14033,6 +14089,17 @@
       "themes/SuiteP/js/"
     ],
     "website": "https://suitecrm.com"
+  },
+  "SuiteDash": {
+    "cats": [
+      53
+    ],
+    "description": "SuiteDash is an all-in-one business/CRM and client portal platform whose portals and embedded forms are hosted on app.suitedash.com.",
+    "icon": "SuiteDash.png",
+    "scriptSrc": [
+      "app\\.suitedash\\.com"
+    ],
+    "website": "https://suitedash.com"
   },
   "Suiteshare": {
     "cats": [

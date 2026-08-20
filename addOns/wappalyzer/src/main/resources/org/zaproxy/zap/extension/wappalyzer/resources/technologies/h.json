@@ -33,6 +33,20 @@
     ],
     "website": "https://github.com/lrsjng/h5ai"
   },
+  "HackerOne": {
+    "cats": [
+      16
+    ],
+    "description": "HackerOne is a vulnerability disclosure and bug bounty platform.",
+    "dns": {
+      "TXT": [
+        "h1-domain-verification="
+      ]
+    },
+    "icon": "HackerOne.svg",
+    "saas": true,
+    "website": "https://www.hackerone.com"
+  },
   "Haddock": {
     "cats": [
       4
@@ -462,6 +476,20 @@
       "\\.harnessapp\\.com"
     ],
     "website": "https://www.goharness.com/nonprofits"
+  },
+  "HashiCorp Cloud Platform": {
+    "cats": [
+      62
+    ],
+    "description": "HashiCorp Cloud Platform is the managed service offering for HashiCorp products such as Terraform, Vault, Consul and Boundary.",
+    "dns": {
+      "TXT": [
+        "hcp-domain-verification="
+      ]
+    },
+    "icon": "HashiCorp.svg",
+    "saas": true,
+    "website": "https://www.hashicorp.com/cloud"
   },
   "Hashnode": {
     "cats": [
@@ -2653,6 +2681,20 @@
     },
     "icon": "HP.svg",
     "website": "https://hp.com"
+  },
+  "HPE GreenLake": {
+    "cats": [
+      63
+    ],
+    "description": "HPE GreenLake is Hewlett Packard Enterprise's hybrid cloud platform delivering infrastructure as a service.",
+    "dns": {
+      "TXT": [
+        "hpe-greenlake-domain-verification="
+      ]
+    },
+    "icon": "HPE GreenLake.svg",
+    "saas": true,
+    "website": "https://www.hpe.com/us/en/greenlake.html"
   },
   "HrFlow.ai": {
     "cats": [
