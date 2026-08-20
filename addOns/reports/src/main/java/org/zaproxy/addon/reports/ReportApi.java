@@ -73,6 +73,7 @@ public class ReportApi extends ApiImplementor {
     static final String PARAM_THEME = "theme";
     static final String PARAM_TITLE = "title";
     static final String PARAM_DISPLAY = "display";
+    static final String PARAM_ZIP = "zip";
     static final String PARAM_INC_CONFIDENCES = "includedConfidences";
     static final String PARAM_INC_RISKS = "includedRisks";
     static final String PARAM_REPORT_FILE_NAME_PATTERN = "reportFileNamePattern";
@@ -106,6 +107,7 @@ public class ReportApi extends ApiImplementor {
                             PARAM_REPORT_FILE_NAME_PATTERN,
                             PARAM_REPORT_DIRECTORY,
                             PARAM_DISPLAY,
+                            PARAM_ZIP,
                         }));
         this.addApiView(new ApiView(VIEW_TEMPLATES));
         this.addApiView(new ApiView(VIEW_TEMPLATE_DETAILS, new String[] {PARAM_TEMPLATE}));
@@ -252,14 +254,19 @@ public class ReportApi extends ApiImplementor {
                 }
                 String reportFilePath = Paths.get(paramReportDir, reportFileName).toString();
 
-                boolean display = params.optBoolean(PARAM_DISPLAY, false);
+                boolean zipReport = params.optBoolean(PARAM_ZIP, false);
+                boolean display = zipReport ? false : params.optBoolean(PARAM_DISPLAY, false);
+                reportData.setZipReport(zipReport);
 
                 try {
-                    extReports.generateReport(reportData, template, reportFilePath, display);
+                    return new ApiResponseElement(
+                            name,
+                            extReports
+                                    .generateReport(reportData, template, reportFilePath, display)
+                                    .getPath());
                 } catch (Exception e) {
                     throw new ApiException(Type.INTERNAL_ERROR, e);
                 }
-                return new ApiResponseElement(name, reportFilePath);
             default:
                 throw new ApiException(Type.BAD_ACTION);
         }
