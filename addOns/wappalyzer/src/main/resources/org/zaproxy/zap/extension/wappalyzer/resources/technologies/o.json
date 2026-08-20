@@ -669,6 +669,26 @@
     ],
     "website": "https://omacro.com"
   },
+  "Omago": {
+    "cats": [
+      52
+    ],
+    "description": "Omago is an AI customer-service assistant for business websites that answers visitor questions in the customer's own language, captures leads and hands conversations over to WhatsApp.",
+    "dom": [
+      "#omago-widget-container",
+      "#omago-widget-button"
+    ],
+    "icon": "Omago.svg",
+    "pricing": [
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.omago\\.ai/widget\\.js"
+    ],
+    "website": "https://omago.ai"
+  },
   "Omeda": {
     "cats": [
       86,
@@ -1663,6 +1683,20 @@
     ],
     "saas": true,
     "website": "https://www.open-xchange.com/"
+  },
+  "OpenAI": {
+    "cats": [
+      112
+    ],
+    "description": "OpenAI provides the GPT family of models and the ChatGPT product line.",
+    "dns": {
+      "TXT": [
+        "openai-domain-verification="
+      ]
+    },
+    "icon": "OpenAI.svg",
+    "saas": true,
+    "website": "https://openai.com"
   },
   "OpenBSD httpd": {
     "cats": [

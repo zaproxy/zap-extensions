@@ -4890,6 +4890,20 @@
     "saas": true,
     "website": "https://www.bowtie.ai"
   },
+  "Box": {
+    "cats": [
+      95
+    ],
+    "description": "Box is a cloud content management and file sharing platform.",
+    "dns": {
+      "TXT": [
+        "box-domain-verification="
+      ]
+    },
+    "icon": "Box.png",
+    "saas": true,
+    "website": "https://www.box.com"
+  },
   "Boxmode": {
     "cats": [
       51

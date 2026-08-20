@@ -2751,6 +2751,11 @@
     "html": [
       "<!-- This comment is expected by the docker HEALTHCHECK  -->"
     ],
+    "dns": {
+      "TXT": [
+        "docker-verification="
+      ]
+    },
     "icon": "Docker.svg",
     "website": "https://www.docker.com/"
   },
@@ -3846,6 +3851,11 @@
       52
     ],
     "description": "Drift is a conversational marketing platform.",
+    "dns": {
+      "TXT": [
+        "drift-domain-verification="
+      ]
+    },
     "icon": "Drift.svg",
     "js": {
       "drift": "",
@@ -4489,6 +4499,11 @@
       "dtCookie1": ""
     },
     "description": "Dynatrace is a technology company that produces a software intelligence platform based on artificial intelligence to monitor and optimise application performance and development, IT infrastructure, and user experience for businesses and government agencies throughout the world.",
+    "dns": {
+      "TXT": [
+        "Dynatrace-site-verification="
+      ]
+    },
     "icon": "Dynatrace.svg",
     "js": {
       "dtrum": ""
