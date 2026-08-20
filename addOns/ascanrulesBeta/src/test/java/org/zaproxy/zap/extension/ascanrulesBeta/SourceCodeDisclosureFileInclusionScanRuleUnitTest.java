@@ -214,6 +214,19 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
     }
 
     @Test
+    void shouldNotAlertWhenAttackResponseIsClientError() throws IOException {
+        // Given - simulates zaproxy/zaproxy#9184 where attack responses return 4xx
+        String path = "/shouldNotAlertWhenAttackResponseIsClientError";
+        nano.addHandler(new ClientErrorFiHandler(path));
+        HttpMessage msg = this.getHttpMessage("GET", path + "?inc=bar", DEFAULT_RESPONSE_STRING);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @Test
     void shouldNotAlertWhenConditionsRightAndDisclosureResponseEmpty() throws IOException {
         // Given
         String path = "/empty";
@@ -272,6 +285,39 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
             }
             return newFixedLengthResponse(
                     NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_HTML, DEFAULT_RESPONSE_STRING);
+        }
+    }
+
+    /**
+     * Handler that simulates zaproxy/zaproxy#9184: returns 200 for the original/random requests but
+     * 404 for attack attempts, causing false positives when body comparison is done without
+     * checking status codes.
+     */
+    private static class ClientErrorFiHandler extends NanoServerHandler {
+
+        public ClientErrorFiHandler(String path) {
+            super(path);
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            String pValue = getFirstParamValue(session, "inc");
+
+            // Random param (38 chars): return OK with different body
+            if (pValue.length() == 38) {
+                return newFixedLengthResponse(
+                        Response.Status.OK, NanoHTTPD.MIME_HTML, "different random content");
+            }
+
+            // Original param: return OK with default content
+            if ("bar".equals(pValue)) {
+                return newFixedLengthResponse(
+                        Response.Status.OK, NanoHTTPD.MIME_HTML, DEFAULT_RESPONSE_STRING);
+            }
+
+            // Attack params: return 404 - this should not trigger an alert
+            return newFixedLengthResponse(
+                    Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "Not Found: " + pValue);
         }
     }
 }
