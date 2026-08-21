@@ -1071,6 +1071,20 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                             sqlBooleanAndFalseValue,
                             refreshedmessage.getRequestHeader().getURI());
 
+                    // Confirm the page is stable by re-sending the original value
+                    int confidence =
+                            checkPageStability(
+                                    param,
+                                    origParamValue,
+                                    normalResponse,
+                                    "Check 2, AND FALSE path");
+                    if (confidence < 0) {
+                        if (isStop()) {
+                            return;
+                        }
+                        continue;
+                    }
+
                     // it's different (suggesting that the "AND 1 = 2" appended on gave
                     // different results because it restricted the data set to nothing
                     // Likely a SQL Injection. Raise it
@@ -1078,7 +1092,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                     // Bypass" alert, if necessary
                     sqlInjectionAttack = sqlBooleanAndTrueValue;
                     newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setConfidence(confidence)
                             .setParam(param)
                             .setAttack(sqlInjectionAttack)
                             .setOtherInfo(
@@ -1139,6 +1153,20 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                 orValue,
                                 refreshedmessage.getRequestHeader().getURI());
 
+                        // Confirm the page is stable by re-sending the original value
+                        int confidence =
+                                checkPageStability(
+                                        param,
+                                        origParamValue,
+                                        normalResponse,
+                                        "Check 2, OR TRUE path");
+                        if (confidence < 0) {
+                            if (isStop()) {
+                                return;
+                            }
+                            continue;
+                        }
+
                         // it's different (suggesting that the "OR 1 = 1" appended on gave
                         // different results because it broadened the data set from nothing
                         // to something
@@ -1146,7 +1174,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                         // "Authentication Bypass" alert, if necessary
                         sqlInjectionAttack = orValue;
                         newAlert()
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setConfidence(confidence)
                                 .setParam(param)
                                 .setAttack(sqlInjectionAttack)
                                 .setOtherInfo(
@@ -1266,11 +1294,50 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                             "Check 2, {} html output for AND FALSE condition [{}] matches the (refreshed) original results",
                             (verificationUsingStripped ? "STRIPPED" : "UNSTRIPPED"),
                             sqlBooleanAndFalseValue);
+
+                    // Confirm the page is stable by re-sending the original value
+                    HttpMessage msgControl = getNewMsg();
+                    setParameter(msgControl, param, origParamValue);
+                    if (isStop()) {
+                        return;
+                    }
+                    try {
+                        sendAndReceive(msgControl, false);
+                    } catch (SocketException ex) {
+                        LOGGER.debug(
+                                "Caught {} {} when accessing: {}",
+                                ex.getClass().getName(),
+                                ex.getMessage(),
+                                msgControl.getRequestHeader().getURI());
+                        continue;
+                    }
+                    countBooleanBasedRequests++;
+
+                    String controlBodyUnstripped = msgControl.getResponseBody().toString();
+                    String controlBodyStripped = stripOff(controlBodyUnstripped, origParamValue);
+
+                    boolean controlMatchesUnstripped =
+                            controlBodyUnstripped.compareTo(mResBodyNormalUnstripped) == 0;
+                    boolean controlMatchesStripped =
+                            controlBodyStripped.compareTo(mResBodyNormalStripped) == 0;
+
+                    int confidence;
+                    if (!controlMatchesUnstripped && !controlMatchesStripped) {
+                        // Control differs from baseline - page may be unstable
+                        LOGGER.debug(
+                                "Check 2a, control request for original value [{}] showed page is unstable for {}",
+                                origParamValue,
+                                refreshedmessage.getRequestHeader().getURI());
+                        confidence = Alert.CONFIDENCE_LOW;
+                    } else {
+                        confidence = Alert.CONFIDENCE_MEDIUM;
+                    }
+
                     // raise the alert, and save the attack string for the "Authentication
                     // Bypass" alert, if necessary
                     sqlInjectionAttack = sqlBooleanOrTrueValue;
                     newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setConfidence(confidence)
                             .setParam(param)
                             .setAttack(sqlInjectionAttack)
                             .setOtherInfo(
@@ -1736,6 +1803,47 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
     // At this time the sqli tests just look for 0, 1, or anything in between, so the exact value
     // here doesn't matter. Anything between 0 and 1 works.
     private static final float HEURISTIC_WEIGHT = .99f;
+
+    /**
+     * Send a control request with the original parameter value to verify page stability. Returns
+     * {@link Alert#CONFIDENCE_MEDIUM} if the page is stable, {@link Alert#CONFIDENCE_LOW} if
+     * unstable, or {@code -1} if the request could not be completed (caller should skip this
+     * iteration).
+     */
+    private int checkPageStability(
+            String param,
+            String origParamValue,
+            ComparableResponse normalResponse,
+            String checkDescription)
+            throws IOException {
+        HttpMessage msgControl = getNewMsg();
+        setParameter(msgControl, param, origParamValue);
+        if (isStop()) {
+            return -1;
+        }
+        try {
+            sendAndReceive(msgControl, false);
+        } catch (SocketException ex) {
+            LOGGER.debug(
+                    "Caught {} {} when accessing: {}",
+                    ex.getClass().getName(),
+                    ex.getMessage(),
+                    msgControl.getRequestHeader().getURI());
+            return -1;
+        }
+        countBooleanBasedRequests++;
+        ComparableResponse controlResponse = new ComparableResponse(msgControl, origParamValue);
+
+        if (compareResponses(normalResponse, controlResponse) < 1) {
+            LOGGER.debug(
+                    "{}: control request for original value [{}] showed page is unstable for {}",
+                    checkDescription,
+                    origParamValue,
+                    refreshedmessage.getRequestHeader().getURI());
+            return Alert.CONFIDENCE_LOW;
+        }
+        return Alert.CONFIDENCE_MEDIUM;
+    }
 
     /**
      * 0 means very different and 1 very similar. Note that this is the opposite from most compareTo
