@@ -23,8 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
@@ -94,5 +96,23 @@ class MongoDbInjectionScanRuleUnitTest extends ActiveScannerTest<MongoDbInjectio
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(alert.getParam(), is(equalTo("qry")));
+        assertThat(alert.getAttack(), is(equalTo("qry[$ne]")));
+        assertThat(alert.getEvidence(), is(equalTo("")));
+        assertThat(
+                alert.getOtherInfo(),
+                is(
+                        equalTo(
+                                "In some PHP or NodeJS based back end implementations, in order to obtain sensitive data it is possible to inject the \"[$ne]\" string (or other similar ones) that is processed as an associative array rather than a simple text.\nThrough this, the queries made to MongoDB will always be true.")));
     }
 }
