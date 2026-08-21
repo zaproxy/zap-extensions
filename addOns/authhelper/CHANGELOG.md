@@ -8,9 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - A toolbar button to the Authentication Diagnostics screenshots tab, to toggle screenshots between full size and scaled to fit the window.
 
 ### Changed
+- Depend on newer Common Library add-on.
 - Tag diagnostic HTTP messages with an internal ID, to make it easier to cross reference them.
 - Obtain the minimal authentication diagnostics when aborting the authentication.
 - Authentication report: include summary with connection success and failure counts.
+- Include Accept, Accept-Language, Connection, and User-Agent headers when doing authentication verification.
 
 ### Fixed
 - Do not wait when getting the element for a screenshot diagnostic step to not add unnecessary delays.

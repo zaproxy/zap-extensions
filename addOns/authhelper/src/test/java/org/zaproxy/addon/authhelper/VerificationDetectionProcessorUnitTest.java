@@ -153,6 +153,10 @@ class VerificationDetectionProcessorUnitTest extends TestUtils {
 
     @ParameterizedTest
     @CsvSource({
+        "user-agent, my agent",
+        "accept, application/json",
+        "accept-language, en",
+        "connection, keep-alive",
         "content-type, application/json",
         "referer, https://example.com",
         "origin, https://example.com"
