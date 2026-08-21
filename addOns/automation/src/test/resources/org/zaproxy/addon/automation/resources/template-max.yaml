@@ -22,6 +22,7 @@ env:                                   # The environment, mandatory
           loggedOutRegex:              # String, regex pattern for determining if logged out
           pollFrequency:               # Int, the poll frequency, only for 'poll' verification
           pollUnits:                   # String, the poll units, one of 'requests', 'seconds', only for 'poll' verification
+          pollMethod:                  # String, the poll HTTP method (e.g. GET), only for 'poll' verification. Post 2.17.0.
           pollUrl:                     # String, the URL to poll, only for 'poll' verification
           pollPostData:                # String, post dat to include in the poll, only for 'poll' verification
           pollAdditionalHeaders:       # List of additional headers for poll request, only for 'poll' verification
