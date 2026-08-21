@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: XML Integration Test
+  version: 1.0.0
+paths:
+  /xml:
+    post:
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: object
+              xml:
+                name: person
+                namespace: "http://example.com/ns"
+                prefix: ex
+              properties:
+                id:
+                  type: integer
+                  xml:
+                    attribute: true
+                    name: id
+                tags:
+                  type: array
+                  xml:
+                    name: tags
+                    wrapped: false
+                  items:
+                    type: string
+                    xml:
+                      name: tag
+      responses:
+        "200":
+          description: OK
