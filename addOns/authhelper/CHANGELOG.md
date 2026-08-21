@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Obtain the minimal authentication diagnostics when aborting the authentication.
 - Authentication report: include summary with connection success and failure counts.
 
+### Fixed
+- Do not wait when getting the element for a screenshot diagnostic step to not add unnecessary delays.
+
 ## [0.41.0] - 2026-08-07
 ### Added
 - Automation Framework `diagnostics` job to start and stop plan-level recording of authentication related diagnostics.

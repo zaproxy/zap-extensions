@@ -653,10 +653,14 @@ return getSelector(arguments[0], document)
             return resetWait(
                     wd,
                     () -> {
+                        int waitForMsec = element.getWaitForMsec();
                         try {
+                            element.setWaitForMsec(0);
                             return element.getWebElement(runtime);
                         } catch (ZestClientFailException e) {
                             return null;
+                        } finally {
+                            element.setWaitForMsec(waitForMsec);
                         }
                     },
                     () -> null);
