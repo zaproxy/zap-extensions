@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Obtain the minimal authentication diagnostics when aborting the authentication.
 - Authentication report: include summary with connection success and failure counts.
 - Include Accept, Accept-Language, Connection, and User-Agent headers when doing authentication verification.
+- Ignore commented Zest statements when collecting authentication diagnostics.
 
 ### Fixed
 - Do not wait when getting the element for a screenshot diagnostic step to not add unnecessary delays.

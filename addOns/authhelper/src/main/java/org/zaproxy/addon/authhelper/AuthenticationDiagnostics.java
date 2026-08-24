@@ -305,7 +305,7 @@ return getSelector(arguments[0], document)
 
         for (int i = 0; i < zestScript.getStatements().size(); i++) {
             ZestStatement stmt = zestScript.getStatements().get(i);
-            if (stmt instanceof ZestClientElementClear) {
+            if (stmt instanceof ZestClientElementClear || !stmt.isEnabled()) {
                 continue;
             }
 
