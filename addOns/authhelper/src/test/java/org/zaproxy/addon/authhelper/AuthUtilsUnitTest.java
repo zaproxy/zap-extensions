@@ -21,6 +21,7 @@ package org.zaproxy.addon.authhelper;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -28,6 +29,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -60,6 +62,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -74,6 +80,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -778,6 +785,98 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(tokens.get("json:accessToken"), is(nullValue()));
+    }
+
+    @Test
+    void shouldExtractJsonTokensFromTopLevelArrayBody() throws Exception {
+        // Given - a top level JSON array response body, e.g. as returned by some login APIs
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader(
+                                "HTTP/1.1 200 OK\r\n" + "Content-Type: application/json"),
+                        new HttpResponseBody("[{\"accessToken\": \"abc123\"}]"));
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
+
+        // Then
+        assertThat(tokens.get("json:[0].accessToken").getValue(), is(equalTo("abc123")));
+    }
+
+    @Test
+    void shouldParseJsonObjectString() {
+        // Given
+        String json = "{\"a\":\"b\"}";
+
+        // When
+        JSON result = AuthUtils.toJSON(json);
+
+        // Then
+        assertThat(result, is(instanceOf(JSONObject.class)));
+        assertThat(((JSONObject) result).getString("a"), is(equalTo("b")));
+    }
+
+    @Test
+    void shouldParseJsonArrayString() {
+        // Given
+        String json = "[\"a\",\"b\"]";
+
+        // When
+        JSON result = AuthUtils.toJSON(json);
+
+        // Then
+        assertThat(result, is(instanceOf(JSONArray.class)));
+        assertThat(((JSONArray) result).size(), is(equalTo(2)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "{\"a\":\"b\"}",
+                " {\"a\":\"b\"}",
+                "\n\t {\"a\":\"b\"}",
+                "\r\n{\"a\":\"b\"}"
+            })
+    void shouldParseJsonObjectStringWithLeadingWhitespace(String json) {
+        // When
+        JSON result = AuthUtils.toJSON(json);
+
+        // Then
+        assertThat(result, is(instanceOf(JSONObject.class)));
+        assertThat(((JSONObject) result).getString("a"), is(equalTo("b")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"[\"a\"]", " [\"a\"]", "\n\t [\"a\"]"})
+    void shouldParseJsonArrayStringWithLeadingWhitespace(String json) {
+        // When
+        JSON result = AuthUtils.toJSON(json);
+
+        // Then
+        assertThat(result, is(instanceOf(JSONArray.class)));
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(
+            strings = {
+                "",
+                " ",
+                "\t",
+                "\n",
+                " \t\n ",
+                "null",
+                "true",
+                "false",
+                "123",
+                "\"a string\"",
+                "not json at all",
+                "{\"a\":",
+                "[\"a\""
+            })
+    void shouldThrowJsonExceptionForInvalidJsonString(String json) {
+        assertThrows(JSONException.class, () -> AuthUtils.toJSON(json));
     }
 
     @Test
