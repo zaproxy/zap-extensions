@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- Allow MCP security key to be copied (Issue #9432)
 
 ## [0.3.0] - 2026-08-07
 

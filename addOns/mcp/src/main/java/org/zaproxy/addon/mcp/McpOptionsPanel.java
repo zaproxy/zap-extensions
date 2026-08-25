@@ -160,6 +160,7 @@ public class McpOptionsPanel extends AbstractParamPanel {
     private JPasswordField getSecurityKeyField() {
         if (securityKeyField == null) {
             securityKeyField = new JPasswordField(32);
+            securityKeyField.putClientProperty("JPasswordField.cutCopyAllowed", true);
         }
         return securityKeyField;
     }
