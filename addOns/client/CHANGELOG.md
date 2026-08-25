@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated Chrome and Firefox full extensions to v0.2.3.
+- Update the Client Spider clear action title capitalization (Issue 2000).
 
 ## [0.31.0] - 2026-08-14
 ### Changed
