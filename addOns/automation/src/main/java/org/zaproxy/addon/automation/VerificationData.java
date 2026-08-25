@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
@@ -34,6 +36,8 @@ import org.zaproxy.zap.authentication.AuthenticationMethod.AuthPollFrequencyUnit
 import org.zaproxy.zap.model.Context;
 
 public class VerificationData extends AutomationData {
+
+    private static final Logger LOGGER = LogManager.getLogger(VerificationData.class);
 
     public static final String METHOD_BOTH = "both";
     public static final String METHOD_RESPONSE = "response";
@@ -58,6 +62,7 @@ public class VerificationData extends AutomationData {
     private String loggedOutRegex;
     private Integer pollFrequency;
     private String pollUnits;
+    private String pollMethod;
     private String pollUrl;
     private String pollPostData;
     private List<AdditionalHeaderData> pollAdditionalHeaders;
@@ -100,6 +105,14 @@ public class VerificationData extends AutomationData {
         }
         this.setPollUrl(authMethod.getPollUrl());
         this.setPollPostData(authMethod.getPollData());
+        try {
+            Class<?> clazz = Class.forName("org.zaproxy.zap.authentication.VerificationMethod");
+            Object verificationMethod =
+                    context.getClass().getMethod("getVerificationMethod").invoke(context);
+            setPollMethod((String) clazz.getMethod("getPollMethod").invoke(verificationMethod));
+        } catch (Exception e) {
+            LOGGER.debug("Failed to read pollMethod via reflection:", e);
+        }
         String headers = authMethod.getPollHeaders();
         if (headers != null) {
             List<AdditionalHeaderData> headerList = new ArrayList<>();
@@ -239,6 +252,17 @@ public class VerificationData extends AutomationData {
             }
         }
         authMethod.setPollData(this.getPollPostData());
+        if (pollMethod != null) {
+            try {
+                Class<?> clazz = Class.forName("org.zaproxy.zap.authentication.VerificationMethod");
+                Object verificationMethod =
+                        context.getClass().getMethod("getVerificationMethod").invoke(context);
+                clazz.getMethod("setPollMethod", String.class)
+                        .invoke(verificationMethod, pollMethod);
+            } catch (Exception e) {
+                LOGGER.debug("Failed to set pollMethod via reflection:", e);
+            }
+        }
         if (this.pollAdditionalHeaders != null && !this.pollAdditionalHeaders.isEmpty()) {
             StringBuilder headers = new StringBuilder();
             for (AdditionalHeaderData header : this.pollAdditionalHeaders) {
@@ -289,6 +313,14 @@ public class VerificationData extends AutomationData {
 
     public void setPollUnits(String pollUnits) {
         this.pollUnits = pollUnits;
+    }
+
+    public String getPollMethod() {
+        return pollMethod;
+    }
+
+    public void setPollMethod(String pollMethod) {
+        this.pollMethod = pollMethod;
     }
 
     public String getPollUrl() {

@@ -148,6 +148,7 @@ public class VerificationDetectionProcessor implements Runnable {
         // Update the context
         AuthenticationMethod authMethod = context.getAuthenticationMethod();
         authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+        AuthUtils.setPollMethod(context, details.getMsg().getRequestHeader().getMethod());
         authMethod.setPollUrl(details.getMsg().getRequestHeader().getURI().toString());
         authMethod.setLoggedInIndicatorPattern(loggedInIndicator);
         authMethod.setLoggedOutIndicatorPattern(loggedOutIndicator);
