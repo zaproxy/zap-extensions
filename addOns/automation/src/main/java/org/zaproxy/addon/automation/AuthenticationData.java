@@ -65,12 +65,14 @@ public class AuthenticationData extends AutomationData {
     public static final String METHOD_BROWSER = "browser";
     public static final String METHOD_AUTO = "autodetect";
     public static final String METHOD_CLIENT = "client";
+    public static final String METHOD_AI = "ai";
 
     public static final String PARAM_HOSTNAME = "hostname";
     public static final String PARAM_REALM = "realm";
     public static final String PARAM_PORT = "port";
     public static final String PARAM_BROWSER_ID = "browserId";
     public static final String PARAM_DIAGNOSTICS = "diagnostics";
+    public static final String PARAM_LOGIN_AI_HINT = "hint";
     public static final String PARAM_LOGIN_PAGE_URL = "loginPageUrl";
     public static final String PARAM_LOGIN_PAGE_WAIT = "loginPageWait";
     public static final String PARAM_LOGIN_REQUEST_URL = "loginRequestUrl";
@@ -86,6 +88,8 @@ public class AuthenticationData extends AutomationData {
             "org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod";
     protected static final String BROWSER_BASED_AUTH_METHOD_CLASSNAME =
             "org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod";
+    protected static final String AI_ASSISTED_AUTH_METHOD_CLASSNAME =
+            "org.zaproxy.addon.authhelper.llm.AiAssistedAuthenticationMethodType.AiAssistedAuthenticationMethod";
 
     /** Field name in the underlying PostBasedAuthenticationMethod class * */
     protected static final String FIELD_LOGIN_REQUEST_URL = "loginRequestURL";
@@ -103,7 +107,8 @@ public class AuthenticationData extends AutomationData {
                     METHOD_SCRIPT,
                     METHOD_BROWSER,
                     METHOD_AUTO,
-                    METHOD_CLIENT);
+                    METHOD_CLIENT,
+                    METHOD_AI);
 
     private String method;
     private Map<String, Object> parameters = new LinkedHashMap<>();
@@ -528,7 +533,46 @@ public class AuthenticationData extends AutomationData {
                                         "automation.error.env.auth.type.bad", getMethod()));
                     }
                     break;
+                case AuthenticationData.METHOD_AI:
+                    AuthenticationMethodType authAiType =
+                            extAuth.getAuthenticationMethodTypeForIdentifier(9);
 
+                    if (authAiType != null) {
+                        AuthenticationMethod am =
+                                authAiType.createAuthenticationMethod(context.getId());
+
+                        JobUtils.setPrivateField(
+                                am,
+                                AuthenticationData.PARAM_LOGIN_PAGE_URL,
+                                env.replaceVars(
+                                        getParameters()
+                                                .get(AuthenticationData.PARAM_LOGIN_PAGE_URL)));
+
+                        JobUtils.setPrivateField(
+                                am,
+                                AuthenticationData.PARAM_LOGIN_AI_HINT,
+                                env.replaceVars(
+                                        getParameters()
+                                                .get(AuthenticationData.PARAM_LOGIN_AI_HINT)));
+
+                        Object browserIdObj =
+                                getParameters().get(AuthenticationData.PARAM_BROWSER_ID);
+                        if (browserIdObj != null && browserIdObj instanceof String) {
+                            JobUtils.setPrivateField(
+                                    am, AuthenticationData.PARAM_BROWSER_ID, (String) browserIdObj);
+                        }
+
+                        setPrivateInteger(am, parameters, AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
+
+                        reloadAuthenticationMethod(am, progress);
+                        context.setAuthenticationMethod(am);
+
+                    } else {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.auth.type.bad", getMethod()));
+                    }
+                    break;
                 case AuthenticationData.METHOD_AUTO:
                     // This should be handled dynamically, but that required core changes
                     AuthenticationMethodType authAutoType =

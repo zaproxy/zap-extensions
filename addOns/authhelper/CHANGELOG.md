@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - A toolbar button to the Authentication Diagnostics screenshots tab, to toggle screenshots between full size and scaled to fit the window.
+- AI Assisted Authentication
 
 ### Changed
 - Depend on newer Common Library add-on.
+- The Authentication Tester dialog now remembers the last authentication method used and selects it by default next time it's opened.
 - Tag diagnostic HTTP messages with an internal ID, to make it easier to cross reference them.
 - Obtain the minimal authentication diagnostics when aborting the authentication.
 - Authentication report: include summary with connection success and failure counts.

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Multi-Step Authentication</h1>
+	<h2>Sign In &mdash; Step 1 of 3</h2>
+
+	<div id="result"></div>
+
+	<form id="loginform" action="step2" method="post">
+	<table style="border: none;">
+	<tr>
+		<td>Username:</td>
+		<td><input id="user" name="user" type="email" placeholder="you@example.com"></td>
+	</tr>
+	<tr>
+		<td>Domain:</td>
+		<td>
+			<select id="domain" name="domain">
+				<option value="">-- Select domain --</option>
+				<option value="alpha.example.com">alpha.example.com</option>
+				<option value="beta.example.com">beta.example.com</option>
+				<option value="Project1">Project1</option>
+				<option value="Project2">Project2</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><button id="next" type="button" onclick="submitform();">Continue</button></td>
+	</tr>
+	</table>
+	</form>
+	<p>
+	Test credentials:
+	<ul>
+		<li>username = test@test.com</li>
+		<li>password = password123</li>
+		<li>domain = Project1</li>
+		<li>department = any valid selection</li>
+	</ul>
+</div>
+<script>
+function submitform() {
+	var domain = document.getElementById("domain").value;
+	if (!domain) {
+		document.getElementById("result").textContent = "Please select a domain.";
+		return;
+	}
+	document.getElementById("loginform").submit();
+}
+
+document.getElementById('user').onkeydown = function(e) {
+	if (e.keyCode == 13) {
+		document.getElementById("domain").focus();
+	}
+};
+
+document.getElementById('domain').onkeydown = function(e) {
+	if (e.keyCode == 13) {
+		submitform();
+	}
+};
+
+document.getElementById("user").focus();
+</script>
+</body>
+</html>
