@@ -182,6 +182,26 @@ public class AuthenticationStep
     }
 
     public WebElement execute(WebDriver wd, UsernamePasswordAuthenticationCredentials credentials) {
+        return execute(wd, credentials, new AuthenticationContext());
+    }
+
+    /**
+     * Executes this step using the supplied {@code ctx} to share state across steps within a
+     * single authentication attempt.
+     *
+     * <p>For {@code TOTP_FIELD} steps the TOTP code is generated lazily through {@code ctx} so it
+     * is as fresh as possible. If the resolved element has {@code maxlength="1"} the step
+     * automatically locates all sibling single-character inputs and fills each with one digit.
+     *
+     * @param wd the WebDriver instance.
+     * @param credentials the user credentials.
+     * @param ctx the authentication context for this attempt.
+     * @return the element interacted with, or {@code null} for WAIT steps.
+     */
+    public WebElement execute(
+            WebDriver wd,
+            UsernamePasswordAuthenticationCredentials credentials,
+            AuthenticationContext ctx) {
         if (getType() == Type.WAIT) {
             try {
                 Thread.sleep(timeout);
@@ -189,6 +209,13 @@ public class AuthenticationStep
                 LOGGER.warn("Interrupted while waiting for timeout.");
                 Thread.currentThread().interrupt();
             }
+            return null;
+        }
+
+        // For TOTP_FIELD steps after the first, fillSplitOtpFields already filled all boxes.
+        // Skip element lookup entirely to avoid timeouts and OTP-component state corruption.
+        if (getType() == Type.TOTP_FIELD && ctx.peekSplitOtpCharIndex() > 0) {
+            ctx.nextSplitOtpCharIndex();
             return null;
         }
 
@@ -204,7 +231,7 @@ public class AuthenticationStep
                 break;
 
             case CUSTOM_FIELD:
-                AuthUtils.fillField(element, value);
+                AuthUtils.fillFieldWithEvents(element, value, wd);
                 break;
 
             case ESCAPE:
@@ -212,7 +239,7 @@ public class AuthenticationStep
                 break;
 
             case PASSWORD:
-                AuthUtils.fillField(element, credentials.getPassword());
+                AuthUtils.fillFieldWithEvents(element, credentials.getPassword(), wd);
                 break;
 
             case RETURN:
@@ -220,11 +247,30 @@ public class AuthenticationStep
                 break;
 
             case TOTP_FIELD:
-                element.sendKeys(getTotpCode(credentials));
+                String totpCode =
+                        ctx.getOrGenerateTotpCode(
+                                () -> getTotpCode(credentials).toString());
+                int charIndex = ctx.nextSplitOtpCharIndex();
+                if (charIndex == 0) {
+                    // First (or only) TOTP_FIELD step.
+                    // fillSplitOtpFields auto-detects all split boxes and fills each
+                    // with one digit, so a single step is enough for both single-step
+                    // and multi-step YAML configs.
+                    if ("1".equals(element.getDomAttribute("maxlength"))) {
+                        AuthUtils.fillSplitOtpFields(wd, element, totpCode);
+                    } else {
+                        // Combined input or app-managed OTP component: send the full
+                        // code and let the component distribute it.
+                        AuthUtils.fillFieldWithEvents(element, totpCode, wd);
+                    }
+                }
+                // charIndex > 0: all boxes were already filled in step 0 above.
+                // Doing nothing here prevents OTP-component shift/corruption bugs
+                // that occur when sendKeys is called on already-filled boxes.
                 break;
 
             case USERNAME:
-                AuthUtils.fillField(element, credentials.getUsername());
+                AuthUtils.fillFieldWithEvents(element, credentials.getUsername(), wd);
                 break;
 
             default:
