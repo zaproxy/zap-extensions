@@ -152,10 +152,7 @@ public class HistoryProvider implements SessionChangedListener {
                 if (msg == null) {
                     continue;
                 }
-                Optional<SessionToken> es =
-                        AuthUtils.getAllTokens(msg, false).values().stream()
-                                .filter(v -> v.getValue().equals(token))
-                                .findFirst();
+                Optional<SessionToken> es = AuthUtils.findToken(msg, false, token);
                 if (es.isPresent()) {
                     AuthUtils.incStatsCounter(
                             msg.getRequestHeader().getURI(),

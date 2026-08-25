@@ -101,11 +101,7 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
                 if (msg.getRequestHeader().hasContentType("json")
                         && StringUtils.isNotEmpty(postData)) {
                     try {
-                        try {
-                            extractJsonStrings(JSONObject.fromObject(postData), "", params);
-                        } catch (JSONException e) {
-                            extractJsonStrings(JSONArray.fromObject(postData), "", params);
-                        }
+                        extractJsonStrings(AuthUtils.toJSON(postData), "", params);
                         type = AuthenticationRequestDetails.AuthDataType.JSON;
                     } catch (JSONException e) {
                         LOGGER.debug("Unable to parse as JSON: {}", postData, e);

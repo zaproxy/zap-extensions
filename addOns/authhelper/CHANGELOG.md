@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Do not wait when getting the element for a screenshot diagnostic step to not add unnecessary delays.
+- Performance issue checking for where cookie values were set during authentication.
 
 ## [0.41.0] - 2026-08-07
 ### Added

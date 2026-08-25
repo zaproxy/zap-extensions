@@ -45,6 +45,7 @@ import java.util.stream.Stream;
 import lombok.Setter;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -73,6 +74,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
@@ -1171,6 +1173,83 @@ public class AuthUtils {
         return tokens;
     }
 
+    /**
+     * Looks for a single {@link SessionToken} with the given value, checking the cheap sources
+     * (response headers, URL params, cookies) before falling back to parsing the (potentially
+     * large) response body. Callers that only care whether a specific value is present should use
+     * this instead of {@link #getAllTokens} to avoid the cost of building the full token map when a
+     * match is found in one of the cheap sources.
+     */
+    public static Optional<SessionToken> findToken(
+            HttpMessage msg, boolean incReqCookies, String value) {
+        for (HttpHeaderField h : msg.getResponseHeader().getHeaders()) {
+            if (value.equals(h.getValue())) {
+                return Optional.of(
+                        new SessionToken(SessionToken.HEADER_SOURCE, h.getName(), h.getValue()));
+            }
+        }
+        for (HtmlParameter p : msg.getUrlParams()) {
+            if (value.equals(p.getValue())) {
+                return Optional.of(
+                        new SessionToken(SessionToken.URL_SOURCE, p.getName(), p.getValue()));
+            }
+        }
+        if (incReqCookies) {
+            for (HtmlParameter c : msg.getRequestHeader().getCookieParams()) {
+                if (value.equals(c.getValue())) {
+                    return Optional.of(
+                            new SessionToken(
+                                    SessionToken.COOKIE_SOURCE, c.getName(), c.getValue()));
+                }
+            }
+        }
+        for (HttpCookie c : msg.getResponseHeader().getHttpCookies(null)) {
+            if (value.equals(c.getValue())) {
+                return Optional.of(
+                        new SessionToken(SessionToken.COOKIE_SOURCE, c.getName(), c.getValue()));
+            }
+        }
+
+        Map<String, SessionToken> bodyTokens = new HashMap<>();
+        addResponseBodyTokens(msg, bodyTokens);
+        return bodyTokens.values().stream().filter(t -> value.equals(t.getValue())).findFirst();
+    }
+
+    /**
+     * Parses a String into a JSON Object or Array
+     *
+     * @param s the string to parse
+     * @return a parsed JSON object
+     * @throws JSONException on a non JSON string
+     * @since 0.42.0
+     */
+    public static JSON toJSON(String s) {
+        if (s == null) {
+            throw new JSONException("Null JSON string");
+        }
+        final int len = s.length();
+
+        int i = 0;
+        while (i < len && s.charAt(i) <= ' ') {
+            i++;
+        }
+
+        if (i == len) {
+            throw new JSONException("Empty JSON string");
+        }
+
+        switch (s.charAt(i)) {
+            case '{':
+                return JSONObject.fromObject(s);
+
+            case '[':
+                return JSONArray.fromObject(s);
+
+            default:
+                throw new JSONException("A JSON string must begin with '{' or '[': " + s);
+        }
+    }
+
     private static void addResponseBodyTokens(HttpMessage msg, Map<String, SessionToken> tokens) {
         if (msg.getResponseBody().length() > MAX_LENGTH_RESPONSE_BODY) {
             LOGGER.debug(
@@ -1185,13 +1264,8 @@ public class AuthUtils {
         if (msg.getResponseHeader().isJson()
                 && StringUtils.isNotBlank(responseData)
                 && !extractJsonString(tokens, responseData)) {
-            // Extract json response data
             try {
-                try {
-                    AuthUtils.extractJsonTokens(JSONObject.fromObject(responseData), "", tokens);
-                } catch (JSONException e) {
-                    AuthUtils.extractJsonTokens(JSONArray.fromObject(responseData), "", tokens);
-                }
+                extractJsonTokens(toJSON(responseData), "", tokens);
             } catch (Exception e) {
                 LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {}",
