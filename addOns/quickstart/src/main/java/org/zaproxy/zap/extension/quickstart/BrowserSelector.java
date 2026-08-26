@@ -28,7 +28,5 @@ public interface BrowserSelector {
 
     String getSelectedBrowserId();
 
-    String getSelectedBrowserName();
-
-    void restoreSelection(String savedBrowserName);
+    void restoreSelection(String savedBrowserId);
 }

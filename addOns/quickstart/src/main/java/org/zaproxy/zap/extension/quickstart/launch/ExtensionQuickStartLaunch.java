@@ -211,14 +211,15 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
         for (int i = 0; i < model.getSize(); i++) {
             ProvidedBrowserUI browser = model.getElementAt(i);
-            String browserName = browser.getName();
+            String browserId = browser.getBrowser().getId();
             JRadioButtonMenuItem item =
-                    new JRadioButtonMenuItem(browserName, browser.equals(selected));
+                    new JRadioButtonMenuItem(browser.getName(), browser.equals(selected));
+            item.setActionCommand(browserId);
             item.setIcon(browser.getBrowser().getIcon());
             item.addActionListener(
                     e -> {
-                        launchPanel.selectBrowser(browserName);
-                        setToolbarButtonIcon(browserName);
+                        launchPanel.selectBrowser(browserId);
+                        setToolbarButtonIcon(browserId);
                         launchPanel.launchBrowser();
                         Stats.incCounter(
                                 "stats.ui.maintoolbar.button.quickstart.browserlaunch.menu");
@@ -234,14 +235,14 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         populateBrowserMenuItems();
     }
 
-    protected void setToolbarButtonIcon(String browserName) {
-        launchToolbarButton.setIcon(getIconForBrowser(browserName));
+    protected void setToolbarButtonIcon(String browserId) {
+        launchToolbarButton.setIcon(getIconForBrowser(browserId));
 
         if (browserPopupMenu != null) {
             for (Iterator<AbstractButton> it = browsersButtonGroup.getElements().asIterator();
                     it.hasNext(); ) {
                 AbstractButton button = it.next();
-                if (button.getText().equals(browserName)) {
+                if (button.getActionCommand().equals(browserId)) {
                     browsersButtonGroup.setSelected(button.getModel(), true);
                     break;
                 }
@@ -249,15 +250,14 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         }
     }
 
-    private Icon getIconForBrowser(String browserName) {
+    private Icon getIconForBrowser(String browserId) {
         if (launchPanel == null) {
             return null;
         }
         ProvidedBrowsersComboBoxModel model = launchPanel.getActiveBrowserModel();
         for (int i = 0; i < model.getSize(); i++) {
             ProvidedBrowserUI bui = model.getElementAt(i);
-            if (bui.getName().equalsIgnoreCase(browserName)
-                    || bui.getBrowser().getId().equalsIgnoreCase(browserName)) {
+            if (bui.getBrowser().getId().equalsIgnoreCase(browserId)) {
                 return bui.getBrowser().getIcon();
             }
         }
@@ -287,27 +287,25 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
     }
 
-    protected void launchBrowser(String browserName, String url) {
+    protected void launchBrowser(String browserId, String url) {
         new Thread(
                         () -> {
                             try {
-                                WebDriver wd =
-                                        getExtSelenium().getProxiedBrowserByName(browserName);
+                                WebDriver wd = getExtSelenium().getProxiedBrowser(browserId);
                                 if (wd != null) {
                                     QuickStartParam params =
                                             getExtQuickStart().getQuickStartParam();
                                     accessUrl(wd, params, url);
                                     // Use the same browser next time, as long
                                     // as it worked
-                                    params.setLaunchDefaultBrowser(browserName);
+                                    params.setLaunchDefaultBrowser(browserId);
                                     params.getConfig().save();
                                 }
                             } catch (Exception e1) {
                                 ExtensionSelenium extSel = getExtSelenium();
                                 View.getSingleton()
                                         .showWarningDialog(
-                                                extSel.getWarnMessageFailedToStart(
-                                                        browserName, e1));
+                                                extSel.getWarnMessageFailedToStart(browserId, e1));
                                 LOGGER.error(e1.getMessage(), e1);
                             }
                         },

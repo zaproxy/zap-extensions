@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -36,8 +37,11 @@ class QuickStartParamUnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
-        mockMessages(new ExtensionQuickStart());
         setUpZap();
+        // Mocked after setUpZap() as it's the first test in the whole module to touch
+        // both the quickstart and selenium message bundles, and the Constant singleton
+        // is (re)initialised (with the real bundles) the very first time it's used.
+        mockMessages(new ExtensionQuickStart(), new ExtensionSelenium());
         param = new QuickStartParam();
         configuration = new ZapXmlConfiguration();
         param.load(configuration);
@@ -97,14 +101,14 @@ class QuickStartParamUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldDefaultAjaxSpiderDefaultBrowserToFirefox() {
-        assertThat(param.getAjaxSpiderDefaultBrowser(), is(equalTo("Firefox")));
+    void shouldDefaultAjaxSpiderDefaultBrowserToFirefoxHeadless() {
+        assertThat(param.getAjaxSpiderDefaultBrowser(), is(equalTo("firefox-headless")));
     }
 
     @Test
     void shouldSaveAjaxSpiderDefaultBrowser() {
         // Given
-        String browser = "Chrome";
+        String browser = "chrome";
         // When
         param.setAjaxSpiderDefaultBrowser(browser);
         // Then
@@ -114,11 +118,44 @@ class QuickStartParamUnitTest extends TestUtils {
     @Test
     void shouldLoadAjaxSpiderDefaultBrowserFromConfig() {
         // Given
-        configuration.setProperty("quickstart.ajax.browser", "Safari");
+        configuration.setProperty("quickstart.ajax.browser", "safari");
         // When
         param.load(configuration);
         // Then
-        assertThat(param.getAjaxSpiderDefaultBrowser(), is(equalTo("Safari")));
+        assertThat(param.getAjaxSpiderDefaultBrowser(), is(equalTo("safari")));
+    }
+
+    @Test
+    void shouldMigrateAjaxSpiderDefaultBrowserNameToIdWhenMigratingFromVersion2() {
+        // Given
+        configuration.setProperty("quickstart[@version]", 2);
+        configuration.setProperty("quickstart.ajax.browser", "Chrome");
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.getAjaxSpiderDefaultBrowser(), is(equalTo("chrome")));
+    }
+
+    @Test
+    void shouldMigrateLaunchDefaultBrowserNameToIdWhenMigratingFromVersion2() {
+        // Given
+        configuration.setProperty("quickstart[@version]", 2);
+        configuration.setProperty("quickstart.launch.defaultBrowser", "Firefox Headless");
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.getLaunchDefaultBrowser(), is(equalTo("firefox-headless")));
+    }
+
+    @Test
+    void shouldResetUnrecognisedAjaxSpiderDefaultBrowserNameToDefaultIdWhenMigratingFromVersion2() {
+        // Given
+        configuration.setProperty("quickstart[@version]", 2);
+        configuration.setProperty("quickstart.ajax.browser", "Some Unknown Browser");
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.getAjaxSpiderDefaultBrowser(), is(equalTo("firefox-headless")));
     }
 
     @Test

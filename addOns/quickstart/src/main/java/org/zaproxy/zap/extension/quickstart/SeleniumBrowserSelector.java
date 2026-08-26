@@ -30,16 +30,19 @@ import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 public class SeleniumBrowserSelector implements BrowserSelector {
 
     private final JComboBox<ProvidedBrowserUI> combo;
+    private final ProvidedBrowsersComboBoxModel model;
 
     public SeleniumBrowserSelector() {
         combo = new JComboBox<>();
         ExtensionSelenium extSelenium =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         if (extSelenium != null) {
-            ProvidedBrowsersComboBoxModel model = extSelenium.createProvidedBrowsersComboBoxModel();
+            model = extSelenium.createProvidedBrowsersComboBoxModel();
             model.setIncludeUnconfigured(false);
             model.setSelectedBrowser(Browser.FIREFOX_HEADLESS.getId());
             combo.setModel(model);
+        } else {
+            model = null;
         }
     }
 
@@ -55,22 +58,10 @@ public class SeleniumBrowserSelector implements BrowserSelector {
     }
 
     @Override
-    public String getSelectedBrowserName() {
-        Object item = combo.getSelectedItem();
-        return item != null ? item.toString() : null;
-    }
-
-    @Override
-    public void restoreSelection(String savedBrowserName) {
-        if (savedBrowserName == null || savedBrowserName.isEmpty()) {
+    public void restoreSelection(String savedBrowserId) {
+        if (model == null || savedBrowserId == null || savedBrowserId.isEmpty()) {
             return;
         }
-        for (int i = 0; i < combo.getModel().getSize(); i++) {
-            ProvidedBrowserUI el = combo.getModel().getElementAt(i);
-            if (el.getName().equals(savedBrowserName)) {
-                combo.setSelectedItem(el);
-                break;
-            }
-        }
+        model.setSelectedBrowser(savedBrowserId);
     }
 }
