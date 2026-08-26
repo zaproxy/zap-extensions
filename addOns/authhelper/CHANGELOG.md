@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [0.42.0] - 2026-08-26
 ### Added
 - A toolbar button to the Authentication Diagnostics screenshots tab, to toggle screenshots between full size and scaled to fit the window.
