@@ -40,7 +40,7 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
     private static final Logger LOGGER = LogManager.getLogger(EncoderOperationMenuItem.class);
 
     private final EncodeDecodeProcessor processor;
-    private JTextComponent lastInvoker;
+    private volatile JTextComponent lastInvoker;
 
     public EncoderOperationMenuItem(String label, EncodeDecodeProcessor processor) {
         super(label);
@@ -87,7 +87,7 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
         return true;
     }
 
-    private void performAction() {
+    void performAction() {
         if (lastInvoker == null) {
             return;
         }
