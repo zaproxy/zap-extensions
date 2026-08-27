@@ -6,12 +6,22 @@
 <BODY>
 	<H1>認証レポート - JSON</H1>
 
-	これは、指定されたサイトに対する認証処理がどのように機能したかを詳述する専用レポートです。
-	<p>
+	This is a specialized report which details how authentication handling worked for the given site.
+
+	<strong>Note</strong>: In order to ensure the most helpful and realistic output users should ensure no other
+	traffic is happening via ZAP at the same time that authentication diagnostics are being collected.
+	
+	<H2>Web Scanning Usage</H2>
+	
 	レポートの対象とするサイトを指定する必要があります。指定しない場合、データは生成されません。
 	<p>
 	このレポートは、認証メソッドを正しく設定し、有効な認証情報を用いて、少なくとも1つの認証が必要なURLへのアクセスを試みた後に実行するように設計されています。<br>
 セッション処理と検証は「自動検出」のままにしておくことができます。このレポートは、その効果がどの程度だったかを詳述します。
+
+	<H2>API Scanning Usage</H2>
+
+	The intended workflow is that an enabling diagnostics job be included, and an API definition import
+	done with a limited number of messages. The report can then include the relevant summary and traffic details.
 
 	<H3>セクション</H3>
 
@@ -80,7 +90,11 @@
 	</table>
 
 	<H3>概要</H3>
-	以下の概要項目が使用されます：
+	Summary items fall into two categories:
+	<ul>
+	<li><strong>Pass/Fail items</strong>: Use a boolean <code>passed</code> field to indicate success or failure.
+	<li><strong>Value-based items</strong>: Use a numeric <code>value</code> field (count) instead of <code>passed</code>.
+	</ul>
 
 	<table>
 		<tr>
@@ -138,7 +152,22 @@
 			<td>true</td>
 			<td>検証URLが特定されました</td>
 		</tr>
+		<tr>
+			<td>auth.summary.connection_successes</td>
+			<td>Value Based</td>
+			<td>Responses received</td>
+		</tr>
+		<tr>
+			<td>auth.summary.connection_failures</td>
+			<td>Value Based</td>
+			<td>Communication or network failures</td>
+		</tr>
 	</table>
+	<p>
+	The connection success and failure items use a numeric <code>value</code> instead of
+	<code>passed</code>. These counts reflect the overall results of network requests made while diagnostics are enabled,
+	including responses received and any network or communication failures.
+	</p>
 
 	<H4>失敗の詳細</H4>
 	以下の失敗の詳細項目が使用されます:
@@ -186,7 +215,10 @@
 	
 	これは、テスト対象のコンテキストを再現するために使用できる<a href="https://www.zaproxy.org/docs/desktop/addons/automation-framework/environment/">自動化フレームワークの環境</a>です。
 	<p>
-	セッション管理または検証を「自動検出」に設定し、ZAPがそれらを正常に検出した場合、環境はZAPが検出した値で更新されます。 
+	セッション管理または検証を「自動検出」に設定し、ZAPがそれらを正常に検出した場合、環境はZAPが検出した値で更新されます。
+	<p>
+	The environment reflects the context used for the report. If several contexts are available, ZAP uses the one most
+	relevant to the report; otherwise the first context is included.
 
 	<H3>統計</H3>
 	
