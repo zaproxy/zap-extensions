@@ -68,59 +68,71 @@ public class EncodeDecodeProcessors {
     private static List<EncodeDecodeProcessorItem> predefinedProcessors = new ArrayList<>();
 
     static {
-        addPredefined("base64decode", Base64Decoder.getSingleton());
-        addPredefined("base64encode", Base64Encoder.getSingleton());
+        addPredefined("base64decode", Base64Decoder.getSingleton(), Category.DECODE);
+        addPredefined("base64encode", Base64Encoder.getSingleton(), Category.ENCODE);
 
-        addPredefined("base64urldecode", Base64UrlDecoder.getSingleton());
-        addPredefined("base64urlencode", Base64UrlEncoder.getSingleton());
+        addPredefined("base64urldecode", Base64UrlDecoder.getSingleton(), Category.DECODE);
+        addPredefined("base64urlencode", Base64UrlEncoder.getSingleton(), Category.ENCODE);
 
-        addPredefined("hexdecode", HexStringDecoder.getSingleton());
-        addPredefined("hexencode", HexStringEncoder.getSingleton());
+        addPredefined("hexdecode", HexStringDecoder.getSingleton(), Category.DECODE);
+        addPredefined("hexencode", HexStringEncoder.getSingleton(), Category.ENCODE);
 
-        addPredefined("htmldecode", HtmlStringDecoder.getSingleton());
-        addPredefined("htmlencode", HtmlStringEncoder.getSingleton());
-        addPredefined("fullhtmlencode", FullHtmlStringEncoder.getSingleton());
+        addPredefined("htmldecode", HtmlStringDecoder.getSingleton(), Category.DECODE);
+        addPredefined("htmlencode", HtmlStringEncoder.getSingleton(), Category.ENCODE);
+        addPredefined("fullhtmlencode", FullHtmlStringEncoder.getSingleton(), Category.ENCODE);
 
-        addPredefined("javascriptdecode", JavaScriptStringDecoder.getSingleton());
-        addPredefined("javascriptencode", JavaScriptStringEncoder.getSingleton());
+        addPredefined("javascriptdecode", JavaScriptStringDecoder.getSingleton(), Category.DECODE);
+        addPredefined("javascriptencode", JavaScriptStringEncoder.getSingleton(), Category.ENCODE);
 
-        addPredefined("unicodedecode", UnicodeDecoder.getSingleton());
-        addPredefined("unicodeencode", UnicodeEncoder.getSingleton());
+        addPredefined("unicodedecode", UnicodeDecoder.getSingleton(), Category.DECODE);
+        addPredefined("unicodeencode", UnicodeEncoder.getSingleton(), Category.ENCODE);
 
-        addPredefined("urldecode", UrlDecoder.getSingleton());
-        addPredefined("urlencode", UrlEncoder.getSingleton());
+        addPredefined("urldecode", UrlDecoder.getSingleton(), Category.DECODE);
+        addPredefined("urlencode", UrlEncoder.getSingleton(), Category.ENCODE);
 
-        addPredefined("fullurldecode", FullUrlDecoder.getSingleton());
-        addPredefined("fullurlencode", FullUrlEncoder.getSingleton());
+        addPredefined("fullurldecode", FullUrlDecoder.getSingleton(), Category.DECODE);
+        addPredefined("fullurlencode", FullUrlEncoder.getSingleton(), Category.ENCODE);
 
-        addPredefined("md5hash", Md5Hasher.getSingleton());
-        addPredefined("sha1hash", Sha1Hasher.getSingleton());
-        addPredefined("sha256hash", Sha256Hasher.getSingleton());
+        addPredefined("md5hash", Md5Hasher.getSingleton(), Category.HASH);
+        addPredefined("sha1hash", Sha1Hasher.getSingleton(), Category.HASH);
+        addPredefined("sha256hash", Sha256Hasher.getSingleton(), Category.HASH);
 
-        addPredefined("illegalutf8with2byteencoder", IllegalUTF8With2ByteEncoder.getSingleton());
-        addPredefined("illegalutf8with3byteencoder", IllegalUTF8With3ByteEncoder.getSingleton());
-        addPredefined("illegalutf8with4byteencoder", IllegalUTF8With4ByteEncoder.getSingleton());
+        addPredefined(
+                "illegalutf8with2byteencoder",
+                IllegalUTF8With2ByteEncoder.getSingleton(),
+                Category.UTILITY);
+        addPredefined(
+                "illegalutf8with3byteencoder",
+                IllegalUTF8With3ByteEncoder.getSingleton(),
+                Category.UTILITY);
+        addPredefined(
+                "illegalutf8with4byteencoder",
+                IllegalUTF8With4ByteEncoder.getSingleton(),
+                Category.UTILITY);
 
-        addPredefined("removewhitespace", RemoveWhitespace.getSingleton());
-        addPredefined("reverse", Reverse.getSingleton());
-        addPredefined("lowercase", LowerCase.getSingleton());
-        addPredefined("uppercase", UpperCase.getSingleton());
+        addPredefined("removewhitespace", RemoveWhitespace.getSingleton(), Category.UTILITY);
+        addPredefined("reverse", Reverse.getSingleton(), Category.UTILITY);
+        addPredefined("lowercase", LowerCase.getSingleton(), Category.UTILITY);
+        addPredefined("uppercase", UpperCase.getSingleton(), Category.UTILITY);
 
-        addPredefined("powershellencode", PowerShellEncoder.getSingleton());
-        addPredefined("ascify", Ascify.getSingleton());
-        addPredefined("morsecodeencode", MorseEncoder.getSingleton());
-        addPredefined("morsecodedecode", MorseDecoder.getSingleton());
+        addPredefined("powershellencode", PowerShellEncoder.getSingleton(), Category.ENCODE);
+        addPredefined("ascify", Ascify.getSingleton(), Category.UTILITY);
+        addPredefined("morsecodeencode", MorseEncoder.getSingleton(), Category.ENCODE);
+        addPredefined("morsecodedecode", MorseDecoder.getSingleton(), Category.DECODE);
     }
 
     private Map<String, EncodeDecodeProcessorItem> scriptProcessors = new HashMap<>();
 
-    private static void addPredefined(String id, EncodeDecodeProcessor processor) {
-        addPredefined(PREDEFINED_PREFIX + id, PREDEFINED_PREFIX + id, processor);
+    private static void addPredefined(
+            String id, EncodeDecodeProcessor processor, Category category) {
+        addPredefined(PREDEFINED_PREFIX + id, PREDEFINED_PREFIX + id, processor, category);
     }
 
-    private static void addPredefined(String id, String i18nKey, EncodeDecodeProcessor processor) {
+    private static void addPredefined(
+            String id, String i18nKey, EncodeDecodeProcessor processor, Category category) {
         predefinedProcessors.add(
-                new EncodeDecodeProcessorItem(id, Constant.messages.getString(i18nKey), processor));
+                new EncodeDecodeProcessorItem(
+                        id, Constant.messages.getString(i18nKey), processor, category));
     }
 
     public List<EncodeDecodeProcessorItem> getProcessorItems() {
@@ -145,11 +157,7 @@ public class EncodeDecodeProcessors {
         }
 
         // Delete not existing
-        for (String key : scriptProcessors.keySet()) {
-            if (!encodeDecodeScripts.contains(key)) {
-                scriptProcessors.remove(key);
-            }
-        }
+        scriptProcessors.keySet().removeIf(key -> !encodeDecodeScripts.contains(key));
 
         return scriptProcessors.values().stream().collect(Collectors.toList());
     }
@@ -158,7 +166,7 @@ public class EncodeDecodeProcessors {
         String scriptName = ws.getName();
         ScriptBasedEncodeDecodeProcessor processor =
                 new ScriptBasedEncodeDecodeProcessor(ws.getName());
-        return new EncodeDecodeProcessorItem(scriptName, scriptName, processor);
+        return new EncodeDecodeProcessorItem(scriptName, scriptName, processor, Category.SCRIPT);
     }
 
     public EncodeDecodeProcessorItem findProcessorItemById(String name) {
@@ -172,10 +180,30 @@ public class EncodeDecodeProcessors {
 
     public EncodeDecodeResult process(String processorId, String value) throws Exception {
         EncodeDecodeProcessorItem processor = findProcessorItemById(processorId);
+        if (processor == null) {
+            throw new IllegalArgumentException(
+                    "Processor '" + processorId + "' not found, disabled or an error occurred");
+        }
         return processor.getProcessor().process(value);
     }
 
     public static List<EncodeDecodeProcessorItem> getPredefinedProcessors() {
         return predefinedProcessors;
+    }
+
+    public static List<EncodeDecodeProcessorItem> getPredefinedItemsByCategory(Category category) {
+        return predefinedProcessors.stream()
+                .filter(item -> category.equals(item.getCategory()))
+                .collect(Collectors.toList());
+    }
+
+    public List<EncodeDecodeProcessorItem> getItemsByCategory(Category category) {
+        List<EncodeDecodeProcessorItem> items =
+                new ArrayList<>(getPredefinedItemsByCategory(category));
+        items.addAll(
+                getScriptProcessors().stream()
+                        .filter(item -> category.equals(item.getCategory()))
+                        .collect(Collectors.toList()));
+        return items;
     }
 }
