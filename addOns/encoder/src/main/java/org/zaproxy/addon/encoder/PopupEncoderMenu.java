@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2018 The ZAP Development Team
+ * Copyright 2026 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@
 package org.zaproxy.addon.encoder;
 
 import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.text.JTextComponent;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.addon.encoder.popup.EncoderOperationMenuItem;
 import org.zaproxy.addon.encoder.popup.EncoderSubMenu;
+import org.zaproxy.addon.encoder.processors.Category;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessorItem;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessors;
 import org.zaproxy.zap.extension.ExtensionPopupMenu;
@@ -36,51 +36,13 @@ import org.zaproxy.zap.view.popup.PopupMenuUtils;
 
 /**
  * The "Encode/Decode/Hash..." right-click popup menu. Hovering shows the in-place Encode, Decode,
- * Hash, and Utility submenus. Clicking the menu opens the Encode/Decode/Hash dialog.
+ * Hash, and Utility submenus. The "Encode/Decode/Hash..." child item opens the Encode/Decode/Hash
+ * dialog.
  */
 @SuppressWarnings("serial")
 public class PopupEncoderMenu extends ExtensionPopupMenu {
 
     private static final long serialVersionUID = 1L;
-
-    private static final String[] ENCODE_IDS = {
-        "base64encode",
-        "base64urlencode",
-        "urlencode",
-        "fullurlencode",
-        "hexencode",
-        "htmlencode",
-        "fullhtmlencode",
-        "javascriptencode",
-        "unicodeencode",
-        "powershellencode",
-        "morsecodeencode"
-    };
-
-    private static final String[] DECODE_IDS = {
-        "base64decode",
-        "base64urldecode",
-        "urldecode",
-        "fullurldecode",
-        "hexdecode",
-        "htmldecode",
-        "javascriptdecode",
-        "unicodedecode",
-        "morsecodedecode"
-    };
-
-    private static final String[] HASH_IDS = {"md5hash", "sha1hash", "sha256hash"};
-
-    private static final String[] UTILITY_IDS = {
-        "removewhitespace",
-        "reverse",
-        "lowercase",
-        "uppercase",
-        "ascify",
-        "illegalutf8with2byteencoder",
-        "illegalutf8with3byteencoder",
-        "illegalutf8with4byteencoder"
-    };
 
     private volatile JTextComponent lastInvoker = null;
 
@@ -88,18 +50,30 @@ public class PopupEncoderMenu extends ExtensionPopupMenu {
         super(Constant.messages.getString("encoder.tools.menu.encdec"));
         setWeight(MenuWeights.MENU_ENCODE_WEIGHT);
 
-        addMouseListener(
-                new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        dialogAction.run();
-                    }
-                });
+        ExtensionPopupMenuItem openDialogItem =
+                new ExtensionPopupMenuItem(msg("encoder.popup.title")) {
+                    private static final long serialVersionUID = 1L;
 
-        add(new EncoderSubMenu(msg("encoder.popup.menu.encode"), buildItems(ENCODE_IDS)));
-        add(new EncoderSubMenu(msg("encoder.popup.menu.decode"), buildItems(DECODE_IDS)));
-        add(new EncoderSubMenu(msg("encoder.popup.menu.hash"), buildItems(HASH_IDS)));
-        add(new EncoderSubMenu(msg("encoder.popup.menu.utility"), buildItems(UTILITY_IDS)));
+                    @Override
+                    public boolean isSafe() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isEnableForComponent(Component invoker) {
+                        return invoker instanceof JTextComponent
+                                && !isInvokerFromEncodeDecode(invoker);
+                    }
+                };
+        openDialogItem.addActionListener(e -> dialogAction.run());
+        add(openDialogItem);
+
+        for (Category category : Category.values()) {
+            List<EncoderOperationMenuItem> items = buildItems(category);
+            if (!items.isEmpty()) {
+                add(new EncoderSubMenu(msg(category.getI18nKey()), items));
+            }
+        }
     }
 
     private static String msg(String key) {
@@ -148,22 +122,11 @@ public class PopupEncoderMenu extends ExtensionPopupMenu {
         return MenuWeights.MENU_ENCODE_WEIGHT;
     }
 
-    private static List<EncoderOperationMenuItem> buildItems(String[] processorIds) {
+    private static List<EncoderOperationMenuItem> buildItems(Category category) {
         List<EncoderOperationMenuItem> items = new ArrayList<>();
-        for (String id : processorIds) {
-            EncodeDecodeProcessorItem item =
-                    EncodeDecodeProcessors.getPredefinedProcessors().stream()
-                            .filter(
-                                    p ->
-                                            p.getId()
-                                                    .equals(
-                                                            EncodeDecodeProcessors.PREDEFINED_PREFIX
-                                                                    + id))
-                            .findFirst()
-                            .orElse(null);
-            if (item != null) {
-                items.add(new EncoderOperationMenuItem(item.getName(), item.getProcessor()));
-            }
+        for (EncodeDecodeProcessorItem item :
+                EncodeDecodeProcessors.getPredefinedItemsByCategory(category)) {
+            items.add(new EncoderOperationMenuItem(item.getName(), item.getProcessor()));
         }
         return items;
     }
