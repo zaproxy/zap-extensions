@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2018 The ZAP Development Team
+ * Copyright 2026 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,10 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
         }
         if (invoker instanceof JTextComponent) {
             JTextComponent textComponent = (JTextComponent) invoker;
+            if (!textComponent.isEditable()) {
+                lastInvoker = null;
+                return false;
+            }
             String selectedText = textComponent.getSelectedText();
             boolean hasSelection = selectedText != null && !selectedText.isEmpty();
             setEnabled(hasSelection);
@@ -92,6 +96,8 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
         if (selectedText == null || selectedText.isEmpty()) {
             return;
         }
+        final int selStart = invoker.getSelectionStart();
+        final int selEnd = invoker.getSelectionEnd();
 
         Thread thread =
                 new Thread(
@@ -103,7 +109,13 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
                                     showErrorDialog(new Exception(newText));
                                 } else {
                                     javax.swing.SwingUtilities.invokeLater(
-                                            () -> replaceSelection(invoker, newText));
+                                            () ->
+                                                    replaceSelectionIfUnchanged(
+                                                            invoker,
+                                                            newText,
+                                                            selStart,
+                                                            selEnd,
+                                                            selectedText));
                                 }
                             } catch (Exception e) {
                                 LOGGER.error(
@@ -119,11 +131,18 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
         thread.start();
     }
 
-    private static void replaceSelection(JTextComponent textComponent, String newText) {
+    private static void replaceSelectionIfUnchanged(
+            JTextComponent textComponent,
+            String newText,
+            int expectedStart,
+            int expectedEnd,
+            String expectedText) {
         try {
             int start = textComponent.getSelectionStart();
             int end = textComponent.getSelectionEnd();
-            if (start == end) {
+            if (start != expectedStart
+                    || end != expectedEnd
+                    || !expectedText.equals(textComponent.getSelectedText())) {
                 return;
             }
             textComponent.replaceSelection(newText);
