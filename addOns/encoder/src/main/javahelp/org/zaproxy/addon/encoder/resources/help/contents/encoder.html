@@ -262,5 +262,26 @@ Many text areas such as the Output tab, Scripts console, Request and Response pa
 right click menu item</td></tr>
 </table>
 
+<H2>In-Place Operations</H2>
+
+<p>
+The right-click context menu provides in-place encode, decode, hash, and utility operations that
+apply directly to the selected text in any <code>JTextComponent</code> (e.g. Request panel, Scripts console).
+The menu is not shown in the Response view.
+
+<p>
+When text is selected and you right-click, the <b>Encode/Decode/Hash...</b> menu contains the following submenus:
+
+<ul>
+  <li><b>Encode</b> - Base64, Base64 URL, URL, Full URL, ASCII Hex, HTML, Full HTML, JavaScript, Unicode, PowerShell, Morse Code</li>
+  <li><b>Decode</b> - Base64, Base64 URL, URL, Full URL, ASCII Hex, HTML, JavaScript, Unicode, Morse Code</li>
+  <li><b>Hash</b> - MD5, SHA1, SHA256</li>
+  <li><b>Utility</b> - Remove Whitespace, Reverse, Lowercase, Uppercase, ASCify, Illegal UTF-8 (2/3/4 byte)</li>
+</ul>
+
+<p>
+Selecting an operation replaces the selected text with the result. The result remains selected so that
+multiple operations can be chained without re-selecting.
+
 </BODY>
 </HTML>
