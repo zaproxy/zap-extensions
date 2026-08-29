@@ -20,11 +20,13 @@
 package org.zaproxy.addon.encoder.popup;
 
 import java.awt.Component;
+import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessor;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
@@ -108,7 +110,7 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
                                 if (result.hasError()) {
                                     showErrorDialog(new Exception(newText));
                                 } else {
-                                    javax.swing.SwingUtilities.invokeLater(
+                                    SwingUtilities.invokeLater(
                                             () ->
                                                     replaceSelectionIfUnchanged(
                                                             invoker,
@@ -154,9 +156,9 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
     }
 
     private void showErrorDialog(Exception e) {
-        javax.swing.SwingUtilities.invokeLater(
+        SwingUtilities.invokeLater(
                 () ->
-                        org.parosproxy.paros.view.View.getSingleton()
+                        View.getSingleton()
                                 .showWarningDialog(
                                         Constant.messages.getString(
                                                 "encoder.popup.operation.error",
