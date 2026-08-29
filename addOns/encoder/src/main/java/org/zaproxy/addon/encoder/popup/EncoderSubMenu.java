@@ -21,14 +21,14 @@ package org.zaproxy.addon.encoder.popup;
 
 import java.awt.Component;
 import java.util.List;
-import org.zaproxy.zap.extension.ExtensionPopupMenu;
+import javax.swing.JMenu;
 
 /**
  * A submenu container for the Encoder add-on's in-place operations (e.g. Encode, Decode, Hash,
  * Utility) containing operation items or further nested submenus.
  */
 @SuppressWarnings("serial")
-public class EncoderSubMenu extends ExtensionPopupMenu {
+public class EncoderSubMenu extends JMenu {
 
     public EncoderSubMenu(String label, List<? extends Component> children) {
         super(label);
