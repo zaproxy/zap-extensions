@@ -397,13 +397,102 @@ class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
-    void shouldSkipAttributeDeclaredByRefWithNullName() throws Exception {
+    void shouldPopulateAttributeDeclaredByRef() throws Exception {
         // Given / When – valid XSD uses <xs:attribute ref="tns:globalRefKey"/>; predic8 leaves
-        // Attribute.getName() null until resolved, and fillFromComplexType skips it
+        // Attribute.getName() null until the ref is resolved
         Map<String, String> params = parseWsdlParams();
         // Then
         assertThat(params, hasEntry("xpath:/Request/attrRefWrapper/@inlineKey", MOCK_FILL_VALUE));
-        assertThat(params, not(hasKey("xpath:/Request/attrRefWrapper/@globalRefKey")));
+        assertThat(
+                params, hasEntry("xpath:/Request/attrRefWrapper/@globalRefKey", MOCK_FILL_VALUE));
+    }
+
+    @Test
+    void shouldUseLocalFixedValueWhenAttributeRefHasOwnFixed() throws Exception {
+        // Given / When – attribute ref use can specify its own fixed value, which is used
+        // instead of the global declaration's default:
+        // <xs:attribute ref="tns:globalRefKeyWithDefault" fixed="LOCAL-FIXED-VAL"/>
+        Map<String, String> params = parseWsdlParams();
+        // Then – local fixed value is used, not the global default
+        assertThat(
+                params,
+                hasEntry(
+                        "xpath:/Request/attrRefLocalFixedWrapper/@globalRefKeyWithDefault",
+                        "LOCAL-FIXED-VAL"));
+        assertThat(
+                params,
+                hasEntry("xpath:/Request/attrRefLocalFixedWrapper/@siblingKey", MOCK_FILL_VALUE));
+    }
+
+    @Test
+    void shouldContinueWhenAttributeRefCannotBeResolved() throws Exception {
+        // Given / When – an unresolvable attribute ref should not stop processing sibling
+        // attributes or elements, just like unresolvable element refs don't
+        Map<String, String> params = parseWsdlParams(DEGRADED_PARAMETERS_WSDL);
+        // Then
+        assertThat(params, hasEntry("xpath:/Request/controlField", MOCK_FILL_VALUE));
+        assertThat(params, hasEntry("xpath:/Request/badAttrRefOuter/innerField", MOCK_FILL_VALUE));
+        assertThat(
+                params,
+                hasEntry("xpath:/Request/badAttrRefOuter/@attrSiblingField", MOCK_FILL_VALUE));
+        assertThat(params, not(hasKey("xpath:/Request/badAttrRefOuter/@missingAttr")));
+    }
+
+    @Test
+    void shouldSkipProhibitedAttributes() throws Exception {
+        // Given / When – XSD attributes can be marked use="prohibited" to exclude them;
+        // the parser must skip prohibited attributes and continue with other fields
+        Map<String, String> params = parseWsdlParams(DEGRADED_PARAMETERS_WSDL);
+        // Then – normal attributes are populated but prohibited ones are skipped
+        assertThat(params, hasEntry("xpath:/Request/prohibitedAttrOuter/field", MOCK_FILL_VALUE));
+        assertThat(
+                params,
+                hasEntry("xpath:/Request/prohibitedAttrOuter/@normalAttr", MOCK_FILL_VALUE));
+        assertThat(params, not(hasKey("xpath:/Request/prohibitedAttrOuter/@prohibitedAttr")));
+    }
+
+    @Test
+    void shouldUseGlobalFixedValueFromResolvedAttribute() throws Exception {
+        // Given / When – when an attribute ref targets a global declaration with a fixed value,
+        // resolveAttributeValue should use the global fixed value as fallback
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(
+                params,
+                hasEntry(
+                        "xpath:/Request/attrRefGlobalFixedWrapper/@globalRefKeyWithFixed",
+                        "GLOBAL-FIXED-VAL"));
+    }
+
+    @Test
+    void shouldUseGlobalEnumValueFromResolvedAttribute() throws Exception {
+        // Given / When – when an attribute ref targets a global declaration with an enumerated
+        // simple type, resolveAttributeValue should use the first enumeration value as fallback
+        Map<String, String> params = parseWsdlParams();
+        // Then
+        assertThat(
+                params,
+                hasEntry(
+                        "xpath:/Request/attrRefGlobalEnumWrapper/@globalRefKeyWithEnum",
+                        "ENUM-VAL-1"));
+    }
+
+    @Test
+    void shouldMaskProhibitedAttributesAcrossMultipleEntries() throws Exception {
+        // Given / When – a complex type has multiple prohibited attributes mixed with normal ones;
+        // the parser must collect all prohibited names and filter them out consistently
+        Map<String, String> params = parseWsdlParams(DEGRADED_PARAMETERS_WSDL);
+        // Then – normal attributes are populated but all prohibited ones are excluded
+        assertThat(
+                params, hasEntry("xpath:/Request/multiProhibitedAttrOuter/field", MOCK_FILL_VALUE));
+        assertThat(
+                params,
+                hasEntry("xpath:/Request/multiProhibitedAttrOuter/@attr1", MOCK_FILL_VALUE));
+        assertThat(
+                params,
+                hasEntry("xpath:/Request/multiProhibitedAttrOuter/@attr2", MOCK_FILL_VALUE));
+        assertThat(params, not(hasKey("xpath:/Request/multiProhibitedAttrOuter/@prohibitedAttr1")));
+        assertThat(params, not(hasKey("xpath:/Request/multiProhibitedAttrOuter/@prohibitedAttr2")));
     }
 
     private Map<String, String> parseWsdlParams() throws Exception {
