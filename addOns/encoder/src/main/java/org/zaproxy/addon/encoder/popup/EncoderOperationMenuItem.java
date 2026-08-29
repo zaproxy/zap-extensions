@@ -20,6 +20,7 @@
 package org.zaproxy.addon.encoder.popup;
 
 import java.awt.Component;
+import java.awt.KeyboardFocusManager;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +43,6 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
     private static final Logger LOGGER = LogManager.getLogger(EncoderOperationMenuItem.class);
 
     private final EncodeDecodeProcessor processor;
-    private volatile JTextComponent lastInvoker;
 
     public EncoderOperationMenuItem(String label, EncodeDecodeProcessor processor) {
         super(label);
@@ -53,25 +53,19 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (isInResponseView(invoker)) {
-            lastInvoker = null;
             return false;
         }
         if (invoker instanceof JTextComponent) {
             JTextComponent textComponent = (JTextComponent) invoker;
             if (!textComponent.isEditable()) {
-                lastInvoker = null;
                 return false;
             }
             String selectedText = textComponent.getSelectedText();
             boolean hasSelection = selectedText != null && !selectedText.isEmpty();
             setEnabled(hasSelection);
-            if (hasSelection) {
-                lastInvoker = textComponent;
-            }
             return true;
         }
 
-        lastInvoker = null;
         return false;
     }
 
@@ -89,11 +83,20 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
         return true;
     }
 
+    private static JTextComponent findInvoker() {
+        Component focusOwner =
+                KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+        if (focusOwner instanceof JTextComponent) {
+            return (JTextComponent) focusOwner;
+        }
+        return null;
+    }
+
     void performAction() {
-        if (lastInvoker == null) {
+        JTextComponent invoker = findInvoker();
+        if (invoker == null) {
             return;
         }
-        final JTextComponent invoker = lastInvoker;
         final String selectedText = invoker.getSelectedText();
         if (selectedText == null || selectedText.isEmpty()) {
             return;
