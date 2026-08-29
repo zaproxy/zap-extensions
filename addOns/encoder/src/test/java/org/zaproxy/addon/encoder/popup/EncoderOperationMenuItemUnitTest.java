@@ -23,10 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import javax.swing.JPanel;
 import javax.swing.text.JTextComponent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.quality.Strictness;
@@ -43,6 +45,11 @@ class EncoderOperationMenuItemUnitTest extends TestUtils {
     @BeforeAll
     static void initMessages() {
         mockMessages(new ExtensionEncoder());
+    }
+
+    @AfterEach
+    void clearInvoker() {
+        EncoderOperationMenuItem.setCurrentInvoker(null);
     }
 
     @Test
@@ -114,8 +121,31 @@ class EncoderOperationMenuItemUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotThrowWhenNoFocusOwner() {
+    void shouldProcessTextViaCurrentInvoker() throws Exception {
+        // Given
+        EncodeDecodeProcessor processor = value -> new EncodeDecodeResult("processed-" + value);
+        EncoderOperationMenuItem menuItem = createMenuItem(processor);
+
+        JTextComponent textComponent =
+                mock(JTextComponent.class, withSettings().strictness(Strictness.LENIENT));
+        given(textComponent.getSelectedText()).willReturn("hello");
+        given(textComponent.getSelectionStart()).willReturn(0);
+        given(textComponent.getSelectionEnd()).willReturn(5);
+
+        EncoderOperationMenuItem.setCurrentInvoker(textComponent);
+
+        // When
+        menuItem.performAction();
+
+        // Then
+        Thread.sleep(1000);
+        verify(textComponent).replaceSelection("processed-hello");
+    }
+
+    @Test
+    void shouldNotThrowWhenNoInvoker() {
         EncoderOperationMenuItem menuItem = createMenuItem();
+        EncoderOperationMenuItem.setCurrentInvoker(null);
         menuItem.performAction();
     }
 

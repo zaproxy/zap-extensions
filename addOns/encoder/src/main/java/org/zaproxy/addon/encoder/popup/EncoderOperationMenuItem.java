@@ -20,7 +20,6 @@
 package org.zaproxy.addon.encoder.popup;
 
 import java.awt.Component;
-import java.awt.KeyboardFocusManager;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import org.apache.logging.log4j.LogManager;
@@ -42,12 +41,18 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
 
     private static final Logger LOGGER = LogManager.getLogger(EncoderOperationMenuItem.class);
 
+    private static volatile JTextComponent currentInvoker;
+
     private final EncodeDecodeProcessor processor;
 
     public EncoderOperationMenuItem(String label, EncodeDecodeProcessor processor) {
         super(label);
         this.processor = processor;
         addActionListener(e -> performAction());
+    }
+
+    public static void setCurrentInvoker(JTextComponent invoker) {
+        currentInvoker = invoker;
     }
 
     @Override
@@ -83,17 +88,8 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
         return true;
     }
 
-    private static JTextComponent findInvoker() {
-        Component focusOwner =
-                KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-        if (focusOwner instanceof JTextComponent) {
-            return (JTextComponent) focusOwner;
-        }
-        return null;
-    }
-
     void performAction() {
-        JTextComponent invoker = findInvoker();
+        JTextComponent invoker = currentInvoker;
         if (invoker == null) {
             return;
         }

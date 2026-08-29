@@ -101,11 +101,13 @@ public class PopupEncoderMenu extends ExtensionPopupMenu {
             String sel = txt.getSelectedText();
             this.setEnabled(!(sel == null || sel.length() == 0));
             setLastInvoker((JTextComponent) invoker);
+            EncoderOperationMenuItem.setCurrentInvoker((JTextComponent) invoker);
             processExtensionPopupChildren(PopupMenuUtils.getPopupMenuInvokerWrapper(invoker));
             return true;
         }
 
         setLastInvoker(null);
+        EncoderOperationMenuItem.setCurrentInvoker(null);
         return false;
     }
 
