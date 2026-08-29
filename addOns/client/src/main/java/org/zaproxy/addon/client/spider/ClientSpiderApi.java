@@ -67,6 +67,7 @@ public class ClientSpiderApi extends ApiImplementor {
     private static final String PARAM_LOGOUT_AVOIDANCE = "logoutAvoidance";
     private static final String PARAM_NUMBER_OF_BROWSERS = "numberOfBrowsers";
     private static final String PARAM_SCOPE_CHECK = "scopeCheck";
+    private static final String PARAM_CACHE_STATIC_RESOURCES = "cacheStaticResources";
 
     private final ExtensionClientIntegration extension;
 
@@ -92,7 +93,8 @@ public class ClientSpiderApi extends ApiImplementor {
                                 PARAM_ACTION_WAIT_TIME,
                                 PARAM_NUMBER_OF_BROWSERS,
                                 PARAM_SCOPE_CHECK,
-                                PARAM_LOGOUT_AVOIDANCE)));
+                                PARAM_LOGOUT_AVOIDANCE,
+                                PARAM_CACHE_STATIC_RESOURCES)));
 
         addApiAction(new ApiAction(ACTION_STOP_SCAN, List.of(PARAM_SCAN_ID)));
 
@@ -175,6 +177,10 @@ public class ClientSpiderApi extends ApiImplementor {
         }
         if (params.containsKey(PARAM_LOGOUT_AVOIDANCE)) {
             options.setLogoutAvoidance(ApiUtils.getBooleanParam(params, PARAM_LOGOUT_AVOIDANCE));
+        }
+        if (params.containsKey(PARAM_CACHE_STATIC_RESOURCES)) {
+            options.setCacheStaticResources(
+                    ApiUtils.getBooleanParam(params, PARAM_CACHE_STATIC_RESOURCES));
         }
 
         User user = getUser(params, context);
