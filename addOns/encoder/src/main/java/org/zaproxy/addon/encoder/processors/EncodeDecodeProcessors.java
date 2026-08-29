@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.encoder.ExtensionEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.Base64Decoder;
@@ -142,7 +141,7 @@ public class EncodeDecodeProcessors {
 
         return processors.stream()
                 .sorted(Comparator.comparing(EncodeDecodeProcessorItem::getName))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<EncodeDecodeProcessorItem> getScriptProcessors() {
@@ -159,7 +158,7 @@ public class EncodeDecodeProcessors {
         // Delete not existing
         scriptProcessors.keySet().removeIf(key -> !encodeDecodeScripts.contains(key));
 
-        return scriptProcessors.values().stream().collect(Collectors.toList());
+        return scriptProcessors.values().stream().toList();
     }
 
     private static EncodeDecodeProcessorItem createItemFromScriptWrapper(ScriptWrapper ws) {
@@ -194,7 +193,7 @@ public class EncodeDecodeProcessors {
     public static List<EncodeDecodeProcessorItem> getPredefinedItemsByCategory(Category category) {
         return predefinedProcessors.stream()
                 .filter(item -> category.equals(item.getCategory()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<EncodeDecodeProcessorItem> getItemsByCategory(Category category) {
@@ -203,7 +202,7 @@ public class EncodeDecodeProcessors {
         items.addAll(
                 getScriptProcessors().stream()
                         .filter(item -> category.equals(item.getCategory()))
-                        .collect(Collectors.toList()));
+                        .toList());
         return items;
     }
 }
