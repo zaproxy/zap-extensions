@@ -110,11 +110,8 @@ public class PopupEncoderMenu extends ExtensionPopupMenu {
     }
 
     private static boolean isInvokerFromEncodeDecode(Component invoker) {
-        if (invoker.getName() == null) {
-            return false;
-        }
-        return invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_FIELD)
-                || invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_RESULTFIELD);
+        return EncodeDecodeDialog.ENCODE_DECODE_FIELD.equals(invoker.getName())
+                || EncodeDecodeDialog.ENCODE_DECODE_RESULTFIELD.equals(invoker.getName());
     }
 
     @Override
