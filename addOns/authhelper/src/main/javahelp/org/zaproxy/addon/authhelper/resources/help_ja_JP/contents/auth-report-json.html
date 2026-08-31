@@ -6,22 +6,20 @@
 <BODY>
 	<H1>認証レポート - JSON</H1>
 
-	This is a specialized report which details how authentication handling worked for the given site.
+	これは、指定されたサイトに対する認証処理がどのように機能したかを詳述する専用レポートです。
 
-	<strong>Note</strong>: In order to ensure the most helpful and realistic output users should ensure no other
-	traffic is happening via ZAP at the same time that authentication diagnostics are being collected.
+	<strong>注</strong>: 最も有用で現実的な診断結果を得るためには、認証診断データの収集中に、ZAPを介して他のトラフィックが発生していないことを確認してください。
 	
-	<H2>Web Scanning Usage</H2>
+	<H2>Webスキャンの使用方法</H2>
 	
 	レポートの対象とするサイトを指定する必要があります。指定しない場合、データは生成されません。
 	<p>
 	このレポートは、認証メソッドを正しく設定し、有効な認証情報を用いて、少なくとも1つの認証が必要なURLへのアクセスを試みた後に実行するように設計されています。<br>
 セッション処理と検証は「自動検出」のままにしておくことができます。このレポートは、その効果がどの程度だったかを詳述します。
 
-	<H2>API Scanning Usage</H2>
+	<H2>APIスキャンの使用方法</H2>
 
-	The intended workflow is that an enabling diagnostics job be included, and an API definition import
-	done with a limited number of messages. The report can then include the relevant summary and traffic details.
+	想定されるワークフローは、有効化診断ジョブを含め、メッセージ数を限定してAPI定義のインポートを行うというものです。 そのレポートには、関連する概要やトラフィックの詳細を含めることができます。
 
 	<H3>セクション</H3>
 
@@ -90,10 +88,10 @@
 	</table>
 
 	<H3>概要</H3>
-	Summary items fall into two categories:
+	概要項目は、以下の2つのカテゴリーに分類されます：
 	<ul>
-	<li><strong>Pass/Fail items</strong>: Use a boolean <code>passed</code> field to indicate success or failure.
-	<li><strong>Value-based items</strong>: Use a numeric <code>value</code> field (count) instead of <code>passed</code>.
+	<li><strong>成功/失敗 項目</strong>：ブール型の <code>成功</code> フィールドを使用して、成功または失敗を示します。
+	<li><strong>値ベースの項目</strong>：<code>成功</code> の代わりに、数値の <code>値</code> フィールド（カウント）を使用します。
 	</ul>
 
 	<table>
@@ -154,19 +152,17 @@
 		</tr>
 		<tr>
 			<td>auth.summary.connection_successes</td>
-			<td>Value Based</td>
-			<td>Responses received</td>
+			<td>値に基づく</td>
+			<td>レスポンスを受信しました。</td>
 		</tr>
 		<tr>
 			<td>auth.summary.connection_failures</td>
-			<td>Value Based</td>
-			<td>Communication or network failures</td>
+			<td>値に基づく</td>
+			<td>通信またはネットワークの失敗</td>
 		</tr>
 	</table>
 	<p>
-	The connection success and failure items use a numeric <code>value</code> instead of
-	<code>passed</code>. These counts reflect the overall results of network requests made while diagnostics are enabled,
-	including responses received and any network or communication failures.
+	接続の成功および失敗を示す項目では、<code>passed</code> の代わりに数値 <code>value</code> が使用されます。 これらのカウント値は、診断機能が有効になっている間に送信されたネットワークリクエストの全体的な結果を示しており、受信したレスポンスや、ネットワーク・通信の障害も含まれます。
 	</p>
 
 	<H4>失敗の詳細</H4>
@@ -217,8 +213,7 @@
 	<p>
 	セッション管理または検証を「自動検出」に設定し、ZAPがそれらを正常に検出した場合、環境はZAPが検出した値で更新されます。
 	<p>
-	The environment reflects the context used for the report. If several contexts are available, ZAP uses the one most
-	relevant to the report; otherwise the first context is included.
+	環境は、レポートに使用されたコンテキストを反映しています。 複数のコンテキストが利用可能な場合、ZAPはそのレポートに最も関連性の高いコンテキストを使用します。それ以外の場合は、最初のコンテキストが組み込まれます。
 
 	<H3>統計</H3>
 	

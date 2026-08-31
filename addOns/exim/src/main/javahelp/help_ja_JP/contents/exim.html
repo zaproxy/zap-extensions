@@ -31,8 +31,8 @@ HTTPメッセージのコンテンツをXMLとして保存するためのコン�
 
 <H3>HAR (HTTPアーカイブファイル) をインポート</H3>
 「インポート」メニューから利用できる、HTTPアーカイブ (HAR) からメッセージをインポートするオプション。 
-Optionally select <em>Send Requests</em> to send the requests (following redirects) instead of importing the recorded responses. The Mode is enforced when sending the requests (and following redirections).
-The optional <em>Max Messages</em> field limits how many messages are imported; use <code>0</code> to import all.
+必要に応じて、<em>リクエストを送信</em>を選択すると、記録されたレスポンスをインポートする代わりに、リクエスト (リダイレクトを含む) を送信できます。 このモードは、リクエストの送信時 (およびそれに続くリダイレクト時) に適用されます。
+オプションの <em>最大メッセージ数</em> フィールドでは、インポートするメッセージの数を制限します。すべてインポートするには <code>0</code> を指定してください。
 <p>
 <strong>注</strong>: HAR (HTTPアーカイブファイル) のインポート時に、以下の変更が行われる可能性があります：
 <ul>
@@ -80,7 +80,7 @@ ModSecurity ログファイルと、以前にZAPからエクスポートされ�
 <H3>アクション</H3>
 <ul>
   <li><code>exportSitesTree (filePath* )</code> サイトツリーをサイトツリーYAML形式でエクスポートします。</li>
-  <li><code>importHar (filePath data sendRequests maxMessages )</code> Imports a HAR from a file or the given data. If sendRequests is true the requests are sent (following redirects) instead of importing the recorded responses. The Mode is enforced when sending the requests (and following redirections). The optional maxMessages parameter limits the number of messages imported; omit or use 0 to import all.</li>
+  <li><code>importHar (filePath data sendRequests maxMessages )</code> ファイルまたは指定されたデータから HAR をインポートします。 sendRequests が true の場合、記録されたレスポンスをインポートするのではなく、リクエストが送信されます (リダイレクトに従って)。 このモードは、リクエストの送信時 (およびその後のリダイレクト時) に適用されます。 オプションの maxMessages パラメータは、インポートされるメッセージの数を制限します。省略するか 0 を指定すると、すべてのメッセージがインポートされます</li>
   <li><code>importModsec2Logs (filePath* )</code> 指定されたファイルシステムパスのファイルからModSecurity2ログをインポートします。</li>
   <li><code>importUrls (filePath* )</code> 指定されたファイルシステムパスのファイルからURL (1行に1つ) をインポートします。</li>
   <li><code>importZapLogs (filePath* )</code> 指定されたファイルシステムパスのファイルから、以前にエクスポートされたZAPメッセージをインポートします。</li>

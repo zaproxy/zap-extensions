@@ -9,72 +9,50 @@ BeanShell コンソール
 <body>
 <h1>BeanShell コンソール</h1>
 <p>
-	The BeanShell is an interactive Java shell that can be used to execute BeanShell scripts. These
-	scripts are a simplified form of Java that use many elements from Java syntax, but in a simpler
-	scripting format. All Java code is also valid BeanShell code.<br/>
-	BeanShell integration in OWASP ZAP enables you to write scripts using the ZAP functions and
-	data set. This can be a very powerful feature for analyzing web applications.
+	BeanShell は、BeanShell スクリプトを実行するために使用できる対話型の Java シェルです。 これらのスクリプトは、Javaの構文の多くの要素を取り入れつつ、よりシンプルなスクリプト形式で記述された、Javaの簡易版です。 すべてのJavaコードは、BeanShellコードとしても有効です。<br/> ZAPにおけるBeanShellの統合により、ZAPの関数やデータセットを使用してスクリプトを作成することができます。 これは、Webアプリケーションを分析する上で非常に強力な機能となり得ます。
 </p>
 <h2>BeanShellコンソール </h2>
 <p>
-	The console is started from the Tools menu, and contains a split screen where the top half is the
-	interactive BeanShell console and the bottom half is a simple text editor. For complex scripts, you're
-	encouraged to use a Java editor. Scripts can be loaded, saved and evaluated from the editor.
-	When the BeanShell starts a number of objects from ZAP are available for use, namely:
+	このコンソールは「ツール」メニューから起動され、画面が上下に分割された構成になっています。上半分は対話型のBeanShellコンソール、下半分はシンプルなテキストエディタとなっています。 複雑なスクリプトを作成する場合は、Java 開発用のエディタの使用をお勧めします。 スクリプトはエディタから読み込まれ、保存および実行することができます。
+	BeanShellが起動すると、ZAPの以下のオブジェクトが利用可能になります。具体的には: 
 	<ul>
-	<li>the <i>Model</i> singleton, through the object named <i>model</i></li>
-	<li>the <i>SiteTree</i> tree of current sites through the <i>sites</i> object</li>
-	<li>an instance of <pre>HttpSender</pre> through the <i>sender</i> object</li>
+	<li><i>Model</i> シングルトンを、<i>model</i>という名前のオブジェクトを介して</li>
+	<li>現在のサイトの <i>SiteTree</i> ツリーを、<i>sites</i> オブジェクトを介して</li>
+	<li>インスタンス <pre>HttpSender</pre> を、 <i>sender</i> オブジェクトを介して</li>
 	</ul>
-	Notice that the BeanShell is loosely typed. Therefore, it is not necessary to declare variables before
-	using them – this makes scripts a bit more concise than regular Java. But of course, if you did want
-	to define the type you can.
+	BeanShellは型付けが厳密ではない点に留意してください。 したがって、変数を使用する前に宣言する必要はありません。このため、スクリプトは通常のJavaよりも少し簡潔になります。 もちろん、もしその型を定義したいのであれば、そうすることも可能です。
 </p>
 <h2>サイトマップの使用</h2>
 <p>
-	Let's start with something useful and typical: Iterate through all the site nodes and check for the
-	existence of a file. A script has already been created that accomplishes this, choose Load and select
-	the example.tree.bsh file. Before clicking Evaluate, first browse to a site through ZAP to populate
-	the tree:
+	まずは、実用的で典型的な例から始めましょう。サイトのすべてのノードを順に巡回し、ファイルが存在するかどうかを確認します。 これを実現するスクリプトはすでに作成されていますので、「Load」を選択し、example.tree.bsh ファイルを選択してください。 [評価] をクリックする前に、まず ZAP を通じてサイトにアクセスし、ツリーにデータを反映させてください:
 	<br/><br/>
-	Now click on evaluate to execute the script that's in the editor. If there are no errors, then you can
-	now start using the object defined in the script by issuing these commands:
+	次に、[評価] をクリックしてエディタ内のスクリプトを実行します。エラーがなければ、以下のコマンドを実行して、スクリプトで定義されたオブジェクトの使用を開始できます:
 	<pre>
 	t = Tree();
 	</pre>
-	Which constructs a new Tree object and assigns a reference to t.
+	これにより、新しい Tree オブジェクトが生成され、その参照が t に代入されます。
 	<pre>
 	t.find(sites.getRoot(), "index.html");
 	</pre>
-	Call the find method on t, which takes a SiteNode as the first argument and a resource to find as the
-	second. In this case, the method will iterate through all the nodes in the tree, because we started at
-	the root, and will find index.html files.
+	t に対して find メソッドを呼び出します。このメソッドは、最初の引数として SiteNode を、2番目の引数として検索対象のリソースを受け取ります。 この場合、ルートから開始したため、このメソッドはツリー内のすべてのノードを順に処理し、index.html ファイルを探し出します。
 	<br/><br/>
-	Instead of iterating through all the nodes, we could choose to start a specific node by using the
-	findChild method e.g.:
+	すべてのノードを順に処理する代わりに、findChild メソッドを使用して特定のノードから処理を開始することもできます。例えば:
 	<br/><br/>
-	This should give you some idea of the power of the BeanShell in ZAP. But to fully exploit it, you'll
-	need to familiarize yourself with the internal API and the BeanShell's features. The BeanShell has
-	been setup so as to allow full access to all internal objects and methods – even private ones.
+	これで、ZAPのBeanShellの機能がいくらかお分かりいただけるでしょう。 しかし、その機能を最大限に活用するには、内部APIやBeanShellの機能について理解を深める必要があります。 BeanShellは、すべての内部オブジェクトおよびメソッド (プライベートなものも含む) に完全にアクセスできるよう設定されています。
 </p>
-<h2>Simple HTTP Request</h2>
+<h2>シンプルな HTTP リクエスト</h2>
 <p>
-	In the next example, we create and send an HTTP request directly in the interactive console:
-	To fully utilize the power of the BeanShell, you should familiarize yourself with ZAP's internals.
-	The sender object is the same instance as is used by the Manual Request Editor and will therefore
-	automatically use proxy settings set in the ZAP configuration.
+	次の例では、対話型コンソール上で直接HTTPリクエストを作成して送信します。BeanShellの機能を最大限に活用するには、ZAPの内部構造について理解しておく必要があります。
+	sender オブジェクトは、手動リクエストエディタで使用されるものと同じインスタンスであるため、ZAP の設定で指定されたプロキシ設定が自動的に適用されます。
 	<br/><br/>
-	TODO: POST example
+	TODO: POST の例
 </p>
 <h2>ヒント</h2>
 <p>
-	Use the unset(String) command to unset any declared variables, methods or objects. This is useful if
-	you want to replace a method declaration in the current namespace. Note that the command takes a
-	String argument, not an Object, so to unset the t object we used above, it should be: unset(“t”); and
-	not unset(t);
+	unset(String) コマンドを使用して、宣言済みの変数、メソッド、またはオブジェクトの設定を解除します。 これは、現在の名前空間にあるメソッドの宣言を置き換えたい場合に便利です。 このコマンドは Object ではなく String 型の引数を取ることに注意してください。したがって、上記で使用した t オブジェクトの設定を解除するには、unset(t); ではなく unset(“t”); とする必要があります。
 </p>
 <p>
-	Original document by: Stephen de Vries
+	原文著者: Stephen de Vries
 </p>
 
 </body>
