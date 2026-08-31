@@ -27,6 +27,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -274,6 +275,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             ZestScript zestScript = getZestScript();
             if (zestScript == null) {
                 LOGGER.warn("No Zest script configured for client script authentication");
+                notifyAuthFailure(null, user);
                 return false;
             }
             try {
@@ -285,12 +287,14 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 runner.setWebDriver(webDriver);
 
                 executeZestAuthScript(runner, user);
+                AuthenticationHelper.notifyOutputAuthSuccessful(getFirstMessage(zestScript, user));
                 return true;
             } catch (Exception e) {
                 LOGGER.warn(
                         "An error occurred while trying to execute the Client Script Authentication script: {}",
                         e.getMessage(),
                         e);
+                notifyAuthFailure(zestScript, user);
                 return false;
             }
         }
@@ -347,6 +351,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             ScriptWrapper script = getScript();
             AuthenticationScript authScript = getAuthenticationScript(script);
             if (authScript == null) {
+                notifyAuthFailure(null, user);
                 return null;
             }
             LOGGER.debug("Script class: {}", authScript.getClass().getCanonicalName());
@@ -371,6 +376,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                         ZestScript zestScript = zestRunner.getScript().getZestScript();
                         if (!hasBrowserLaunch(zestScript)) {
                             LOGGER.warn("The script does not have any browser launch.");
+                            notifyAuthFailure(zestScript, user);
                             return null;
                         }
 
@@ -385,6 +391,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                         }
                     } else {
                         LOGGER.warn("Expected authScript to be a Zest script");
+                        notifyAuthFailure(null, user);
                         return null;
                     }
 
@@ -403,6 +410,10 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
                 } catch (Exception e) {
                     diags.recordErrorStep(getWebDriver(zestRunner));
+
+                    notifyAuthFailure(
+                            zestRunner != null ? zestRunner.getScript().getZestScript() : null,
+                            user);
 
                     // Catch Exception instead of ScriptException and IOException because script
                     // engine
@@ -524,6 +535,37 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                     });
                     zestRunner.closeProxy();
                 }
+            }
+        }
+
+        private void notifyAuthFailure(ZestScript zestScript, User user) {
+            HttpMessage authMsg = getFirstMessage(zestScript, user);
+            if (authMsg != null) {
+                AuthenticationHelper.notifyOutputAuthFailure(authMsg);
+            }
+        }
+
+        static HttpMessage getFirstMessage(ZestScript zestScript, User user) {
+            String url = null;
+            if (zestScript != null) {
+                url =
+                        zestScript.getStatements().stream()
+                                .filter(ZestClientLaunch.class::isInstance)
+                                .map(ZestClientLaunch.class::cast)
+                                .filter(ZestClientLaunch::isEnabled)
+                                .map(ZestClientLaunch::getUrl)
+                                .findFirst()
+                                .orElse(null);
+            }
+            if (url == null) {
+                LOGGER.warn("Using'unknown URL' for authentication failure of {}", user.getName());
+                url = "https://unknown-auth-url.zap/";
+            }
+
+            try {
+                return new HttpMessage(new URI(url, true));
+            } catch (Exception e) {
+                return null;
             }
         }
 
