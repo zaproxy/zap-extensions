@@ -25,6 +25,7 @@ import com.predic8.schema.ComplexContent;
 import com.predic8.schema.ComplexType;
 import com.predic8.schema.Element;
 import com.predic8.schema.Extension;
+import com.predic8.schema.Include;
 import com.predic8.schema.Sequence;
 import com.predic8.schema.SimpleType;
 import com.predic8.schema.restriction.BaseRestriction;
@@ -35,15 +36,18 @@ import com.predic8.wsdl.AbstractBinding;
 import com.predic8.wsdl.Binding;
 import com.predic8.wsdl.BindingOperation;
 import com.predic8.wsdl.Definitions;
+import com.predic8.wsdl.Import;
 import com.predic8.wsdl.Operation;
 import com.predic8.wsdl.Part;
 import com.predic8.wsdl.Port;
 import com.predic8.wsdl.PortType;
 import com.predic8.wsdl.Service;
 import com.predic8.wsdl.WSDLParser;
+import com.predic8.wsdl.WSDLParserContext;
 import com.predic8.wstool.creator.RequestCreator;
 import com.predic8.wstool.creator.SOARequestCreator;
 import com.predic8.xml.util.ResourceDownloadException;
+import com.predic8.xml.util.ResourceResolver;
 import groovy.xml.MarkupBuilder;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
@@ -59,6 +63,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -77,7 +83,9 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -160,7 +168,7 @@ public class WSDLCustomParser {
             return false;
         } else {
             // WSDL parsing.
-            WSDLParser parser = new WSDLParser();
+            WSDLParser parser = createWSDLParser();
             try {
                 InputStream contentI =
                         new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
@@ -171,6 +179,50 @@ public class WSDLCustomParser {
                 return false;
             }
         }
+    }
+
+    private static HttpRequestConfig createRequestConfig(
+            AtomicBoolean requestValid, AtomicReference<URI> effectiveUri) {
+        return HttpRequestConfig.builder()
+                .setRedirectionValidator(
+                        new HttpRedirectionValidator() {
+                            @Override
+                            public void notifyMessageReceived(HttpMessage msg) {
+                                effectiveUri.set(msg.getRequestHeader().getURI());
+                            }
+
+                            @Override
+                            public boolean isValid(URI redirection) {
+                                requestValid.set(isValidForCurrentMode(redirection));
+                                return requestValid.get();
+                            }
+                        })
+                .build();
+    }
+
+    private static boolean send(HttpSender sender, HttpMessage message) throws IOException {
+        return send(sender, message, new AtomicReference<>());
+    }
+
+    private static boolean send(
+            HttpSender sender, HttpMessage message, AtomicReference<URI> effectiveUri)
+            throws IOException {
+        if (!isValidForCurrentMode(message.getRequestHeader().getURI())) {
+            return false;
+        }
+
+        AtomicBoolean requestValid = new AtomicBoolean(true);
+        effectiveUri.set(message.getRequestHeader().getURI());
+        sender.sendAndReceive(message, createRequestConfig(requestValid, effectiveUri));
+        return requestValid.get();
+    }
+
+    private static boolean isValidForCurrentMode(URI uri) {
+        return switch (Control.getSingleton().getMode()) {
+            case safe -> false;
+            case protect -> Model.getSingleton().getSession().isInScope(uri.toString());
+            default -> true;
+        };
     }
 
     /*
@@ -234,8 +286,11 @@ public class WSDLCustomParser {
                 return;
             }
             HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
+            AtomicReference<URI> effectiveUri = new AtomicReference<>();
             try {
-                sender.sendAndReceive(httpRequest, true);
+                if (!send(sender, httpRequest, effectiveUri)) {
+                    return;
+                }
             } catch (IOException e) {
                 LOGGER.error("Unable to send WSDL request.", e);
                 return;
@@ -245,7 +300,9 @@ public class WSDLCustomParser {
             if (content.trim().isEmpty()) {
                 LOGGER.debug("Response from WSDL file request has no body content, url: {}", url);
             } else {
-                parseWSDLContent(content, true, maxMessages);
+                String baseDir =
+                        java.net.URI.create(effectiveUri.get().toString()).resolve(".").toString();
+                parseWSDLContent(content, baseDir, true, maxMessages);
             }
         } catch (Exception e) {
             LOGGER.error("There was an error while parsing WSDL from URL. ", e);
@@ -253,15 +310,23 @@ public class WSDLCustomParser {
     }
 
     private boolean parseWSDLContent(String content, boolean sendMessages, int maxMessages) {
+        return parseWSDLContent(content, "", sendMessages, maxMessages);
+    }
+
+    private boolean parseWSDLContent(
+            String content, String baseDir, boolean sendMessages, int maxMessages) {
         if (content == null || content.trim().length() <= 0) {
             return false;
         } else {
             // WSDL parsing.
-            WSDLParser parser = new WSDLParser();
+            WSDLParser parser = createWSDLParser();
             try {
                 InputStream contentI =
                         new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
-                Definitions wsdl = parser.parse(contentI);
+                WSDLParserContext context = new WSDLParserContext();
+                context.setInput(contentI);
+                context.setBaseDir(baseDir);
+                Definitions wsdl = parser.parse(context);
                 contentI.close();
                 parseWSDL(wsdl, sendMessages, maxMessages);
                 return true;
@@ -689,9 +754,12 @@ public class WSDLCustomParser {
         HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
         /* Send request. */
         try {
-            sender.sendAndReceive(httpRequest, true);
+            if (!send(sender, httpRequest)) {
+                return;
+            }
         } catch (IOException e) {
             LOGGER.error("Unable to communicate with SOAP server. Server may be not available.", e);
+            return;
         }
         persistMessage(httpRequest);
         if (sb != null)
@@ -740,5 +808,73 @@ public class WSDLCustomParser {
 
     SOAPMsgConfig getLastConfig() {
         return lastConfig;
+    }
+
+    private static WSDLParser createWSDLParser() {
+        WSDLParser parser = new WSDLParser();
+        parser.setResourceResolver(
+                new ResourceResolver() {
+                    public Object resolve(Object input, String baseDir) {
+                        if (input instanceof InputStream ipt) {
+                            try {
+                                return fixUtf(ipt);
+                            } catch (IOException e) {
+                                throw new IllegalStateException("Failed to read WSDL resource.", e);
+                            }
+                        }
+
+                        String location;
+                        if (input instanceof Import imp) {
+                            location = imp.getLocation();
+                        } else if (input instanceof com.predic8.schema.Import schImp) {
+                            location = schImp.getSchemaLocation();
+                        } else if (input instanceof Include incl) {
+                            location = incl.getSchemaLocation();
+                        } else if (input instanceof String loc) {
+                            location = loc;
+                        } else {
+                            throw new IllegalArgumentException(
+                                    "Unsupported WSDL resource: " + input);
+                        }
+
+                        if (location == null || location.isBlank()) {
+                            return null;
+                        }
+
+                        java.net.URI resourceUri = java.net.URI.create(location);
+                        if (!resourceUri.isAbsolute()) {
+                            if (baseDir == null || baseDir.isBlank()) {
+                                throw new IllegalArgumentException(
+                                        "Unable to resolve relative WSDL resource: " + location);
+                            }
+                            resourceUri = java.net.URI.create(baseDir).resolve(resourceUri);
+                        }
+
+                        String scheme = resourceUri.getScheme();
+                        if (!HttpHeader.HTTP.equalsIgnoreCase(scheme)
+                                && !HttpHeader.HTTPS.equalsIgnoreCase(scheme)) {
+                            throw new IllegalArgumentException(
+                                    "Unsupported WSDL resource URI: " + resourceUri);
+                        }
+
+                        try {
+                            HttpMessage message =
+                                    new HttpMessage(new URI(resourceUri.toString(), true));
+                            HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
+
+                            if (!send(sender, message)) {
+                                throw new IllegalStateException(
+                                        "WSDL resource blocked by current mode: " + resourceUri);
+                            }
+
+                            return fixUtf(
+                                    new ByteArrayInputStream(message.getResponseBody().getBytes()));
+                        } catch (IOException e) {
+                            throw new IllegalStateException(
+                                    "Failed to retrieve WSDL resource: " + resourceUri, e);
+                        }
+                    }
+                });
+        return parser;
     }
 }
