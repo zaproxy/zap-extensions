@@ -13,12 +13,12 @@
 LDAPインジェクションの可能性があります。 攻撃者が認証制御をバイパスし、LDAPディレクトリ内の任意のデータを閲覧および変更できる可能性があります。
 クライアントまたはサーバーエラーのレスポンスステータスコードが元々返されたメッセージはスキップされます。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
+最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>.
+アラートID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>.
 
-<h2 id="id-40024">SQL Injection - SQLite (Time Based)</h2>
-This active scan rule attempts to inject SQLite specific commands into parameter values and analyzes the timing of server responses to see if the commands were effectively executed on the server (indicating a successful SQL injection attack).
+<h2 id="id-40024">SQLインジェクション - SQLite (時間ベース)</h2>
+このアクティブスキャンルールは、SQLite固有のコマンドをパラメーター値に注入し、サーバーレスポンスのタイミングを分析して、コマンドがサーバー上で効果的に実行されたか (SQLインジェクション攻撃の成功を示す) を確認しようとします。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SqlInjectionSqLiteTimingScanRule.java">SqlInjectionSqLiteTimingScanRule.java</a>
 <br>

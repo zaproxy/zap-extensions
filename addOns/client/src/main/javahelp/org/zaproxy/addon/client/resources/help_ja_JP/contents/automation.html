@@ -33,9 +33,9 @@ spiderClient ジョブを使用すると、モダンなWebアプリケーショ�
       scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Flexible
 </pre>
 
-<H2>Job: export (Client Map)</H2>
-When the <a href="https://www.zaproxy.org/docs/desktop/addons/import-export/">Import/Export add-on</a> is installed, the Client Map can be exported via the standard <code>export</code> job using <code>source: clientmap</code> and <code>type: yaml</code>.
-The YAML produced by this job differs from the manual Client Map export, for example it includes <code>url</code> fields and omits <code>components</code>.
+<H2>ジョブ: export (Client Map)</H2>
+<a href="https://www.zaproxy.org/docs/desktop/addons/import-export/">インポート/エクスポートアドオン</a>をインストールすると、<code>source: clientmap</code> および <code>type: yaml</code> を指定して、標準の <code>エクスポート</code> ジョブを介してクライアントマップをエクスポートすることができます。
+このジョブによって生成される YAML は、手動でのクライアントマップのエクスポートとは異なります。例えば、<code>url</code>フィールドが含まれており、<code>components</code>は省略されています。
 
 <pre>
   - type: export            # Exports the Client Map
@@ -46,7 +46,7 @@ The YAML produced by this job differs from the manual Client Map export, for exa
       fileName:             # String: Name/path of the output file
 </pre>
 
-An example of the YAML produced:
+生成されるYAMLの例:
 
 <pre>
 - node: "ClientMap"

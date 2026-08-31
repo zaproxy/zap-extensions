@@ -3,23 +3,19 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Bank Identification Number (BIN) List
+        銀行識別番号 (BIN) リスト
     </title>
 </head>
 <body>
-<h1>Bank Identification Number (BIN) List</h1>
+<h1>銀行識別番号 (BIN) リスト</h1>
 
-The Common Library add-on includes a BIN list used by scan rules to enrich
-alerts for suspected credit card numbers.
-
-<p>
-When a scan rule finds a potential credit card number it is looked up against this third party BIN list,
-which might not be accurate. If a match is found the alert is raised at High confidence and additional
-details are added to the 'Other Information' field in the alert, otherwise the alerts will have Medium
-confidence.
+Common Library アドオンには、スキャンルールで使用される BIN リストが含まれており、これによってクレジットカード番号の疑いがあるケースに関するアラートの精度が向上します。
 
 <p>
-Data source: <a href="https://github.com/venelinkochev/bin-list-data/">bin-list-data</a>.
+スキャンルールがクレジットカード番号の可能性があるものを検出した場合、その番号はこのサードパーティの BIN リストと照合されますが、このリストは正確ではない可能性があります。 一致が見つかった場合、アラートは「高」の信頼度で発生し、アラートの「その他の情報」フィールドに追加の詳細情報が記載されます。そうでない場合、アラートの信頼度は「中」となります。
+
+<p>
+データソース: <a href="https://github.com/venelinkochev/bin-list-data/">bin-list-data</a>
 
 </body>
 </html>
