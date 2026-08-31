@@ -85,12 +85,11 @@ public final class ClientSideHandler implements HttpMessageHandler {
         if (ctx.isFromClient()) {
             return;
         }
+        historyProvider.addAuthMessageToHistory(msg);
         if (firstHrefId == 0 && msg.getHistoryRef() != null) {
             // Backstop for looping back through the history
             firstHrefId = msg.getHistoryRef().getHistoryId();
         }
-
-        historyProvider.addAuthMessageToHistory(msg);
 
         if (!user.getContext().isIncluded(msg.getRequestHeader().getURI().toString())) {
             String reqBody = msg.getRequestBody().toString();
@@ -142,10 +141,14 @@ public final class ClientSideHandler implements HttpMessageHandler {
         Set<SessionToken> reqSessionTokens = AuthUtils.getRequestSessionTokens(msg, headerConfigs);
         Set<SessionToken> unkSessionTokens = new HashSet<>();
         for (SessionToken token : reqSessionTokens) {
-            if (!SessionToken.COOKIE_SOURCE.equals(token.getSource())) {
-                AuthUtils.recordRequestSessionToken(
-                        user.getContext(), token.getKey(), token.getValue());
+            if (SessionToken.COOKIE_SOURCE.equals(token.getSource())) {
+                // Cookies are maintained separately
+                continue;
             }
+
+            AuthUtils.recordRequestSessionToken(
+                    user.getContext(), token.getKey(), token.getValue());
+
             if (AuthUtils.containsSessionToken(token.getValue()) == null) {
                 unkSessionTokens.add(token);
             }
@@ -156,7 +159,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
             SessionManagementRequestDetails smReqDetails =
                     AuthUtils.findSessionTokenSource(st.getValue(), firstHrefId);
             if (smReqDetails != null) {
-                candidate = new AuthRequestDetails(msg);
+                candidate = new AuthRequestDetails(smReqDetails.getMsg());
                 if (candidate.isBetterThan(authReq, headerConfigs)) {
                     LOGGER.debug(
                             "Found better auth candidate {} {}",
@@ -181,6 +184,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
 
     public void resetAuthMsg() {
         this.authReq = null;
+        this.firstHrefId = 0;
     }
 
     protected static boolean isBetterThan(

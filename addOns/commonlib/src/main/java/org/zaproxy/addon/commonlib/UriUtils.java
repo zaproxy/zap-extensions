@@ -38,20 +38,19 @@ public class UriUtils {
      *     reason for rejection
      * @since 1.43.0
      */
-    // FIXME
-    @SuppressWarnings("deprecation")
     public static void isValid(String uri) throws ZapUriException {
         if (uri == null) {
             throw new ZapUriException("URI must not be null");
         }
+        URI parsedUri;
         try {
-            new URI(uri);
+            parsedUri = new URI(uri);
         } catch (URISyntaxException e) {
             throw new ZapUriException(uri, e);
         }
         try {
-            new URL(uri);
-        } catch (MalformedURLException e) {
+            parsedUri.toURL();
+        } catch (IllegalArgumentException | MalformedURLException e) {
             throw new ZapUriException(uri, e);
         }
     }
@@ -66,13 +65,17 @@ public class UriUtils {
      * @return the constructed URL
      * @throws ZapUriException if the components do not form a valid URL
      */
-    // FIXME
-    @SuppressWarnings("deprecation")
     public static URL buildUrl(String scheme, String host, int port, String file)
             throws ZapUriException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(scheme).append("://").append(host);
+        if (port != -1) {
+            sb.append(':').append(port);
+        }
+        sb.append(file);
         try {
-            return new URL(scheme, host, port, file);
-        } catch (MalformedURLException e) {
+            return new URI(sb.toString()).toURL();
+        } catch (URISyntaxException | IllegalArgumentException | MalformedURLException e) {
             throw new ZapUriException(scheme + "://" + host + ":" + port + "/" + file, e);
         }
     }

@@ -199,6 +199,7 @@ return getSelector(arguments[0], document)
     private HttpSenderListener listener;
     private DiagnosticStep currentStep;
     private ScriptKey elementSelectorScriptKey;
+    private boolean interrupted;
 
     public AuthenticationDiagnostics(
             boolean enabled, String authenticationMethod, String context, String user) {
@@ -304,7 +305,7 @@ return getSelector(arguments[0], document)
 
         for (int i = 0; i < zestScript.getStatements().size(); i++) {
             ZestStatement stmt = zestScript.getStatements().get(i);
-            if (stmt instanceof ZestClientElementClear) {
+            if (stmt instanceof ZestClientElementClear || !stmt.isEnabled()) {
                 continue;
             }
 
@@ -357,19 +358,41 @@ return getSelector(arguments[0], document)
         try {
             Thread.sleep(150);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            interrupted = true;
         }
 
         currentStep.setCreateTimestamp(Instant.now());
-        currentStep.setUrl(wd.getCurrentUrl());
+        currentStep.setUrl(withInterruptHandled(wd::getCurrentUrl));
         currentStep.setDescription(description);
 
         if (wd instanceof TakesScreenshot ts) {
             DiagnosticScreenshot screenshot = new DiagnosticScreenshot();
-            screenshot.setData(ts.getScreenshotAs(OutputType.BASE64));
+            screenshot.setData(withInterruptHandled(() -> ts.getScreenshotAs(OutputType.BASE64)));
             screenshot.setCreateTimestamp(Instant.now());
             screenshot.setStep(currentStep);
             currentStep.setScreenshot(screenshot);
+        }
+
+        try {
+            recordElements(wd, element);
+            recordStorage(wd);
+        } catch (WebDriverException e) {
+            if (!(e.getCause() instanceof InterruptedException)) {
+                throw e;
+            }
+            interrupted = true;
+        }
+
+        createStep();
+
+        if (interrupted) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void recordElements(WebDriver wd, WebElement element) {
+        if (interrupted) {
+            return;
         }
 
         List<WebElement> foundElements =
@@ -384,14 +407,35 @@ return getSelector(arguments[0], document)
                 currentStep.getWebElements().add(field);
             }
         }
+    }
+
+    private void recordStorage(WebDriver wd) {
+        if (interrupted) {
+            return;
+        }
 
         if (wd instanceof JavascriptExecutor je) {
             for (var type : DiagnosticBrowserStorageItem.Type.values()) {
                 processStorage(je, type);
             }
         }
+    }
 
-        createStep();
+    private <T> T withInterruptHandled(Supplier<T> function) {
+        interrupted |= Thread.interrupted();
+
+        try {
+            return function.get();
+        } catch (WebDriverException e) {
+            if (!(e.getCause() instanceof InterruptedException)) {
+                throw e;
+            }
+
+            // Retry again with interruption cleared.
+            interrupted |= Thread.interrupted();
+
+            return function.get();
+        }
     }
 
     /**
@@ -550,6 +594,8 @@ return getSelector(arguments[0], document)
                     }
                 });
 
+        interrupted |= Thread.interrupted();
+
         PersistenceManager pm = TableJdo.getPmf().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         try {
@@ -563,6 +609,11 @@ return getSelector(arguments[0], document)
                 tx.rollback();
             }
             pm.close();
+
+            // JDO/DataNucleus does not restore the interruption.
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -602,10 +653,14 @@ return getSelector(arguments[0], document)
             return resetWait(
                     wd,
                     () -> {
+                        int waitForMsec = element.getWaitForMsec();
                         try {
+                            element.setWaitForMsec(0);
                             return element.getWebElement(runtime);
                         } catch (ZestClientFailException e) {
                             return null;
+                        } finally {
+                            element.setWaitForMsec(waitForMsec);
                         }
                     },
                     () -> null);
@@ -637,8 +692,25 @@ return getSelector(arguments[0], document)
         diagnosticDataProviders.remove(provider);
     }
 
+    private static FlushRunnable flushHook;
+
+    public static void setFlushHook(FlushRunnable hook) {
+        flushHook = hook;
+    }
+
+    public static void callFlushHook() {
+        if (flushHook != null) {
+            flushHook.flush();
+        }
+    }
+
     public interface DiagnosticDataProvider {
 
         void addDiagnostics(Diagnostic diagnostic);
+    }
+
+    public interface FlushRunnable {
+
+        void flush();
     }
 }

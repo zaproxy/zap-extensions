@@ -4,17 +4,18 @@
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Authentication Helper" image="authhelper-icon" target="authhelper">
+				<tocitem text="Authentication Report" target="authhelper.auth-report-json"/>
 				<tocitem text="Authentication Request Identification" target="authhelper.auth-req-id"/>
-				<tocitem text="Auto-Detect Authentication" target="authhelper.autodetect-auth"/>
-				<tocitem text="Browser Based Authentication" target="authhelper.browser-auth"/>
-				<tocitem text="Session Management Identification" target="authhelper.session-mgmt-id"/>
-				<tocitem text="Client Script Authentication" target="authhelper.client-script-auth"/>
-				<tocitem text="Auto-Detect Session Management" target="authhelper.autodetect-session"/>
-				<tocitem text="Header Based Session Management" target="authhelper.session-header"/>
-				<tocitem text="Verification Identification" target="authhelper.verification-id"/>
 				<tocitem text="Authentication Tester Dialog" target="authhelper.auth-tester"/>
-				<tocitem text="Report Templates" target="authhelper.report-templates"/>
+				<tocitem text="Auto-Detect Authentication" target="authhelper.autodetect-auth"/>
+				<tocitem text="Auto-Detect Session Management" target="authhelper.autodetect-session"/>
 				<tocitem text="Automation Framework Support" target="authhelper.automation"/>
+				<tocitem text="Browser Based Authentication" target="authhelper.browser-auth"/>
+				<tocitem text="Client Script Authentication" target="authhelper.client-script-auth"/>
+				<tocitem text="Header Based Session Management" target="authhelper.session-header"/>
+				<tocitem text="Report Templates" target="authhelper.report-templates"/>
+				<tocitem text="Session Management Identification" target="authhelper.session-mgmt-id"/>
+				<tocitem text="Verification Identification" target="authhelper.verification-id"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

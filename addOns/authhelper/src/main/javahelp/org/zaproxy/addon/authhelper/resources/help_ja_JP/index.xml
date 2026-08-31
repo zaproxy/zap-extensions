@@ -3,6 +3,7 @@
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="認証ヘルパー" target="authhelper"/>
+	<indexitem text="認証レポート" target="authhelper.auth-report-json"/>
 	<indexitem text="認証リクエストの識別" target="authhelper.auth-req-id"/>
 	<indexitem text="認証の自動検出" target="authhelper.autodetect-auth"/>
 	<indexitem text="ブラウザベース認証" target="authhelper.browser-auth"/>

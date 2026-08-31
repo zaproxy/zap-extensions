@@ -6,35 +6,35 @@ Client Side Integration - Client Spider Options
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Client Side Integration - Client Spider Options</H1>
+<H1>クライアントサイド統合 - クライアントスパイダーオプション</H1>
 
-The Client Spider Options panel (available under Options / Client Integration / Client Spider) allows you to configure the default settings used by the <a href="spider.html">Client Spider</a>.
+クライアントスパイダーオプションパネル (オプション → クライアント統合 → クライアントスパイダー からアクセス可能) では、<a href="spider.html">クライアントスパイダー</a>で使用されるデフォルト設定を構成できます。
 
 <p>
-These defaults are used when starting a new spider scan and are also pre-populated in the <a href="spider.html">Client Spider dialog</a>.
+これらのデフォルト設定は、新しいスパイダースキャンを開始する際に使用され、<a href="spider.html">クライアントスパイダー ダイアログ</a>にもあらかじめ入力されています。
 
-<h2>Options</h2>
+<h2>オプション</h2>
 
 <ul>
-<li><b>Browser</b> - The browser the spider uses to crawl the target application.</li>
-<li><b>Number of Browser Windows to Open</b> - The number of browser windows the spider uses in parallel. More windows increases speed but uses more memory.</li>
-<li><b>Maximum Crawl Depth</b> - The maximum depth the spider will crawl to. 0 means unlimited.</li>
-<li><b>Maximum Children</b> - The maximum number of child nodes to add under any single node in the tree. 0 means unlimited.</li>
-<li><b>Initial Page Load Time</b> - The number of seconds to wait after the initial URL is loaded. Default: 0.</li>
-<li><b>Page Load Time</b> - The number of seconds to wait after each subsequent URL is loaded. Default: 0.</li>
-<li><b>Action Wait Time</b> - The number of seconds to wait after performing an action on the browser (e.g. opening a URL, clicking a button, submitting a form). Default: 0.</li>
-<li><b>Shutdown Time</b> - The number of seconds to wait for new events after the last action before the spider shuts down. Default: 5.</li>
-<li><b>Maximum Duration</b> - The maximum number of minutes the spider is allowed to run. 0 means unlimited.</li>
-<li><b>Scope Check</b> - Controls how the spider handles requests to out-of-scope resources:
+<li><b>ブラウザー</b> - スパイダーが対象アプリケーションをクロールするために使用するブラウザー</li>
+<li><b>同時起動するブラウザーウィンドウ</b> - スパイダーが並行して使用するブラウザウィンドウの数。 ウィンドウの数を増やすと動作は速くなりますが、メモリの使用量も増えます</li>
+<li><b>クロールする最大階層</b> - スパイダーがクロールする最大階層。0は無制限を意味します</li>
+<li><b>最大子要素数</b> - ツリー内の任意の単一ノードの下に追加できる子ノードの最大数。 0は「無制限」を意味します</li>
+<li><b>初期ページ読み込み時間</b> - 最初のURLが読み込まれてから待機する秒数。 デフォルト値: 0</li>
+<li><b>ページ読み込み時間</b> - 連続する各URLの読み込み後に待機する秒数。 デフォルト値: 0</li>
+<li><b>アクション待機時間</b> - ブラウザ上でアクション (URLの開く、ボタンのクリック、フォームの送信など) を実行した後、待機する秒数。 デフォルト値: 0</li>
+<li><b>シャットダウン時間</b> - 最後のアクション後、スパイダーがシャットダウンするまでに新しいイベントを待機する秒数。 デフォルト値: 5</li>
+<li><b>最大継続時間</b> - スパイダーの実行が許可される最大時間 (分)。 0は「無制限」を意味します</li>
+<li><b>スコープチェック</b> - スパイダーがスコープ外のリソースに対するリクエストをどのように処理するかを制御します:
 	<ul>
-		<li><b>Flexible</b> - Allows out-of-scope resources (e.g. third-party scripts and stylesheets) to pass through the proxy so the browser can load them, but does not crawl them. This is the default.</li>
-		<li><b>Strict</b> - Blocks all out-of-scope resources at the proxy. The browser will only be able to load resources that are in scope.</li>
+		<li><b>柔軟</b> - スコープ外のリソース (サードパーティのスクリプトやスタイルシートなど) がプロキシを通過してブラウザがそれらを読み込めるようにしますが、それらをクロールすることはありません。 これがデフォルトの設定です</li>
+		<li><b>厳格</b> - プロキシですべてのスコープ外のリソースをブロックします。 ブラウザはスコープ内にあるリソースのみを読み込むことができます</li>
 	</ul>
 </li>
-<li><b>Logout Avoidance</b> - When enabled, the spider will avoid clicking elements that are likely to log the user out.</li>
+<li><b>ログアウト回避</b> - 有効にすると、スパイダーはユーザーをログアウトさせる可能性のある要素をクリックしないようにします</li>
 </ul>
 
-<p>When both <b>Page Load Time</b> and <b>Action Wait Time</b> are set to 0, the spider uses an adaptive wait strategy instead of fixed delays. The adaptive strategy monitors in-scope network traffic and waits until requests quiesce, up to a hard limit of 15 seconds. It applies a longer quiesce threshold (2.5 seconds) the first time a URL is visited, and shorter thresholds for subsequent visits.
+<p><b>ページ読み込み時間</b>と<b>アクション待機時間</b>の両方が0に設定されている場合、スパイダーは固定の遅延ではなく、適応型の待機戦略を使用します。 この適応型戦略は、対象範囲内のネットワークトラフィックを監視し、リクエストが落ち着くまで待機します。ただし、最大15秒というハードリミットが設定されています。 URL に初めてアクセスした際には、より長いクワイエス閾値 (2.5秒) を適用し、それ以降のアクセスではより短い閾値を適用します。
 
 </BODY>
 </HTML>

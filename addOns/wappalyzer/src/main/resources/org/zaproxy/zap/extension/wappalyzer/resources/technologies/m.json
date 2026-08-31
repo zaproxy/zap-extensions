@@ -3381,6 +3381,20 @@
     ],
     "website": "https://messagemedia.com"
   },
+  "Meta": {
+    "cats": [
+      19
+    ],
+    "description": "Meta domain verification, used by Meta Business to prove ownership of a domain for Facebook and Instagram business assets.",
+    "dns": {
+      "TXT": [
+        "facebook-domain-verification="
+      ]
+    },
+    "icon": "Meta.svg",
+    "saas": true,
+    "website": "https://about.meta.com"
+  },
   "MetaMap": {
     "cats": [
       69
@@ -3524,6 +3538,26 @@
       "/wp-content/plugins/metorik-helper(?:/.*)?(?:\\?.*)?$"
     ],
     "website": "https://metorik.com"
+  },
+  "Metricool": {
+    "cats": [
+      10
+    ],
+    "description": "Metricool is a social media management and analytics platform; its website tracker loads be.js from tracker.metricool.com and exposes the beTracker global.",
+    "dom": [
+      "img[src*=\"tracker.metricool.com/\"]"
+    ],
+    "icon": "Metricool.png",
+    "js": {
+      "beTracker": ""
+    },
+    "scriptSrc": [
+      "tracker\\.metricool\\.com/"
+    ],
+    "website": "https://metricool.com",
+    "xhr": [
+      "tracker\\.metricool\\.com"
+    ]
   },
   "Metrics Key": {
     "cats": [
@@ -3859,6 +3893,9 @@
     "dns": {
       "MX": [
         "outlook\\.com"
+      ],
+      "TXT": [
+        "^MS=(?:ms[\\w-]+|[0-9A-Fa-f]{40})$"
       ]
     },
     "icon": "Microsoft 365.svg",
@@ -4739,6 +4776,20 @@
       "mirakl\\.track"
     ],
     "website": "https://www.mirakl.com"
+  },
+  "Miro": {
+    "cats": [
+      19
+    ],
+    "description": "Miro is a collaborative online whiteboard and visual workspace platform.",
+    "dns": {
+      "TXT": [
+        "miro-verification="
+      ]
+    },
+    "icon": "Miro.png",
+    "saas": true,
+    "website": "https://miro.com"
   },
   "mirrAR": {
     "cats": [
@@ -5964,6 +6015,20 @@
     "description": "MongoDB is a document-oriented NoSQL database used for high volume data storage.",
     "icon": "MongoDB.svg",
     "website": "https://www.mongodb.org"
+  },
+  "MongoDB Atlas": {
+    "cats": [
+      34
+    ],
+    "description": "MongoDB Atlas is MongoDB's managed multi-cloud database service.",
+    "dns": {
+      "TXT": [
+        "mongodb-site-verification="
+      ]
+    },
+    "icon": "MongoDB.svg",
+    "saas": true,
+    "website": "https://www.mongodb.com/atlas"
   },
   "Mongrel": {
     "cats": [

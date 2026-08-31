@@ -3374,6 +3374,20 @@
     ],
     "website": "https://www.wix.com/freesitebuilder/tae-store"
   },
+  "Wiz": {
+    "cats": [
+      16
+    ],
+    "description": "Wiz is a cloud-native application protection platform (CNAPP).",
+    "dns": {
+      "TXT": [
+        "wiz-domain-verification="
+      ]
+    },
+    "icon": "Wiz.png",
+    "saas": true,
+    "website": "https://www.wiz.io"
+  },
   "Wized": {
     "cats": [
       51

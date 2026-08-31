@@ -168,6 +168,12 @@ class UriUtilsUnitTest {
         assertEquals(host, url.getHost());
         assertEquals(port, url.getPort());
         assertEquals(file, url.getFile());
+
+        int queryIndex = file.indexOf('?');
+        String expectedPath = queryIndex == -1 ? file : file.substring(0, queryIndex);
+        String expectedQuery = queryIndex == -1 ? null : file.substring(queryIndex + 1);
+        assertEquals(expectedPath, url.getPath());
+        assertEquals(expectedQuery, url.getQuery());
     }
 
     static Stream<Arguments> validUrlComponents() {
@@ -194,7 +200,24 @@ class UriUtilsUnitTest {
                 // Empty file (path)
                 Arguments.of("http", "example.com", 80, ""),
                 // Root path
-                Arguments.of("http", "example.com", 80, "/"));
+                Arguments.of("http", "example.com", 80, "/"),
+                // Percent-encoded characters in the path must not be re-encoded
+                Arguments.of("https", "example.com", 443, "/path%20with%20encoded%20spaces"),
+                Arguments.of("https", "example.com", 443, "/%E2%82%AC/path"),
+                Arguments.of("https", "example.com", 443, "/50%25off"),
+                // An escaped '?' in the path must not be mistaken for the query delimiter
+                Arguments.of("https", "example.com", 443, "/search%3Fnotquery"),
+                // Percent-encoded characters in the query must not be re-encoded
+                Arguments.of("https", "example.com", 443, "/search?q=hello%20world&lang=en"),
+                Arguments.of("https", "example.com", 443, "/path?already%3Dencoded=value"),
+                Arguments.of("https", "example.com", 443, "/path?a%26b=1%262"),
+                Arguments.of("https", "example.com", 443, "/path?q=%2Fslash%2F"),
+                // Escaped characters in both the path and the query
+                Arguments.of(
+                        "https",
+                        "example.com",
+                        443,
+                        "/50%25off%20now/%E2%82%AC?q=%2Fslash%2F&name=hello%20world%26more"));
     }
 
     @ParameterizedTest

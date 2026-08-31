@@ -27,6 +27,20 @@
     ],
     "website": "https://www.yachtsys.com"
   },
+  "Yahoo": {
+    "cats": [
+      19
+    ],
+    "description": "Yahoo domain verification, used to prove ownership of a domain to Yahoo services.",
+    "dns": {
+      "TXT": [
+        "yahoo-verification-key="
+      ]
+    },
+    "icon": "Yahoo.svg",
+    "saas": true,
+    "website": "https://www.yahoo.com"
+  },
   "Yahoo Advertising": {
     "cats": [
       36,

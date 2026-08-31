@@ -4,17 +4,18 @@
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
 			<tocitem text="認証ヘルパー" image="authhelper-icon" target="authhelper">
+				<tocitem text="認証レポート" target="authhelper.auth-report-json"/>
 				<tocitem text="認証リクエストの識別" target="authhelper.auth-req-id"/>
-				<tocitem text="認証の自動検出" target="authhelper.autodetect-auth"/>
-				<tocitem text="ブラウザベース認証" target="authhelper.browser-auth"/>
-				<tocitem text="セッション管理の特定" target="authhelper.session-mgmt-id"/>
-				<tocitem text="クライアントスクリプト認証" target="authhelper.client-script-auth"/>
-				<tocitem text="セッション管理の自動検出" target="authhelper.autodetect-session"/>
-				<tocitem text="ヘッダーベースセッション管理" target="authhelper.session-header"/>
-				<tocitem text="検証の特定" target="authhelper.verification-id"/>
 				<tocitem text="認証テスターダイアログ" target="authhelper.auth-tester"/>
-				<tocitem text="レポートテンプレート" target="authhelper.report-templates"/>
+				<tocitem text="認証の自動検出" target="authhelper.autodetect-auth"/>
+				<tocitem text="セッション管理の自動検出" target="authhelper.autodetect-session"/>
 				<tocitem text="自動化フレームワーク対応" target="authhelper.automation"/>
+				<tocitem text="ブラウザベース認証" target="authhelper.browser-auth"/>
+				<tocitem text="クライアントスクリプト認証" target="authhelper.client-script-auth"/>
+				<tocitem text="ヘッダーベースセッション管理" target="authhelper.session-header"/>
+				<tocitem text="レポートテンプレート" target="authhelper.report-templates"/>
+				<tocitem text="セッション管理の特定" target="authhelper.session-mgmt-id"/>
+				<tocitem text="検証の特定" target="authhelper.verification-id"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

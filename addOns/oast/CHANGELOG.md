@@ -6,9 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.25.0] - 2026-08-19
 ### Changed
 - Maintenance changes.
 - Formatted JavaScript files for consistency.
+
+### Fixed
+- Decrypt Interactsh interactions using AES-CTR, to support Interactsh server 1.3.0 and later (which changed the cipher from AES-CFB). Older servers are no longer supported.
 
 ## [0.24.0] - 2025-12-15
 ### Changed
@@ -201,6 +207,7 @@ Button is disabled in that case.
 
 ## [0.1.0] - 2021-08-04
 
+[0.25.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.25.0
 [0.24.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.24.0
 [0.23.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.22.0

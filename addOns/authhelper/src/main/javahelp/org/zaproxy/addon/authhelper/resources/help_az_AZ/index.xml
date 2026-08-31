@@ -3,6 +3,7 @@
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="Authentication Helper" target="authhelper"/>
+	<indexitem text="Authentication Report" target="authhelper.auth-report-json"/>
 	<indexitem text="Authentication Request Identification" target="authhelper.auth-req-id"/>
 	<indexitem text="Auto-Detect Authentication" target="authhelper.autodetect-auth"/>
 	<indexitem text="Browser Based Authentication" target="authhelper.browser-auth"/>

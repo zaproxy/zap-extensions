@@ -149,6 +149,20 @@
     ],
     "website": "https://www.jameda.de"
   },
+  "Jamf": {
+    "cats": [
+      16
+    ],
+    "description": "Jamf is an Apple device management (MDM) and endpoint security platform.",
+    "dns": {
+      "TXT": [
+        "jamf-site-verification="
+      ]
+    },
+    "icon": "Jamf.svg",
+    "saas": true,
+    "website": "https://www.jamf.com"
+  },
   "JamFeed": {
     "cats": [
       1
@@ -465,6 +479,20 @@
     ],
     "saas": true,
     "website": "https://www.jetboost.io"
+  },
+  "JetBrains": {
+    "cats": [
+      47
+    ],
+    "description": "JetBrains develops IDEs and developer tools including IntelliJ IDEA and TeamCity.",
+    "dns": {
+      "TXT": [
+        "jetbrains-domain-verification="
+      ]
+    },
+    "icon": "JetBrains.png",
+    "saas": true,
+    "website": "https://www.jetbrains.com"
   },
   "JetEngine": {
     "cats": [

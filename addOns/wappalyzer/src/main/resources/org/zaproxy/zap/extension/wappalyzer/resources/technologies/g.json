@@ -1923,6 +1923,20 @@
     ],
     "website": "https://www.globalshopex.com"
   },
+  "GlobalSign": {
+    "cats": [
+      70
+    ],
+    "description": "GlobalSign is a certificate authority providing TLS, code signing and identity certificates.",
+    "dns": {
+      "TXT": [
+        "_?globalsign-domain-verification="
+      ]
+    },
+    "icon": "GlobalSign.svg",
+    "saas": true,
+    "website": "https://www.globalsign.com"
+  },
   "Globo Also Bought": {
     "cats": [
       100
@@ -3014,6 +3028,22 @@
       "Google Cloud"
     ],
     "website": "https://cloud.google.com/cdn"
+  },
+  "Google Cloud DNS": {
+    "cats": [
+      88
+    ],
+    "description": "Google Cloud DNS is Google's authoritative DNS service; domains using it are served by ns-cloud-*.googledomains.com nameservers.",
+    "dns": {
+      "NS": [
+        "ns-cloud-[a-z]\\d\\.googledomains\\.com"
+      ],
+      "SOA": [
+        "ns-cloud-[a-z]\\d\\.googledomains\\.com"
+      ]
+    },
+    "icon": "Google Cloud.svg",
+    "website": "https://cloud.google.com/dns"
   },
   "Google Cloud Load Balancing": {
     "cats": [

@@ -4,8 +4,24 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.42.0] - 2026-08-26
+### Added
+- A toolbar button to the Authentication Diagnostics screenshots tab, to toggle screenshots between full size and scaled to fit the window.
+- Use the HTTP method for the verification configuration (on newer ZAP versions).
+
 ### Changed
+- Depend on newer Common Library add-on.
 - Tag diagnostic HTTP messages with an internal ID, to make it easier to cross reference them.
+- Obtain the minimal authentication diagnostics when aborting the authentication.
+- Authentication report: include summary with connection success and failure counts.
+- Include Accept, Accept-Language, Connection, and User-Agent headers when doing authentication verification.
+- Ignore commented Zest statements when collecting authentication diagnostics.
+
+### Fixed
+- Do not wait when getting the element for a screenshot diagnostic step to not add unnecessary delays.
+- Performance issue checking for where cookie values were set during authentication.
 
 ## [0.41.0] - 2026-08-07
 ### Added
@@ -393,6 +409,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.42.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.42.0
 [0.41.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.41.0
 [0.40.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.40.0
 [0.39.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.39.0

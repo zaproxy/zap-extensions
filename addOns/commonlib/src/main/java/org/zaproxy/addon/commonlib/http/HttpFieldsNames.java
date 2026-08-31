@@ -27,6 +27,12 @@ package org.zaproxy.addon.commonlib.http;
 public final class HttpFieldsNames {
 
     public static final String ACCEPT = "accept";
+
+    /**
+     * @since 1.44.0
+     */
+    public static final String ACCEPT_LANGUAGE = "accept-language";
+
     public static final String ACCEPT_ENCODING = "accept-encoding";
     public static final String ACCESS_CONTROL_ALLOW_CREDENTIALS =
             "access-control-allow-credentials";

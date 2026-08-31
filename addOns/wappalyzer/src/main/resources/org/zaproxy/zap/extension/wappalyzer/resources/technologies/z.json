@@ -342,6 +342,23 @@
     ],
     "website": "https://www.zeald.com"
   },
+  "Zeeg": {
+    "cats": [
+      72
+    ],
+    "description": "Zeeg is an appointment-scheduling platform whose booking widgets are embedded via assets.zeeg.me.",
+    "icon": "Zeeg.png",
+    "js": {
+      "Zeeg": ""
+    },
+    "scriptSrc": [
+      "assets\\.zeeg\\.me/embed\\.min\\.js"
+    ],
+    "website": "https://zeeg.me",
+    "xhr": [
+      "(?:api|assets|uploads|page-analytics)\\.zeeg\\.me"
+    ]
+  },
   "ZeeMaps": {
     "cats": [
       35
@@ -1532,6 +1549,21 @@
       "wp-content/plugins/zoodpay/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1"
     ],
     "website": "https://www.zoodpay.com"
+  },
+  "Zoom": {
+    "cats": [
+      19
+    ],
+    "description": "Zoom is a video conferencing and collaboration platform.",
+    "dns": {
+      "TXT": [
+        "^ZOOM_verify_",
+        "zoom-domain-verification="
+      ]
+    },
+    "icon": "Zoom.png",
+    "saas": true,
+    "website": "https://www.zoom.com"
   },
   "Zoominfo": {
     "cats": [

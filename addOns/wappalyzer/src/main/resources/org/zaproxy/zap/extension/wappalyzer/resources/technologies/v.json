@@ -961,6 +961,34 @@
     ],
     "website": "https://www.vergic.com"
   },
+  "Verificado": {
+    "cats": [
+      90,
+      5
+    ],
+    "description": "Verificado is a SaaS platform for collecting, moderating and publishing verified product and seller reviews on ecommerce sites.",
+    "dom": [
+      "#verificadoAIwidget",
+      ".verificadoai-plp-rating",
+      "html[data-verificado]"
+    ],
+    "icon": "Verificado.svg",
+    "js": {
+      "VerificadoAI.version": "^(.+)$\\;version:\\1",
+      "verificadoAIKeyId": "",
+      "verificadoAIUriBaseCdn": ""
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.verificado\\.ai/js/widget/onsite-feedback-widget\\.js",
+      "cdn-mz-gj-vai\\.verificado\\.ai/(?:js/)?widget/"
+    ],
+    "website": "https://verificado.ai"
+  },
   "Verifone 2Checkout": {
     "cats": [
       41
@@ -2530,6 +2558,20 @@
     "icon": "vk.svg",
     "oss": true,
     "website": "https://vkcom.github.io/VKUI"
+  },
+  "VMware CloudHealth": {
+    "cats": [
+      19
+    ],
+    "description": "CloudHealth by VMware is a multi-cloud cost management and governance platform.",
+    "dns": {
+      "TXT": [
+        "^cloudhealth="
+      ]
+    },
+    "icon": "VMware.png",
+    "saas": true,
+    "website": "https://www.vmware.com"
   },
   "Vnda": {
     "cats": [

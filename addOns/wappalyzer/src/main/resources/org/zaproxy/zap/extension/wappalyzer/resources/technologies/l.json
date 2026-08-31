@@ -2144,6 +2144,11 @@
       53
     ],
     "description": "Linear is a platform for collecting payments and managing business operations, offering sales and marketing tools for real estate agents, extending beyond a traditional brokerage system.",
+    "dns": {
+      "TXT": [
+        "linear-domain-verification="
+      ]
+    },
     "icon": "Linear.svg",
     "js": {
       "linearFrontend": ""
@@ -2911,6 +2916,20 @@
     ],
     "website": "https://www.liveperson.com"
   },
+  "LiveRamp": {
+    "cats": [
+      97
+    ],
+    "description": "LiveRamp is an identity resolution and data collaboration platform.",
+    "dns": {
+      "TXT": [
+        "liveramp-site-verification="
+      ]
+    },
+    "icon": "LiveRamp.svg",
+    "saas": true,
+    "website": "https://liveramp.com"
+  },
   "LiveRamp DPM": {
     "cats": [
       36
@@ -3409,6 +3428,21 @@
     ],
     "website": "https://www.logaholic.com"
   },
+  "LogaTech": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "LogaTech is a web development company offering a platform used to build and manage multi-tenant CMS, CRM and e-commerce websites.",
+    "headers": {
+      "X-Powered-By": "^LogaTech$"
+    },
+    "icon": "LogaTech.png",
+    "meta": {
+      "generator": "^LogaTech$"
+    },
+    "website": "https://logatech.net"
+  },
   "Loggly": {
     "cats": [
       10
@@ -3713,7 +3747,8 @@
     ],
     "dns": {
       "TXT": [
-        "loom-verification"
+        "loom-verification",
+        "loom-site-verification="
       ]
     },
     "icon": "Loom.svg",

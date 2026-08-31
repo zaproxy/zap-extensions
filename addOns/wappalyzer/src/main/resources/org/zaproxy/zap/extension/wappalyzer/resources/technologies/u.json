@@ -17,6 +17,20 @@
     "saas": true,
     "website": "https://u-komi.com/en/"
   },
+  "Uber": {
+    "cats": [
+      19
+    ],
+    "description": "Uber domain verification, used by Uber for Business to prove ownership of a company domain.",
+    "dns": {
+      "TXT": [
+        "uber-domain-verification="
+      ]
+    },
+    "icon": "Uber.svg",
+    "saas": true,
+    "website": "https://www.uber.com"
+  },
   "Ubercart": {
     "cats": [
       6

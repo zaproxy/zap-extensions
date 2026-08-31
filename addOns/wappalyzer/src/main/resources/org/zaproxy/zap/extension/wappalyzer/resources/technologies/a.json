@@ -465,6 +465,9 @@
     ],
     "description": "AccessiWay is a solution focused on digital accessibility and compliance for organizations seeking to meet established standards.",
     "icon": "AccessiWay.svg",
+    "js": {
+      "accessWidget.config.footerHtml": ""
+    },
     "pricing": [
       "poa"
     ],
@@ -1851,6 +1854,20 @@
     ],
     "website": "https://adnymics.com"
   },
+  "Adobe": {
+    "cats": [
+      19
+    ],
+    "description": "Adobe enterprise domain claim, used by the Adobe Admin Console to verify ownership of a domain for Adobe identity management.",
+    "dns": {
+      "TXT": [
+        "adobe-idp-site-verification="
+      ]
+    },
+    "icon": "Adobe.svg",
+    "saas": true,
+    "website": "https://www.adobe.com"
+  },
   "Adobe Analytics": {
     "cats": [
       10
@@ -2457,6 +2474,25 @@
       "/wp-content/plugins/advanced-custom-fields(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://www.advancedcustomfields.com"
+  },
+  "Adventive": {
+    "cats": [
+      36
+    ],
+    "description": "Adventive is an ad-serving and rich-media advertising platform; its ad tags are served from ads.adventive.com.",
+    "dom": [
+      "script[src*=\"ads.adventive.com/\"]",
+      "img[src*=\"ads.adventive.com/\"]",
+      "iframe[src*=\"ads.adventive.com/\"]"
+    ],
+    "icon": "Adventive.png",
+    "scriptSrc": [
+      "ads\\.adventive\\.com/"
+    ],
+    "website": "https://adventive.com",
+    "xhr": [
+      "ads\\.adventive\\.com"
+    ]
   },
   "Advert Stream": {
     "cats": [
@@ -3350,6 +3386,11 @@
     "dom": [
       "iframe[scr*='//airtable.com/'], a[href*='//airtable.com/'][target='_blank']"
     ],
+    "dns": {
+      "TXT": [
+        "airtable-verification="
+      ]
+    },
     "icon": "Airtable.svg",
     "pricing": [
       "freemium",
@@ -4818,6 +4859,22 @@
       "payments\\.amazon\\.com"
     ]
   },
+  "Amazon Route 53": {
+    "cats": [
+      88
+    ],
+    "description": "Amazon Route 53 is AWS's authoritative DNS service; domains using it are served by awsdns nameservers.",
+    "dns": {
+      "NS": [
+        "\\.awsdns-\\d+\\."
+      ],
+      "SOA": [
+        "\\.awsdns-\\d+\\."
+      ]
+    },
+    "icon": "Amazon Web Services.svg",
+    "website": "https://aws.amazon.com/route53/"
+  },
   "Amazon S3": {
     "cats": [
       31
@@ -4846,7 +4903,8 @@
     "description": "Amazon Simple Email Service (SES) is an email service that enables developers to send mail from within any application.",
     "dns": {
       "TXT": [
-        "amazonses\\.com"
+        "amazonses\\.com",
+        "^amazonses:"
       ]
     },
     "icon": "Amazon SES.svg",
@@ -8422,6 +8480,21 @@
     ],
     "website": "https://www.atlassian.com/software/bitbucket/overview/"
   },
+  "Atlassian Cloud": {
+    "cats": [
+      47
+    ],
+    "description": "Atlassian Cloud is the hosted platform behind Atlassian products such as Jira, Confluence and Bitbucket.",
+    "dns": {
+      "TXT": [
+        "atlassian-domain-verification=",
+        "atlassian-sending-domain-verification="
+      ]
+    },
+    "icon": "Atlassian.svg",
+    "saas": true,
+    "website": "https://www.atlassian.com"
+  },
   "Atlassian Confluence": {
     "cats": [
       8
@@ -8981,6 +9054,20 @@
       "static\\.autoconf\\.com"
     ],
     "website": "https://autoconf.com.br"
+  },
+  "Autodesk": {
+    "cats": [
+      19
+    ],
+    "description": "Autodesk provides design, engineering and construction software.",
+    "dns": {
+      "TXT": [
+        "autodesk-domain-verification="
+      ]
+    },
+    "icon": "Autodesk.svg",
+    "saas": true,
+    "website": "https://www.autodesk.com"
   },
   "Autoketing": {
     "cats": [
