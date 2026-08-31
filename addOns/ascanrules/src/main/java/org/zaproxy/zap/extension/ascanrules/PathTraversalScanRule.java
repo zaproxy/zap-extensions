@@ -313,8 +313,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
                 for (int h = 0; h < winCount; h++) {
 
-                    if (sendAndCheckPayload(param, WIN_LOCAL_FILE_TARGETS[h], WIN_PATTERN, 1)
-                            || isStop()) {
+                    if (sendAndCheckPayload(param, WIN_LOCAL_FILE_TARGETS[h], WIN_PATTERN, 1)) {
                         // Dispose all resources
                         // Exit the scan rule
                         return;
@@ -323,22 +322,18 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
                     // to the input.
                     if (includeNullByteInjectionPayload) {
                         if (sendAndCheckPayload(
-                                        param,
-                                        WIN_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER,
-                                        WIN_PATTERN,
-                                        1)
-                                || isStop()) {
+                                param,
+                                WIN_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER,
+                                WIN_PATTERN,
+                                1)) {
                             return;
                         }
                         if (extension != null) {
                             if (sendAndCheckPayload(
-                                            param,
-                                            WIN_LOCAL_FILE_TARGETS[h]
-                                                    + NULL_BYTE_CHARACTER
-                                                    + extension,
-                                            WIN_PATTERN,
-                                            1)
-                                    || isStop()) {
+                                    param,
+                                    WIN_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER + extension,
+                                    WIN_PATTERN,
+                                    1)) {
                                 return;
                             }
                         }
@@ -353,8 +348,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
                     // Check if a there was a finding or the scan has been stopped
                     // if yes dispose resources and exit
-                    if (sendAndCheckPayload(param, NIX_LOCAL_FILE_TARGETS[h], NIX_PATTERN, 2)
-                            || isStop()) {
+                    if (sendAndCheckPayload(param, NIX_LOCAL_FILE_TARGETS[h], NIX_PATTERN, 2)) {
                         // Dispose all resources
                         // Exit the scan rule
                         return;
@@ -363,23 +357,19 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
                     // to the input
                     if (includeNullByteInjectionPayload) {
                         if (sendAndCheckPayload(
-                                        param,
-                                        NIX_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER,
-                                        NIX_PATTERN,
-                                        2)
-                                || isStop()) {
+                                param,
+                                NIX_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER,
+                                NIX_PATTERN,
+                                2)) {
                             return;
                         }
 
                         if (extension != null) {
                             if (sendAndCheckPayload(
-                                            param,
-                                            NIX_LOCAL_FILE_TARGETS[h]
-                                                    + NULL_BYTE_CHARACTER
-                                                    + extension,
-                                            NIX_PATTERN,
-                                            2)
-                                    || isStop()) {
+                                    param,
+                                    NIX_LOCAL_FILE_TARGETS[h] + NULL_BYTE_CHARACTER + extension,
+                                    NIX_PATTERN,
+                                    2)) {
                                 return;
                             }
                         }
@@ -393,8 +383,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
                     // Check if a there was a finding or the scan has been stopped
                     // if yes dispose resources and exit
-                    if (sendAndCheckPayload(param, NIX_LOCAL_DIR_TARGETS[h], NIX_DIR_MATCHER, 3)
-                            || isStop()) {
+                    if (sendAndCheckPayload(param, NIX_LOCAL_DIR_TARGETS[h], NIX_DIR_MATCHER, 3)) {
                         // Dispose all resources
                         // Exit the scan rule
                         return;
@@ -403,8 +392,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
             }
             if (inScope(Tech.Windows)) {
                 for (int h = 0; h < winDirCount; h++) {
-                    if (sendAndCheckPayload(param, WIN_LOCAL_DIR_TARGETS[h], WIN_DIR_MATCHER, 3)
-                            || isStop()) {
+                    if (sendAndCheckPayload(param, WIN_LOCAL_DIR_TARGETS[h], WIN_DIR_MATCHER, 3)) {
                         // Dispose all resources
                         // Exit the scan rule
                         return;
@@ -433,8 +421,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
                     if (sendAndCheckPayload(param, sslashPattern, WAR_PATTERN, 4)
                             || sendAndCheckPayload(param, bslashPattern, WAR_PATTERN, 4)
                             || sendAndCheckPayload(param, '/' + sslashPattern, WAR_PATTERN, 4)
-                            || sendAndCheckPayload(param, '\\' + bslashPattern, WAR_PATTERN, 4)
-                            || isStop()) {
+                            || sendAndCheckPayload(param, '\\' + bslashPattern, WAR_PATTERN, 4)) {
 
                         // Dispose all resources
                         // Exit the scan rule
@@ -579,6 +566,10 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
     private boolean sendAndCheckPayload(
             String param, String newValue, ContentsMatcher contentsMatcher, int check)
             throws IOException {
+        if (isStop()) {
+            return true;
+        }
+
         if (contentsMatcher.match(getContentsToMatch(getBaseMsg())) != null) {
             // Evidence already present, no point sending the payload/attack.
             return false;
