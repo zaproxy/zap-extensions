@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Unreleased
 ### Changed
 - Simplify tab names in the Automation Framework job dialogue (Issue 9408).
+- Update dependency.
 
 ## [0.34.0] - 2026-08-12
 ### Added
