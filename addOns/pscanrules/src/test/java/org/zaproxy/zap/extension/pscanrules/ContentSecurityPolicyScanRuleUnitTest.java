@@ -297,8 +297,8 @@ class ContentSecurityPolicyScanRuleUnitTest
 
     @Test
     void shouldAlertOnReasonableMetaCspWithoutFrameAncestors() {
-        // Given — meta CSPs cannot enforce frame-ancestors, so a otherwise-reasonable meta
-        // policy still leaves framing unrestricted at the effective PolicyList layer
+        // Given — meta CSPs cannot enforce frame-ancestors, so an otherwise-reasonable
+        // meta policy still leaves framing unrestricted at the effective PolicyList layer
         HttpMessage msg = createHttpMessage();
         msg.setResponseBody(
                 "<html><head><meta http-equiv=\""
@@ -792,13 +792,33 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
+    void shouldUseGenericParamWhenHeaderUnparseableAndMetaProvidesEffectivePolicy() {
+        // Given — header is present but unparseable (non-ASCII), so it never contributes to
+        // enforcedPolicyTexts; only the meta policy is actually evaluated. The effective-policy
+        // alerts' param must reflect that the header was unused, not point at the header itself.
+        HttpMessage msg = createHttpMessage();
+        msg.getResponseHeader().addHeader("Content-Security-Policy", "default-src ‘self’");
+        msg.setResponseBody(
+                "<html><head><meta http-equiv=\""
+                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
+                        + "\" content=\"script-src 'unsafe-inline'\"></head></html>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        Alert unsafeInline = findAlert("10055-5");
+        assertThat(unsafeInline.getParam(), equalTo(HttpFieldsNames.CONTENT_SECURITY_POLICY));
+        assertThat(unsafeInline.getEvidence(), equalTo("script-src 'unsafe-inline'"));
+    }
+
+    @Test
     void shouldAlertOnReasonableCspWhichIncludesPrefetchsrc() {
         // Given
         HttpMessage msg = createHttpMessage("", REASONABLE_POLICY + "; prefetch-src *");
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 is(equalTo("Warnings:\nThe prefetch-src directive has been deprecated\n")));
@@ -824,7 +844,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(
                 alertsRaised.get(0).getDescription(),
                 is(
@@ -834,6 +854,130 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
+    }
+
+    @Test
+    void shouldAlertOnUnsafeEvalWhenAllowedOnlyViaDefaultSrcFallback() {
+        // Given — script-src omitted; default-src carries 'unsafe-eval', which governs via
+        // the CSP fallback chain (Policy.getGoverningDirectiveForEffectiveDirective).
+        String policy = "default-src 'unsafe-eval'; form-action 'none'; frame-ancestors 'none'";
+        HttpMessage msg = createHttpMessage(policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        Alert evalAlert = findAlert("10055-10");
+        assertThat(evalAlert.getName(), equalTo("CSP: script-src unsafe-eval"));
+        assertThat(evalAlert.getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(evalAlert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(evalAlert.getEvidence(), equalTo(policy));
+    }
+
+    @Test
+    void shouldAlertOnUnsafeEvalWhenIntersectionReliesOnDefaultSrcFallback() {
+        // Given — one policy names script-src, the other only default-src; intersection
+        // still allows eval (PolicyList.allowsEval() == true).
+        String first = "script-src 'unsafe-eval'; form-action 'none'; frame-ancestors 'none'";
+        String second = "default-src 'unsafe-eval'; form-action 'none'; frame-ancestors 'none'";
+        HttpMessage msg = createHttpMessage(first);
+        msg.getResponseHeader().addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, second);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        Alert evalAlert = findAlert("10055-10");
+        assertThat(evalAlert.getName(), equalTo("CSP: script-src unsafe-eval"));
+        assertThat(evalAlert.getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(evalAlert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(evalAlert.getEvidence(), equalTo(first));
+    }
+
+    @Test
+    void shouldAlertOnUnsafeHashesWhenAllowedOnlyViaDefaultSrcFallback() {
+        // Given — same fallback issue for 'unsafe-hashes' / 10055-7
+        String policy =
+                "default-src 'unsafe-hashes' 'sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY='; "
+                        + "form-action 'none'; frame-ancestors 'none'";
+        HttpMessage msg = createHttpMessage(policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        Alert hashesAlert = findAlert("10055-7");
+        assertThat(hashesAlert.getName(), equalTo("CSP: script-src unsafe-hashes"));
+        assertThat(hashesAlert.getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(hashesAlert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(hashesAlert.getEvidence(), equalTo(policy));
+    }
+
+    @Test
+    void shouldNotAlertOnUnsafeHashesWhenPoliciesHaveDisjointHashSets() {
+        // Given — both policies contain 'unsafe-hashes' but list different hashes.
+        // No concrete handler is allowed by every policy, so the intersection does not
+        // effectively allow unsafe-hashes.
+        String hashA = "sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY=";
+        String hashB = "sha256-xyz4zkCjuC3lZcD2UmnqDG0vurmq12W/XKM5Vd0+MlQ=";
+        HttpMessage msg = createHttpMessage(hashPolicy("script-src", hashA));
+        msg.getResponseHeader()
+                .addHeader(
+                        HttpFieldsNames.CONTENT_SECURITY_POLICY, hashPolicy("script-src", hashB));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(
+                alertsRaised.stream().filter(a -> "10055-7".equals(a.getAlertRef())).count(),
+                equalTo(0L));
+    }
+
+    @Test
+    void shouldNotAlertOnStyleUnsafeHashesWhenPoliciesHaveDisjointHashSets() {
+        // Given — same disjoint-hash-set scenario for style-src / 10055-8
+        String hashA = "sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY=";
+        String hashB = "sha256-xyz4zkCjuC3lZcD2UmnqDG0vurmq12W/XKM5Vd0+MlQ=";
+        HttpMessage msg = createHttpMessage(hashPolicy("style-src", hashA));
+        msg.getResponseHeader()
+                .addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, hashPolicy("style-src", hashB));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(
+                alertsRaised.stream().filter(a -> "10055-8".equals(a.getAlertRef())).count(),
+                equalTo(0L));
+    }
+
+    @Test
+    void shouldAlertOnUnsafeHashesWhenIntersectingHashSetsAllowThem() {
+        // Given — shared hash + keyword in every policy → intersection still permits
+        // unsafe-hashes for that hash; 10055-7 is appropriate.
+        String sharedHash = "sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY=";
+        String extraHash = "sha256-xyz4zkCjuC3lZcD2UmnqDG0vurmq12W/XKM5Vd0+MlQ=";
+        String first = hashPolicy("script-src", sharedHash);
+        String second = hashPolicy("script-src", sharedHash, extraHash);
+        HttpMessage msg = createHttpMessage(first);
+        msg.getResponseHeader().addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, second);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        Alert hashesAlert = findAlert("10055-7");
+        assertThat(hashesAlert.getName(), equalTo("CSP: script-src unsafe-hashes"));
+        assertThat(hashesAlert.getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(hashesAlert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(hashesAlert.getEvidence(), equalTo(first));
+    }
+
+    private Alert findAlert(String alertRef) {
+        return alertsRaised.stream()
+                .filter(a -> alertRef.equals(a.getAlertRef()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected " + alertRef + " alert"));
+    }
+
+    private static String hashPolicy(String directive, String... hashes) {
+        StringBuilder sb =
+                new StringBuilder("default-src 'self'; ")
+                        .append(directive)
+                        .append(" 'unsafe-hashes'");
+        for (String hash : hashes) {
+            sb.append(" '").append(hash).append('\'');
+        }
+        return sb.append("; form-action 'none'; frame-ancestors 'none'").toString();
     }
 
     private static HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {

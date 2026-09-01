@@ -22,10 +22,12 @@ package org.zaproxy.zap.extension.pscanrules;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -46,6 +48,7 @@ import org.htmlunit.csp.PolicyListInOrigin;
 import org.htmlunit.csp.directive.SourceExpressionDirective;
 import org.htmlunit.csp.url.URI;
 import org.htmlunit.csp.url.URLWithScheme;
+import org.htmlunit.csp.value.Hash;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -125,6 +128,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
 
         List<Policy> enforcedPolicies = new ArrayList<>();
         List<String> enforcedPolicyTexts = new ArrayList<>();
+        boolean headerContributedPolicy = false;
 
         for (String csp : cspOptions) {
             List<PolicyError> observedErrors = new ArrayList<>();
@@ -142,6 +146,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
             if (!parsed.getPolicies().isEmpty()) {
                 enforcedPolicies.addAll(parsed.getPolicies());
                 enforcedPolicyTexts.add(csp);
+                headerContributedPolicy = true;
             }
         }
 
@@ -172,7 +177,8 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         }
 
         if (!enforcedPolicies.isEmpty()) {
-            checkEffectivePolicies(msg, enforcedPolicies, enforcedPolicyTexts, cspHeaderFound);
+            checkEffectivePolicies(
+                    msg, enforcedPolicies, enforcedPolicyTexts, headerContributedPolicy);
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
@@ -182,12 +188,12 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
             HttpMessage msg,
             List<Policy> enforcedPolicies,
             List<String> enforcedPolicyTexts,
-            boolean cspHeaderFound) {
+            boolean headerContributedPolicy) {
         PolicyList policyList = new PolicyList(enforcedPolicies);
         PolicyListInOrigin bound = new PolicyListInOrigin(policyList, HTTP_URI.get());
         String evidence = enforcedPolicyTexts.get(0);
         String param =
-                cspHeaderFound
+                headerContributedPolicy
                         ? getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY).get(0)
                         : HttpFieldsNames.CONTENT_SECURITY_POLICY;
         String multiPolicyInfo =
@@ -202,17 +208,13 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         if (bound.allowsUnsafeInlineStyle()) {
             buildStyleUnsafeInlineAlert(param, evidence, multiPolicyInfo).raise();
         }
-        if (isUnsafeKeywordAllowed(
-                policyList,
-                FetchDirectiveKind.ScriptSrc,
-                SourceExpressionDirective::unsafeHashes)) {
+        if (isUnsafeHashesEffectivelyAllowed(policyList, FetchDirectiveKind.ScriptSrc)) {
             buildScriptUnsafeHashAlert(param, evidence, multiPolicyInfo).raise();
         }
-        if (isUnsafeKeywordAllowed(
-                policyList, FetchDirectiveKind.StyleSrc, SourceExpressionDirective::unsafeHashes)) {
+        if (isUnsafeHashesEffectivelyAllowed(policyList, FetchDirectiveKind.StyleSrc)) {
             buildStyleUnsafeHashAlert(param, evidence, multiPolicyInfo).raise();
         }
-        if (isUnsafeKeywordAllowed(
+        if (isEffectiveKeywordAllowed(
                 policyList, FetchDirectiveKind.ScriptSrc, SourceExpressionDirective::unsafeEval)) {
             buildScriptUnsafeEvalAlert(param, evidence, multiPolicyInfo).raise();
         }
@@ -341,18 +343,54 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         }
     }
 
-    private static boolean isUnsafeKeywordAllowed(
+    /**
+     * Determines whether every policy effectively allows the given keyword for the given fetch
+     * directive, resolving each policy's governing directive via the CSP fallback chain (e.g.
+     * {@code script-src} falling back to {@code default-src}). A policy with no governing directive
+     * in the chain is unrestricted and does not block the keyword. At least one policy must
+     * actually declare the keyword, otherwise there is nothing to alert on.
+     */
+    private static boolean isEffectiveKeywordAllowed(
             PolicyList policyList,
             FetchDirectiveKind source,
             Predicate<SourceExpressionDirective> hasKeyword) {
-        List<Policy> policies = policyList.getPolicies();
-        return !policies.isEmpty()
-                && policies.stream()
-                        .allMatch(
-                                policy ->
-                                        policy.getFetchDirective(source)
-                                                .map(hasKeyword::test)
-                                                .orElse(false));
+        List<Optional<SourceExpressionDirective>> effectiveDirectives =
+                policyList.getPolicies().stream()
+                        .map(policy -> policy.getGoverningDirectiveForEffectiveDirective(source))
+                        .toList();
+        return effectiveDirectives.stream().anyMatch(d -> d.filter(hasKeyword).isPresent())
+                && effectiveDirectives.stream().allMatch(d -> d.map(hasKeyword::test).orElse(true));
+    }
+
+    /**
+     * Determines whether {@code 'unsafe-hashes'} is effectively allowed for the given fetch
+     * directive across all policies: every restricted policy (per the CSP fallback chain) must
+     * declare {@code 'unsafe-hashes'} and their hash sets must intersect, since a hash blocked by
+     * any one policy is blocked overall.
+     */
+    private static boolean isUnsafeHashesEffectivelyAllowed(
+            PolicyList policyList, FetchDirectiveKind source) {
+        Set<Hash> commonHashes = null;
+        for (Policy policy : policyList.getPolicies()) {
+            Optional<SourceExpressionDirective> effective =
+                    policy.getGoverningDirectiveForEffectiveDirective(source);
+            if (effective.isEmpty()) {
+                continue;
+            }
+            SourceExpressionDirective directive = effective.get();
+            if (!directive.unsafeHashes() || directive.getHashes().isEmpty()) {
+                return false;
+            }
+            if (commonHashes == null) {
+                commonHashes = new HashSet<>(directive.getHashes());
+            } else {
+                commonHashes.retainAll(directive.getHashes());
+            }
+            if (commonHashes.isEmpty()) {
+                return false;
+            }
+        }
+        return commonHashes != null;
     }
 
     private static String getCspNoticesString(List<PolicyError> notices) {
