@@ -66,6 +66,16 @@ interface ScanRuleTests extends UrlTests {
                         .anyMatch(str -> str.equals(name)));
     }
 
+    /**
+     * Returns the (1-based) alert ref indices to skip when checking example alerts are contiguous,
+     * e.g. for a retired alert ref that leaves a gap in the numbering.
+     *
+     * @return the indices to skip, or empty for no skips
+     */
+    default Set<Integer> getSkippedAlertRefs() {
+        return Set.of();
+    }
+
     default void shouldHaveExpectedAlertRefsInExampleAlerts() {
         // Given / When
         List<Alert> alerts = getExampleAlerts(getScanRule());
@@ -74,10 +84,14 @@ interface ScanRuleTests extends UrlTests {
             return;
         }
 
+        Set<Integer> skipped = getSkippedAlertRefs();
         List<String> errors = new ArrayList<>();
         int i = 0;
         for (Alert alert : alerts) {
             ++i;
+            while (skipped.contains(i)) {
+                ++i;
+            }
             String alertRef = alert.getPluginId() + "-" + i;
             if (!alertRef.equals(alert.getAlertRef())) {
                 errors.add(

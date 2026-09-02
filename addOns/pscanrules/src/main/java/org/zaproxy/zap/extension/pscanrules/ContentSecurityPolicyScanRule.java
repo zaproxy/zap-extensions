@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -136,7 +137,9 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                     (severity, message, policyIndex, directiveIndex, valueIndex) ->
                             observedErrors.add(
                                     new PolicyError(severity, message, directiveIndex, valueIndex));
-            PolicyList parsed = parsePolicyList(csp, consumer, msg, id);
+            PolicyList parsed =
+                    parseWithErrorHandling(
+                            () -> Policy.parseSerializedCSPList(csp, consumer), csp, msg, id);
             if (parsed == null) {
                 continue;
             }
@@ -150,7 +153,10 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
             }
         }
 
-        for (Element element : getMetaPolicies(source)) {
+        for (Element element :
+                source.getAllElements(HTMLElementName.META).stream()
+                        .filter(e -> !StringUtils.isBlank(e.getAttributeValue("http-equiv")))
+                        .toList()) {
             String metaField = element.getAttributeValue("http-equiv");
             String metaPolicy = element.getAttributeValue("content");
             if (!HttpFieldsNames.CONTENT_SECURITY_POLICY.equalsIgnoreCase(metaField)
@@ -162,7 +168,12 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                     (severity, message, directiveIndex, valueIndex) ->
                             metaObservedErrors.add(
                                     new PolicyError(severity, message, directiveIndex, valueIndex));
-            Policy parsedMetaPolicy = parsePolicy(metaPolicy, metaConsumer, true, msg, id);
+            Policy parsedMetaPolicy =
+                    parseWithErrorHandling(
+                            () -> Policy.parseSerializedCSP(metaPolicy, metaConsumer, true),
+                            metaPolicy,
+                            msg,
+                            id);
             if (parsedMetaPolicy == null) {
                 continue;
             }
@@ -195,9 +206,14 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         String param =
                 headerContributedPolicy
                         ? getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY).get(0)
-                        : HttpFieldsNames.CONTENT_SECURITY_POLICY;
+                        : "";
         String multiPolicyInfo =
-                buildMultiPolicyOtherInfo(enforcedPolicies.size(), enforcedPolicyTexts);
+                enforcedPolicies.size() <= 1
+                        ? ""
+                        : Constant.messages.getString(
+                                MESSAGE_PREFIX + "multipolicy.otherinfo",
+                                enforcedPolicies.size(),
+                                String.join("\n", enforcedPolicyTexts));
 
         List<String> allowedWildcardSources = getAllowedWildcardSources(policyList);
         checkWildcardSources(allowedWildcardSources, param, evidence, multiPolicyInfo);
@@ -246,24 +262,9 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         }
     }
 
-    private PolicyList parsePolicyList(
-            String csp, PolicyListErrorConsumer consumer, HttpMessage msg, int id) {
+    private <T> T parseWithErrorHandling(Supplier<T> parser, String csp, HttpMessage msg, int id) {
         try {
-            return Policy.parseSerializedCSPList(csp, consumer);
-        } catch (IllegalArgumentException iae) {
-            handleParseException(iae, csp, msg, id);
-        }
-        return null;
-    }
-
-    private Policy parsePolicy(
-            String csp,
-            PolicyErrorConsumer consumer,
-            boolean deliveredViaMeta,
-            HttpMessage msg,
-            int id) {
-        try {
-            return Policy.parseSerializedCSP(csp, consumer, deliveredViaMeta);
+            return parser.get();
         } catch (IllegalArgumentException iae) {
             handleParseException(iae, csp, msg, id);
         }
@@ -356,7 +357,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
             Predicate<SourceExpressionDirective> hasKeyword) {
         List<Optional<SourceExpressionDirective>> effectiveDirectives =
                 policyList.getPolicies().stream()
-                        .map(policy -> policy.getGoverningDirectiveForEffectiveDirective(source))
+                        .map(pol -> pol.getGoverningDirectiveForEffectiveDirective(source))
                         .toList();
         return effectiveDirectives.stream().anyMatch(d -> d.filter(hasKeyword).isPresent())
                 && effectiveDirectives.stream().allMatch(d -> d.map(hasKeyword::test).orElse(true));
@@ -371,9 +372,9 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
     private static boolean isUnsafeHashesEffectivelyAllowed(
             PolicyList policyList, FetchDirectiveKind source) {
         Set<Hash> commonHashes = null;
-        for (Policy policy : policyList.getPolicies()) {
+        for (Policy pol : policyList.getPolicies()) {
             Optional<SourceExpressionDirective> effective =
-                    policy.getGoverningDirectiveForEffectiveDirective(source);
+                    pol.getGoverningDirectiveForEffectiveDirective(source);
             if (effective.isEmpty()) {
                 continue;
             }
@@ -463,64 +464,48 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         return matchedHeaders;
     }
 
-    private static List<String> getAllowedWildcardSources(PolicyList policyList) {
+    private static List<String> getAllowedWildcardSources(PolicyList pol) {
 
         List<String> allowedSources = new ArrayList<>();
 
-        if (checkPolicy(policyList::allowsExternalScript)) {
+        if (checkPolicy(pol::allowsExternalScript)) {
             allowedSources.add("script-src");
         }
-        if (checkPolicy(policyList::allowsExternalStyle)) {
+        if (checkPolicy(pol::allowsExternalStyle)) {
             allowedSources.add("style-src");
         }
-        if (checkPolicy(policyList::allowsImage)) {
+        if (checkPolicy(pol::allowsImage)) {
             allowedSources.add("img-src");
         }
-        if (checkPolicy(policyList::allowsConnection)) {
+        if (checkPolicy(pol::allowsConnection)) {
             allowedSources.add("connect-src");
         }
-        if (checkPolicy(policyList::allowsFrame)) {
+        if (checkPolicy(pol::allowsFrame)) {
             allowedSources.add("frame-src");
         }
-        if (checkPolicy(policyList::allowsFrameAncestor)) {
+        if (checkPolicy(pol::allowsFrameAncestor)) {
             allowedSources.add(FRAME_ANCESTORS);
         }
-        if (checkPolicy(policyList::allowsFont)) {
+        if (checkPolicy(pol::allowsFont)) {
             allowedSources.add("font-src");
         }
-        if (checkPolicy(policyList::allowsMedia)) {
+        if (checkPolicy(pol::allowsMedia)) {
             allowedSources.add("media-src");
         }
-        if (checkPolicy(policyList::allowsObject)) {
+        if (checkPolicy(pol::allowsObject)) {
             allowedSources.add("object-src");
         }
-        if (checkPolicy(policyList::allowsApplicationManifest)) {
+        if (checkPolicy(pol::allowsApplicationManifest)) {
             allowedSources.add("manifest-src");
         }
-        if (checkPolicy(policyList::allowsWorker)) {
+        if (checkPolicy(pol::allowsWorker)) {
             allowedSources.add("worker-src");
         }
-        if (checkPolicy(policyList::allowsFormAction)) {
+        if (checkPolicy(pol::allowsFormAction)) {
             allowedSources.add("form-action");
         }
 
         return allowedSources;
-    }
-
-    private static List<Element> getMetaPolicies(Source source) {
-        return source.getAllElements(HTMLElementName.META).stream()
-                .filter(element -> !StringUtils.isBlank(element.getAttributeValue("http-equiv")))
-                .collect(Collectors.toList());
-    }
-
-    private static String buildMultiPolicyOtherInfo(int policyCount, List<String> policyTexts) {
-        if (policyCount <= 1) {
-            return "";
-        }
-        return Constant.messages.getString(
-                MESSAGE_PREFIX + "multipolicy.otherinfo",
-                policyCount,
-                String.join("\n", policyTexts));
     }
 
     private static String appendMultiPolicyInfo(String otherInfo, String multiPolicyInfo) {
@@ -604,64 +589,89 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                 .setAlertRef(PLUGIN_ID + "-" + alertRef);
     }
 
+    private AlertBuilder getBuilder(
+            String name, String alertRef, String param, String evidence, int risk) {
+        return getBuilder(name, alertRef).setRisk(risk).setParam(param).setEvidence(evidence);
+    }
+
+    private AlertBuilder getBuilder(
+            String name,
+            String alertRef,
+            String param,
+            String evidence,
+            int risk,
+            String otherInfoKey,
+            String multiPolicyInfo) {
+        return getBuilder(name, alertRef, param, evidence, risk)
+                .setOtherInfo(
+                        appendMultiPolicyInfo(
+                                Constant.messages.getString(MESSAGE_PREFIX + otherInfoKey),
+                                multiPolicyInfo));
+    }
+
     private AlertBuilder buildXcspAlert(int risk, String param, String evidence) {
-        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "xcsp.name"), "1")
-                .setRisk(risk)
-                .setParam(param)
-                .setEvidence(evidence)
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "xcsp.name"),
+                        "1",
+                        param,
+                        evidence,
+                        risk)
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "xcsp.otherinfo"));
     }
 
     private AlertBuilder buildWebkitCspAlert(int risk, String param, String evidence) {
-        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.name"), "2")
-                .setRisk(risk)
-                .setParam(param)
-                .setEvidence(evidence)
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.name"),
+                        "2",
+                        param,
+                        evidence,
+                        risk)
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.otherinfo"));
     }
 
     private AlertBuilder buildNoticesAlert(
             int risk, String param, String evidence, String otherinfo) {
-        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "notices.name"), "3")
-                .setRisk(risk)
-                .setParam(param)
-                .setEvidence(evidence)
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "notices.name"),
+                        "3",
+                        param,
+                        evidence,
+                        risk)
                 .setOtherInfo(otherinfo);
     }
 
     private AlertBuilder buildWildcardAlert(String param, String evidence, String otherinfo) {
-        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "wildcard.name"), "4")
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "wildcard.name"),
+                        "4",
+                        param,
+                        evidence,
+                        Alert.RISK_MEDIUM)
                 .setOtherInfo(otherinfo);
     }
 
     private AlertBuilder buildScriptUnsafeInlineAlert(
             String param, String evidence, String multiPolicyInfo) {
         return getBuilder(
-                        Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.name"), "5")
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
-                .setOtherInfo(
-                        appendMultiPolicyInfo(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "scriptsrc.unsafe.otherinfo"),
-                                multiPolicyInfo));
+                Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.name"),
+                "5",
+                param,
+                evidence,
+                Alert.RISK_MEDIUM,
+                "scriptsrc.unsafe.otherinfo",
+                multiPolicyInfo);
     }
 
     private AlertBuilder buildStyleUnsafeInlineAlert(
             String param, String evidence, String multiPolicyInfo) {
-        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.name"), "6")
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
-                .setOtherInfo(
-                        appendMultiPolicyInfo(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "stylesrc.unsafe.otherinfo"),
-                                multiPolicyInfo));
+        return getBuilder(
+                Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.name"),
+                "6",
+                param,
+                evidence,
+                Alert.RISK_MEDIUM,
+                "stylesrc.unsafe.otherinfo",
+                multiPolicyInfo);
     }
 
     private AlertBuilder buildScriptUnsafeHashAlert(
@@ -669,15 +679,12 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         return getBuilder(
                         Constant.messages.getString(
                                 MESSAGE_PREFIX + "scriptsrc.unsafe.hashes.name"),
-                        "7")
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
-                .setOtherInfo(
-                        appendMultiPolicyInfo(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "scriptsrc.unsafe.hashes.otherinfo"),
-                                multiPolicyInfo))
+                        "7",
+                        param,
+                        evidence,
+                        Alert.RISK_MEDIUM,
+                        "scriptsrc.unsafe.hashes.otherinfo",
+                        multiPolicyInfo)
                 .setReference(
                         Constant.messages.getString(
                                 MESSAGE_PREFIX + "scriptsrc.unsafe.hashes.refs"));
@@ -687,25 +694,24 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
             String param, String evidence, String multiPolicyInfo) {
         return getBuilder(
                         Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.hashes.name"),
-                        "8")
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
-                .setOtherInfo(
-                        appendMultiPolicyInfo(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "stylesrc.unsafe.hashes.otherinfo"),
-                                multiPolicyInfo))
+                        "8",
+                        param,
+                        evidence,
+                        Alert.RISK_MEDIUM,
+                        "stylesrc.unsafe.hashes.otherinfo",
+                        multiPolicyInfo)
                 .setReference(
                         Constant.messages.getString(
                                 MESSAGE_PREFIX + "stylesrc.unsafe.hashes.refs"));
     }
 
     private AlertBuilder buildMalformedAlert(String param, String evidence, String badChars) {
-        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "malformed.name"), "9")
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "malformed.name"),
+                        "9",
+                        param,
+                        evidence,
+                        Alert.RISK_MEDIUM)
                 .setOtherInfo(
                         Constant.messages.getString(
                                 MESSAGE_PREFIX + "malformed.otherinfo", badChars));
@@ -714,25 +720,22 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
     private AlertBuilder buildScriptUnsafeEvalAlert(
             String param, String evidence, String multiPolicyInfo) {
         return getBuilder(
-                        Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.eval.name"),
-                        "10")
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
-                .setOtherInfo(
-                        appendMultiPolicyInfo(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "scriptsrc.unsafe.eval.otherinfo"),
-                                multiPolicyInfo));
+                Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.eval.name"),
+                "10",
+                param,
+                evidence,
+                Alert.RISK_MEDIUM,
+                "scriptsrc.unsafe.eval.otherinfo",
+                multiPolicyInfo);
     }
 
     private AlertBuilder buildBadMetaAlert(String param, String evidence) {
         return getBuilder(
                         Constant.messages.getString(MESSAGE_PREFIX + "meta.bad.directive.name"),
-                        "11")
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
+                        "11",
+                        param,
+                        evidence,
+                        Alert.RISK_MEDIUM)
                 .setDescription(
                         Constant.messages.getString(MESSAGE_PREFIX + "meta.bad.directive.desc"));
     }
@@ -741,11 +744,13 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
 
     private AlertBuilder buildNofallbackAlert(
             String param, String evidence, List<String> directives, String multiPolicyInfo) {
-        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "nofallback.name"), "13")
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "nofallback.name"),
+                        "13",
+                        param,
+                        evidence,
+                        Alert.RISK_MEDIUM)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "nofallback.desc"))
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
                 .setOtherInfo(
                         appendMultiPolicyInfo(
                                 Constant.messages.getString(
