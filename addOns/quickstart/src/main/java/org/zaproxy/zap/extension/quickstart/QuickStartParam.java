@@ -27,6 +27,8 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
+import org.zaproxy.zap.extension.selenium.Browser;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
 public class QuickStartParam extends VersionedAbstractParam {
 
@@ -50,7 +52,10 @@ public class QuickStartParam extends VersionedAbstractParam {
 
     private static final String BLANK_START_PAGE = "BLANK";
 
-    private static final String DEFAULT_BROWSER = "Firefox"; // The default default ;)
+    // The default default ;)
+    private static final String DEFAULT_BROWSER_ID = Browser.FIREFOX.getId();
+
+    private static final String DEFAULT_SPIDER_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
 
     private static final String PARAM_AJAX_BASE_KEY = PARAM_BASE_KEY + ".ajax";
 
@@ -78,7 +83,7 @@ public class QuickStartParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 2;
+    private static final int CURRENT_CONFIG_VERSION = 3;
 
     /**
      * The configuration key to read/write the version of the configurations.
@@ -91,7 +96,7 @@ public class QuickStartParam extends VersionedAbstractParam {
     private List<Object> recentUrls = new ArrayList<>(0);
     private int maxRecentUrls;
     private String launchStartPage;
-    private String launchDefaultBrowser = DEFAULT_BROWSER;
+    private String launchDefaultBrowser = DEFAULT_BROWSER_ID;
 
     private String ajaxSpiderSelection;
     private String ajaxSpiderDefaultBrowser;
@@ -122,7 +127,7 @@ public class QuickStartParam extends VersionedAbstractParam {
             LOGGER.error("Failed to load the \"Start Page\" configuration", e);
         }
         try {
-            launchDefaultBrowser = getConfig().getString(PARAM_DEFAULT_BROWSER, DEFAULT_BROWSER);
+            launchDefaultBrowser = getConfig().getString(PARAM_DEFAULT_BROWSER, DEFAULT_BROWSER_ID);
         } catch (Exception e) {
             LOGGER.error("Failed to load the \"Default Browser\" configuration", e);
         }
@@ -137,7 +142,9 @@ public class QuickStartParam extends VersionedAbstractParam {
         }
         try {
             ajaxSpiderDefaultBrowser =
-                    getConfig().getString(PARAM_AJAX_SPIDER_DEFAULT_BROWSER, DEFAULT_BROWSER);
+                    getConfig()
+                            .getString(
+                                    PARAM_AJAX_SPIDER_DEFAULT_BROWSER, DEFAULT_SPIDER_BROWSER_ID);
         } catch (Exception e) {
             LOGGER.error("Failed to load the Ajax \"Default Browser\" configuration", e);
         }
@@ -189,8 +196,38 @@ public class QuickStartParam extends VersionedAbstractParam {
                                 Constant.messages.getString(
                                         "quickstart.modern.option.clientspider"));
                 break;
+            case 2:
+                // Default browser configurations used to be stored by (translatable) name,
+                // now they're stored by (stable) id.
+                migrateBrowserNameToId(PARAM_DEFAULT_BROWSER);
+                migrateBrowserNameToId(PARAM_AJAX_SPIDER_DEFAULT_BROWSER);
+                break;
             default:
         }
+    }
+
+    /**
+     * Converts a browser value persisted under the given {@code configKey} from its (potentially
+     * translated) display name to its stable id, if possible. If the value cannot be matched to a
+     * known browser the property is cleared so the coded default id is used instead.
+     */
+    private void migrateBrowserNameToId(String configKey) {
+        String value = getConfig().getString(configKey, null);
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        for (Browser browser : Browser.values()) {
+            if (value.equals(browser.getId())) {
+                return;
+            }
+        }
+        for (Browser browser : Browser.values()) {
+            if (value.equals(ExtensionSelenium.getName(browser))) {
+                getConfig().setProperty(configKey, browser.getId());
+                return;
+            }
+        }
+        getConfig().clearProperty(configKey);
     }
 
     public String getLaunchStartPage() {
@@ -226,10 +263,16 @@ public class QuickStartParam extends VersionedAbstractParam {
         getConfig().setProperty(PARAM_START_PAGE, str);
     }
 
+    /**
+     * @return the id (not display name) of the default browser for Manual Explore.
+     */
     public String getLaunchDefaultBrowser() {
         return launchDefaultBrowser;
     }
 
+    /**
+     * @param defaultBrowser the id (not display name) of the default browser.
+     */
     public void setLaunchDefaultBrowser(String defaultBrowser) {
         this.launchDefaultBrowser = defaultBrowser;
         getConfig().setProperty(PARAM_DEFAULT_BROWSER, defaultBrowser);
@@ -255,10 +298,16 @@ public class QuickStartParam extends VersionedAbstractParam {
         QuickStartHelper.raiseOptionsChangedEvent();
     }
 
+    /**
+     * @return the id (not display name) of the default browser for the Ajax/Client Spider.
+     */
     public String getAjaxSpiderDefaultBrowser() {
         return ajaxSpiderDefaultBrowser;
     }
 
+    /**
+     * @param ajaxSpiderDefaultBrowser the id (not display name) of the default browser.
+     */
     public void setAjaxSpiderDefaultBrowser(String ajaxSpiderDefaultBrowser) {
         this.ajaxSpiderDefaultBrowser = ajaxSpiderDefaultBrowser;
         getConfig().setProperty(PARAM_AJAX_SPIDER_DEFAULT_BROWSER, ajaxSpiderDefaultBrowser);

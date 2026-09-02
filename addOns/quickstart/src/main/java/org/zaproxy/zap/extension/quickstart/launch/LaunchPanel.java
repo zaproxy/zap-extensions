@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -267,7 +266,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         if (addToRecentList) {
             getExtQuickStart().getQuickStartParam().addRecentUrl(url);
         }
-        extLaunch.launchBrowser(getSelectedBrowser(), url);
+        extLaunch.launchBrowser(getSelectedBrowserId(), url);
     }
 
     /**
@@ -287,14 +286,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             // no default
             return;
         }
-        ComboBoxModel<ProvidedBrowserUI> model = this.getBrowserComboBox().getModel();
-        for (int idx = 0; idx < model.getSize(); idx++) {
-            ProvidedBrowserUI el = model.getElementAt(idx);
-            if (el.getName().equals(def)) {
-                model.setSelectedItem(el);
-                break;
-            }
-        }
+        getActiveBrowserModel().setSelectedBrowser(def);
 
         JPanel hudPanel = new QuickStartBackgroundPanel();
         hudPanel.add(getHudCheckbox(), LayoutHelper.getGBC(0, 0, 1, 0));
@@ -319,23 +311,16 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         }
     }
 
-    private String getSelectedBrowser() {
-        return getBrowserComboBox().getSelectedItem().toString();
+    private String getSelectedBrowserId() {
+        return ((ProvidedBrowserUI) getBrowserComboBox().getSelectedItem()).getBrowser().getId();
     }
 
     public ProvidedBrowsersComboBoxModel getActiveBrowserModel() {
         return (ProvidedBrowsersComboBoxModel) getBrowserComboBox().getModel();
     }
 
-    public void selectBrowser(String browserName) {
-        ProvidedBrowsersComboBoxModel model = getActiveBrowserModel();
-        for (int i = 0; i < model.getSize(); i++) {
-            ProvidedBrowserUI browser = model.getElementAt(i);
-            if (browser.getName().equals(browserName)) {
-                model.setSelectedItem(browser);
-                break;
-            }
-        }
+    public void selectBrowser(String browserId) {
+        getActiveBrowserModel().setSelectedBrowser(browserId);
     }
 
     private String getUrlValue() {
@@ -363,30 +348,30 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             allBrowserModel.setIncludeUnconfigured(false);
             browserComboBox.setModel(allBrowserModel);
             browserComboBox.addActionListener(
-                    e ->
-                            extLaunch.setToolbarButtonIcon(
-                                    browserComboBox.getSelectedItem().toString()));
+                    e -> extLaunch.setToolbarButtonIcon(getSelectedBrowserId()));
         }
         return browserComboBox;
     }
 
     private void setBrowserOptions(boolean hudEnabled) {
         if (hudBrowserModel != null) {
-            Object selected = browserComboBox.getModel().getSelectedItem();
+            ProvidedBrowserUI selected =
+                    (ProvidedBrowserUI) browserComboBox.getModel().getSelectedItem();
+            String selectedId = selected != null ? selected.getBrowser().getId() : null;
             if (hudEnabled) {
                 browserComboBox.setModel(hudBrowserModel);
                 if (getExtQuickStart()
                         .getHudProvider()
                         .getSupportedBrowserIds()
-                        .contains(selected)) {
-                    browserComboBox.getModel().setSelectedItem(selected);
+                        .contains(selectedId)) {
+                    hudBrowserModel.setSelectedBrowser(selectedId);
                 } else {
                     hudBrowserModel.setSelectedBrowser(DEFAULT_BROWSER_ID);
                 }
             } else {
                 browserComboBox.setModel(allBrowserModel);
                 // New model will be a superset
-                browserComboBox.getModel().setSelectedItem(selected);
+                allBrowserModel.setSelectedBrowser(selectedId);
             }
         }
     }
