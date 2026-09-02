@@ -98,7 +98,6 @@ val addOns =
         "scripts",
         "selenium",
         "sequence",
-        "simpleexample",
         "soap",
         "spider",
         "spiderAjax",
