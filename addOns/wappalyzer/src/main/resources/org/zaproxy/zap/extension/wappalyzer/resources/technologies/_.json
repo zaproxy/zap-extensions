@@ -1,4 +1,17 @@
 {
+  "10to8": {
+    "cats": [
+      72
+    ],
+    "html": [
+      "<a [^>]*id=\"TTE[^\"]"
+    ],
+    "icon": "10to8.png",
+    "website": "https://10to8.com/",
+    "xhr": [
+      "10to8\\.com"
+    ]
+  },
   "11Sight": {
     "cats": [
       52,
@@ -169,6 +182,16 @@
     ],
     "website": "https://www.34sp.com"
   },
+  "3Q": {
+    "cats": [
+      14
+    ],
+    "icon": "3Q.png",
+    "scripts": [
+      "3qsdn\\.com"
+    ],
+    "website": "https://3q.video"
+  },
   "4-Tell": {
     "cats": [
       76
@@ -249,6 +272,16 @@
       "poa"
     ],
     "website": "https://4partners.io/en/4p-cms"
+  },
+  "4w MarketPlace for Publishers": {
+    "cats": [
+      36
+    ],
+    "icon": "4wmarketplace.png",
+    "scripts": [
+      "cdn\\.feed\\.4wnet\\.com"
+    ],
+    "website": "http://www.4wmarketplace.com/"
   },
   "51.LA": {
     "cats": [
@@ -483,5 +516,15 @@
       "//unpkg\\.com/hyperscript\\.org@([\\d\\.]+)\\;version:\\1"
     ],
     "website": "https://hyperscript.org"
+  },
+  "|related| Natív Hirdetés Kft": {
+    "cats": [
+      36
+    ],
+    "icon": "related.png",
+    "scripts": [
+      "//related\\.hu"
+    ],
+    "website": "https://related.hu"
   }
 }
