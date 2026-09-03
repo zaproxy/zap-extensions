@@ -19,6 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
@@ -28,5 +33,37 @@ abstract class PassiveScannerTest<T extends PluginPassiveScanner>
     @Override
     protected void setUpMessages() {
         mockMessages(new ExtensionPscanRules());
+    }
+
+    /**
+     * Returns a set of alert ref indices (1-based) to skip in the contiguity check.
+     *
+     * @return set of alert ref indices to skip, or empty set for no skips
+     */
+    protected Set<Integer> getSkippedAlertRefs() {
+        return Set.of();
+    }
+
+    @Override
+    public void shouldHaveExpectedAlertRefsInExampleAlerts() {
+        Set<Integer> skipped = getSkippedAlertRefs();
+        if (skipped.isEmpty()) {
+            super.shouldHaveExpectedAlertRefsInExampleAlerts();
+            return;
+        }
+        // Given / When
+        @SuppressWarnings("unchecked")
+        T rule = (T) getScanRule();
+        List<String> alertRefs =
+                rule.getExampleAlerts().stream().map(alert -> alert.getAlertRef()).toList();
+        int pluginId = Integer.parseInt(alertRefs.get(0).split("-")[0]);
+        // Then — build expected refs: 1..N skipping any in skipped set
+        List<String> expected = new ArrayList<>();
+        for (int i = 1; i <= alertRefs.size() + skipped.size(); i++) {
+            if (!skipped.contains(i)) {
+                expected.add(pluginId + "-" + i);
+            }
+        }
+        MatcherAssert.assertThat(alertRefs, Matchers.equalTo(expected));
     }
 }

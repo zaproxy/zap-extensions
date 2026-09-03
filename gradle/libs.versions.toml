@@ -89,7 +89,7 @@ openapi-swagger-compatSpecParser = "io.swagger:swagger-compat-spec-parser:1.0.76
 openapi-swagger-parser = "io.swagger.parser.v3:swagger-parser:2.1.47"
 pscanrules-antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 pscanrules-antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
-pscanrules-htmlunit-csp = "org.htmlunit:htmlunit-csp:5.3.0"
+pscanrules-htmlunit-csp = "org.htmlunit:htmlunit-csp:5.5.0"
 pscanrules-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
 pscanrulesAlpha-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
 reports-flyingSaucerPdf = "org.xhtmlrenderer:flying-saucer-pdf:9.13.3"
