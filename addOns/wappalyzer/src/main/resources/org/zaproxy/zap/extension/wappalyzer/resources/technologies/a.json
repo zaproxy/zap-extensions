@@ -1017,6 +1017,16 @@
     ],
     "website": "https://www.activengage.com"
   },
+  "ACTV8": {
+    "cats": [
+      36
+    ],
+    "icon": "ACTV8.svg",
+    "js": {
+      "a8MpParams": ""
+    },
+    "website": "https://www.actv8me.com/"
+  },
   "Acuity Scheduling": {
     "cats": [
       72
@@ -1369,6 +1379,16 @@
       "s3\\.amazonaws\\.com/widgets\\.addi\\.com/bundle\\.min\\.js"
     ],
     "website": "https://co.addi.com/"
+  },
+  "Addingwell SST": {
+    "cats": [
+      42
+    ],
+    "html": [
+      "\\.js\\?aw='.*?\\+.*?dl;"
+    ],
+    "icon": "Addingwell SST.png",
+    "website": "https://www.addingwell.com"
   },
   "Addsearch": {
     "cats": [
@@ -1838,6 +1858,16 @@
       "\\.adnegah\\.net/"
     ],
     "website": "https://adnegah.net"
+  },
+  "Adnuntius": {
+    "cats": [
+      36
+    ],
+    "icon": "Adnuntius.png",
+    "scripts": [
+      "cdn\\.adnuntius\\.com/adn\\.js"
+    ],
+    "website": "https://adnuntius.com"
   },
   "Adnymics": {
     "cats": [
@@ -2545,6 +2575,16 @@
     ],
     "website": "https://www.advin.cz"
   },
+  "Advisible": {
+    "cats": [
+      36
+    ],
+    "icon": "Advisible.png",
+    "scripts": [
+      "//cdn\\.advisible\\.com"
+    ],
+    "website": "https://www.advisible.com"
+  },
   "Adwos CMS": {
     "cats": [
       1,
@@ -3112,6 +3152,17 @@
     ],
     "saas": true,
     "website": "https://www.aidbase.ai"
+  },
+  "AIDEM Technologies": {
+    "cats": [
+      36
+    ],
+    "icon": "AIDEM Technologies.png",
+    "scripts": [
+      "//zero\\.aidemsrv\\.com/dist/prebid\\.js",
+      "stream\\.aidemsrv\\.com/lib/stream\\.js"
+    ],
+    "website": "https://www.aidem.com/"
   },
   "Aiden": {
     "cats": [
@@ -4510,6 +4561,17 @@
       "js/alternc\\.js"
     ],
     "website": "https://alternc.com"
+  },
+  "Altervista Platform": {
+    "cats": [
+      11,
+      88
+    ],
+    "html": [
+      "<a href=\"http://www.altervista.org\">Altervista</a>"
+    ],
+    "icon": "Altervista Platform.png",
+    "website": "https://altervista.com"
   },
   "Altis": {
     "cats": [
