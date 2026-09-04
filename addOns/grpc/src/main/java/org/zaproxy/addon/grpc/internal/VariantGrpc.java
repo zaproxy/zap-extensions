@@ -46,9 +46,14 @@ public class VariantGrpc implements Variant {
 
     @Override
     public void setMessage(HttpMessage msg) {
+        params.clear();
+        requestDecodedBody = null;
         if (isValidGrpcMessage(msg.getRequestHeader(), msg.getRequestBody())) {
             try {
-                byte[] body = Base64.getDecoder().decode(msg.getRequestBody().getBytes());
+                byte[] body = msg.getRequestBody().getBytes();
+                if (isBase64EncodedGrpc(msg.getRequestHeader())) {
+                    body = Base64.getDecoder().decode(body);
+                }
                 byte[] payload = DecoderUtils.extractPayload(body);
                 protoBufMessageDecoder.decode(payload);
                 parseContent(protoBufMessageDecoder.getDecodedToList(), "");
@@ -95,7 +100,19 @@ public class VariantGrpc implements Variant {
     }
 
     private static boolean isValidGrpcMessage(HttpHeader header, HttpBody body) {
-        return header.hasContentType("application/grpc") && !body.toString().isEmpty();
+        return header.hasContentType("application/grpc") && body.getBytes().length > 0;
+    }
+
+    private static boolean isBase64EncodedGrpc(HttpHeader header) {
+        return header.hasContentType("application/grpc-web-text");
+    }
+
+    @Override
+    public String getLeafName(String nodeName, HttpMessage msg) {
+        if (!isValidGrpcMessage(msg.getRequestHeader(), msg.getRequestBody())) {
+            return null;
+        }
+        return msg.getRequestHeader().getMethod() + ":" + nodeName;
     }
 
     @Override
@@ -129,7 +146,9 @@ public class VariantGrpc implements Variant {
             throws InvalidProtobufFormatException, IOException {
         protoBufMessageEncoder.encode(EncoderUtils.parseIntoList(newContent));
         byte[] encodedMessage = protoBufMessageEncoder.getOutputEncodedMessage();
-        encodedMessage = Base64.getEncoder().encode(encodedMessage);
+        if (isBase64EncodedGrpc(msg.getRequestHeader())) {
+            encodedMessage = Base64.getEncoder().encode(encodedMessage);
+        }
         msg.getRequestBody().setBody(encodedMessage);
     }
 
@@ -185,9 +204,11 @@ public class VariantGrpc implements Variant {
         }
 
         try {
-            byte[] body =
-                    DecoderUtils.splitMessageBodyAndStatusCode(msg.getResponseBody().getBytes());
-            body = Base64.getDecoder().decode(body);
+            byte[] body = msg.getResponseBody().getBytes();
+            if (isBase64EncodedGrpc(msg.getResponseHeader())) {
+                body = DecoderUtils.splitMessageBodyAndStatusCode(body);
+                body = Base64.getDecoder().decode(body);
+            }
             byte[] payload = DecoderUtils.extractPayload(body);
             protoBufMessageDecoder.decode(payload);
             msg.getResponseBody().setBody(protoBufMessageDecoder.getDecodedOutput());

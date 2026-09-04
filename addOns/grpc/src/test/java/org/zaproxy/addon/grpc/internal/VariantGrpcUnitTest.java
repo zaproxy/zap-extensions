@@ -23,10 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.function.Consumer;
 import org.apache.logging.log4j.Level;
@@ -171,6 +173,53 @@ class VariantGrpcUnitTest {
     }
 
     @Test
+    void shouldExtractParametersFromNativeGrpcMessage() throws HttpMalformedHeaderException {
+        String encodedRequestBody =
+                "AAAAADEKC2pvaG4gTWlsbGVyEB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
+
+        HttpMessage httpMessage =
+                createNativeGrpcHttpMessage(Base64.getDecoder().decode(encodedRequestBody));
+
+        variantGrpc.setMessage(httpMessage);
+        List<NameValuePair> expectedParamList = new ArrayList<>();
+        expectedParamList.add(
+                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, "1:2", "\"john Miller\"", 0));
+        expectedParamList.add(new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, "2:0", "30", 1));
+        expectedParamList.add(
+                new NameValuePair(
+                        VariantGrpc.TYPE_GRPC_WEB_TEXT,
+                        "3:2",
+                        "\"1234 Main St. Anytown, USA 12345\"",
+                        2));
+
+        assertEquals(expectedParamList, variantGrpc.getParamList());
+    }
+
+    @Test
+    void shouldKeepNativeGrpcMessageBinaryWhenSettingParameter()
+            throws HttpMalformedHeaderException {
+        String encodedRequestBody =
+                "AAAAAEEKEEhlbGxvLCBQcm90b2J1ZiESJwoESm9obhIGTWlsbGVyGhcKBEpvaG4QAhoNCgtIZWxsbyBXb3JsZBjqrcDlJA";
+        String expectedEncodedOutput =
+                "AAAAAEkKGGxzIC4uLy4uLy4uLy4uLy4uL2FkbWluLxInCgRKb2huEgZNaWxsZXIaFwoESm9obhACGg0KC0hlbGxvIFdvcmxkGOqtwOUk";
+
+        HttpMessage httpMessage =
+                createNativeGrpcHttpMessage(Base64.getDecoder().decode(encodedRequestBody));
+
+        variantGrpc.setMessage(httpMessage);
+        String param = "1:2";
+        String payload = "ls ../../../../../admin/";
+        NameValuePair originalPair =
+                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
+
+        variantGrpc.setParameter(httpMessage, originalPair, param, payload);
+
+        assertArrayEquals(
+                Base64.getDecoder().decode(expectedEncodedOutput),
+                httpMessage.getRequestBody().getBytes());
+    }
+
+    @Test
     void shouldExtractParametersFromEmptyGrpcMessage() throws HttpMalformedHeaderException {
         String encodedRequestBody = "";
 
@@ -225,6 +274,16 @@ class VariantGrpcUnitTest {
         setGrpcHeader(httpRequestHeader);
         HttpMessage httpMessage = new HttpMessage(httpRequestHeader);
         httpMessage.setRequestBody(encodedRequestBody);
+        return httpMessage;
+    }
+
+    private static HttpMessage createNativeGrpcHttpMessage(byte[] requestBody)
+            throws HttpMalformedHeaderException {
+        HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
+        httpRequestHeader.setMessage("POST /abc/xyz HTTP/2");
+        httpRequestHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc");
+        HttpMessage httpMessage = new HttpMessage(httpRequestHeader);
+        httpMessage.setRequestBody(requestBody);
         return httpMessage;
     }
 
