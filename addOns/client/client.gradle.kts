@@ -35,6 +35,11 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.client.ajax.ExtensionClientAjax") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.client.ajax"))
+                }
+            }
             register("org.zaproxy.addon.client.exim.ExtensionClientExim") {
                 classnames {
                     allowed.set(listOf("org.zaproxy.addon.client.exim"))
