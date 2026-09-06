@@ -36,7 +36,10 @@ public class ProtoBufMessageEncoder {
 
     public void encode(List<String> inputString)
             throws InvalidProtobufFormatException, IOException {
-        if (inputString == null || inputString.isEmpty()) {
+        if (inputString == null) {
+            outputStream = null;
+            outputEncodedMessage = null;
+            totalEncodedMessageSize = 0;
             return;
         }
         this.outputStream = new ByteArrayOutputStream();

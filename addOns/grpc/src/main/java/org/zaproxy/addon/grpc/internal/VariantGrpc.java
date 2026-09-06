@@ -68,35 +68,44 @@ public class VariantGrpc implements Variant {
             throws InvalidProtobufFormatException {
         for (String pair : decodedList) {
             String[] nameValuePair = pair.split("::", 2);
-            if (commonPrefixForNestedMessage.isEmpty()) {
-                params.add(
-                        new NameValuePair(
-                                TYPE_GRPC_WEB_TEXT,
-                                nameValuePair[0],
-                                nameValuePair[1],
-                                params.size()));
-
-            } else {
-                params.add(
-                        new NameValuePair(
-                                TYPE_GRPC_WEB_TEXT,
-                                commonPrefixForNestedMessage + '.' + nameValuePair[0],
-                                nameValuePair[1],
-                                params.size()));
+            if (nameValuePair.length != 2) {
+                continue;
             }
+
+            String fullName =
+                    commonPrefixForNestedMessage.isEmpty()
+                            ? nameValuePair[0]
+                            : commonPrefixForNestedMessage + '.' + nameValuePair[0];
             String[] fieldNumAndWireType = nameValuePair[0].split(":", 2);
-            if (fieldNumAndWireType[1].length() > 1 && fieldNumAndWireType[1].charAt(1) == 'N') {
-                String nestedMessage = EncoderUtils.removeFirstAndLastCurlyBraces(nameValuePair[1]);
+            if (fieldNumAndWireType.length != 2) {
+                continue;
+            }
+
+            String fieldType = fieldNumAndWireType[1];
+            if (isNestedMessageField(fieldType)) {
+                String nestedMessage =
+                        EncoderUtils.removeFirstAndLastCurlyBraces(nameValuePair[1]);
                 List<String> nestedMessagePairList = EncoderUtils.parseIntoList(nestedMessage);
-                if (commonPrefixForNestedMessage.isEmpty()) {
-                    parseContent(nestedMessagePairList, nameValuePair[0]);
-                } else {
-                    parseContent(
-                            nestedMessagePairList,
-                            commonPrefixForNestedMessage + '.' + nameValuePair[0]);
-                }
+                parseContent(nestedMessagePairList, fullName);
+            } else if (isInjectableField(fieldType)) {
+                params.add(
+                        new NameValuePair(
+                                TYPE_GRPC_WEB_TEXT,
+                                fullName,
+                                nameValuePair[1],
+                                params.size()));
             }
         }
+    }
+
+    private static boolean isNestedMessageField(String fieldType) {
+        return "2N".equals(fieldType);
+    }
+
+    private static boolean isInjectableField(String fieldType) {
+        // Generic ZAP active-scan payloads are strings. Numeric/fixed/enum protobuf fields cannot
+        // contain those payloads, and nested-message containers are not scalar attack parameters.
+        return "2".equals(fieldType);
     }
 
     private static boolean isValidGrpcMessage(HttpHeader header, HttpBody body) {
@@ -125,21 +134,32 @@ public class VariantGrpc implements Variant {
             HttpMessage msg, NameValuePair originalPair, String param, String value) {
         try {
             List<String> decodedList = EncoderUtils.parseIntoList(requestDecodedBody);
-            String newContent = buildNewBodyContent(decodedList, originalPair, param, value);
+            String newContent = buildNewBodyContent(decodedList, originalPair, value);
             setEncodedReqBodyMessage(msg, newContent);
             return newContent;
-        } catch (InvalidProtobufFormatException | IOException | NumberFormatException e) {
+        } catch (InvalidProtobufFormatException | IOException | IllegalArgumentException e) {
             LOGGER.warn("Failed to set parameter in gRPC message: {}", e.getMessage());
             return null;
         }
     }
 
     private String buildNewBodyContent(
-            List<String> decodedList, NameValuePair originalPair, String param, String value)
+            List<String> decodedList, NameValuePair originalPair, String value)
             throws InvalidProtobufFormatException {
-        String currentPairName = originalPair.getName();
-        String[] nestedMessageParams = currentPairName.split("\\.");
-        return findParamAndPutPayload(decodedList, nestedMessageParams, param, value);
+        int[] currentPosition = {0};
+        boolean[] replaced = {false};
+        String result =
+                findParamAndPutPayload(
+                        decodedList,
+                        originalPair.getPosition(),
+                        value,
+                        currentPosition,
+                        replaced);
+        if (!replaced[0]) {
+            throw new IllegalArgumentException(
+                    "Unable to locate gRPC parameter at position " + originalPair.getPosition());
+        }
+        return result;
     }
 
     private void setEncodedReqBodyMessage(HttpMessage msg, String newContent)
@@ -153,34 +173,54 @@ public class VariantGrpc implements Variant {
     }
 
     private String findParamAndPutPayload(
-            List<String> decodedList, String[] nestedMessageParam, String param, String value)
+            List<String> decodedList,
+            int targetPosition,
+            String value,
+            int[] currentPosition,
+            boolean[] replaced)
             throws InvalidProtobufFormatException {
         StringBuilder newContent = new StringBuilder();
         for (String val : decodedList) {
             String[] nameValuePair = val.split("::", 2);
-            if (nestedMessageParam.length > 0
-                    && Objects.equals(nestedMessageParam[0], nameValuePair[0])) {
-                newContent.append(nameValuePair[0]);
-                newContent.append("::");
-                nestedMessageParam =
-                        Arrays.copyOfRange(nestedMessageParam, 1, nestedMessageParam.length);
-                if (nestedMessageParam.length == 0) {
-                    if (Objects.equals(nameValuePair[0].split(":", 2)[1], "2")) {
-                        newContent.append("\"").append(value).append("\"");
-                    } else {
-                        newContent.append(value);
-                    }
-                } else {
-                    List<String> nestedMessageList =
-                            EncoderUtils.parseIntoList(
-                                    EncoderUtils.removeFirstAndLastCurlyBraces(nameValuePair[1]));
+            if (nameValuePair.length != 2) {
+                newContent.append(val).append('\n');
+                continue;
+            }
 
-                    String s =
-                            "{\n"
-                                    + findParamAndPutPayload(
-                                            nestedMessageList, nestedMessageParam, param, value)
-                                    + "}";
-                    newContent.append(s);
+            String[] fieldNumAndWireType = nameValuePair[0].split(":", 2);
+            String fieldType = fieldNumAndWireType.length == 2 ? fieldNumAndWireType[1] : "";
+
+            if (isNestedMessageField(fieldType)) {
+                List<String> nestedMessageList =
+                        EncoderUtils.parseIntoList(
+                                EncoderUtils.removeFirstAndLastCurlyBraces(nameValuePair[1]));
+                newContent
+                        .append(nameValuePair[0])
+                        .append("::{\n")
+                        .append(
+                                findParamAndPutPayload(
+                                        nestedMessageList,
+                                        targetPosition,
+                                        value,
+                                        currentPosition,
+                                        replaced))
+                        .append('}');
+            } else if (isInjectableField(fieldType)) {
+                boolean isTarget = !replaced[0] && currentPosition[0] == targetPosition;
+                currentPosition[0]++;
+                if (isTarget) {
+                    replaced[0] = true;
+                    // ZAP uses null/null to request removal of the parameter.
+                    if (value == null) {
+                        continue;
+                    }
+                    newContent
+                            .append(nameValuePair[0])
+                            .append("::\"")
+                            .append(EncoderUtils.escapeString(value))
+                            .append('"');
+                } else {
+                    newContent.append(val);
                 }
             } else {
                 newContent.append(val);

@@ -93,7 +93,10 @@ class VariantGrpcUnitTest {
         String param = "2:2N.3:2N.3:2N.1:2";
         String payload = "../../../../admin/";
         NameValuePair originalPair =
-                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
+                variantGrpc.getParamList().stream()
+                        .filter(pair -> param.equals(pair.getName()))
+                        .findFirst()
+                        .orElseThrow();
         String newMessageWithPayload =
                 variantGrpc.setParameter(httpMessage, originalPair, param, payload);
 
@@ -109,7 +112,7 @@ class VariantGrpcUnitTest {
         String encodedRequestBody =
                 "AAAAAEEKEEhlbGxvLCBQcm90b2J1ZiESJwoESm9obhIGTWlsbGVyGhcKBEpvaG4QAhoNCgtIZWxsbyBXb3JsZBjqrcDlJA";
         String expectedOutput =
-                "1:2::\"John\r\rSmith:\t67 Marcus' Rd\"\n2:2N::{\n1:2::\"John\"\n2:2::\"Miller\"\n3:2N::{\n1:2::\"John\"\n2:0::2\n3:2N::{\n1:2::\"Hello World\"\n}\n}\n}\n3:0::9876543210\n";
+                "1:2::\"John\\r\\rSmith:\\t67 Marcus' Rd\"\n2:2N::{\n1:2::\"John\"\n2:2::\"Miller\"\n3:2N::{\n1:2::\"John\"\n2:0::2\n3:2N::{\n1:2::\"Hello World\"\n}\n}\n}\n3:0::9876543210\n";
 
         HttpMessage httpMessage = createHttpMessage(encodedRequestBody);
 
@@ -161,13 +164,12 @@ class VariantGrpcUnitTest {
         List<NameValuePair> expectedParamList = new ArrayList<>();
         expectedParamList.add(
                 new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, "1:2", "\"john Miller\"", 0));
-        expectedParamList.add(new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, "2:0", "30", 1));
         expectedParamList.add(
                 new NameValuePair(
                         VariantGrpc.TYPE_GRPC_WEB_TEXT,
                         "3:2",
                         "\"1234 Main St. Anytown, USA 12345\"",
-                        2));
+                        1));
 
         assertEquals(expectedParamList, variantGrpc.getParamList());
     }
@@ -184,13 +186,12 @@ class VariantGrpcUnitTest {
         List<NameValuePair> expectedParamList = new ArrayList<>();
         expectedParamList.add(
                 new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, "1:2", "\"john Miller\"", 0));
-        expectedParamList.add(new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, "2:0", "30", 1));
         expectedParamList.add(
                 new NameValuePair(
                         VariantGrpc.TYPE_GRPC_WEB_TEXT,
                         "3:2",
                         "\"1234 Main St. Anytown, USA 12345\"",
-                        2));
+                        1));
 
         assertEquals(expectedParamList, variantGrpc.getParamList());
     }

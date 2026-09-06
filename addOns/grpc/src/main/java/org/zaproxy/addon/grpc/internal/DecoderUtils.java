@@ -159,7 +159,7 @@ public class DecoderUtils {
                             decodedValueBuilder
                                     .append("::")
                                     .append('"')
-                                    .append(decoded)
+                                    .append(EncoderUtils.escapeString(decoded))
                                     .append('"');
                         }
                     }

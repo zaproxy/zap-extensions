@@ -48,3 +48,8 @@
 # VS Code
 # -------
 .vscode
+zap-grpc-followup-injection-v3-final.patch
+zap-grpc-injection-v4-final.patch
+zap-grpc-injection-v5-final.patch
+zap-grpc-injection-v6-null-removal-final.patch
+zap-grpc-injection-v7-empty-nested-final.patch
