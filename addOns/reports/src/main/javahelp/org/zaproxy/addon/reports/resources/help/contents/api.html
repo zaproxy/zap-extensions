@@ -19,8 +19,8 @@
 	<ul>
 		<li>generate (title* template* theme description contexts sites
 			sections includedConfidences includedRisks reportFileName
-			reportFileNamePattern reportDir display): Generate a report with the
-			supplied parameters.
+			reportFileNamePattern reportDir display zip): Generate a report with
+			the supplied parameters.
 			<ul>
 				<li>title: Report Title</li>
 				<li>template: Report Template</li>
@@ -49,7 +49,12 @@
 				<li>reportDir: Path to directory in which the generated report
 					should be placed.</li>
 				<li>display: Display the generated report. Either "true" or
-					"false".</li>
+					"false". Cannot be used together with zip.</li>
+				<li>zip: ZIP the report output. Either "true" or "false". When
+					"true", the generated report and any template resources are
+					packaged into a single <code>.zip</code> file. Cannot be used
+					together with display.
+				</li>
 			</ul>
 		</li>
 	</ul>
