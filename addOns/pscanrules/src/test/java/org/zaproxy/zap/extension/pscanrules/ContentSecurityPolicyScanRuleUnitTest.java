@@ -20,14 +20,20 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -46,15 +52,17 @@ class ContentSecurityPolicyScanRuleUnitTest
 
     // Note: This policy does not include sandbox, report-uri, or plugin-types
     private static final String REASONABLE_POLICY =
-            "default-src 'self'; script-src 'self' "
-                    + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
-                    + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                    + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; form-action 'none'";
+            """
+            default-src 'self'; script-src 'self' \
+            storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; \
+            style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com \
+            fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; form-action 'none'""";
     private static final String REASONABLE_META_POLICY =
-            "default-src 'self'; script-src 'self' "
-                    + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
-                    + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                    + "fonts.gstatic.com; worker-src 'self'; form-action 'none'";
+            """
+            default-src 'self'; script-src 'self' \
+            storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; \
+            style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com \
+            fonts.gstatic.com; worker-src 'self'; form-action 'none'""";
 
     @Override
     protected ContentSecurityPolicyScanRule createScanner() {
@@ -66,55 +74,42 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(7)));
+        assertThat(tags, aMapWithSize(7));
         assertThat(
-                tags.containsKey(CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getTag()),
-                is(equalTo(true)));
+                tags,
+                hasEntry(
+                        CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getTag(),
+                        CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getValue()));
         assertThat(
-                tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
-                is(equalTo(true)));
+                tags,
+                hasEntry(
+                        CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag(),
+                        CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue()));
         assertThat(
-                tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
-                is(equalTo(true)));
-        assertThat(tags.containsKey(CommonAlertTag.SYSTEMIC.getTag()), is(equalTo(true)));
-        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
-        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
-        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+                tags,
+                hasEntry(
+                        CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag(),
+                        CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue()));
         assertThat(
-                tags.get(CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getTag()),
-                is(equalTo(CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getValue())));
-        assertThat(
-                tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
-                is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
-        assertThat(
-                tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
-                is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
-        assertThat(
-                tags.get(CommonAlertTag.SYSTEMIC.getTag()),
-                is(equalTo(CommonAlertTag.SYSTEMIC.getValue())));
+                tags,
+                hasEntry(CommonAlertTag.SYSTEMIC.getTag(), CommonAlertTag.SYSTEMIC.getValue()));
+        assertThat(tags, hasKey(PolicyTag.PENTEST.getTag()));
+        assertThat(tags, hasKey(PolicyTag.DEV_STD.getTag()));
+        assertThat(tags, hasKey(PolicyTag.QA_STD.getTag()));
     }
 
     @Test
     void shouldReturnExpectedExampleAlerts() {
         // Given / When
-        int count = rule.getExampleAlerts().size();
-        long countInfos =
-                rule.getExampleAlerts().stream()
-                        .filter(alert -> Alert.RISK_INFO == alert.getRisk())
-                        .count();
-        long countLows =
-                rule.getExampleAlerts().stream()
-                        .filter(alert -> Alert.RISK_LOW == alert.getRisk())
-                        .count();
-        long countMediums =
-                rule.getExampleAlerts().stream()
-                        .filter(alert -> Alert.RISK_MEDIUM == alert.getRisk())
-                        .count();
+        List<Alert> exampleAlerts = rule.getExampleAlerts();
+        Map<Integer, Long> byRisk =
+                exampleAlerts.stream()
+                        .collect(Collectors.groupingBy(Alert::getRisk, Collectors.counting()));
         // Then
-        assertThat(count, is(equalTo(13)));
-        assertThat(countInfos, is(equalTo(1L)));
-        assertThat(countLows, is(equalTo(3L)));
-        assertThat(countMediums, is(equalTo(9L)));
+        assertThat(exampleAlerts, hasSize(13));
+        assertThat(byRisk.get(Alert.RISK_INFO), equalTo(1L));
+        assertThat(byRisk.get(Alert.RISK_LOW), equalTo(3L));
+        assertThat(byRisk.get(Alert.RISK_MEDIUM), equalTo(9L));
     }
 
     @Test
@@ -126,7 +121,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         rule.setAlertThreshold(AlertThreshold.MEDIUM);
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -138,7 +133,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         rule.setAlertThreshold(AlertThreshold.LOW);
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(5));
+        assertThat(alertsRaised, hasSize(5));
     }
 
     @Test
@@ -148,13 +143,17 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(5));
+        assertThat(alertsRaised, hasSize(5));
 
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
-                        "Errors:\nDirective name default-src: contains characters outside the range ALPHA / DIGIT / \"-\"\nDirective name report_uri contains characters outside the range ALPHA / DIGIT / \"-\"\n"));
+                        """
+                        Errors:
+                        Directive name default-src: contains characters outside the range ALPHA / DIGIT / "-"
+                        Directive name report_uri contains characters outside the range ALPHA / DIGIT / "-"
+                        """));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
@@ -185,7 +184,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(5));
+        assertThat(alertsRaised, hasSize(5));
         assertThat(
                 alertsRaised.get(1).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -205,13 +204,16 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(2));
+        assertThat(alertsRaised, hasSize(2));
 
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
-                        "Warnings:\nThis host name is unusual, and likely meant to be a keyword that is missing the required quotes: 'none'.\n"));
+                        """
+                        Warnings:
+                        This host name is unusual, and likely meant to be a keyword that is missing the required quotes: 'none'.
+                        """));
 
         assertThat(
                 alertsRaised.get(0).getEvidence(),
@@ -229,7 +231,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
 
         assertThat(
                 alertsRaised.get(0).getName(),
@@ -255,14 +257,17 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
 
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
-                        "The following directives either allow wildcard sources (or ancestors), are not "
-                                + "defined, or are overly broadly defined:\nconnect-src"));
+                        """
+                        The following directives either allow wildcard sources (or ancestors), are not \
+                        defined, or are overly broadly defined:
+                        connect-src\
+                        """));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo(
@@ -280,7 +285,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -288,35 +293,31 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given
         HttpMessage msg = createHttpMessage();
         msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s"></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
     void shouldNotNpeOrAlertOnInvalidMetaCsp() {
-        // Given
+        // Given — trailing comma causes the parsing to fail and return null
         HttpMessage msg = createHttpMessage();
         msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        // The comma here causes the parsing to fail and return null
-                        + REASONABLE_META_POLICY
-                        + ","
-                        + "\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s,"></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -324,20 +325,22 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given
         HttpMessage msg = createHttpMessage();
         msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "; prefetch-src *"
-                        + "\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s; prefetch-src *"></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
-                is("Warnings:\n" + "The prefetch-src directive has been deprecated\n"));
+                equalTo(
+                        """
+                        Warnings:
+                        The prefetch-src directive has been deprecated
+                        """));
     }
 
     @Test
@@ -346,11 +349,10 @@ class ContentSecurityPolicyScanRuleUnitTest
         HttpMessage msg =
                 createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         msg.setResponseBody(
-                "<html><head><meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "\"><meta /></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s"><meta /></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When / Then
         assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
@@ -362,16 +364,15 @@ class ContentSecurityPolicyScanRuleUnitTest
         HttpMessage msg =
                 createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s"></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertThat(alert.getName(), equalTo("CSP: Header & Meta"));
         assertThat(alert.getAlertRef(), equalTo("10055-12"));
@@ -382,17 +383,15 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given
         HttpMessage msg = createHttpMessage();
         msg.setResponseBody(
-                "<html><head><<meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "; sandbox allow-forms"
-                        + "\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s; sandbox allow-forms"></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertThat(alert.getName(), equalTo("CSP: Meta Policy Invalid Directive"));
         assertThat(alert.getAlertRef(), equalTo("10055-11"));
@@ -406,7 +405,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised, is(empty()));
     }
 
     @ParameterizedTest
@@ -422,7 +421,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
 
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
         assertThat(alertsRaised.get(0).getOtherInfo(), containsString(expectedError));
@@ -445,7 +444,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
 
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
         assertThat(alertsRaised.get(0).getOtherInfo(), containsString(expectedWarning));
@@ -478,7 +477,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: " + input));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
@@ -492,8 +491,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
-        // Verify the specific alerts
+        assertThat(alertsRaised, hasSize(4));
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -517,8 +515,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
-        // Verify the specific alerts
+        assertThat(alertsRaised, hasSize(4));
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -542,8 +539,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
-        // Verify the specific alerts
+        assertThat(alertsRaised, hasSize(4));
         assertThat(alertsRaised.get(3).getName(), equalTo("CSP: script-src unsafe-eval"));
         assertThat(alertsRaised.get(3).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(3).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
@@ -560,8 +556,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
-        // Verify the specific alerts
+        assertThat(alertsRaised, hasSize(4));
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -599,8 +594,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(3));
-        // Verify the specific alerts
+        assertThat(alertsRaised, hasSize(3));
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -629,8 +623,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(2));
-        // Verify the specific alerts
+        assertThat(alertsRaised, hasSize(2));
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -653,8 +646,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(2));
-        // Verify the specific alerts
+        assertThat(alertsRaised, hasSize(2));
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -676,14 +668,17 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
-        // Verify the specific alerts
+        assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Malformed Policy (Non-ASCII)"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(policy));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
-                        "A non-ASCII character was encountered while attempting to parse the policy, thus rendering it invalid (no further evaluation occurred). The following invalid characters were collected: ‘’"));
+                        """
+                        A non-ASCII character was encountered while attempting to parse the policy, thus \
+                        rendering it invalid (no further evaluation occurred). The following invalid \
+                        characters were collected: ‘’\
+                        """));
         assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-9"));
     }
 
@@ -694,25 +689,33 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
-                is(equalTo("Warnings:\nThe prefetch-src directive has been deprecated\n")));
+                equalTo(
+                        """
+                        Warnings:
+                        The prefetch-src directive has been deprecated
+                        """));
     }
 
     @ParameterizedTest
     @ValueSource(
             strings = {
                 // No form-action
-                "default-src 'self'; script-src 'self' "
-                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
-                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                        + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self';",
+                """
+                default-src 'self'; script-src 'self' \
+                storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; \
+                style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com \
+                fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self';\
+                """,
                 // No frame-ancestors
-                "default-src 'self'; script-src 'self' "
-                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
-                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                        + "fonts.gstatic.com; worker-src 'self'; form-action 'none'"
+                """
+                default-src 'self'; script-src 'self' \
+                storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; \
+                style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com \
+                fonts.gstatic.com; worker-src 'self'; form-action 'none'\
+                """
             })
     void shouldAlertWhenMissingRelevantDirectiveWithoutFallback(String policy) {
         // Given
@@ -720,13 +723,14 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised, hasSize(1));
         assertThat(
                 alertsRaised.get(0).getDescription(),
-                is(
-                        equalTo(
-                                "The Content Security Policy fails to define one of the directives that has no "
-                                        + "fallback. Missing/excluding them is the same as allowing anything.")));
+                equalTo(
+                        """
+                        The Content Security Policy fails to define one of the directives that has no \
+                        fallback. Missing/excluding them is the same as allowing anything.\
+                        """));
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -751,16 +755,14 @@ class ContentSecurityPolicyScanRuleUnitTest
 
             msg.setResponseBody("<html></html>");
             msg.setResponseHeader(
-                    "HTTP/1.1 200 OK\r\n"
-                            + "Server: Apache-Coyote/1.1\r\n"
-                            + header
-                            + ":"
-                            + cspPolicy
-                            + "\r\n"
-                            + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                            + "Content-Length: "
-                            + msg.getResponseBody().length()
-                            + "\r\n");
+                    """
+                    HTTP/1.1 200 OK\r
+                    Server: Apache-Coyote/1.1\r
+                    %s:%s\r
+                    Content-Type: text/html;charset=ISO-8859-1\r
+                    Content-Length: %d\r
+                    """
+                            .formatted(header, cspPolicy, msg.getResponseBody().length()));
             msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         } catch (HttpMalformedHeaderException e) {
             throw new RuntimeException(e);
