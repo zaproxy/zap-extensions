@@ -63,10 +63,14 @@ public class BrowserRequestHandler extends HttpSenderHandler {
             Stream.of(
                             // Chrome
                             "^\\Qhttp://clients2.google.com/time/1/current\\E",
+                            "^\\Qhttp://edgedl.me.gvt1.com/edgedl/\\E",
                             "^\\Qhttps://accounts.google.com/ListAccounts?gpsia\\E",
                             "^\\Qhttps://android.clients.google.com/c2dm/register3\\E",
                             "^\\Qhttps://android.clients.google.com/checkin\\E",
+                            "^\\Qhttps://chromewebstore.googleapis.com/v2/items/-/\\E",
+                            "^\\Qhttps://clients1.google.com/tools/pso/\\E",
                             "^\\Qhttps://optimizationguide-pa.googleapis.com/\\E",
+                            "^\\Qhttps://update.googleapis.com/service/update2/json\\E",
                             "^\\Qhttps://www.google.com/async/folae\\E",
                             "^\\Qhttps://www.googleapis.com/chromewebstore/\\E",
 
