@@ -64,8 +64,6 @@ class VariantSoapUnitTest {
 
     @Test
     void shouldReturnNodeNameForSoapMessage() {
-        // Given / When
-        // The msg setup in @BeforeEach is a valid SOAP request for "GetTemp"
         String leafName = variant.getLeafName("nodeName", msg);
 
         // Then
