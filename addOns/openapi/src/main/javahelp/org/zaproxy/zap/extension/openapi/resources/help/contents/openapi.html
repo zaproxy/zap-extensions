@@ -10,7 +10,7 @@ OpenAPI Support
 <H1>OpenAPI Support</H1>
 This add-on allows you to spider and import OpenAPI (Swagger) definitions, versions 1.2, 2.0, 3.0, and 3.1.
 <br>
-<strong>Note:</strong> Generation of XML content is currently not supported.
+<strong>Note:</strong> The add-on can generate XML request bodies for XML media types (for example, <code>application/xml</code>, <code>text/xml</code>, and <code>application/*+xml</code>). If an explicit example is provided in the OpenAPI media type that example will be used; otherwise the add-on will attempt to generate a best-effort XML example from the schema. The generator attempts to honour XML-specific metadata (such as <code>xml.name</code>, <code>xml.namespace</code>, <code>xml.prefix</code>, <code>xml.attribute</code>, and <code>xml.wrapped</code>). Generation can fail for complex or invalid schemas. If generation fails an error is logged and surfaced, and an empty body may be returned — you can also supply a hand-crafted example in the OpenAPI spec or edit the request body manually.
 <br><br>
 The add-on will automatically detect any OpenAPI definitions and spider them as long as they are in scope.
 <br><br>
