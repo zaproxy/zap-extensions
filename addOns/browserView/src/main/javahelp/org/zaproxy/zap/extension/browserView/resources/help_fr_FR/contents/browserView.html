@@ -9,22 +9,23 @@ Browser View
 <body>
 <h1>Browser View</h1>
 <p>
-	The Browser View add-on adds the option to render HTML responses like a browser.
+	L’extension Browser View permet d’afficher les réponses HTML telles qu’elles seraient rendues par un navigateur.
 </p>
 <p>
-	It can be selected via the Response tab toolbar.
+	Elle peut être sélectionnée depuis la barre d’outils de l’onglet Réponse.
 </p>
 
-<h2>Requirements</h2>
-JavaFX is required to use this add-on, it can be obtained, for example, from <a href="https://gluonhq.com/products/javafx/">Gluon HQ</a>.
+<h2>Prérequis</h2>
+JavaFX est requis pour utiliser cette extension. Il peut être obtenu, par exemple, auprès de <a href="https://gluonhq.com/products/javafx/">Gluon HQ</a>.
 <p>
-Once obtained ZAP needs to be configured to use JavaFX, which can be done with the following JVM arguments replacing with the appropriate path to the JavaFX's lib directory:
+Une fois JavaFX obtenu, ZAP doit être configuré pour l’utiliser. Pour ce faire, utilisez les arguments JVM suivants en remplaçant le chemin par celui correspondant au répertoire lib de JavaFX :
 <br>
 <code>
 --module-path /path/to/javafx/lib/ --add-modules javafx.swing,javafx.web
 </code>
 <p>
-If ZAP is launched with the default startup scripts the JVM arguments can be specified through the JVM options panel.
+Si ZAP est lancé avec les scripts de démarrage par défaut, les arguments JVM peuvent être spécifiés dans le panneau des options JVM.
+
 
 </body>
 </html>
