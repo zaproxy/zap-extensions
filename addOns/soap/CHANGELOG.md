@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-- Add missing getLeafName method to VariantSoap (Issue 8856).
+
+### Fixed
+- Fix an issue where SOAP nodes were not correctly displaying their leaf names in the interface (Issue 8856).
 
 ## [32] - 2026-08-12
 ### Added
