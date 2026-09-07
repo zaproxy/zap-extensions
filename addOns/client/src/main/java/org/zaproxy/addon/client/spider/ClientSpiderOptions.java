@@ -44,6 +44,7 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
     public static final int DEFAULT_SHUTDOWN_TIME = 5;
     public static final int DEFAULT_ACTION_WAIT_TIME = 0;
     public static final boolean DEFAULT_LOGOUT_AVOIDANCE = true;
+    public static final boolean DEFAULT_CACHE_STATIC_RESOURCES = true;
 
     private static final String CONFIG_VERSION_KEY = CLIENT_SPIDER_BASE_KEY + VERSION_ATTRIBUTE;
     private static final String BROWSER_ID_KEY = CLIENT_SPIDER_BASE_KEY + ".browserId";
@@ -59,6 +60,8 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
     private static final String SCOPE_CHECK_KEY = CLIENT_SPIDER_BASE_KEY + ".scopeCheck";
     private static final String LOGOUT_AVOIDANCE_KEY = CLIENT_SPIDER_BASE_KEY + ".logoutAvoidance";
     private static final String ACTION_WAIT_TIME_KEY = CLIENT_SPIDER_BASE_KEY + ".actionWaitTime";
+    private static final String CACHE_STATIC_RESOURCES_KEY =
+            CLIENT_SPIDER_BASE_KEY + ".cacheStaticResources";
 
     private static final String ADAPTIVE_WAIT_BASE_KEY = CLIENT_SPIDER_BASE_KEY + ".adaptive.";
     private static final String ADAPTIVE_WAIT_TIMEOUT_KEY = ADAPTIVE_WAIT_BASE_KEY + "timeout";
@@ -112,6 +115,7 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
     private ScopeCheck scopeCheck = ScopeCheck.getDefault();
     private boolean logoutAvoidance;
     private int actionWaitTimeInSecs = DEFAULT_ACTION_WAIT_TIME;
+    private boolean cacheStaticResources = DEFAULT_CACHE_STATIC_RESOURCES;
 
     private int adaptiveTimeout;
     private int adaptiveQuiesceFirstAccess;
@@ -142,6 +146,8 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
         this.scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
         this.logoutAvoidance = getBoolean(LOGOUT_AVOIDANCE_KEY, DEFAULT_LOGOUT_AVOIDANCE);
         this.actionWaitTimeInSecs = getInt(ACTION_WAIT_TIME_KEY, DEFAULT_ACTION_WAIT_TIME);
+        this.cacheStaticResources =
+                getBoolean(CACHE_STATIC_RESOURCES_KEY, DEFAULT_CACHE_STATIC_RESOURCES);
         this.showAdvancedDialog = getBoolean(SHOW_ADV_OPTIONS_KEY, false);
 
         this.adaptiveTimeout = getInt(ADAPTIVE_WAIT_TIMEOUT_KEY, 15_000);
@@ -319,6 +325,15 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
     public void setActionWaitTimeInSecs(int actionWaitTimeInSecs) {
         this.actionWaitTimeInSecs = actionWaitTimeInSecs;
         getConfig().setProperty(ACTION_WAIT_TIME_KEY, actionWaitTimeInSecs);
+    }
+
+    public boolean isCacheStaticResources() {
+        return cacheStaticResources;
+    }
+
+    public void setCacheStaticResources(boolean cacheStaticResources) {
+        this.cacheStaticResources = cacheStaticResources;
+        getConfig().setProperty(CACHE_STATIC_RESOURCES_KEY, cacheStaticResources);
     }
 
     @ZapApiIgnore

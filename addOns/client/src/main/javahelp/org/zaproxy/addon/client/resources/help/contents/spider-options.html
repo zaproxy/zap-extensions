@@ -32,6 +32,11 @@ These defaults are used when starting a new spider scan and are also pre-populat
 	</ul>
 </li>
 <li><b>Logout Avoidance</b> - When enabled, the spider will avoid clicking elements that are likely to log the user out.</li>
+<li><b>Cache Static Resources</b> - When enabled, static resources (e.g. stylesheets, scripts, images, fonts) fetched during the crawl are cached and repeated requests
+	for them are served from the cache instead of being sent to the server again, which speeds up the crawl of sites that reuse the same resources across pages.
+	Only successful responses with clearly static content types are cached, responses that opt out of caching (e.g. <code>Cache-Control: no-store</code>,
+	<code>no-cache</code>, or <code>private</code>) are not. This does not change what is crawled, only repeated fetches of identical static resources are avoided.
+	Default: enabled.</li>
 </ul>
 
 <p>When both <b>Page Load Time</b> and <b>Action Wait Time</b> are set to 0, the spider uses an adaptive wait strategy instead of fixed delays. The adaptive strategy monitors in-scope network traffic and waits until requests quiesce, up to a hard limit of 15 seconds. It applies a longer quiesce threshold (2.5 seconds) the first time a URL is visited, and shorter thresholds for subsequent visits.
