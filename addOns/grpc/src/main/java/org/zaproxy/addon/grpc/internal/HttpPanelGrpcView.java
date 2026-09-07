@@ -195,7 +195,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
                 payload = DecoderUtils.extractPayload(body);
             } else if (decodingMethod == DecoderUtils.DecodingMethod.GRPC_BINARY
                     || decodingMethod == DecoderUtils.DecodingMethod.AUTO) {
-                payload = DecoderUtils.extractPayload(body);
+                payload = DecoderUtils.extractUnaryGrpcPayload(body);
             } else {
                 payload = body;
             }

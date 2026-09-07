@@ -22,10 +22,8 @@ package org.zaproxy.addon.grpc.internal;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
-import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.NameValuePair;
@@ -40,8 +38,6 @@ public class VariantGrpc implements Variant {
     private final ProtoBufMessageEncoder protoBufMessageEncoder = new ProtoBufMessageEncoder();
     private final ProtoBufMessageDecoder protoBufMessageDecoder = new ProtoBufMessageDecoder();
 
-    // TODO - This must be define in NameValuePair class
-    public static final int TYPE_GRPC_WEB_TEXT = 39;
     private String requestDecodedBody = null;
 
     @Override
@@ -53,9 +49,11 @@ public class VariantGrpc implements Variant {
                 byte[] body = msg.getRequestBody().getBytes();
                 if (isBase64EncodedGrpc(msg.getRequestHeader())) {
                     body = Base64.getDecoder().decode(body);
+                    body = DecoderUtils.extractPayload(body);
+                } else {
+                    body = DecoderUtils.extractUnaryGrpcPayload(body);
                 }
-                byte[] payload = DecoderUtils.extractPayload(body);
-                protoBufMessageDecoder.decode(payload);
+                protoBufMessageDecoder.decode(body);
                 parseContent(protoBufMessageDecoder.getDecodedToList(), "");
                 requestDecodedBody = protoBufMessageDecoder.getDecodedOutput();
             } catch (InvalidProtobufFormatException | IllegalArgumentException e) {
@@ -90,7 +88,7 @@ public class VariantGrpc implements Variant {
             } else if (isInjectableField(fieldType)) {
                 params.add(
                         new NameValuePair(
-                                TYPE_GRPC_WEB_TEXT,
+                                NameValuePair.TYPE_GRPC_WEB_TEXT,
                                 fullName,
                                 nameValuePair[1],
                                 params.size()));
@@ -248,9 +246,11 @@ public class VariantGrpc implements Variant {
             if (isBase64EncodedGrpc(msg.getResponseHeader())) {
                 body = DecoderUtils.splitMessageBodyAndStatusCode(body);
                 body = Base64.getDecoder().decode(body);
+                body = DecoderUtils.extractPayload(body);
+            } else {
+                body = DecoderUtils.extractUnaryGrpcPayload(body);
             }
-            byte[] payload = DecoderUtils.extractPayload(body);
-            protoBufMessageDecoder.decode(payload);
+            protoBufMessageDecoder.decode(body);
             msg.getResponseBody().setBody(protoBufMessageDecoder.getDecodedOutput());
         } catch (UnsupportedEncodingException | IllegalArgumentException e) {
             LOGGER.warn("Error decoding the Response Body: {}", e.getMessage());

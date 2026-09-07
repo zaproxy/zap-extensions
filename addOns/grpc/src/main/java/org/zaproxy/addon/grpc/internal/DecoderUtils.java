@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 public class DecoderUtils {
 
-    public static final int PAYLOAD_HEADER_SIZE = 5;
+    public static final int PAYLOAD_HEADER_SIZE = GrpcFrameCodec.HEADER_LENGTH;
 
     public static final int DOUBLE_EXPONENT_LEN = 11;
 
@@ -92,6 +92,10 @@ public class DecoderUtils {
             return EMPTY_BYTE_ARRAY;
         }
         return Arrays.copyOfRange(input, PAYLOAD_HEADER_SIZE, input.length);
+    }
+
+    public static byte[] extractUnaryGrpcPayload(byte[] input) {
+        return GrpcFrameCodec.decodeUnaryMessage(input);
     }
 
     public static String decodeField(int tag, CodedInputStream inputStream) throws IOException {

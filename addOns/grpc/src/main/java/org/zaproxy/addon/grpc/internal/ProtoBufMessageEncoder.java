@@ -22,61 +22,35 @@ package org.zaproxy.addon.grpc.internal;
 import com.google.protobuf.CodedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.List;
 
 public class ProtoBufMessageEncoder {
-    private static final int HEADER_LENGTH = 5;
-
-    private static byte[] EMPTY_BYTE_ARRAY = new byte[0];
+    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
     private ByteArrayOutputStream outputStream;
     private byte[] outputEncodedMessage;
-    private ByteBuffer headerScratch;
-    private int totalEncodedMessageSize;
 
     public void encode(List<String> inputString)
             throws InvalidProtobufFormatException, IOException {
         if (inputString == null) {
             outputStream = null;
             outputEncodedMessage = null;
-            totalEncodedMessageSize = 0;
             return;
         }
         this.outputStream = new ByteArrayOutputStream();
         CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(outputStream);
-        headerScratch = ByteBuffer.allocate(HEADER_LENGTH);
 
         try {
-            final int bufferSize = EncoderUtils.getSerializedSize(inputString);
-            totalEncodedMessageSize = bufferSize + HEADER_LENGTH;
-            writeHeader();
             EncoderUtils.writeFields(inputString, codedOutputStream);
             codedOutputStream.flush();
-            setOutputEncodedMessage();
+            outputEncodedMessage = GrpcFrameCodec.encodeUnaryMessage(outputStream.toByteArray());
         } catch (Exception e) {
             outputStream.reset();
             outputEncodedMessage = EMPTY_BYTE_ARRAY;
             throw e;
         }
-
-        return;
-    }
-
-    private void writeHeader() {
-        headerScratch.clear();
-        headerScratch.put((byte) 0).putInt(totalEncodedMessageSize - HEADER_LENGTH);
-        outputStream.write(headerScratch.array(), 0, headerScratch.position());
     }
 
     public byte[] getOutputEncodedMessage() {
         return outputEncodedMessage;
-    }
-
-    private void setOutputEncodedMessage() {
-        byte[] outputStreamBytes = outputStream.toByteArray();
-        outputEncodedMessage = new byte[totalEncodedMessageSize];
-        for (int i = 0; i < totalEncodedMessageSize; i++) {
-            outputEncodedMessage[i] = outputStreamBytes[i];
-        }
     }
 }

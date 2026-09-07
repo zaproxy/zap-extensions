@@ -120,7 +120,7 @@ class VariantGrpcUnitTest {
         String param = "1:2";
         String payload = "John\r\rSmith:\t67 Marcus' Rd";
         NameValuePair originalPair =
-                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
+                new NameValuePair(NameValuePair.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
         String newMessageWithPayload =
                 variantGrpc.setParameter(httpMessage, originalPair, param, payload);
 
@@ -144,7 +144,7 @@ class VariantGrpcUnitTest {
         String param = "1:2";
         String payload = "ls ../../../../../admin/";
         NameValuePair originalPair =
-                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
+                new NameValuePair(NameValuePair.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
         String newMessageWithPayload =
                 variantGrpc.setParameter(httpMessage, originalPair, param, payload);
         assertEquals(
@@ -163,10 +163,10 @@ class VariantGrpcUnitTest {
         variantGrpc.setMessage(httpMessage);
         List<NameValuePair> expectedParamList = new ArrayList<>();
         expectedParamList.add(
-                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, "1:2", "\"john Miller\"", 0));
+                new NameValuePair(NameValuePair.TYPE_GRPC_WEB_TEXT, "1:2", "\"john Miller\"", 0));
         expectedParamList.add(
                 new NameValuePair(
-                        VariantGrpc.TYPE_GRPC_WEB_TEXT,
+                        NameValuePair.TYPE_GRPC_WEB_TEXT,
                         "3:2",
                         "\"1234 Main St. Anytown, USA 12345\"",
                         1));
@@ -185,10 +185,10 @@ class VariantGrpcUnitTest {
         variantGrpc.setMessage(httpMessage);
         List<NameValuePair> expectedParamList = new ArrayList<>();
         expectedParamList.add(
-                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, "1:2", "\"john Miller\"", 0));
+                new NameValuePair(NameValuePair.TYPE_GRPC_WEB_TEXT, "1:2", "\"john Miller\"", 0));
         expectedParamList.add(
                 new NameValuePair(
-                        VariantGrpc.TYPE_GRPC_WEB_TEXT,
+                        NameValuePair.TYPE_GRPC_WEB_TEXT,
                         "3:2",
                         "\"1234 Main St. Anytown, USA 12345\"",
                         1));
@@ -211,7 +211,7 @@ class VariantGrpcUnitTest {
         String param = "1:2";
         String payload = "ls ../../../../../admin/";
         NameValuePair originalPair =
-                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
+                new NameValuePair(NameValuePair.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
 
         variantGrpc.setParameter(httpMessage, originalPair, param, payload);
 
