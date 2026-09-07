@@ -69,6 +69,7 @@ public class VariantSoap implements Variant {
 
         return list;
     }
+
     @Override
     public String getLeafName(String nodeName, HttpMessage msg) {
         String soapNodeName = SitesTreeHelper.getNodeName(msg);
