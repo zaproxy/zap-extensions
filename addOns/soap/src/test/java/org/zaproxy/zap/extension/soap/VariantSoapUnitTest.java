@@ -63,9 +63,23 @@ class VariantSoapUnitTest {
     }
 
     @Test
-    void shouldUseDefaultLeafName() {
+    void shouldReturnNodeNameForSoapMessage() {
         // Given / When
+        // The msg setup in @BeforeEach is a valid SOAP request for "GetTemp"
         String leafName = variant.getLeafName("nodeName", msg);
+
+        // Then
+        assertThat(leafName, is("GetTemp (v1.2)"));
+    }
+
+    @Test
+    void shouldReturnNullLeafNameForNonSoapMessage() {
+        // Given
+        HttpMessage emptyMsg = new HttpMessage();
+
+        // When
+        String leafName = variant.getLeafName("nodeName", emptyMsg);
+
         // Then
         assertThat(leafName, is(nullValue()));
     }
