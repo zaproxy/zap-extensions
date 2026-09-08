@@ -1751,4 +1751,12 @@ public class AuthUtils {
             }
         }
     }
+
+    static String getFallbackUnknownAuthUrl(String url, User user) {
+        if (url == null || url.isBlank()) {
+            LOGGER.warn("Using'unknown URL' for authentication failure of {}", user.getName());
+            return "https://unknown-auth-url.zap/";
+        }
+        return url;
+    }
 }
