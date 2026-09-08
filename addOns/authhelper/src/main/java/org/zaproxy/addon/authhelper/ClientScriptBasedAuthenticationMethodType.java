@@ -557,10 +557,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                 .findFirst()
                                 .orElse(null);
             }
-            if (url == null) {
-                LOGGER.warn("Using'unknown URL' for authentication failure of {}", user.getName());
-                url = "https://unknown-auth-url.zap/";
-            }
+
+            url = AuthUtils.getFallbackUnknownAuthUrl(url, user);
 
             try {
                 return new HttpMessage(new URI(url, true));

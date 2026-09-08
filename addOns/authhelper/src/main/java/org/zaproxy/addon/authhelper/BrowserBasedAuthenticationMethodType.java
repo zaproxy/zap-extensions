@@ -304,16 +304,47 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         public boolean authenticate(WebDriver webDriver, User user) {
             if (!isConfigured()) {
                 LOGGER.warn("Login page URL is not configured");
+                notifyAuthFailure(user);
                 return false;
             }
-            return AuthUtils.authenticateAsUser(
-                    diagnostics,
-                    webDriver,
-                    user,
-                    loginPageUrl,
-                    loginPageWait,
-                    stepDelay,
-                    authenticationSteps);
+
+            try {
+                boolean result =
+                        AuthUtils.authenticateAsUser(
+                                diagnostics,
+                                webDriver,
+                                user,
+                                loginPageUrl,
+                                loginPageWait,
+                                stepDelay,
+                                authenticationSteps);
+                if (result) {
+                    AuthenticationHelper.notifyOutputAuthSuccessful(createMessage(user));
+                } else {
+                    notifyAuthFailure(user);
+                }
+                return result;
+            } catch (Exception e) {
+                notifyAuthFailure(user);
+                throw e;
+            }
+        }
+
+        private void notifyAuthFailure(User user) {
+            HttpMessage authMsg = createMessage(user);
+            if (authMsg != null) {
+                AuthenticationHelper.notifyOutputAuthFailure(authMsg);
+            }
+        }
+
+        private HttpMessage createMessage(User user) {
+            String url = AuthUtils.getFallbackUnknownAuthUrl(loginPageUrl, user);
+
+            try {
+                return new HttpMessage(new URI(url, true));
+            } catch (Exception e) {
+                return null;
+            }
         }
 
         @Override

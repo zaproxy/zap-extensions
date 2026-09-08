@@ -80,6 +80,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.By;
@@ -1335,6 +1336,26 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(el1.getWaitForMsec(), is(equalTo(5000)));
         assertThat(el2.getWaitForMsec(), is(equalTo(5000)));
         assertThat(el3.getWaitForMsec(), is(equalTo(8000)));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "  "})
+    void shouldReturnFallbackUrlWhenUrlIsNullOrBlank(String loginUrl) {
+        // Given / When
+        String url = AuthUtils.getFallbackUnknownAuthUrl(loginUrl, mock(User.class));
+        // Then
+        assertThat(url, is(equalTo("https://unknown-auth-url.zap/")));
+    }
+
+    @Test
+    void shouldReturnUrlWhenUrlIsNotBlank() {
+        // Given
+        String loginUrl = "https://example.com/login";
+        // When
+        String url = AuthUtils.getFallbackUnknownAuthUrl(loginUrl, mock(User.class));
+        // Then
+        assertThat(url, is(equalTo(loginUrl)));
     }
 
     static class BrowserTest extends TestUtils {
