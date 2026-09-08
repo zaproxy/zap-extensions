@@ -67,7 +67,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
     private static final String[] BASELINE_PROFILE = {
         "passiveScan-config",
         "spider",
-        "spiderAjax",
+        "spiderClient",
         "passiveScan-wait",
         REPORT_JOB_NAME,
         ExitStatusJob.JOB_NAME
@@ -76,7 +76,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
         "passiveScan-config",
         "import",
         "spider",
-        "spiderAjax",
+        "spiderClient",
         "passiveScan-wait",
         ActiveScanJob.JOB_NAME,
         REPORT_JOB_NAME,
@@ -109,7 +109,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
     private static final String[] FULL_SCAN_PROFILE = {
         "passiveScan-config",
         "spider",
-        "spiderAjax",
+        "spiderClient",
         "passiveScan-wait",
         ActiveScanJob.JOB_NAME,
         REPORT_JOB_NAME,
