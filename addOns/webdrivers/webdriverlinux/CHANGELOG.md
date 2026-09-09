@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [222] - 2026-09-08
+### Changed
+- Update ChromeDriver to 153.0.8010.36.
+
 ## [221] - 2026-09-03
 ### Changed
 - Update ChromeDriver to 152.0.7977.82.
@@ -917,6 +921,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[222]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v222
 [221]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v221
 [220]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v220
 [219]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v219

@@ -155,7 +155,7 @@ public class ModernSpiderPanel implements PlugableSpider {
         QuickStartParam qsParam = extension.getQuickStartParam();
         qsParam.setAjaxSpiderSelection(((Select) selectComboBox.getSelectedItem()).name());
         if (browserSelector != null) {
-            qsParam.setAjaxSpiderDefaultBrowser(browserSelector.getSelectedBrowserName());
+            qsParam.setAjaxSpiderDefaultBrowser(browserSelector.getSelectedBrowserId());
         }
         ModernSpiderOption selected = (ModernSpiderOption) getTypeComboBox().getSelectedItem();
         if (selected != null) {
