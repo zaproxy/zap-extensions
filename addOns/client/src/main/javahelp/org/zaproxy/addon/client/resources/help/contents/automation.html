@@ -33,6 +33,18 @@ This job supports monitor tests.
       scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Flexible
 </pre>
 
+<H2>Job: spiderAjax (AJAX Spider add-on not installed)</H2>
+If the AJAX Spider add-on is not installed then this add-on also registers a <code>spiderAjax</code> job, which runs the
+<a href="spider.html">Client Spider</a> in its place, so that existing plans which use the AJAX Spider keep working.
+Only the parameters also supported by the <code>spiderClient</code> job (above) are applied; any AJAX Spider only
+parameters (for example <code>clickDefaultElems</code> or <code>randomInputs</code>) are ignored, and a warning is
+raised to say that the Client Spider is being used instead.
+<p>
+If the AJAX Spider add-on is installed while ZAP is running then this add-on hands control of the <code>spiderAjax</code>
+job type back to it (and takes it back if the AJAX Spider add-on is later uninstalled). However, a plan that is already
+open in the Automation Framework tab at the time will keep using the Client Spider for any <code>spiderAjax</code> job
+it contains - close and reopen the plan (or reload the plan file) to pick up the AJAX Spider add-on's own job.
+
 <H2>Job: export (Client Map)</H2>
 When the <a href="https://www.zaproxy.org/docs/desktop/addons/import-export/">Import/Export add-on</a> is installed, the Client Map can be exported via the standard <code>export</code> job using <code>source: clientmap</code> and <code>type: yaml</code>.
 The YAML produced by this job differs from the manual Client Map export, for example it includes <code>url</code> fields and omits <code>components</code>.

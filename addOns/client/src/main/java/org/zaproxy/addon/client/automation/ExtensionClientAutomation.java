@@ -32,17 +32,31 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.zap.extension.AddOnInstallationStatusListener;
+import org.zaproxy.zap.extension.AddOnInstallationStatusListener.StatusUpdate;
 
+/**
+ * Registers the {@code spiderClient} automation job, and, when the real AJAX Spider add-on is not
+ * installed, a {@code spiderAjax} job backed by the Client Spider so that existing plans keep
+ * working.
+ *
+ * <p>If the AJAX Spider add-on is installed later (e.g. via the Marketplace) control of the {@code
+ * spiderAjax} job type is handed back to it; if it's later uninstalled control is taken back.
+ */
 public class ExtensionClientAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionClientAutomation";
 
     private static final String RESOURCES_DIR = "/org/zaproxy/addon/client/resources/";
 
+    private static final String AJAX_SPIDER_EXTENSION = "ExtensionSpiderAjax";
+    private static final String AJAX_SPIDER_ADDON_ID = "spiderAjax";
+
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionClientIntegration.class, ExtensionAutomation.class);
 
     private ClientSpiderJob job;
+    private AjaxSpiderJob ajaxSpiderJob;
 
     public ExtensionClientAutomation() {
         super(NAME);
@@ -56,10 +70,69 @@ public class ExtensionClientAutomation extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
+
+        extensionHook.addAddOnInstallationStatusListener(
+                new AddOnInstallationStatusListener() {
+                    @Override
+                    public void update(StatusUpdate statusUpdate) {
+                        if (!AJAX_SPIDER_ADDON_ID.equals(statusUpdate.getAddOn().getId())) {
+                            return;
+                        }
+                        updateStatus(statusUpdate);
+                    }
+                });
+
         job = new ClientSpiderJob();
-        extAuto.registerAutomationJob(job);
+        getExtAutomation().registerAutomationJob(job);
+
+        if (!isAjaxSpiderInstalled()) {
+            registerAjaxSpiderJob();
+        }
+    }
+
+    private static ExtensionAutomation getExtAutomation() {
+        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
+    }
+
+    private static boolean isAjaxSpiderInstalled() {
+        return Control.getSingleton().getExtensionLoader().getExtension(AJAX_SPIDER_EXTENSION)
+                != null;
+    }
+
+    private void registerAjaxSpiderJob() {
+        if (ajaxSpiderJob != null) {
+            return;
+        }
+        ajaxSpiderJob = new AjaxSpiderJob();
+        getExtAutomation().registerAutomationJob(ajaxSpiderJob);
+    }
+
+    private void unregisterAjaxSpiderJob() {
+        if (ajaxSpiderJob == null) {
+            return;
+        }
+        getExtAutomation().unregisterAutomationJob(ajaxSpiderJob);
+        ajaxSpiderJob = null;
+    }
+
+    protected void updateStatus(StatusUpdate statusUpdate) {
+        if (!AJAX_SPIDER_ADDON_ID.equals(statusUpdate.getAddOn().getId())) {
+            return;
+        }
+        switch (statusUpdate.getStatus()) {
+            case INSTALL:
+                // The real AJAX Spider add-on is about to load, give up the spiderAjax job type
+                // so it can register its own.
+                unregisterAjaxSpiderJob();
+                break;
+            case UNINSTALLED:
+            case SOFT_UNINSTALLED:
+                // The real AJAX Spider add-on is gone, take back the spiderAjax job type.
+                registerAjaxSpiderJob();
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -69,10 +142,8 @@ public class ExtensionClientAutomation extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
-
-        extAuto.unregisterAutomationJob(job);
+        getExtAutomation().unregisterAutomationJob(job);
+        unregisterAjaxSpiderJob();
     }
 
     @Override
