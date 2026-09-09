@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Mock OAuth2 Authorization Server</H1>
+	<h2>Sign in &amp; Authorize</h2>
+
+	<!-- ERROR -->
+
+	<p>The application "<!-- CLIENT_ID -->" is requesting access to: <!-- SCOPE --></p>
+
+	<form method="post" id="login-form">
+	<input type="hidden" name="client_id" value="<!-- CLIENT_ID -->" />
+	<input type="hidden" name="redirect_uri" value="<!-- REDIRECT_URI -->" />
+	<input type="hidden" name="scope" value="<!-- SCOPE -->" />
+	<input type="hidden" name="state" value="<!-- STATE -->" />
+	<input type="hidden" name="code_challenge" value="<!-- CODE_CHALLENGE -->" />
+	<input type="hidden" name="code_challenge_method" value="<!-- CODE_CHALLENGE_METHOD -->" />
+	<table style="border: none;">
+	<tr>
+		<td>Username:
+		<td><input id="username" name="username" type="text"></td>
+	</tr>
+	<tr>
+		<td>Password:
+		<td><input id="password" name="password" type="password"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><button id="approve" type="submit">Sign in &amp; Authorize</button></td>
+	</tr>
+	</table>
+	</form>
+	<p>
+	<a id="deny" href="#" onclick="deny(); return false;">Deny access</a> (for manually testing the
+	<code>access_denied</code> path - this is not exercised by ZAP's automated login).
+	<p>
+	Test credentials:
+	<ul>
+		<li>username = test@test.com
+		<li>password = password123
+	</ul>
+
+</div>
+<script>
+function deny() {
+	const form = document.getElementById("login-form");
+	const params = new URLSearchParams({
+		client_id: form.client_id.value,
+		redirect_uri: form.redirect_uri.value,
+		scope: form.scope.value,
+		state: form.state.value,
+		code_challenge: form.code_challenge.value,
+		code_challenge_method: form.code_challenge_method.value,
+		action: "deny"
+	});
+	location.href = "authorize?" + params.toString();
+}
+</script>
+</body>
+</html>
