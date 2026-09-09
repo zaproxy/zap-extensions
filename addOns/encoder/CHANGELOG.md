@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- In-place encode/decode/hash/convert operations in the right-click context menu, with submenus for Encode, Decode, Hash, and Utility operations that apply directly to selected text in JTextComponent fields.
+
 ### Changed
 - Maintenance changes.
 - Formatted JavaScript files for consistency.
