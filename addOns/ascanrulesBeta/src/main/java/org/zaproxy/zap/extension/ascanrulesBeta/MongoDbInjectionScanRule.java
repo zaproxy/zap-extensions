@@ -231,12 +231,8 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
                         sendAndReceive(counterProofMsg, false);
                         String bodyCounterProof = counterProofMsg.getResponseBody().toString();
                         if (bodyBase.equals(bodyCounterProof)) {
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_HIGH)
-                                    .setParam(param)
+                            buildAlert(Alert.CONFIDENCE_HIGH, param, ALL_DATA_ATTACK, msgInjAttack)
                                     .setAttack(paramInj + valueInj)
-                                    .setOtherInfo(getExtraInfo(ALL_DATA_ATTACK))
-                                    .setMessage(msgInjAttack)
                                     .raise();
                             isBingo = true;
                             break;
@@ -277,12 +273,8 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
                         Matcher matcher =
                                 pattern.matcher(msgInjAttack.getResponseBody().toString());
                         if (matcher.find()) {
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setParam(param)
+                            buildAlert(Alert.CONFIDENCE_MEDIUM, param, CRASH_ATTACK, msgInjAttack)
                                     .setAttack(valueInj)
-                                    .setOtherInfo(getExtraInfo(CRASH_ATTACK))
-                                    .setMessage(msgInjAttack)
                                     .raise();
                             isBingo = true;
                             break;
@@ -328,23 +320,15 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
                             sendAndReceive(counterProofMsg, false);
                             String bodyCounterProof = counterProofMsg.getResponseBody().toString();
                             if (bodyBase.equals(bodyCounterProof)) {
-                                newAlert()
-                                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                                        .setParam(param)
+                                buildAlert(Alert.CONFIDENCE_HIGH, param, JSON_ATTACK, msgInjAttack)
                                         .setAttack(jpv[0] + jpv[1])
-                                        .setOtherInfo(getExtraInfo(JSON_ATTACK))
-                                        .setMessage(msgInjAttack)
                                         .raise();
                                 isBingo = true;
                                 break;
                             }
                         } else {
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setParam(param)
+                            buildAlert(Alert.CONFIDENCE_MEDIUM, param, JSON_ATTACK, msgInjAttack)
                                     .setAttack(jpv[0] + jpv[1])
-                                    .setOtherInfo(getExtraInfo(JSON_ATTACK))
-                                    .setMessage(msgInjAttack)
                                     .raise();
                             isBingo = true;
                             break;
@@ -394,11 +378,11 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
                                     && requestUri.getHost().equals(loginUri.getHost())
                                     && requestUri.getPort() == loginUri.getPort()
                                     && requestUri.getPath().equals(loginUri.getPath())) {
-                                newAlert()
-                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                        .setParam(param)
-                                        .setOtherInfo(getExtraInfo(AUTH_BYPASS_ATTACK))
-                                        .setMessage(getBaseMsg())
+                                buildAlert(
+                                                Alert.CONFIDENCE_MEDIUM,
+                                                param,
+                                                AUTH_BYPASS_ATTACK,
+                                                getBaseMsg())
                                         .raise();
                                 break;
                             }
@@ -413,6 +397,23 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
                 }
             }
         }
+    }
+
+    private AlertBuilder buildAlert(
+            int confidence, String param, String attackType, HttpMessage message) {
+        return newAlert()
+                .setConfidence(confidence)
+                .setParam(param)
+                .setOtherInfo(getExtraInfo(attackType))
+                .setMessage(message);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(Alert.CONFIDENCE_HIGH, "qry", ALL_DATA_ATTACK, null)
+                        .setAttack("qry[$ne]")
+                        .build());
     }
 
     private static String getParamJsonString(String param, String[] params) throws JSONException {
