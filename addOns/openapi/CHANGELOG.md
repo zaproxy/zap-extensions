@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update reference to avoid redirect.
 - Dependency update.
 
 ## [58] - 2026-08-12

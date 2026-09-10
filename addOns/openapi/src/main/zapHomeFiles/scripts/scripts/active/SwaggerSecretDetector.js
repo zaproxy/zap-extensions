@@ -469,7 +469,7 @@ function scanPath(as, origMsg, scheme, host, port, pathOnly, fullPath) {
       if ((version === 2 && vInt < 20210) || (version === 3 && vInt < 32403)) {
         const cveReference =
           version === 2
-            ? "https://nvd.nist.gov/vuln/detail/CVE-2019-17495"
+            ? "https://nvd.nist.gov/vuln/detail/cve-2019-17495"
             : "https://github.com/swagger-api/swagger-ui/releases/tag/v3.24.3";
 
         as.newAlert("100043-1")

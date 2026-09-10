@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Dependency update.
 - Maintenance changes.
-- Update references to avoid redirects.
+- Update references and CVE links to avoid redirects.
 
 ## [66] - 2026-05-06
 ### Changed

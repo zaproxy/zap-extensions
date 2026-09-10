@@ -88,7 +88,7 @@ class CommonAlertTagUnitTest implements UrlTests {
         assertThat(allTags.size(), is(equalTo(2)));
         assertTrue(allTags.containsKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
         assertTrue(allTags.containsKey(cve));
-        assertThat(link, is(equalTo("https://nvd.nist.gov/vuln/detail/CVE-2020-1234")));
+        assertThat(link, is(equalTo("https://nvd.nist.gov/vuln/detail/cve-2020-1234")));
     }
 
     @Test
