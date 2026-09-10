@@ -31,7 +31,16 @@ This job supports monitor tests.
       actionWaitTime:                  # Int: The time in seconds to wait after performing an action (e.g. clicking a button), default: 0
       shutdownTime:                    # Int: The time in seconds to wait after no activity before shutting down, default: 5
       scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Flexible
+      logoutAvoidance:                 # Bool: When enabled, the spider will avoid clicking common logout elements, default: true
+      runOnlyIfModern:                 # Boolean: If true then the spider will only run if a "modern app" alert is raised, default: false
 </pre>
+
+If 'runOnlyIfModern' is set to 'True' then the
+<a href="https://www.zaproxy.org/docs/desktop/addons/automation-framework/job-pscanwait/">passiveScan-wait</a> job
+MUST be run before this one and the <a href="https://www.zaproxy.org/docs/alerts/10109/">Modern Web Application</a>
+rule installed and enabled. If either of those things are not done then the Client Spider will always run and a warning output.
+If they are both done and no "Modern Web Application" alert is raised then the assumption is made that this is a traditional app
+and therefore the Client Spider is not needed.
 
 <H2>Job: spiderAjax (AJAX Spider add-on not installed)</H2>
 If the AJAX Spider add-on is not installed then this add-on also registers a <code>spiderAjax</code> job, which runs the

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Stand in for the AJAX Spider's `spiderAjax` automation job and `ajaxSpider` API, using the Client Spider, when the AJAX Spider add-on is not installed.
+- Add `runOnlyIfModern` option to the `spiderClient` automation job, to only run the Client Spider if a "Modern Web Application" alert has been raised.
 
 ### Changed
 - Updated Chrome and Firefox full extensions to v0.2.3.

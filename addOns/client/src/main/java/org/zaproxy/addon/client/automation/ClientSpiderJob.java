@@ -19,8 +19,10 @@
  */
 package org.zaproxy.addon.client.automation;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -30,13 +32,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderOptions;
@@ -48,6 +53,8 @@ public class ClientSpiderJob extends AutomationJob {
     private static final Logger LOGGER = LogManager.getLogger(ClientSpiderJob.class);
 
     private static final String JOB_NAME = "spiderClient";
+
+    private static final int MODERN_WEB_DETECTION_RULE_ID = 10109;
 
     private ExtensionClientIntegration extSpider;
 
@@ -106,6 +113,11 @@ public class ClientSpiderJob extends AutomationJob {
         }
         uriStr = env.replaceVars(uriStr);
 
+        if (Boolean.TRUE.equals(this.getParameters().getRunOnlyIfModern())
+                && !isModernApp(progress)) {
+            return;
+        }
+
         forceStop = false;
         int scanId = -1;
         try {
@@ -158,6 +170,39 @@ public class ClientSpiderJob extends AutomationJob {
     @Override
     public void stop() {
         forceStop = true;
+    }
+
+    @SuppressWarnings("removal")
+    private boolean isModernApp(AutomationProgress progress) {
+        JobResultData resultData = progress.getJobResultData(PassiveScanJobResultData.KEY);
+        if (resultData == null) {
+            // They havnt run the passive scan wait job
+            progress.warn(Constant.messages.getString("client.automation.error.nopscanresults"));
+            return true;
+        }
+        if (!(resultData instanceof PassiveScanJobResultData pscanResultData)) {
+            progress.error(
+                    Constant.messages.getString(
+                            "client.automation.error.badresultdata",
+                            resultData.getClass().getCanonicalName()));
+            return true;
+        }
+        List<PassiveScanJobResultData.RuleData> modernRuleData =
+                pscanResultData.getAllRuleData().stream()
+                        .filter(r -> r.getId() == MODERN_WEB_DETECTION_RULE_ID)
+                        .collect(Collectors.toList());
+        if (modernRuleData.isEmpty()
+                || AlertThreshold.OFF.equals(modernRuleData.get(0).getThreshold())) {
+            // Rule is not present or turned off
+            progress.warn(Constant.messages.getString("client.automation.error.nomodernrule"));
+            return true;
+        }
+        if (pscanResultData.getAlertData(MODERN_WEB_DETECTION_RULE_ID) == null) {
+            progress.info(Constant.messages.getString("client.automation.info.notmodern"));
+            return false;
+        }
+        progress.info(Constant.messages.getString("client.automation.info.modern"));
+        return true;
     }
 
     protected ClientSpiderOptions paramsToOptions() {
@@ -304,6 +349,7 @@ public class ClientSpiderJob extends AutomationJob {
         private String scopeCheck = ScopeCheck.getDefault().toString();
         private Boolean logoutAvoidance = ClientSpiderOptions.DEFAULT_LOGOUT_AVOIDANCE;
         private Integer actionWaitTime = ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME;
+        private Boolean runOnlyIfModern = Boolean.FALSE;
 
         public Parameters() {}
     }

@@ -30,6 +30,8 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
@@ -51,6 +55,7 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderOptions;
@@ -59,7 +64,10 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
+@SuppressWarnings("removal")
 public class ClientSpiderJobUnitTest extends TestUtils {
+
+    private static final int MODERN_WEB_DETECTION_RULE_ID = 10109;
 
     private ExtensionLoader extensionLoader;
     private ExtensionClientIntegration extClient;
@@ -166,6 +174,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(
                 job.getParameters().getActionWaitTime(),
                 is(ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME));
+        assertThat(job.getParameters().getRunOnlyIfModern(), is(equalTo(false)));
     }
 
     @Test
@@ -189,6 +198,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
                   shutdownTime:     14
                   logoutAvoidance: false
                   actionWaitTime:  3
+                  runOnlyIfModern: true
                 """;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -213,6 +223,7 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getShutdownTime(), is(equalTo(14)));
         assertThat(job.getParameters().getLogoutAvoidance(), is(equalTo(false)));
         assertThat(job.getParameters().getActionWaitTime(), is(equalTo(3)));
+        assertThat(job.getParameters().getRunOnlyIfModern(), is(equalTo(true)));
     }
 
     @ParameterizedTest
@@ -284,6 +295,114 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldWarnAndStillRunIfRunOnlyIfModernAndNoPassiveScanResults()
+            throws URIException, NullPointerException {
+        // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getContext()).willReturn(context);
+        String url = "http://example.com";
+        given(contextWrapper.getUrls()).willReturn(List.of(url));
+
+        ClientSpider clientSpider = mock(ClientSpider.class);
+        given(extClient.startScan(any(), any(), any(), any(), anyBoolean())).willReturn(1);
+        given(extClient.getScan(anyInt())).willReturn(clientSpider);
+
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(url)).willReturn(url);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+
+        ClientSpiderJob job = new ClientSpiderJob();
+        job.getParameters().setRunOnlyIfModern(true);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extClient).startScan(any(), any(), any(), any(), anyBoolean());
+    }
+
+    @Test
+    void shouldRunIfRunOnlyIfModernAndAppIsModern() throws URIException, NullPointerException {
+        // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getContext()).willReturn(context);
+        String url = "http://example.com";
+        given(contextWrapper.getUrls()).willReturn(List.of(url));
+
+        ClientSpider clientSpider = mock(ClientSpider.class);
+        given(extClient.startScan(any(), any(), any(), any(), anyBoolean())).willReturn(1);
+        given(extClient.getScan(anyInt())).willReturn(clientSpider);
+
+        AutomationProgress progress = new AutomationProgress();
+        progress.addJobResultData(modernAppPassiveScanResultData(true));
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(url)).willReturn(url);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+
+        ClientSpiderJob job = new ClientSpiderJob();
+        job.getParameters().setRunOnlyIfModern(true);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extClient).startScan(any(), any(), any(), any(), anyBoolean());
+    }
+
+    @Test
+    void shouldNotRunIfRunOnlyIfModernAndAppIsNotModern()
+            throws URIException, NullPointerException {
+        // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        String url = "http://example.com";
+        given(contextWrapper.getUrls()).willReturn(List.of(url));
+
+        AutomationProgress progress = new AutomationProgress();
+        progress.addJobResultData(modernAppPassiveScanResultData(false));
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(url)).willReturn(url);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+
+        ClientSpiderJob job = new ClientSpiderJob();
+        job.getParameters().setRunOnlyIfModern(true);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extClient, never()).startScan(any(), any(), any(), any(), anyBoolean());
+    }
+
+    private static PassiveScanJobResultData modernAppPassiveScanResultData(boolean modern) {
+        PassiveScanJobResultData.RuleData ruleData = mock(PassiveScanJobResultData.RuleData.class);
+        given(ruleData.getId()).willReturn(MODERN_WEB_DETECTION_RULE_ID);
+        given(ruleData.getThreshold()).willReturn(AlertThreshold.MEDIUM);
+
+        PassiveScanJobResultData resultData = mock(PassiveScanJobResultData.class);
+        given(resultData.getKey()).willReturn(PassiveScanJobResultData.KEY);
+        given(resultData.getAllRuleData()).willReturn(List.of(ruleData));
+        if (modern) {
+            given(resultData.getAlertData(MODERN_WEB_DETECTION_RULE_ID))
+                    .willReturn(mock(Alert.class));
+        }
+        return resultData;
     }
 
     private static void assertValidTemplate(String value) {

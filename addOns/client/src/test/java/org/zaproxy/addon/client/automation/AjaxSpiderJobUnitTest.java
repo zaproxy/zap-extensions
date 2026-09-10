@@ -109,7 +109,6 @@ class AjaxSpiderJobUnitTest extends TestUtils {
                   maxCrawlStates:          10
                   randomInputs:            true
                   reloadWait:              1000
-                  runOnlyIfModern:         true
                   warnIfFoundUrlsLessThan: 20
                 """;
         Yaml yaml = new Yaml();
@@ -136,6 +135,7 @@ class AjaxSpiderJobUnitTest extends TestUtils {
                   context:         testContext
                   url:             https://www.example.com/test/
                   logoutAvoidance: false
+                  runOnlyIfModern: true
                 """;
         Yaml yaml = new Yaml();
         job.setJobData((LinkedHashMap<?, ?>) yaml.load(yamlStr));
@@ -149,6 +149,7 @@ class AjaxSpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getContext(), is(equalTo("testContext")));
         assertThat(job.getParameters().getUrl(), is(equalTo("https://www.example.com/test/")));
         assertThat(job.getParameters().getLogoutAvoidance(), is(equalTo(false)));
+        assertThat(job.getParameters().getRunOnlyIfModern(), is(equalTo(true)));
     }
 
     @ParameterizedTest
