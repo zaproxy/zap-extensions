@@ -172,10 +172,10 @@ class Log4ShellScanRuleUnitTest extends ActiveScannerTest<Log4ShellScanRule> {
                 is(equalTo(ExtensionOast.OAST_ALERT_TAG_VALUE)));
         assertThat(
                 tags.get(Log4ShellScanRule.CVE_44228),
-                is(equalTo("https://nvd.nist.gov/vuln/detail/CVE-2021-44228")));
+                is(equalTo("https://nvd.nist.gov/vuln/detail/cve-2021-44228")));
         assertThat(
                 tags.get(Log4ShellScanRule.CVE_45046),
-                is(equalTo("https://nvd.nist.gov/vuln/detail/CVE-2021-45046")));
+                is(equalTo("https://nvd.nist.gov/vuln/detail/cve-2021-45046")));
     }
 
     @Test

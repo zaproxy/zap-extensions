@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Content Security Policy scan rule analyzes all active CSP headers and META policies together using browser-style intersection (Issue 9403).
 - Update dependency.
+- Update reference to avoid redirect.
 - Updated help entries for the following scan rules, clarifying the data used to supplement their alerts for credit card related findings:
   - Information Disclosure: Referrer
   - PII Disclosure

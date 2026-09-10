@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Update references to avoid redirects.
+- Update references and CVE links to avoid redirects.
 - Adjust stop checks in the Path Traversal scan rule to terminate sooner.
 
 ## [83] - 2026-06-26

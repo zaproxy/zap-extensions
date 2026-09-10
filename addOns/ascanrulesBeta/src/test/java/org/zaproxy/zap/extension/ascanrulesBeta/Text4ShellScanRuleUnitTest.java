@@ -167,7 +167,7 @@ class Text4ShellScanRuleUnitTest extends ActiveScannerTest<Text4ShellScanRule> {
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getValue())));
         assertThat(
                 tags.get(Text4ShellScanRule.CVE),
-                is(equalTo("https://nvd.nist.gov/vuln/detail/CVE-2022-42889")));
+                is(equalTo("https://nvd.nist.gov/vuln/detail/cve-2022-42889")));
         assertThat(
                 tags.get(ExtensionOast.OAST_ALERT_TAG_KEY),
                 is(equalTo(ExtensionOast.OAST_ALERT_TAG_VALUE)));

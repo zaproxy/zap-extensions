@@ -21,6 +21,7 @@ package org.zaproxy.addon.commonlib;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /** A standard set of alert tags. */
@@ -529,6 +530,6 @@ public enum CommonAlertTag {
     }
 
     private static String createCveLink(String cve) {
-        return "https://nvd.nist.gov/vuln/detail/" + cve;
+        return "https://nvd.nist.gov/vuln/detail/" + cve.toLowerCase(Locale.ROOT);
     }
 }
