@@ -137,7 +137,7 @@ public class ClientSpider implements GenericScanner2 {
     private final ExtensionNetwork extensionNetwork;
 
     private final Session session;
-    private final List<String> exclusionList;
+    private final List<Pattern> exclusionList;
 
     private List<WebDriverProcess> webDriverPool = new ArrayList<>();
     private Set<WebDriverProcess> webDriverActive = new HashSet<>();
@@ -229,13 +229,17 @@ public class ClientSpider implements GenericScanner2 {
         extensionNetwork = getExtension(ExtensionNetwork.class);
 
         exclusionList = new ArrayList<>();
-        exclusionList.addAll(session.getExcludeFromSpiderRegexs());
-        exclusionList.addAll(session.getGlobalExcludeURLRegexs());
+        addCompiled(session.getExcludeFromSpiderRegexs(), exclusionList);
+        addCompiled(session.getGlobalExcludeURLRegexs(), exclusionList);
 
         HttpPrefixUriValidator validator =
                 scanOptions.isSubtreeOnly() ? new HttpPrefixUriValidator(targetUri) : null;
         this.httpPrefixUriValidator = validator;
         createOutOfScopeResponse(Constant.messages.getString("client.spider.outofscope.response"));
+    }
+
+    private static void addCompiled(List<String> source, List<Pattern> target) {
+        source.stream().map(Pattern::compile).forEach(target::add);
     }
 
     private static <T extends Extension> T getExtension(Class<T> clazz) {
@@ -745,6 +749,12 @@ public class ClientSpider implements GenericScanner2 {
     protected ResourceState checkResourceState(URI uri, String hostName, boolean allowAll) {
         ResourceState state = ResourceState.ALLOWED;
         String uriString = uri.toString();
+        for (Pattern pattern : exclusionList) {
+            if (pattern.matcher(uriString).matches()) {
+                LOGGER.debug("Excluding resource with {} {}", pattern, uriString);
+                return ResourceState.EXCLUDED;
+            }
+        }
         if (httpPrefixUriValidator != null && !httpPrefixUriValidator.isValid(uri)) {
             LOGGER.debug("Excluding resource not under subtree: {}", uriString);
             state = ResourceState.OUT_OF_SUBTREE;
@@ -761,14 +771,6 @@ public class ClientSpider implements GenericScanner2 {
         } else if (!targetHost.equalsIgnoreCase(hostName)) {
             LOGGER.debug("Excluding resource not on target host: {}", uriString);
             state = ResourceState.OUT_OF_HOST;
-        }
-        if (state == ResourceState.ALLOWED) {
-            for (String regex : exclusionList) {
-                if (Pattern.matches(regex, uriString)) {
-                    LOGGER.debug("Excluding resource with {} {}", regex, uriString);
-                    state = ResourceState.EXCLUDED;
-                }
-            }
         }
         if (state != ResourceState.ALLOWED && allowAll && mode != Control.Mode.protect) {
             state = ResourceState.THIRD_PARTY;
@@ -1198,19 +1200,22 @@ public class ClientSpider implements GenericScanner2 {
             if (!ctx.isFromClient()) {
                 handleRedirection(httpMessage);
 
-                notifyMessage(
-                        httpMessage, scanOptions.getHrefType(), getResourceState(httpMessage));
+                ResourceState responseState = getResourceState(httpMessage);
+                if (responseState != ResourceState.EXCLUDED) {
+                    notifyMessage(httpMessage, scanOptions.getHrefType(), responseState);
+                }
                 return;
             }
 
-            ResourceState state = ResourceState.ALLOWED;
-            if (isAllowedResource(httpMessage.getRequestHeader().getURI())) {
-                // Nothing to do, state already set to allowed.
-            } else {
-                state = checkResourceState(httpMessage, allowAll);
+            ResourceState state = checkResourceState(httpMessage, allowAll);
+            if (state != ResourceState.EXCLUDED
+                    && isAllowedResource(httpMessage.getRequestHeader().getURI())) {
+                state = ResourceState.ALLOWED;
             }
 
-            if (state != ResourceState.ALLOWED && state != ResourceState.THIRD_PARTY) {
+            if (state != ResourceState.ALLOWED
+                    && state != ResourceState.THIRD_PARTY
+                    && state != ResourceState.EXCLUDED) {
                 setOutOfScopeResponse(httpMessage);
                 notifyMessage(httpMessage, scanOptions.getTmpHrefType(), state);
                 ctx.overridden();

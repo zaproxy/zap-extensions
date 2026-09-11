@@ -81,7 +81,6 @@ public class MessagesTableModel
         statesMap = new EnumMap<>(ResourceState.class);
         addState(statesMap, ResourceState.ALLOWED, "allowed");
         addState(statesMap, ResourceState.THIRD_PARTY, "thirdparty");
-        addState(statesMap, ResourceState.EXCLUDED, "excluded");
         addState(statesMap, ResourceState.IO_ERROR, "ioerror");
         addState(statesMap, ResourceState.OUT_OF_CONTEXT, "outofcontext");
         addState(statesMap, ResourceState.OUT_OF_HOST, "outofhost");
