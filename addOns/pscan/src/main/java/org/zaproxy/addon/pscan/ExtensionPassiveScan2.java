@@ -42,6 +42,7 @@ import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.pscan.internal.AddOnScanRulesLoader;
 import org.zaproxy.addon.pscan.internal.DefaultStatsListener;
 import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
@@ -80,6 +81,7 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(
                     ExtensionAlert.class,
+                    ExtensionCommonlib.class,
                     org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class);
 
     private AddOnScanRulesLoader scanRulesLoader;
@@ -103,6 +105,8 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     private List<PassiveScanRuleProvider> pscanRuleProviders =
             Collections.synchronizedList(new ArrayList<>());
+
+    private final GspmPassiveScanRegistrar gspmRegistrar = new GspmPassiveScanRegistrar();
 
     public ExtensionPassiveScan2() {
         super(NAME);
@@ -195,6 +199,8 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
         scanRulesLoader.load();
 
         StatsPassiveScanner.load(this);
+
+        gspmRegistrar.register(scannersManager);
     }
 
     @Override
@@ -364,6 +370,8 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     @Override
     public void unload() {
+        gspmRegistrar.unregister();
+
         scanRulesLoader.unload();
 
         if (hasView()) {
