@@ -176,7 +176,7 @@ public class ClientSpiderJob extends AutomationJob {
     private boolean isModernApp(AutomationProgress progress) {
         JobResultData resultData = progress.getJobResultData(PassiveScanJobResultData.KEY);
         if (resultData == null) {
-            // They havnt run the passive scan wait job
+            // They haven't run the passive scan wait job
             progress.warn(Constant.messages.getString("client.automation.error.nopscanresults"));
             return true;
         }
