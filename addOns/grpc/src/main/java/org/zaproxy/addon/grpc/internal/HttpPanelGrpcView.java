@@ -29,12 +29,16 @@ import javax.swing.JPanel;
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.AbstractByteHttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelEvent;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelListener;
+import org.zaproxy.zap.extension.httppanel.view.impl.models.http.request.RequestBodyByteHttpPanelViewModel;
+import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyByteHttpPanelViewModel;
 
 public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListener {
 
@@ -50,7 +54,8 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     private ProtoBufMessageEncoder protoBufMessageEncoder;
     private AbstractByteHttpPanelViewModel model;
 
-    private final DecoderUtils.DecodingMethod decodingMethod;
+    private final DecoderUtils.DecodingMethod configuredDecodingMethod;
+    private DecoderUtils.DecodingMethod decodingMethod;
 
     public HttpPanelGrpcView(
             AbstractByteHttpPanelViewModel model, DecoderUtils.DecodingMethod decodingMethod) {
@@ -63,6 +68,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         model.addHttpPanelViewModelListener(this);
         protoBufMessageDecoder = new ProtoBufMessageDecoder();
         protoBufMessageEncoder = new ProtoBufMessageEncoder();
+        this.configuredDecodingMethod = decodingMethod;
         this.decodingMethod = decodingMethod;
     }
 
@@ -95,7 +101,35 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
 
     @Override
     public boolean isEnabled(Message message) {
-        // todo: check for grpc string body type
+        if (configuredDecodingMethod != DecoderUtils.DecodingMethod.AUTO) {
+            return true;
+        }
+
+        if (!(message instanceof HttpMessage)) {
+            return false;
+        }
+
+        HttpMessage httpMessage = (HttpMessage) message;
+        HttpHeader header;
+        if (model instanceof RequestBodyByteHttpPanelViewModel) {
+            header = httpMessage.getRequestHeader();
+        } else if (model instanceof ResponseBodyByteHttpPanelViewModel) {
+            header = httpMessage.getResponseHeader();
+            if (!header.hasContentType("application/grpc")) {
+                header = httpMessage.getRequestHeader();
+            }
+        } else {
+            return false;
+        }
+
+        if (!header.hasContentType("application/grpc")) {
+            return false;
+        }
+
+        decodingMethod =
+                header.hasContentType("application/grpc-web-text")
+                        ? DecoderUtils.DecodingMethod.BASE64_ENCODED
+                        : DecoderUtils.DecodingMethod.GRPC_BINARY;
         return true;
     }
 
@@ -154,11 +188,14 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         byte[] body = ((AbstractByteHttpPanelViewModel) e.getSource()).getData();
         httpPanelGrpcArea.setBorder(null);
         try {
-            body = DecoderUtils.splitMessageBodyAndStatusCode(body);
             byte[] payload;
             if (decodingMethod == DecoderUtils.DecodingMethod.BASE64_ENCODED) {
+                body = DecoderUtils.splitMessageBodyAndStatusCode(body);
                 body = Base64.getDecoder().decode(body);
                 payload = DecoderUtils.extractPayload(body);
+            } else if (decodingMethod == DecoderUtils.DecodingMethod.GRPC_BINARY
+                    || decodingMethod == DecoderUtils.DecodingMethod.AUTO) {
+                payload = DecoderUtils.extractUnaryGrpcPayload(body);
             } else {
                 payload = body;
             }
