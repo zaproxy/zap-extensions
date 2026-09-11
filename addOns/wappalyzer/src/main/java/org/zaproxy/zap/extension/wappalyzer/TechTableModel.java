@@ -39,14 +39,14 @@ public class TechTableModel extends AbstractTableModel {
     public TechTableModel() {
         super();
         columnNames = new ArrayList<>();
-        columnNames.add(Constant.messages.getString("wappalyzer.table.header.name"));
-        columnNames.add(Constant.messages.getString("wappalyzer.table.header.version"));
-        columnNames.add(Constant.messages.getString("wappalyzer.table.header.category"));
-        columnNames.add(Constant.messages.getString("wappalyzer.table.header.website"));
-        columnNames.add(Constant.messages.getString("wappalyzer.table.header.implies"));
-        columnNames.add(Constant.messages.getString("wappalyzer.table.header.cpe"));
+        columnNames.add(Constant.messages.getString("techdetect.table.header.name"));
+        columnNames.add(Constant.messages.getString("techdetect.table.header.version"));
+        columnNames.add(Constant.messages.getString("techdetect.table.header.category"));
+        columnNames.add(Constant.messages.getString("techdetect.table.header.website"));
+        columnNames.add(Constant.messages.getString("techdetect.table.header.implies"));
+        columnNames.add(Constant.messages.getString("techdetect.table.header.cpe"));
         // Dont currently support confidence
-        // columnNames.add(Constant.messages.getString("wappalyzer.table.header.confidence"));
+        // columnNames.add(Constant.messages.getString("techdetect.table.header.confidence"));
 
         apps = Collections.synchronizedList(new ArrayList<>());
 
@@ -114,8 +114,8 @@ public class TechTableModel extends AbstractTableModel {
         StringBuilder sb = new StringBuilder();
         for (String str : list) {
             // See if we can i18n them
-            if (Constant.messages.containsKey("wappalyzer.category." + str)) {
-                sb.append(Constant.messages.getString("wappalyzer.category." + str));
+            if (Constant.messages.containsKey("techdetect.category." + str)) {
+                sb.append(Constant.messages.getString("techdetect.category." + str));
             } else {
                 sb.append(str);
             }
