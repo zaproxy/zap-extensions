@@ -48,7 +48,6 @@ public class AjaxSpiderJob extends ClientSpiderJob {
         "maxCrawlStates",
         "randomInputs",
         "reloadWait",
-        "runOnlyIfModern",
         "warnIfFoundUrlsLessThan",
     };
 

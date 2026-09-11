@@ -25,6 +25,7 @@ import java.util.List;
 import javax.swing.JTextField;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.client.automation.ClientSpiderJob.Parameters;
 import org.zaproxy.addon.client.internal.ScopeCheckComponent;
 import org.zaproxy.addon.client.spider.ClientSpiderOptions;
@@ -52,6 +53,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
             "client.automation.dialog.spider.maxcrawldepth";
     private static final String NUM_BROWSERS_PARAM = "client.automation.dialog.spider.numbrowsers";
     private static final String BROWSER_ID_PARAM = "client.automation.dialog.spider.browserid";
+    private static final String ONLY_IF_MODERN = "client.automation.dialog.spider.runOnlyIfModern";
     private static final String FIELD_ADVANCED = "client.automation.dialog.spider.advanced";
 
     private static final String MAX_CHILDREN_PARAM = "client.automation.dialog.spider.maxchildren";
@@ -108,6 +110,9 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
 
         getScopeCheckComponent().setScopeCheck(job.getParameters().getScopeCheck());
         addCustomComponent(0, getScopeCheckComponent().getComponent());
+
+        this.addCheckBoxField(
+                0, ONLY_IF_MODERN, JobUtils.unBox(this.job.getParameters().getRunOnlyIfModern()));
 
         this.addCheckBoxField(0, FIELD_ADVANCED, advOptionsSet());
         this.addFieldListener(FIELD_ADVANCED, e -> setAdvancedTabs(getBoolValue(FIELD_ADVANCED)));
@@ -257,6 +262,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
             }
         }
         this.job.getParameters().setScopeCheck(getScopeCheckComponent().getScopeCheck().toString());
+        this.job.getParameters().setRunOnlyIfModern(this.getBoolValue(ONLY_IF_MODERN));
 
         if (this.getBoolValue(FIELD_ADVANCED)) {
             this.job.getParameters().setNumberOfBrowsers(this.getIntValue(NUM_BROWSERS_PARAM));
