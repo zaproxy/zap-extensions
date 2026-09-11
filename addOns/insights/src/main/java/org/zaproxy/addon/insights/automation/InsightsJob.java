@@ -44,8 +44,7 @@ import org.zaproxy.addon.insights.internal.InsightsParam;
 public class InsightsJob extends AutomationJob implements InsightListener {
 
     private static final String JOB_NAME = "insights";
-    private static final String RESOURCES_DIR =
-            "/org/zaproxy/zap/extension/alertFilters/resources/";
+    private static final String RESOURCES_DIR = "resources/";
 
     private static final String OPTIONS_METHOD_NAME = "getParam";
 

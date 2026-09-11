@@ -21,6 +21,11 @@ package org.zaproxy.addon.insights.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
@@ -35,7 +40,9 @@ import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
+import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.insights.ExtensionInsights;
@@ -75,6 +82,22 @@ class InsightsJobUnitTest extends TestUtils {
     private void wireEnvForStop() {
         given(env.getPlan()).willReturn(plan);
         given(plan.getProgress()).willReturn(progress);
+    }
+
+    @Test
+    void shouldReturnDefaultFields() {
+        assertThat(job.getType(), is(equalTo("insights")));
+        assertThat(job.getName(), is(equalTo("insights")));
+        assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.CONFIGS)));
+        assertValidTemplate(job.getTemplateDataMin());
+        assertValidTemplate(job.getTemplateDataMax());
+        assertThat(job.getParamMethodObject(), is(instanceOf(ExtensionInsights.class)));
+        assertThat(job.getParamMethodName(), is(equalTo("getParam")));
+    }
+
+    private static void assertValidTemplate(String value) {
+        assertThat(value, is(not(equalTo(""))));
+        assertDoesNotThrow(() -> new Yaml().load(value));
     }
 
     @Test
