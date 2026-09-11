@@ -37,7 +37,7 @@ public class PopupMenuEvidence extends ExtensionPopupMenu {
     private ExtensionWappalyzer extension;
 
     public PopupMenuEvidence(ExtensionWappalyzer extension) {
-        super(Constant.messages.getString("wappalyzer.search.popup"));
+        super(Constant.messages.getString("techdetect.search.popup"));
         this.extension = extension;
     }
 

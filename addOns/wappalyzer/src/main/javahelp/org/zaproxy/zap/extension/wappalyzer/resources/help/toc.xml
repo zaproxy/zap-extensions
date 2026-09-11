@@ -6,10 +6,10 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Technology Detection" image="addon.wappalyzer.icon" target="addon.wappalyzer">
-				<tocitem text="API" target="addon.wappalyzer.api" />
-				<tocitem text="Options" target="addon.wappalyzer.options" />
-				<tocitem text="Automation" target="addon.wappalyzer.automation" />
+			<tocitem text="Technology Detection" image="addon.techdetect.icon" target="addon.techdetect">
+				<tocitem text="API" target="addon.techdetect.api" />
+				<tocitem text="Options" target="addon.techdetect.options" />
+				<tocitem text="Automation" target="addon.techdetect.automation" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

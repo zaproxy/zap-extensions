@@ -4,10 +4,10 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-	<mapID target="addon.wappalyzer.icon" url="contents/images/fingerprint-recognition.png" />
+	<mapID target="addon.techdetect.icon" url="contents/images/fingerprint-recognition.png" />
 
-	<mapID target="addon.wappalyzer" url="contents/wappalyzer.html" />
-	<mapID target="addon.wappalyzer.api" url="contents/api.html" />
-	<mapID target="addon.wappalyzer.options" url="contents/options.html" />
-	<mapID target="addon.wappalyzer.automation" url="contents/automation.html" />
+	<mapID target="addon.techdetect" url="contents/techdetect.html" />
+	<mapID target="addon.techdetect.api" url="contents/api.html" />
+	<mapID target="addon.techdetect.options" url="contents/options.html" />
+	<mapID target="addon.techdetect.automation" url="contents/automation.html" />
 </map>
