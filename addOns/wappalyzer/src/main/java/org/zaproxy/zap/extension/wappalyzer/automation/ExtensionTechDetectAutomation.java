@@ -28,16 +28,16 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer;
 
-public class ExtensionWappalyzerAutomation extends ExtensionAdaptor {
+public class ExtensionTechDetectAutomation extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionWappalyzerAutomation";
+    public static final String NAME = "ExtensionTechDetectAutomation";
 
     private TechJob job;
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionWappalyzer.class, ExtensionAutomation.class);
 
-    public ExtensionWappalyzerAutomation() {
+    public ExtensionTechDetectAutomation() {
         super(NAME);
     }
 
@@ -75,11 +75,11 @@ public class ExtensionWappalyzerAutomation extends ExtensionAdaptor {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("wappalyzer.automation.desc");
+        return Constant.messages.getString("techdetect.automation.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("wappalyzer.automation.name");
+        return Constant.messages.getString("techdetect.automation.name");
     }
 }

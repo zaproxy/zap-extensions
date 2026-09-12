@@ -4,8 +4,8 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="Wappalyzer" target="addon.wappalyzer" />
-	<indexitem text="Wappalyzer API" target="addon.wappalyzer.api" />
-	<indexitem text="Wappalyzer Options" target="addon.wappalyzer.options" />
-	<indexitem text="Wappalyzer Automation" target="addon.wappalyzer.automation" />
+	<indexitem text="Technology Detection" target="addon.techdetect" />
+	<indexitem text="Technology Detection API" target="addon.techdetect.api" />
+	<indexitem text="Technology Detection Options" target="addon.techdetect.options" />
+	<indexitem text="Technology Detection Automation" target="addon.techdetect.automation" />
 </index>
