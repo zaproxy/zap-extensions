@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -245,6 +246,38 @@ class ClientSpiderUnitTest extends TestUtils {
             mapListener = captor.getAllValues().get(0);
         }
         return mapListener;
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldIgnoreExcludedUrls(boolean fromClient) throws Exception {
+        // Given
+        given(session.getExcludeFromSpiderRegexs()).willReturn(List.of(".*excluded.*"));
+        spider =
+                new ClientSpider(
+                        extClient,
+                        map,
+                        "",
+                        seedUrl,
+                        clientOptions,
+                        ScanOptions.builder().setExternalControl(true).build(),
+                        mock(ValueProvider.class),
+                        1);
+        HttpMessageHandlerSetup setup =
+                getMessageHandler(
+                        new HttpMessage(new URI("https://www.example.com/excluded/", true)));
+
+        HttpMessageHandlerContext ctx = setup.ctx();
+        given(ctx.isFromClient()).willReturn(fromClient);
+        clearInvocations(map);
+
+        // When
+        setup.handler().handleMessage(ctx, setup.message());
+
+        // Then
+        verify(ctx, never()).overridden();
+        verify(session, never()).getSessionId();
+        verify(map, never()).getOrAddNode(anyString(), anyBoolean(), anyBoolean());
     }
 
     @Test
@@ -802,7 +835,7 @@ class ClientSpiderUnitTest extends TestUtils {
         HttpMessageHandlerSetup setup = setUpRedirect(location);
 
         // When
-        setup.handler().handleMessage(setup.ctx(), setup.redirectMessage());
+        setup.handler().handleMessage(setup.ctx(), setup.message());
 
         // Then
         verify(map).getOrAddNode("https://www.example.com/original", true, false);
@@ -818,7 +851,7 @@ class ClientSpiderUnitTest extends TestUtils {
         HttpMessageHandlerSetup setup = setUpRedirect(location);
 
         // When
-        setup.handler().handleMessage(setup.ctx(), setup.redirectMessage());
+        setup.handler().handleMessage(setup.ctx(), setup.message());
 
         // Then
         verify(map, never()).setRedirect(anyString(), anyString());
@@ -831,6 +864,11 @@ class ClientSpiderUnitTest extends TestUtils {
                 .setURI(new URI("https://www.example.com/original", true));
         redirectMessage.setResponseHeader("HTTP/1.1 302 Found");
         redirectMessage.getResponseHeader().setHeader(HttpFieldsNames.LOCATION, location);
+        return getMessageHandler(redirectMessage);
+    }
+
+    private HttpMessageHandlerSetup getMessageHandler(HttpMessage message) {
+        message.setResponseFromTargetHost(true);
 
         ArgumentCaptor<HttpServerConfig> configCaptor = ArgumentCaptor.captor();
         given(network.createHttpServer(configCaptor.capture())).willReturn(serverMock);
@@ -841,13 +879,11 @@ class ClientSpiderUnitTest extends TestUtils {
         HttpMessageHandlerContext ctx = mock(HttpMessageHandlerContext.class);
         given(ctx.isFromClient()).willReturn(false);
 
-        return new HttpMessageHandlerSetup(handler, ctx, redirectMessage);
+        return new HttpMessageHandlerSetup(handler, ctx, message);
     }
 
     private record HttpMessageHandlerSetup(
-            HttpMessageHandler handler,
-            HttpMessageHandlerContext ctx,
-            HttpMessage redirectMessage) {}
+            HttpMessageHandler handler, HttpMessageHandlerContext ctx, HttpMessage message) {}
 
     @Test
     void shouldFinishImmediatelyWhenExistingOnlyAndMapIsEmpty() {
