@@ -273,5 +273,9 @@
             <name>Remote OS Command Injection (Time Based)</name>
             <enabled>true</enabled>
         </p90037>
+        <p230000>
+            <name>PTK Scan Rules</name>
+            <enabled>true</enabled>
+        </p230000>
     </plugins>
 </configuration>
