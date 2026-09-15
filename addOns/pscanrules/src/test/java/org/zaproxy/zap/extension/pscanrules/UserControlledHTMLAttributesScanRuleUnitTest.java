@@ -289,8 +289,7 @@ class UserControlledHTMLAttributesScanRuleUnitTest
     void shouldNotRaiseAlertForSingleCharParamMatchingMetaViewportToken() throws Exception {
         // Given - Issue 9461: "1" from viewport's "initial-scale=1" must not match ?step=1
         HttpMessage msg = createMessage();
-        msg.getRequestHeader()
-                .setURI(new URI("http://example.com/i.php?step=1", false));
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?step=1", false));
         msg.setResponseBody(
                 "<html><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></html>");
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -304,8 +303,7 @@ class UserControlledHTMLAttributesScanRuleUnitTest
     void shouldNotRaiseAlertForSingleCharParamMatchingMetaContentSingleChar() throws Exception {
         // Given - Issue 9461: single-char param "y" must not match any meta content token
         HttpMessage msg = createMessage();
-        msg.getRequestHeader()
-                .setURI(new URI("http://example.com/i.php?flag=y", false));
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?flag=y", false));
         msg.setResponseBody(
                 "<html><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"></html>");
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -319,10 +317,8 @@ class UserControlledHTMLAttributesScanRuleUnitTest
     void shouldStillRaiseAlertForMultiCharParamMatchingMetaContent() throws Exception {
         // Given - Regression: multi-char values must still alert
         HttpMessage msg = createMessage();
-        msg.getRequestHeader()
-                .setURI(new URI("http://example.com/i.php?name=noindex", false));
-        msg.setResponseBody(
-                "<html><meta name=\"robots\" content=\"noindex, nofollow\"></html>");
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?name=noindex", false));
+        msg.setResponseBody("<html><meta name=\"robots\" content=\"noindex, nofollow\"></html>");
         given(passiveScanData.isPage200(any())).willReturn(true);
         // When
         scanHttpResponseReceive(msg);
