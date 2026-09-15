@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CVE link to avoid redirect.
 - Update browser background requests.
 
+### Fixed
+- Preserve existing host header name case when normalizing (Issue 9428).
+
 ## [0.29.0] - 2026-08-07
 ### Added
 - Option to support client certificates programmatically.

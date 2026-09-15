@@ -419,7 +419,7 @@ class HttpSenderImplUnitTest {
         void shouldBeSentWithExistingHostHeaderRemainingInPlace(SenderMethod method)
                 throws Exception {
             // Given
-            message.getRequestHeader().setHeader("Host", "localhost:" + serverPort);
+            message.getRequestHeader().setHeader("host", "localhost:" + serverPort);
             message.getRequestHeader().setContentLength(message.getRequestBody().length());
             // When
             method.sendWith(httpSender, message);
@@ -447,7 +447,7 @@ class HttpSenderImplUnitTest {
         void shouldBeSentWithUpdatedHostHeaderRemainingInPlace(SenderMethod method)
                 throws Exception {
             // Given
-            message.getRequestHeader().setHeader("Host", "example.org:" + serverPort);
+            message.getRequestHeader().setHeader("host", "example.org:" + serverPort);
             message.getRequestHeader().setContentLength(message.getRequestBody().length());
             // When
             method.sendWith(httpSender, message);
@@ -498,7 +498,7 @@ class HttpSenderImplUnitTest {
                 "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
         void shouldBeSentWithIncorrectContentLength(SenderMethod method) throws Exception {
             // Given
-            message.getRequestHeader().setHeader("Host", "localhost:" + serverPort);
+            message.getRequestHeader().setHeader("host", "localhost:" + serverPort);
             message.getRequestHeader().setContentLength(42);
             server.setFixedLengthMessage(61);
             // When
@@ -527,7 +527,7 @@ class HttpSenderImplUnitTest {
         void shouldBeUpdatedWithExactContentLengthHeaderCase(
                 String requestMethod, SenderMethod method) throws Exception {
             // Given
-            message.getRequestHeader().setHeader("Host", "localhost:" + serverPort);
+            message.getRequestHeader().setHeader("host", "localhost:" + serverPort);
             message.getRequestHeader().addHeader("content-length", "0");
             message.getRequestHeader().addHeader("OtherHeader", "SomeValue");
             // When
@@ -1476,6 +1476,20 @@ class HttpSenderImplUnitTest {
         @AfterEach
         void teardown() throws IOException {
             server.close();
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldPreserveExistingHeaderNameCase(SenderMethod method) throws Exception {
+            // Given
+            message.getRequestHeader().setHeader("HoSt", "example.com");
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    messageReceived.getRequestHeader().toString(),
+                    containsString("a: 1\r\nHoSt: " + serverHost + "\r\nb: 2\r\n\r\n"));
         }
 
         @ParameterizedTest
