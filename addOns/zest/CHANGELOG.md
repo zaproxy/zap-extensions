@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Depend on newer version of Script Console add-on to use its functionality.
 
+### Fixed
+- Preserve percent-encoded URLs when scanning Zest sequences to avoid requesting the wrong path.
+
 ## [48.14.0] - 2026-07-06
 ### Added
 - Browser screenshots are now automatically captured on Zest client step failures, and script print output is included in the diagnostics report. For chain runs, each output is clearly attributed to the specific script that produced it.
