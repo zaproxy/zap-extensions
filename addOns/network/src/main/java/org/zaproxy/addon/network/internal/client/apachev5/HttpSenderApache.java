@@ -855,7 +855,15 @@ public class HttpSenderApache
             header.addHeader(HttpRequestHeader.HOST, expectedHost);
             return;
         }
-        header.setHeader(HttpRequestHeader.HOST, expectedHost);
+        header.setHeader(getHostHeaderName(header), expectedHost);
+    }
+
+    private static String getHostHeaderName(HttpRequestHeader header) {
+        return header.getHeaders().stream()
+                .map(HttpHeaderField::getName)
+                .filter(HttpRequestHeader.HOST::equalsIgnoreCase)
+                .findFirst()
+                .orElse(HttpRequestHeader.HOST);
     }
 
     private static String createExpectedHost(HttpRequestHeader header) {
