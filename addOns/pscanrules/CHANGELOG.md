@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - PII Disclosure
 
 ### Fixed
-- User Controllable HTML Element Attribute scan rule: added minimum length guard to meta content check to avoid false positives with single-character parameter values (Issue 9461).
+- User Controllable HTML Element Attribute scan rule: reduce false positives for short parameter values in meta content checks.
 
 ### Removed
 - CSP "Header & Meta" alert (10055-12) is no longer raised.
