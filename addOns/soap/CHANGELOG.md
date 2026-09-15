@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- Fix an issue where SOAP nodes were not correctly displaying their leaf names in the interface (Issue 8856).
 
 ## [32] - 2026-08-12
 ### Added
