@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Update dependencies.
 - Update CVE link to avoid redirect.
 - Update browser background requests.
 
