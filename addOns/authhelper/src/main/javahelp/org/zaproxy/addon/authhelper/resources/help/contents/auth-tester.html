@@ -24,10 +24,12 @@ The name of the context which will be configured to handle the authentication.
 If the context already exists then it will be deleted and recreated.
 
 <H3>Auth Method</H3>
-The authentication method to use: 
+The authentication method to use:
 <ul>
 <li>Browser Based - ZAP will try to identify and fill in the credentials automatically.
 <li>Client Script - ZAP will use the Client Script you have chosen to authenticate.
+<li>AI Assisted - an LLM will decide what to click, type or select on the login page, see
+<a href="ai-auth.html">AI Assisted Authentication</a> for more details.
 </ul>
 
 <H3>Client Script</H3>
@@ -43,12 +45,16 @@ The browser to use for authentication.<br>
 The browser you choose will need to be installed and be able to be launched from ZAP.
 
 <H3>Username</H3>
-The username to use for authentication - this will only be enabled if you have selected the "Browser Based" Auth Method.<br>
+The username to use for authentication - this will only be enabled if you have selected the "Browser Based" or "AI Assisted" Auth Method.<br>
 The username and password must be valid for the login to work.
 
 <H3>Password</H3>
-The password to use for authentication - this will only be enabled if you have selected the "Browser Based" Auth Method.<br>
+The password to use for authentication - this will only be enabled if you have selected the "Browser Based" or "AI Assisted" Auth Method.<br>
 The username and password must be valid for the login to work.
+
+<H3>Hints</H3>
+Free-text guidance for the LLM, for non-obvious steps it cannot infer just by looking at the page - this will only be shown if you have
+selected the "AI Assisted" Auth Method, see <a href="ai-auth.html">AI Assisted Authentication</a> for more details.
 
 <H3>Time to Wait (seconds)</H3>
 The number of seconds to wait after submitting the login form before closing the browser.<br>
@@ -60,10 +66,12 @@ the session handling or find a suitable verification URL.
 The number of seconds to wait in-between each step, either the implicit steps (filling in the username field, then password, then submitting),
 or the ones specified on the Steps tab.<br>
 This can help if the target application is running too slowly and does not react in time to handle ZAP's input.<br>
-Setting this to 2 will have the same effect as the previous "Demo Mode".
+Setting this to 2 will have the same effect as the previous "Demo Mode".<br>
+This will only be enabled if you have selected the "Browser Based" Auth Method.
 
 <H3>Record Diagnostics</H3>
-Enables the recording of diagnostic data during the authentication. Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.
+Enables the recording of diagnostic data during the authentication. Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.<br>
+This is not currently supported by the "AI Assisted" Auth Method.
 
 <H3>Reset Button</H3>
 The reset button allows you to reset all the fields on the Test tab, and disable all Steps in the Steps tab (steps are only disabled not removed as recreating them might be tedious).

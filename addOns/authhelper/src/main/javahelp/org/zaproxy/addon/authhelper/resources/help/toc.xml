@@ -9,6 +9,7 @@
 			<tocitem text="Authentication Helper" image="authhelper-icon" target="authhelper">
 				<tocitem text="Authentication Report" target="authhelper.auth-report-json"/>
 				<tocitem text="Authentication Request Identification" target="authhelper.auth-req-id"/>
+				<tocitem text="AI Assisted Authentication" target="authhelper.ai-auth"/>
 				<tocitem text="Authentication Tester Dialog" target="authhelper.auth-tester"/>
 				<tocitem text="Auto-Detect Authentication" target="authhelper.autodetect-auth"/>
 				<tocitem text="Auto-Detect Session Management" target="authhelper.autodetect-session"/>
