@@ -37,6 +37,7 @@ import org.zaproxy.addon.dev.api.openapi.simpleUnauth.OpenApiSimpleUnauthDir;
 import org.zaproxy.addon.dev.auth.basicHttp.BasicHttpDir;
 import org.zaproxy.addon.dev.auth.jsonMultipleCookies.JsonMultipleCookiesDir;
 import org.zaproxy.addon.dev.auth.nonStdJsonBearer.NonStdJsonBearerDir;
+import org.zaproxy.addon.dev.auth.oauth2.OAuth2RootDir;
 import org.zaproxy.addon.dev.auth.passswordAddedNoSubmit.PasswordAddedNoSubmitDir;
 import org.zaproxy.addon.dev.auth.passwordAddedJson.PasswordAddedJsonDir;
 import org.zaproxy.addon.dev.auth.passwordHiddenJson.PasswordHiddenJsonDir;
@@ -110,6 +111,7 @@ public class TestProxyServer {
         authDir.addDirectory(new SSOMSRootDir(this, "sso-ms"));
         authDir.addDirectory(new SSOMSPopupRootDir(this, "sso-ms-popup"));
         authDir.addDirectory(new UuidLoginRootDir(this, "uuid-login"));
+        authDir.addDirectory(new OAuth2RootDir(this, "oauth2"));
 
         TestDirectory apiDir = new TestDirectory(this, "api");
         TestDirectory openapiDir = new TestDirectory(this, "openapi");
