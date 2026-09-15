@@ -195,8 +195,7 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
 
                 // False Positive Reduction
                 // Skip single-character param values to avoid matches against
-                // static meta tokens like "1" from viewport or "yes" from
-                // apple-mobile-web-app-capable (Issue 9461).
+                // static meta tokens like "1" in "initial-scale=1" (Issue 9461).
                 if (paramValue.length() <= 1) {
                     continue;
                 }
