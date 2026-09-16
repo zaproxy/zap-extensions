@@ -145,7 +145,7 @@ public class MessageEntity {
         message.setTimeElapsedMillis(timeElapsedMillis);
         message.setResponseFromTargetHost(responseFromTargetHost);
         if (responseFromTargetHost) {
-            message.setRequestHeader(resHeader);
+            message.setResponseHeader(resHeader);
             message.setResponseBody(resBody);
         }
         return message;
