@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [15.56.0] - 2026-09-16
 ### Changed
 - Update Selenium to version 4.49.0.
 
@@ -394,6 +394,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.56.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.56.0
 [15.55.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.55.0
 [15.54.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.54.0
 [15.53.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.53.0
