@@ -111,6 +111,21 @@ class GspmActiveScanRegistrarUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReportPluginsOwnStatusRegardlessOfAddOn() {
+        // Given — e.g. a script-backed rule, which has no owning add-on but does have its own
+        // status (from its metadata), which must not be reported as unknown just because there's
+        // no add-on to fall back on.
+        plugins.add(pluginWithId(103, "Rule", AddOn.Status.beta));
+
+        // When
+        scanRuleRegistrar.registerRulesWithGspm(registry);
+
+        // Then
+        List<GspmRule> rules = registry.getRulesByTool(GspmActiveScanRegistrar.TOOL);
+        assertThat(rules.get(0).getStatus(), is(AddOn.Status.beta));
+    }
+
+    @Test
     void shouldRegisterPluginAddedForInstalledAddOn() {
         // Given
         AddOn addOn = addOnWithRule("Extra Add-on", 101);
@@ -203,9 +218,14 @@ class GspmActiveScanRegistrarUnitTest extends TestUtils {
     }
 
     private static Plugin pluginWithId(int id, String name) {
+        return pluginWithId(id, name, AddOn.Status.unknown);
+    }
+
+    private static Plugin pluginWithId(int id, String name, AddOn.Status status) {
         Plugin plugin = mock(Plugin.class);
         lenient().when(plugin.getId()).thenReturn(id);
         lenient().when(plugin.getName()).thenReturn(name);
+        lenient().when(plugin.getStatus()).thenReturn(status);
         return plugin;
     }
 

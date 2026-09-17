@@ -36,7 +36,6 @@ import org.zaproxy.addon.commonlib.gspm.GspmScanRuleRegistrar;
 import org.zaproxy.addon.commonlib.gspm.GspmScanRuleRegistrar.RuleOwner;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.control.ExtensionFactory;
-import org.zaproxy.zap.extension.AddOnInstallationStatusListener;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -46,10 +45,13 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * single {@link GspmCategory} with the stable key {@code "server-side"} and an i18n display name.
  *
  * <p>Lifecycle: call {@link #register(PassiveScannersManager)} once all scan rules are loaded (from
- * {@code postInit()}), and {@link #unregister()} when the extension is unloaded. {@link
- * #getInstallationStatusListener()} must be added to the extension hook <em>after</em> the {@code
- * AddOnScanRulesLoader} so that newly installed scanners have already been added to the {@link
- * PassiveScannersManager} by the time it reacts to the same event.
+ * {@code postInit()}), and {@link #unregister()} when the extension is unloaded. That call does a
+ * one-time bulk registration of whatever is already in the {@link PassiveScannersManager} at that
+ * point; from then on, {@link #ruleAdded(PluginPassiveScanner)} / {@link #ruleRemoved(int)} keep
+ * GSPM in sync as rules are added to or removed from the manager (add-on install/uninstall,
+ * script-backed rules, or anything else that calls {@code PassiveScannersManager.add()}/{@code
+ * .remove()} — see {@code ExtensionPassiveScan2.PassiveScannersManagerImpl}, the single choke point
+ * every passive scan rule flows through).
  */
 class GspmPassiveScanRegistrar {
 
@@ -62,7 +64,10 @@ class GspmPassiveScanRegistrar {
                     TOOL,
                     () -> Constant.messages.getString("pscan.gspm.tool"),
                     this::getAllCurrentRules,
-                    this::getRulesForAddOn);
+                    // Add-on install/uninstall sync happens via ruleAdded/ruleRemoved instead (see
+                    // class javadoc), so there's nothing for GspmScanRuleRegistrar's own
+                    // add-on-install-driven path to contribute here.
+                    addOn -> List.of());
 
     private PassiveScannersManager scannersManager;
     private ExtensionCommonlib commonlib;
@@ -84,11 +89,24 @@ class GspmPassiveScanRegistrar {
     }
 
     /**
-     * Returns the listener to register with the extension hook so that passive scan rules
-     * contributed by add-ons installed or uninstalled at runtime are kept in sync with GSPM.
+     * Registers a single passive scan rule with GSPM immediately — called for every rule added to
+     * the {@link PassiveScannersManager}, regardless of source (add-on install, script, or anything
+     * else).
      */
-    AddOnInstallationStatusListener getInstallationStatusListener() {
-        return scanRuleRegistrar;
+    void ruleAdded(PluginPassiveScanner scanner) {
+        if (scanner.getPluginId() == -1) {
+            LOGGER.debug("GSPM: skipping passive scan rule with no ID: {}", scanner.getName());
+            return;
+        }
+        scanRuleRegistrar.ruleAdded(toGspmRule(scanner, findOwningAddOn(scanner)));
+    }
+
+    /**
+     * Unregisters a single passive scan rule from GSPM immediately, by id — the counterpart to
+     * {@link #ruleAdded(PluginPassiveScanner)}.
+     */
+    void ruleRemoved(int id) {
+        scanRuleRegistrar.ruleRemoved(id);
     }
 
     private List<RuleOwner> getAllCurrentRules() {
@@ -106,28 +124,27 @@ class GspmPassiveScanRegistrar {
         return owners;
     }
 
-    /**
-     * Returns the rules contributed by {@code addOn}, assuming they have already been added to the
-     * {@link PassiveScannersManager} (e.g. by {@code AddOnScanRulesLoader}).
-     */
-    private List<GspmRule> getRulesForAddOn(AddOn addOn) {
-        List<String> pscanRuleClassNames = addOn.getPscanrules();
-        if (pscanRuleClassNames.isEmpty()) {
-            return List.of();
-        }
-        List<GspmRule> rules = new ArrayList<>();
-        for (PluginPassiveScanner scanner : scannersManager.getScanRules()) {
-            if (scanner.getPluginId() == -1
-                    || !pscanRuleClassNames.contains(scanner.getClass().getCanonicalName())) {
-                continue;
-            }
-            rules.add(toGspmRule(scanner, addOn));
-        }
-        return rules;
-    }
-
     private static GspmRule toGspmRule(PluginPassiveScanner scanner, AddOn addOn) {
         return new PassiveGspmRule(scanner, addOn != null ? addOn.getName() : null);
+    }
+
+    /**
+     * Looks up the add-on that contributes {@code scanner}, by matching its class name against
+     * every installed add-on's declared {@code pscanrules} list. {@code null} if none matches (e.g.
+     * a script-backed rule, which isn't contributed by an add-on).
+     */
+    private static AddOn findOwningAddOn(PluginPassiveScanner scanner) {
+        String className = scanner.getClass().getCanonicalName();
+        try {
+            for (AddOn addOn : ExtensionFactory.getAddOnLoader().getAddOnCollection().getAddOns()) {
+                if (addOn.getPscanrules().contains(className)) {
+                    return addOn;
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.debug("GSPM: could not determine owning add-on for pscan rule {}", className, e);
+        }
+        return null;
     }
 
     private static Map<PluginPassiveScanner, AddOn> buildAddOnMap(

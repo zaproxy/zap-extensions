@@ -140,6 +140,7 @@ public class PassiveScriptSynchronizerUnitTest extends TestUtils {
                     }
                 };
         given(scannersManager.add(any())).willReturn(true);
+        given(scannersManager.remove(any())).willReturn(true);
         ScriptWrapper script =
                 createScriptWrapper(metadataProvider, ScanRuleMetadataProvider.class);
         // When

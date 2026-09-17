@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
@@ -39,6 +40,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
@@ -50,6 +52,7 @@ import org.zaproxy.zap.testutils.TestUtils;
 class ActiveScriptSynchronizerUnitTest extends TestUtils {
 
     private ExtensionPassiveScan2 extensionPassiveScan;
+    private ExtensionCommonlib extensionCommonlib;
     private ExtensionScript extensionScript;
     private ExtensionLoader extensionLoader;
     private Model model;
@@ -58,11 +61,15 @@ class ActiveScriptSynchronizerUnitTest extends TestUtils {
     void setUp() throws Exception {
         setUpZap();
         extensionPassiveScan = mock(ExtensionPassiveScan2.class);
+        extensionCommonlib = mock(ExtensionCommonlib.class);
         extensionScript = mock(ExtensionScript.class);
         extensionLoader = mock(ExtensionLoader.class);
         model = mock(Model.class);
         Model.setSingletonForTesting(model);
         Control.initSingletonForTesting(model, extensionLoader);
+        lenient()
+                .when(extensionLoader.getExtension(ExtensionCommonlib.class))
+                .thenReturn(extensionCommonlib);
     }
 
     @Test
@@ -82,10 +89,12 @@ class ActiveScriptSynchronizerUnitTest extends TestUtils {
         var scanRuleCaptor = ArgumentCaptor.forClass(ActiveScriptScanRule.class);
         // When
         try (var pluginFactory = mockStatic(PluginFactory.class)) {
+            pluginFactory.when(() -> PluginFactory.isPluginLoaded(any())).thenReturn(true);
             synchronizer.scriptAdded(script);
             pluginFactory.verify(() -> PluginFactory.loadedPlugin(scanRuleCaptor.capture()));
         }
         // Then
+        verify(extensionCommonlib, times(1)).registerGspmActiveScanRule(scanRuleCaptor.getValue());
         ActiveScriptScanRule scanRule = scanRuleCaptor.getValue();
         assertThat(scanRule, is(notNullValue()));
         assertThat(scanRule.getId(), is(equalTo(metadata.getId())));
@@ -145,6 +154,8 @@ class ActiveScriptSynchronizerUnitTest extends TestUtils {
             pluginFactory.verify(() -> PluginFactory.unloadedPlugin(scanRuleCaptor.capture()));
         }
         // Then
+        verify(extensionCommonlib, times(1)).registerGspmActiveScanRule(scanRuleCaptor.getValue());
+        verify(extensionCommonlib, times(1)).unregisterGspmActiveScanRule(metadata.getId());
         ActiveScriptScanRule scanRule = scanRuleCaptor.getValue();
         assertThat(scanRule, is(notNullValue()));
         assertThat(scanRule.getId(), is(equalTo(metadata.getId())));

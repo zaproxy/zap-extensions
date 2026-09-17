@@ -129,6 +129,22 @@ public class GspmActiveScanRegistrar {
         }
     }
 
+    /**
+     * Registers a single active scan plugin with GSPM immediately, outside the normal add-on
+     * install lifecycle — e.g. a script-backed active scan rule added at runtime.
+     */
+    public void ruleAdded(Plugin plugin) {
+        scanRuleRegistrar.ruleAdded(toGspmRule(plugin, null));
+    }
+
+    /**
+     * Unregisters a single active scan plugin from GSPM immediately, by id — e.g. a script-backed
+     * active scan rule removed at runtime.
+     */
+    public void ruleRemoved(int id) {
+        scanRuleRegistrar.ruleRemoved(id);
+    }
+
     /** Unregisters the proxy from {@link ExtensionActiveScan} via reflection. */
     public void unregisterFromCore() {
         if (registeredProxy == null) {
@@ -199,10 +215,7 @@ public class GspmActiveScanRegistrar {
     }
 
     private static GspmRule toGspmRule(Plugin plugin, AddOn addOn) {
-        return new ActiveScanGspmRule(
-                plugin,
-                addOn != null ? addOn.getName() : null,
-                addOn != null ? addOn.getStatus() : AddOn.Status.unknown);
+        return new ActiveScanGspmRule(plugin, addOn != null ? addOn.getName() : null);
     }
 
     private static Map<Integer, AddOn> buildPluginAddOnMap() {
@@ -224,7 +237,6 @@ public class GspmActiveScanRegistrar {
 
         private final Plugin plugin;
         private final String addOnName;
-        private final AddOn.Status status;
 
         @Override
         public int getId() {
@@ -286,7 +298,7 @@ public class GspmActiveScanRegistrar {
 
         @Override
         public AddOn.Status getStatus() {
-            return status;
+            return plugin.getStatus();
         }
 
         @Override

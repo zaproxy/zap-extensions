@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
@@ -178,6 +179,26 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
      */
     public void unregisterGspmRuleSource(GspmRuleSource source) {
         source.unregisterRulesFromGspm(gspmRegistry);
+    }
+
+    /**
+     * Registers a single active scan plugin with GSPM immediately, outside the normal add-on
+     * install lifecycle — e.g. a script-backed active scan rule added at runtime.
+     *
+     * @since 1.45.0
+     */
+    public void registerGspmActiveScanRule(Plugin plugin) {
+        gspmAscanRegistrar.ruleAdded(plugin);
+    }
+
+    /**
+     * Unregisters a single active scan plugin from GSPM immediately, by id — e.g. a script-backed
+     * active scan rule removed at runtime.
+     *
+     * @since 1.45.0
+     */
+    public void unregisterGspmActiveScanRule(int id) {
+        gspmAscanRegistrar.ruleRemoved(id);
     }
 
     /**
