@@ -67,14 +67,19 @@ jobs:
         GECKO_INPUT=${GECKO_INPUT:-"gxx" }
         echo $GECKO_INPUT
         if [ $GECKO_INPUT == "gxx" ]; then
-          GECKO_VERS=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .tag_name | cut -c 2-)
+          GECKO_TAG=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest|jq -r .tag_name)
+          if [ -n "$GECKO_TAG" ] && [ "$GECKO_TAG" != "null" ]; then
+            GECKO_VERS=$(echo "$GECKO_TAG" | cut -c 2-)
+          else
+            GECKO_VERS=""
+          fi
           GECKO_SOURCE=fetched
         else
           GECKO_VERS=${{ github.event.inputs.gecko_version }}
           GECKO_SOURCE=workflow_dispatch
         fi
         echo $GECKO_VERS
-        if [ -n "$GECKO_VERS" ] && [ "$GECKO_VERS" != "null" ]; then GECKO_RETRIEVED=yes; else GECKO_RETRIEVED=no; fi
+        if [ -n "$GECKO_VERS" ]; then GECKO_RETRIEVED=yes; else GECKO_RETRIEVED=no; fi
         {
           echo "### geckodriver version"
           echo "- **Retrieved:** $GECKO_RETRIEVED (\`$GECKO_VERS\`)"
@@ -132,7 +137,7 @@ jobs:
           echo "- **Changelog commit:** $([ "$GECKO_COMMIT" -eq 1 ] && echo yes || echo no)"
           echo ""
         } >> "$SUMMARY"
-        if [ "$CHROME_VERS" == "null" ] || [ "$GECKO_VERS" == "null" ]; then
+        if [ "$CHROME_VERS" == "null" ] || [ -z "$GECKO_VERS" ]; then
           echo "Could not retrieve one (or both) of the new version identifiers"
           {
             echo "### Stopped"
