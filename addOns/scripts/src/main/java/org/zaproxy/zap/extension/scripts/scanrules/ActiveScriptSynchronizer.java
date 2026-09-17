@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.PluginFactory;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -33,6 +34,7 @@ public class ActiveScriptSynchronizer {
     private static final Logger LOGGER = LogManager.getLogger(ActiveScriptSynchronizer.class);
 
     private ExtensionScript extScript;
+    private ExtensionCommonlib extCommonlib;
     private final Map<ScriptWrapper, ActiveScriptScanRule> scriptToScanRuleMap = new HashMap<>();
 
     public void scriptAdded(ScriptWrapper script) {
@@ -55,6 +57,7 @@ public class ActiveScriptSynchronizer {
                 }
                 if (unloadScanRule(scanRule)) {
                     scriptToScanRuleMap.remove(script);
+                    notifyGspmRuleRemoved(scanRule.getId());
                 }
             }
 
@@ -69,6 +72,7 @@ public class ActiveScriptSynchronizer {
                 return;
             }
             scriptToScanRuleMap.put(script, scanRule);
+            notifyGspmRuleAdded(scanRule);
         } catch (Exception e) {
             getExtScript().handleScriptException(script, e);
         }
@@ -82,6 +86,7 @@ public class ActiveScriptSynchronizer {
             }
             if (unloadScanRule(scanRule)) {
                 scriptToScanRuleMap.remove(script);
+                notifyGspmRuleRemoved(scanRule.getId());
             }
         } catch (Exception e) {
             extScript.handleScriptException(script, e);
@@ -89,7 +94,14 @@ public class ActiveScriptSynchronizer {
     }
 
     public void unload() {
-        scriptToScanRuleMap.values().forEach(this::unloadScanRule);
+        scriptToScanRuleMap
+                .values()
+                .forEach(
+                        scanRule -> {
+                            if (unloadScanRule(scanRule)) {
+                                notifyGspmRuleRemoved(scanRule.getId());
+                            }
+                        });
     }
 
     private boolean unloadScanRule(ActiveScriptScanRule scanRule) {
@@ -107,5 +119,34 @@ public class ActiveScriptSynchronizer {
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         }
         return extScript;
+    }
+
+    /**
+     * Notifies GSPM directly that this script-backed rule was added, so it shows up without waiting
+     * for GSPM's initial registration or an add-on install/uninstall event.
+     */
+    private void notifyGspmRuleAdded(ActiveScriptScanRule scanRule) {
+        ExtensionCommonlib commonlib = getExtCommonlib();
+        if (commonlib != null) {
+            commonlib.registerGspmActiveScanRule(scanRule);
+        }
+    }
+
+    /** Notifies GSPM directly that the script-backed rule with this id was removed. */
+    private void notifyGspmRuleRemoved(int id) {
+        ExtensionCommonlib commonlib = getExtCommonlib();
+        if (commonlib != null) {
+            commonlib.unregisterGspmActiveScanRule(id);
+        }
+    }
+
+    private ExtensionCommonlib getExtCommonlib() {
+        if (extCommonlib == null) {
+            extCommonlib =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionCommonlib.class);
+        }
+        return extCommonlib;
     }
 }

@@ -287,10 +287,6 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
         extensionHook.addApiImplementor(new PassiveScanApi(this, scannersManager));
 
         extensionHook.addAddOnInstallationStatusListener(scanRulesLoader);
-        // Added after scanRulesLoader so newly installed scanners are already in
-        // scannersManager by the time gspmRegistrar reacts to the same event.
-        extensionHook.addAddOnInstallationStatusListener(
-                gspmRegistrar.getInstallationStatusListener());
 
         if (hasView()) {
             scanStatus =
@@ -523,6 +519,7 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
                     if (hasView()) {
                         getPolicyPanel().getPassiveScanTableModel().addScanner(pps);
                     }
+                    gspmRegistrar.ruleAdded(pps);
                 }
                 return added;
 
@@ -549,10 +546,14 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
                 removed = scanRuleManager.remove(name);
             }
 
-            if (scanner != null && hasView() && scanner instanceof PluginPassiveScanner) {
-                getPolicyPanel()
-                        .getPassiveScanTableModel()
-                        .removeScanner((PluginPassiveScanner) scanner);
+            if (scanner != null && scanner instanceof PluginPassiveScanner) {
+                PluginPassiveScanner pps = (PluginPassiveScanner) scanner;
+                if (hasView()) {
+                    getPolicyPanel().getPassiveScanTableModel().removeScanner(pps);
+                }
+                if (removed) {
+                    gspmRegistrar.ruleRemoved(pps.getPluginId());
+                }
             }
 
             return removed;
