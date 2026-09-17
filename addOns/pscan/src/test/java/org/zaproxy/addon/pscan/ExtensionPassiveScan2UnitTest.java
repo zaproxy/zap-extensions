@@ -25,26 +25,47 @@ import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
+import org.apache.commons.configuration.FileConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.extension.pscan.PassiveScanner;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link ExtensionPassiveScan2}. */
 class ExtensionPassiveScan2UnitTest extends TestUtils {
 
     private ExtensionPassiveScan2 extension;
+    private GspmPassiveScanRegistrar gspmRegistrar;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         extension = new ExtensionPassiveScan2();
         mockMessages(extension);
+
+        Model model = mock(Model.class);
+        OptionsParam optionsParam = mock(OptionsParam.class);
+        lenient().when(model.getOptionsParam()).thenReturn(optionsParam);
+        lenient().when(optionsParam.getConfig()).thenReturn(mock(FileConfiguration.class));
+        extension.initModel(model);
+
+        gspmRegistrar = mock(GspmPassiveScanRegistrar.class);
+        setField(extension, "gspmRegistrar", gspmRegistrar);
     }
 
     @Test
@@ -73,5 +94,90 @@ class ExtensionPassiveScan2UnitTest extends TestUtils {
         extension.init();
         // Then
         assertThat(extension.getAutoTaggingTags(), is(empty()));
+    }
+
+    @Test
+    void shouldNotifyGspmWhenPluginPassiveScanRuleAdded() {
+        // Given
+        PluginPassiveScanner scanner = mock(PluginPassiveScanner.class);
+        given(scanner.getName()).willReturn("Test Rule");
+        given(scanner.getPluginId()).willReturn(42);
+
+        // When
+        boolean added = extension.getPassiveScannersManager().add(scanner);
+
+        // Then
+        assertThat(added, is(true));
+        verify(gspmRegistrar).ruleAdded(scanner);
+    }
+
+    @Test
+    void shouldNotNotifyGspmWhenPluginPassiveScanRuleFailsToAdd() {
+        // Given — ScanRuleManager rejects a second scanner registered under the same name.
+        PluginPassiveScanner first = mock(PluginPassiveScanner.class);
+        given(first.getName()).willReturn("Duplicate");
+        given(first.getPluginId()).willReturn(43);
+        extension.getPassiveScannersManager().add(first);
+        PluginPassiveScanner duplicateName = mock(PluginPassiveScanner.class);
+        given(duplicateName.getName()).willReturn("Duplicate");
+        given(duplicateName.getPluginId()).willReturn(44);
+
+        // When
+        boolean added = extension.getPassiveScannersManager().add(duplicateName);
+
+        // Then
+        assertThat(added, is(false));
+        verify(gspmRegistrar, never()).ruleAdded(duplicateName);
+    }
+
+    @Test
+    void shouldNotNotifyGspmWhenNonPluginPassiveScannerAdded() {
+        // Given
+        PassiveScanner scanner = mock(PassiveScanner.class);
+        given(scanner.getName()).willReturn("Plain Scanner");
+
+        // When
+        boolean added = extension.getPassiveScannersManager().add(scanner);
+
+        // Then
+        assertThat(added, is(true));
+        verifyNoInteractions(gspmRegistrar);
+    }
+
+    @Test
+    void shouldNotifyGspmWhenPluginPassiveScanRuleRemoved() {
+        // Given
+        PluginPassiveScanner scanner = mock(PluginPassiveScanner.class);
+        given(scanner.getName()).willReturn("Test Rule");
+        given(scanner.getPluginId()).willReturn(46);
+        extension.getPassiveScannersManager().add(scanner);
+
+        // When
+        boolean removed = extension.getPassiveScannersManager().remove(scanner);
+
+        // Then
+        assertThat(removed, is(true));
+        verify(gspmRegistrar).ruleRemoved(46);
+    }
+
+    @Test
+    void shouldNotNotifyGspmWhenPluginPassiveScanRuleNeverAdded() {
+        // Given — a scanner that was never added, so ScanRuleManager won't find it by class name
+        // and none of its stubbed behaviour is actually consulted during the remove attempt.
+        PluginPassiveScanner scanner = mock(PluginPassiveScanner.class);
+
+        // When
+        boolean removed = extension.getPassiveScannersManager().remove(scanner);
+
+        // Then
+        assertThat(removed, is(false));
+        verify(gspmRegistrar, never()).ruleRemoved(anyInt());
+    }
+
+    private static void setField(ExtensionPassiveScan2 target, String name, Object value)
+            throws Exception {
+        Field field = ExtensionPassiveScan2.class.getDeclaredField(name);
+        field.setAccessible(true);
+        field.set(target, value);
     }
 }

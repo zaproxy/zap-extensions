@@ -219,6 +219,82 @@ class GspmScanRuleRegistrarUnitTest {
         assertThat(registry.getAllRules(), is(empty()));
     }
 
+    @Test
+    void shouldRegisterRuleAddedDirectly() {
+        // Given — e.g. a script-backed rule added at runtime, outside any add-on install.
+        registrar.registerRulesWithGspm(registry);
+
+        // When
+        registrar.ruleAdded(fakeRule(20));
+
+        // Then
+        assertThat(registry.isRegistered(20), is(true));
+    }
+
+    @Test
+    void shouldNotDoubleRegisterRuleAddedDirectlyTwice() {
+        // Given
+        registrar.registerRulesWithGspm(registry);
+        registrar.ruleAdded(fakeRule(21));
+
+        // When
+        registrar.ruleAdded(fakeRule(21));
+
+        // Then
+        assertThat(registry.getRulesByTool(TOOL), hasSize(1));
+    }
+
+    @Test
+    void shouldDoNothingWhenRuleAddedDirectlyWhileNotRegisteredWithGspm() {
+        // Given — registerRulesWithGspm was never called.
+        // When / Then
+        assertDoesNotThrow(() -> registrar.ruleAdded(fakeRule(22)));
+        assertThat(registry.getAllRules(), is(empty()));
+    }
+
+    @Test
+    void shouldUnregisterRuleRemovedDirectly() {
+        // Given — e.g. a script-backed rule removed at runtime, outside any add-on uninstall.
+        registrar.registerRulesWithGspm(registry);
+        registrar.ruleAdded(fakeRule(23));
+
+        // When
+        registrar.ruleRemoved(23);
+
+        // Then
+        assertThat(registry.isRegistered(23), is(false));
+    }
+
+    @Test
+    void shouldDoNothingWhenRemovingRuleNotRegisteredDirectly() {
+        // Given
+        registrar.registerRulesWithGspm(registry);
+
+        // When / Then
+        assertDoesNotThrow(() -> registrar.ruleRemoved(99));
+    }
+
+    @Test
+    void shouldDoNothingWhenRuleRemovedDirectlyWhileNotRegisteredWithGspm() {
+        // Given — registerRulesWithGspm was never called.
+        // When / Then
+        assertDoesNotThrow(() -> registrar.ruleRemoved(24));
+    }
+
+    @Test
+    void shouldNotReRegisterRuleRemovedDirectlyAfterUnregisterRulesFromGspm() {
+        // Given
+        registrar.registerRulesWithGspm(registry);
+        registrar.ruleAdded(fakeRule(25));
+        registrar.unregisterRulesFromGspm(registry);
+
+        // When
+        assertDoesNotThrow(() -> registrar.ruleRemoved(25));
+
+        // Then
+        assertThat(registry.getAllRules(), is(empty()));
+    }
+
     private static GspmRule fakeRule(int id) {
         GspmRule rule = mock(GspmRule.class);
         lenient().when(rule.getId()).thenReturn(id);
