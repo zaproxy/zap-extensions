@@ -301,6 +301,26 @@ class ZestZapUtilsUnitTest {
         assertThat(msg.getRequestHeader().getURI().toString(), is(equalTo(expectedUrl)));
     }
 
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com/{{path}}/a%20b, https://www.example.com/%7B%7Bpath%7D%7D/a%20b",
+        "https://www.example.com/a%2Fb?value={{value}}, https://www.example.com/a%2Fb?value=%7B%7Bvalue%7D%7D",
+        "https://www.example.com/{{path}}?value=], https://www.example.com/%7B%7Bpath%7D%7D?value=%5D",
+        "https://www.example.com/a%2Fb?value={{value}}], https://www.example.com/a%2Fb?value=%7B%7Bvalue%7D%7D%5D",
+    })
+    void shouldEncodeUrlWithVariables(String urlToken, String expectedUrl) throws Exception {
+        // Given
+        ZestRequest req = new ZestRequest();
+        req.setUrlToken(urlToken);
+        req.setMethod("GET");
+
+        // When
+        HttpMessage msg = ZestZapUtils.toHttpMessage(req, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getURI().toString(), is(equalTo(expectedUrl)));
+    }
+
     private static ZestParam createZestParam() {
         ZestParam zestParam = new ZestParam();
         zestParam.load(new ZapXmlConfiguration());
