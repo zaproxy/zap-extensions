@@ -140,8 +140,7 @@ public class HttpsConfigScanRule extends AbstractHostPlugin {
             new ExampleICipherSuite("TLS_AES_256_GCM_SHA384", "STRONG", "TLSv1.3"),
             new ExampleICipherSuite("TLS_CHACHA20_POLY1305_SHA256", "STRONG", "TLSv1.3")
         };
-        String exampleConfigReport =
-                buildConfigReport("example.com", null, exampleCert, exampleCiphers);
+        String exampleConfigReport = buildConfigReport("example.com", exampleCert, exampleCiphers);
         String exampleFailureDetails =
                 "Certificate & Chain: Certificate expired\n"
                         + "  - [SYS-0020100] Certificate expired (CRITICAL)\n\n";
@@ -194,6 +193,16 @@ public class HttpsConfigScanRule extends AbstractHostPlugin {
     }
 
     @Override
+    public void init() {
+        ExtensionHttpsInfo extHttpsInfo =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionHttpsInfo.class);
+        if (extHttpsInfo != null && extHttpsInfo.isProxyEnabled()) {
+            getParent()
+                    .pluginSkipped(this, Constant.messages.getString(MESSAGE_PREFIX + "skipped"));
+        }
+    }
+
+    @Override
     public void scan() {
         HttpMessage baseMsg = getBaseMsg();
         if (!baseMsg.getRequestHeader().isSecure()) {
@@ -225,12 +234,6 @@ public class HttpsConfigScanRule extends AbstractHostPlugin {
                 return;
             }
 
-            ExtensionHttpsInfo extHttpsInfo =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionHttpsInfo.class);
-            String proxyChainWarning =
-                    extHttpsInfo != null ? extHttpsInfo.getProxyChainWarning() : null;
             IX509Certificate cert = null;
             ICipherSuite[] ciphers = null;
             try {
@@ -239,7 +242,7 @@ public class HttpsConfigScanRule extends AbstractHostPlugin {
             } catch (DeepVioletException e) {
                 LOGGER.debug("Failed to get engine data: {}", e.getMessage());
             }
-            String report = buildConfigReport(target.getHost(), proxyChainWarning, cert, ciphers);
+            String report = buildConfigReport(target.getHost(), cert, ciphers);
 
             buildInfoAlert(baseMsg, null, report).raise();
 
@@ -352,14 +355,8 @@ public class HttpsConfigScanRule extends AbstractHostPlugin {
         };
     }
 
-    private String buildConfigReport(
-            String host, String proxyChainWarning, IX509Certificate cert, ICipherSuite[] ciphers) {
+    private String buildConfigReport(String host, IX509Certificate cert, ICipherSuite[] ciphers) {
         StringBuilder report = new StringBuilder();
-        if (proxyChainWarning != null) {
-            report.append(proxyChainWarning)
-                    .append(System.lineSeparator())
-                    .append(System.lineSeparator());
-        }
         report.append(Constant.messages.getString("httpsinfo.general.server.leadin", host));
         report.append(System.lineSeparator());
 

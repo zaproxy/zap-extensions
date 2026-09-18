@@ -28,6 +28,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.net.HttpURLConnection;
 import java.util.Map;
@@ -38,7 +42,10 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -68,6 +75,38 @@ class HttpsConfigScanRuleUnitTest extends ActiveScannerTestUtils<HttpsConfigScan
     @Override
     protected void setUpMessages() {
         mockMessages(new ExtensionHttpsInfo());
+    }
+
+    @Test
+    void shouldSkipWhenProxyIsConfigured() throws Exception {
+        // Given
+        ExtensionLoader extensionLoader = mock();
+        ExtensionHttpsInfo extHttpsInfo = mock();
+        given(extHttpsInfo.isProxyEnabled()).willReturn(true);
+        given(extensionLoader.getExtension(ExtensionHttpsInfo.class)).willReturn(extHttpsInfo);
+        Control.initSingletonForTesting(mock(), extensionLoader);
+        HttpMessage httpsMessage = createHttpsMessage(SSLCOM_VALID_DV_RSA);
+
+        // When
+        rule.init(httpsMessage, parent);
+
+        // Then
+        verify(parent).pluginSkipped(rule, Constant.messages.getString("httpsinfo.scan.skipped"));
+    }
+
+    @Test
+    void shouldNotSkipWhenProxyNotConfigured() throws Exception {
+        // Given
+        ExtensionLoader extensionLoader = mock();
+        given(extensionLoader.getExtension(ExtensionHttpsInfo.class)).willReturn(mock());
+        Control.initSingletonForTesting(mock(), extensionLoader);
+        HttpMessage httpsMessage = createHttpsMessage(SSLCOM_VALID_DV_RSA);
+
+        // When
+        rule.init(httpsMessage, parent);
+
+        // Then
+        verifyNoInteractions(parent);
     }
 
     @Test

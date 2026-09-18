@@ -161,22 +161,10 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor implements SessionChang
         return Constant.messages.getString("httpsinfo.desc");
     }
 
-    /**
-     * Returns the proxy chain warning message if ZAP is configured to use an outbound proxy, or
-     * {@code null} otherwise. Results may be inaccurate when proxy chaining is enabled, as they may
-     * represent the connection to the proxy instead of the connection to the target.
-     *
-     * @return the warning message, or {@code null} if proxy chaining is not enabled
-     */
-    public String getProxyChainWarning() {
+    boolean isProxyEnabled() {
         ExtensionNetwork extNetwork =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
-        if (!extNetwork.isHttpProxyEnabled()) {
-            return null;
-        }
-        return Constant.messages.getString(
-                "httpsinfo.warn.outgoing.proxy.enabled",
-                Constant.messages.getString("httpsinfo.name"));
+        return extNetwork.isProxyEnabled();
     }
 
     protected int getTabIndex(String tabName) {

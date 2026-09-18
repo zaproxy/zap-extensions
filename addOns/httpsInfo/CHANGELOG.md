@@ -4,6 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Depend on newer version of Network add-on.
+- The HTTPS Configuration scan rule now skips the scan when an outbound proxy (HTTP or SOCKS) is configured.
+
 ### Fixed
 - Example alert code link.
 
