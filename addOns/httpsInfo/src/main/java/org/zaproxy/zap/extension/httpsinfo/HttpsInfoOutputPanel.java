@@ -151,13 +151,6 @@ public class HttpsInfoOutputPanel extends OutputPanel {
 
     private void showGeneral() {
         StringBuilder content = new StringBuilder();
-        ExtensionHttpsInfo extHttpsInfo =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionHttpsInfo.class);
-        String proxyChainWarning =
-                extHttpsInfo != null ? extHttpsInfo.getProxyChainWarning() : null;
-        if (proxyChainWarning != null) {
-            content.append(proxyChainWarning).append(NEWLINE).append(NEWLINE);
-        }
         content.append(
                 Constant.messages.getString("httpsinfo.general.server.leadin", target.getHost()));
         try {

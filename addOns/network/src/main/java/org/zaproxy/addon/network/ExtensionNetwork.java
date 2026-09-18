@@ -350,6 +350,17 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return getConnectionOptions().isHttpProxyEnabled();
     }
 
+    /**
+     * Tells whether or not a proxy (HTTP or SOCKS) is enabled.
+     *
+     * @return {@code true} if a proxy is enabled, {@code false} otherwise.
+     * @since 0.30.0
+     */
+    public boolean isProxyEnabled() {
+        return getConnectionOptions().isHttpProxyEnabled()
+                || getConnectionOptions().isSocksProxyEnabled();
+    }
+
     ClientCertificatesOptions getClientCertificatesOptions() {
         return clientCertificatesOptions;
     }
