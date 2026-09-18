@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.httpsinfo;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
@@ -33,6 +34,17 @@ public class MenuEntry extends PopupMenuItemHttpMessageContainer {
     public MenuEntry(String label, ExtensionHttpsInfo extension) {
         super(label);
         this.extension = extension;
+    }
+
+    @Override
+    protected boolean isButtonEnabledForHttpMessageContainerState(
+            HttpMessageContainer httpMessageContainer) {
+        if (extension.isProxyEnabled()) {
+            setToolTipText(Constant.messages.getString("httpsinfo.rightclick.menuitem.disabled"));
+            return false;
+        }
+        setToolTipText("");
+        return super.isButtonEnabledForHttpMessageContainerState(httpMessageContainer);
     }
 
     @Override

@@ -12,7 +12,7 @@ zapAddOn {
                     version.set(">= 1.40.0 & < 2.0.0")
                 }
                 register("network") {
-                    version.set(">=0.26.0")
+                    version.set(">=0.30.0")
                 }
             }
         }

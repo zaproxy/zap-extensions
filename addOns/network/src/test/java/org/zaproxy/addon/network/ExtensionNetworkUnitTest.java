@@ -75,6 +75,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
@@ -189,6 +190,22 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @Test
     void shouldHaveDescription() {
         assertThat(extension.getDescription(), is(not(emptyString())));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "false, false, false",
+        "true, false, true",
+        "false, true, true",
+        "true, true, true"
+    })
+    void shouldReturnExpectedProxyEnabledState(boolean http, boolean socks, boolean expected) {
+        // Given
+        extension.getConnectionOptions().load(new ZapXmlConfiguration());
+        extension.getConnectionOptions().setHttpProxyEnabled(http);
+        extension.getConnectionOptions().setSocksProxyEnabled(socks);
+        // When / Then
+        assertThat(extension.isProxyEnabled(), is(equalTo(expected)));
     }
 
     @Test
