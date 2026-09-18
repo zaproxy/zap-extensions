@@ -45,12 +45,11 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     @Test
     void shouldEncodingWithEmptyInput() throws Exception {
         String inputString = "";
-        byte[] decodedBytes = Base64.getDecoder().decode(inputString);
 
         List<String> messageFields = EncoderUtils.parseIntoList(inputString);
         encoder.encode(messageFields);
 
-        assertArrayEquals(null, encoder.getOutputEncodedMessage());
+        assertArrayEquals(new byte[] {0, 0, 0, 0, 0}, encoder.getOutputEncodedMessage());
     }
 
     @Test
@@ -59,6 +58,61 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
         encoder.encode(null);
 
         assertArrayEquals(null, encoder.getOutputEncodedMessage());
+    }
+
+    @Test
+    void shouldEncodingWithEmptyNestedMessage() throws Exception {
+        byte[] expectedBytes = Base64.getDecoder().decode("AAAAAAIKAA==");
+        String inputString = "1:2N::{\n}\n";
+
+        encoder.encode(EncoderUtils.parseIntoList(inputString));
+
+        assertArrayEquals(expectedBytes, encoder.getOutputEncodedMessage());
+    }
+
+    @Test
+    void shouldEncodingWithDeeplyNestedEmptyMessage() throws Exception {
+        byte[] expectedBytes =
+                Base64.getDecoder()
+                        .decode(
+                                "AAAAADQKEEhlbGxvLCBQcm90b2J1ZiESGgoESm9obhIGTWlsbGVyGgoKBEpvaG4QAhoAGOqtwOUk");
+        String inputString =
+                "1:2::\"Hello, Protobuf!\"\n"
+                        + "2:2N::{\n"
+                        + "1:2::\"John\"\n"
+                        + "2:2::\"Miller\"\n"
+                        + "3:2N::{\n"
+                        + "1:2::\"John\"\n"
+                        + "2:0::2\n"
+                        + "3:2N::{\n"
+                        + "}\n"
+                        + "}\n"
+                        + "}\n"
+                        + "3:0::9876543210\n";
+
+        encoder.encode(EncoderUtils.parseIntoList(inputString));
+
+        assertArrayEquals(expectedBytes, encoder.getOutputEncodedMessage());
+    }
+
+    @Test
+    void shouldResetOutputForEmptyAndNullInputAfterPreviousEncoding() throws Exception {
+        encoder.encode(EncoderUtils.parseIntoList("1:2::\"value\"\n"));
+
+        encoder.encode(List.of());
+        assertArrayEquals(new byte[] {0, 0, 0, 0, 0}, encoder.getOutputEncodedMessage());
+
+        encoder.encode(null);
+        assertArrayEquals(null, encoder.getOutputEncodedMessage());
+    }
+
+    @Test
+    void shouldRejectMalformedNestedMessageInsteadOfEncodingItAsString() {
+        String inputString = "1:2N::{\ninvalid\n}\n";
+
+        assertThrows(
+                InvalidProtobufFormatException.class,
+                () -> encoder.encode(EncoderUtils.parseIntoList(inputString)));
     }
 
     @Test
