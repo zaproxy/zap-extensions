@@ -225,9 +225,12 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         "org.bouncycastle.jsse.provider.ProvTlsServer"),
                 Level.WARN);
 
-        // Do not WARN by default on invalid/rejected cookies.
+        // Do not WARN by default on failed negotiation or invalid/rejected cookies.
         setLogLevel(
-                List.of("org.apache.hc.client5.http.protocol.ResponseProcessCookies"), Level.ERROR);
+                List.of(
+                        "org.apache.hc.client5.http.impl.auth.HttpAuthenticator",
+                        "org.apache.hc.client5.http.protocol.ResponseProcessCookies"),
+                Level.ERROR);
 
         // Force initialisation.
         TlsUtils.getSupportedTlsProtocols();
