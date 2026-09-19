@@ -270,14 +270,9 @@ apply directly to the selected text in any <code>JTextComponent</code> (e.g. Req
 The in-place operation submenus are not shown in the Response view.
 
 <p>
-When text is selected and you right-click, the <b>Encode/Decode/Hash...</b> menu contains the following submenus:
-
-<ul>
-  <li><b>Encode</b> - Base64, Base64 URL, URL, Full URL, ASCII Hex, HTML, Full HTML, JavaScript, Unicode, PowerShell, Morse Code</li>
-  <li><b>Decode</b> - Base64, Base64 URL, URL, Full URL, ASCII Hex, HTML, JavaScript, Unicode, Morse Code</li>
-  <li><b>Hash</b> - MD5, SHA1, SHA256</li>
-  <li><b>Utility</b> - Remove Whitespace, Reverse, Lowercase, Uppercase, ASCify, Illegal UTF-8 (2/3/4 byte)</li>
-</ul>
+When text is selected and you right-click, the <b>Encode/Decode/Hash...</b> menu contains a submenu
+per category of processor (Encode, Decode, Hash, Utility, Scripts), each listing the matching
+processors described above. A disabled Custom script is still listed, but greyed out.
 
 <p>
 Selecting an operation replaces the selected text with the result. The result remains selected so that
