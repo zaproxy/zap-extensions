@@ -24,15 +24,19 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit tests for {@link PopupEncoderMenu}. */
@@ -44,7 +48,13 @@ class PopupEncoderMenuUnitTest extends TestUtils {
         Constant.getInstance();
         Model model = new Model();
         Model.setSingletonForTesting(model);
-        Control.initSingletonForTesting(model);
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionScript extensionScript =
+                mock(ExtensionScript.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
+        Control.initSingletonForTesting(model, extensionLoader);
     }
 
     @Test
