@@ -21,14 +21,28 @@ package org.zaproxy.addon.encoder.processors;
 
 public class EncodeDecodeProcessorItem {
 
-    private String id;
-    private String name;
-    private EncodeDecodeProcessor processor;
+    private final String id;
+    private final String name;
+    private final EncodeDecodeProcessor processor;
+    private final Category category;
+    private final boolean enabled;
 
-    public EncodeDecodeProcessorItem(String id, String name, EncodeDecodeProcessor processor) {
+    public EncodeDecodeProcessorItem(
+            String id,
+            String name,
+            EncodeDecodeProcessor processor,
+            Category category,
+            boolean enabled) {
         this.id = id;
         this.name = name;
         this.processor = processor;
+        this.category = category;
+        this.enabled = enabled;
+    }
+
+    public EncodeDecodeProcessorItem(
+            String id, String name, EncodeDecodeProcessor processor, Category category) {
+        this(id, name, processor, category, true);
     }
 
     public String getId() {
@@ -41,5 +55,13 @@ public class EncodeDecodeProcessorItem {
 
     public EncodeDecodeProcessor getProcessor() {
         return processor;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }
