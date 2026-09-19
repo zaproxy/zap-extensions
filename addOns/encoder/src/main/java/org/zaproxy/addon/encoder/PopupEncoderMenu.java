@@ -22,12 +22,12 @@ package org.zaproxy.addon.encoder;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JMenu;
 import javax.swing.text.JTextComponent;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.addon.encoder.popup.EncoderOperationMenuItem;
-import org.zaproxy.addon.encoder.popup.EncoderSubMenu;
 import org.zaproxy.addon.encoder.processors.Category;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessorItem;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessors;
@@ -45,6 +45,8 @@ public class PopupEncoderMenu extends ExtensionPopupMenu {
     private static final long serialVersionUID = 1L;
 
     private volatile JTextComponent lastInvoker = null;
+    private final EncodeDecodeProcessors processors = new EncodeDecodeProcessors();
+    private JMenu scriptsSubMenu;
 
     public PopupEncoderMenu(Runnable dialogAction) {
         super(Constant.messages.getString("encoder.tools.menu.encdec"));
@@ -69,11 +71,38 @@ public class PopupEncoderMenu extends ExtensionPopupMenu {
         add(openDialogItem);
 
         for (Category category : Category.values()) {
-            List<EncoderOperationMenuItem> items = buildItems(category);
+            if (category == Category.SCRIPT) {
+                continue;
+            }
+            List<EncoderOperationMenuItem> items = buildItems(processors, category);
             if (!items.isEmpty()) {
-                add(new EncoderSubMenu(msg(category.getI18nKey()), items));
+                add(newSubMenu(msg(category.getI18nKey()), items));
             }
         }
+        rebuildScriptsMenu();
+    }
+
+    /**
+     * Rebuilds the Scripts submenu from the current set of encode/decode scripts, so scripts added,
+     * removed, or enabled/disabled since the menu was last shown are reflected.
+     */
+    private void rebuildScriptsMenu() {
+        if (scriptsSubMenu != null) {
+            remove(scriptsSubMenu);
+            scriptsSubMenu = null;
+        }
+
+        List<EncoderOperationMenuItem> items = buildItems(processors, Category.SCRIPT);
+        if (!items.isEmpty()) {
+            scriptsSubMenu = newSubMenu(msg(Category.SCRIPT.getI18nKey()), items);
+            add(scriptsSubMenu);
+        }
+    }
+
+    private static JMenu newSubMenu(String label, List<EncoderOperationMenuItem> items) {
+        JMenu menu = new JMenu(label);
+        items.forEach(menu::add);
+        return menu;
     }
 
     private static String msg(String key) {
@@ -102,6 +131,7 @@ public class PopupEncoderMenu extends ExtensionPopupMenu {
             this.setEnabled(!(sel == null || sel.length() == 0));
             setLastInvoker((JTextComponent) invoker);
             EncoderOperationMenuItem.setCurrentInvoker((JTextComponent) invoker);
+            rebuildScriptsMenu();
             processExtensionPopupChildren(PopupMenuUtils.getPopupMenuInvokerWrapper(invoker));
             return true;
         }
@@ -121,11 +151,14 @@ public class PopupEncoderMenu extends ExtensionPopupMenu {
         return MenuWeights.MENU_ENCODE_WEIGHT;
     }
 
-    private static List<EncoderOperationMenuItem> buildItems(Category category) {
+    private static List<EncoderOperationMenuItem> buildItems(
+            EncodeDecodeProcessors processors, Category category) {
         List<EncoderOperationMenuItem> items = new ArrayList<>();
-        for (EncodeDecodeProcessorItem item :
-                EncodeDecodeProcessors.getPredefinedItemsByCategory(category)) {
-            items.add(new EncoderOperationMenuItem(item.getName(), item.getProcessor()));
+        for (EncodeDecodeProcessorItem item : processors.getItemsByCategory(category)) {
+            EncoderOperationMenuItem menuItem =
+                    new EncoderOperationMenuItem(item.getName(), item.getProcessor());
+            menuItem.setEnabled(item.isEnabled());
+            items.add(menuItem);
         }
         return items;
     }
