@@ -25,17 +25,24 @@ public class EncodeDecodeProcessorItem {
     private final String name;
     private final EncodeDecodeProcessor processor;
     private final Category category;
+    private final boolean enabled;
 
     public EncodeDecodeProcessorItem(
-            String id, String name, EncodeDecodeProcessor processor, Category category) {
+            String id,
+            String name,
+            EncodeDecodeProcessor processor,
+            Category category,
+            boolean enabled) {
         this.id = id;
         this.name = name;
         this.processor = processor;
         this.category = category;
+        this.enabled = enabled;
     }
 
-    public EncodeDecodeProcessorItem(String id, String name, EncodeDecodeProcessor processor) {
-        this(id, name, processor, null);
+    public EncodeDecodeProcessorItem(
+            String id, String name, EncodeDecodeProcessor processor, Category category) {
+        this(id, name, processor, category, true);
     }
 
     public String getId() {
@@ -52,5 +59,9 @@ public class EncodeDecodeProcessorItem {
 
     public Category getCategory() {
         return category;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }
