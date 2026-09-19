@@ -193,6 +193,13 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
                     continue;
                 }
 
+                // False Positive Reduction
+                // Skip single-character param values to avoid matches against
+                // static meta tokens like "1" in "initial-scale=1".
+                if (paramValue.length() <= 1) {
+                    continue;
+                }
+
                 for (String s : attrValue.split("[;=,]")) {
                     if (s.equals(paramValue)) {
                         buildAlert(
