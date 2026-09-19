@@ -20,7 +20,7 @@
 package org.zaproxy.addon.encoder.popup;
 
 import java.awt.Component;
-import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.text.JTextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -100,36 +100,29 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
         final int selStart = invoker.getSelectionStart();
         final int selEnd = invoker.getSelectionEnd();
 
-        Thread thread =
-                new Thread(
-                        () -> {
-                            try {
-                                EncodeDecodeResult result = processor.process(selectedText);
-                                String newText = result.getResult();
-                                if (result.hasError()) {
-                                    showErrorDialog(new Exception(newText));
-                                } else {
-                                    SwingUtilities.invokeLater(
-                                            () ->
-                                                    replaceSelectionIfUnchanged(
-                                                            invoker,
-                                                            newText,
-                                                            selStart,
-                                                            selEnd,
-                                                            selectedText));
-                                }
-                            } catch (Exception e) {
-                                LOGGER.error(
-                                        "Error performing operation '{}': {}",
-                                        getText(),
-                                        e.getMessage(),
-                                        e);
-                                showErrorDialog(e);
-                            }
-                        },
-                        "EncoderOperation-" + getText());
-        thread.setDaemon(true);
-        thread.start();
+        new SwingWorker<EncodeDecodeResult, Void>() {
+            @Override
+            protected EncodeDecodeResult doInBackground() throws Exception {
+                return processor.process(selectedText);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    EncodeDecodeResult result = get();
+                    if (result.hasError()) {
+                        showErrorDialog(new Exception(result.getResult()));
+                    } else {
+                        replaceSelectionIfUnchanged(
+                                invoker, result.getResult(), selStart, selEnd, selectedText);
+                    }
+                } catch (Exception e) {
+                    LOGGER.error(
+                            "Error performing operation '{}': {}", getText(), e.getMessage(), e);
+                    showErrorDialog(e);
+                }
+            }
+        }.execute();
     }
 
     private static void replaceSelectionIfUnchanged(
@@ -155,15 +148,11 @@ public class EncoderOperationMenuItem extends ExtensionPopupMenuItem {
     }
 
     private void showErrorDialog(Exception e) {
-        SwingUtilities.invokeLater(
-                () ->
-                        View.getSingleton()
-                                .showWarningDialog(
-                                        Constant.messages.getString(
-                                                "encoder.popup.operation.error",
-                                                getText(),
-                                                e.getMessage() == null
-                                                        ? e.toString()
-                                                        : e.getMessage())));
+        View.getSingleton()
+                .showWarningDialog(
+                        Constant.messages.getString(
+                                "encoder.popup.operation.error",
+                                getText(),
+                                e.getMessage() == null ? e.toString() : e.getMessage()));
     }
 }
