@@ -147,12 +147,11 @@ public class EncodeDecodeProcessors {
     private List<EncodeDecodeProcessorItem> getScriptProcessors() {
         List<String> encodeDecodeScripts = new ArrayList<>();
 
-        // Insert new
+        // Insert new / refresh enabled state of existing
         for (ScriptWrapper scriptWrapper : ExtensionEncoder.getEncodeDecodeScripts()) {
             String scriptName = scriptWrapper.getName();
             encodeDecodeScripts.add(scriptName);
-            scriptProcessors.computeIfAbsent(
-                    scriptName, k -> createItemFromScriptWrapper(scriptWrapper));
+            scriptProcessors.put(scriptName, createItemFromScriptWrapper(scriptWrapper));
         }
 
         // Delete not existing
@@ -165,7 +164,8 @@ public class EncodeDecodeProcessors {
         String scriptName = ws.getName();
         ScriptBasedEncodeDecodeProcessor processor =
                 new ScriptBasedEncodeDecodeProcessor(ws.getName());
-        return new EncodeDecodeProcessorItem(scriptName, scriptName, processor, Category.SCRIPT);
+        return new EncodeDecodeProcessorItem(
+                scriptName, scriptName, processor, Category.SCRIPT, ws.isEnabled());
     }
 
     public EncodeDecodeProcessorItem findProcessorItemById(String name) {
@@ -197,12 +197,9 @@ public class EncodeDecodeProcessors {
     }
 
     public List<EncodeDecodeProcessorItem> getItemsByCategory(Category category) {
-        List<EncodeDecodeProcessorItem> items =
-                new ArrayList<>(getPredefinedItemsByCategory(category));
-        items.addAll(
-                getScriptProcessors().stream()
-                        .filter(item -> category.equals(item.getCategory()))
-                        .toList());
-        return items;
+        if (category != Category.SCRIPT) {
+            return getPredefinedItemsByCategory(category);
+        }
+        return getScriptProcessors();
     }
 }
