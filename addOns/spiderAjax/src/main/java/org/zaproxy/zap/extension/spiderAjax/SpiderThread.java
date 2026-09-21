@@ -61,6 +61,7 @@ import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.extension.selenium.DriverConfiguration;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.ScopeCheck;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
@@ -582,6 +583,7 @@ public class SpiderThread implements Runnable {
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
+            listener.setAllowAll(false);
             webDriverProcesses.add(webDriverProcess);
 
             EmbeddedBrowser embeddedBrowser =
@@ -623,9 +625,9 @@ public class SpiderThread implements Runnable {
         private Server proxy;
         private WebDriver webDriver;
 
-        private WebDriverProcess(
+        WebDriverProcess(
                 ExtensionNetwork extensionNetwork,
-                SpiderProxyListener listener,
+                HttpMessageHandler listener,
                 String browser,
                 boolean enableExtensions)
                 throws IOException {
@@ -644,8 +646,14 @@ public class SpiderThread implements Runnable {
                             .getExtensionLoader()
                             .getExtension(ExtensionSelenium.class)
                             .getWebDriver(
-                                    INITIATOR, browser, LOCAL_PROXY_IP, port, enableExtensions);
-            listener.setAllowAll(false);
+                                    browser,
+                                    DriverConfiguration.builder()
+                                            .requester(INITIATOR)
+                                            .proxyAddress(LOCAL_PROXY_IP)
+                                            .proxyPort(port)
+                                            .enableExtensions(enableExtensions)
+                                            .syncScriptExecution(true)
+                                            .build());
         }
 
         private void shutdown() {

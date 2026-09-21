@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Changed
+- Allow callers to configure whether Selenium scripts are executed synchronously when the browser is launched.
 
 ## [15.56.0] - 2026-09-16
 ### Changed

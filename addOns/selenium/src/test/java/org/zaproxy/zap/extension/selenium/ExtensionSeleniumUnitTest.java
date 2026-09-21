@@ -40,7 +40,11 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,8 +52,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.quality.Strictness;
 import org.openqa.selenium.WebDriver;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.selenium.internal.BrowserArgument;
 import org.zaproxy.zap.extension.selenium.internal.BrowserPreference;
 import org.zaproxy.zap.extension.selenium.internal.CustomBrowserImpl;
@@ -525,6 +533,75 @@ class ExtensionSeleniumUnitTest extends TestUtils {
             } finally {
                 driver2.quit();
             }
+        }
+    }
+
+    @Nested
+    class SeleniumScripts {
+
+        private ExtensionSelenium extension;
+        private ExtensionScript extScript;
+        private ScriptWrapper scriptWrapper;
+
+        @BeforeEach
+        void initExtension() {
+            extension = new ExtensionSelenium();
+            extension.init();
+
+            extScript = mock(withSettings().strictness(Strictness.LENIENT));
+            scriptWrapper = mock(withSettings().strictness(Strictness.LENIENT));
+            given(scriptWrapper.isEnabled()).willReturn(true);
+            given(extScript.getScripts(ExtensionSelenium.SCRIPT_TYPE_SELENIUM))
+                    .willReturn(List.of(scriptWrapper));
+
+            ExtensionLoader extensionLoader = mock();
+            given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extScript);
+            Control.initSingletonForTesting(model, extensionLoader);
+
+            extension.hook(mock());
+        }
+
+        @AfterEach
+        void tearDownExtension() {
+            extension.destroy();
+        }
+
+        @Test
+        void shouldRunSeleniumScriptSynchronouslyWhenSynchronousSetToTrue() throws Exception {
+            // Given
+            AtomicReference<String> scriptThread = new AtomicReference<>();
+            given(extScript.getInterface(scriptWrapper, SeleniumScript.class))
+                    .willReturn(ssu -> scriptThread.set(Thread.currentThread().getName()));
+
+            String callingThread = Thread.currentThread().getName();
+
+            // When
+            extension.getWebDriver(
+                    "htmlunit", DriverConfiguration.builder().syncScriptExecution(true).build());
+
+            // Then
+            assertThat(scriptThread.get(), is(callingThread));
+        }
+
+        @Test
+        void shouldRunSeleniumScriptAsynchronouslyWhenSynchronousSetToFalse() throws Exception {
+            // Given
+            CountDownLatch latch = new CountDownLatch(1);
+            AtomicReference<String> scriptThread = new AtomicReference<>();
+            given(extScript.getInterface(scriptWrapper, SeleniumScript.class))
+                    .willReturn(
+                            ssu -> {
+                                scriptThread.set(Thread.currentThread().getName());
+                                latch.countDown();
+                            });
+
+            // When
+            extension.getWebDriver(
+                    "htmlunit", DriverConfiguration.builder().syncScriptExecution(false).build());
+
+            // Then
+            assertThat(latch.await(5, TimeUnit.SECONDS), is(true));
+            assertThat(scriptThread.get(), is("ZAP-selenium-script"));
         }
     }
 

@@ -56,7 +56,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("selenium") {
-                    version.set(">=15.49.0")
+                    version.set(">=15.57.0")
                 }
                 register("network") {
                     version.set(">=0.8.0")
