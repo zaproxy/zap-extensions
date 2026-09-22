@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - PII Disclosure
 
 ### Fixed
-- User Controllable HTML Element Attribute scan rule: reduce false positives for short parameter values in meta content checks.
+- User Controllable HTML Element Attribute scan rule: reduce false positives for short parameter values in meta content checks (Issue 9461).
 
 ### Removed
 - CSP "Header & Meta" alert (10055-12) is no longer raised.
