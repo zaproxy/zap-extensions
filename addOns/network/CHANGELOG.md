@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update dependencies.
 - Update CVE link to avoid redirect.
 - Update browser background requests.
+- Change default log level of HTTP authenticator to error to avoid flooding the logs with warnings caused by negotiation errors.
 
 ### Fixed
 - Preserve existing host header name case when normalizing (Issue 9428).
