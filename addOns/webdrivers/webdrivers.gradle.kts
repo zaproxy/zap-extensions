@@ -115,6 +115,32 @@ subprojects {
                 files.from(webdriversDir)
             }
         }
+
+        val javaHelpSrcDir = layout.projectDirectory.dir("src/main/javahelp")
+        val processedHelpDir = layout.buildDirectory.dir("processedHelp")
+
+        val processHelpTokens =
+            tasks.register<Copy>("processHelpTokens") {
+                from(javaHelpSrcDir) {
+                    include("**/*.html")
+                    filter { line: String ->
+                        line
+                            .replace("""<wbr wd-version="chromedriver" />""", chromeDriverVersion)
+                            .replace("""<wbr wd-version="geckodriver" />""", geckodriverVersion)
+                    }
+                }
+                into(processedHelpDir)
+            }
+
+        tasks.named<Jar>(AddOnPlugin.JAR_ZAP_ADD_ON_TASK_NAME) {
+            from(processHelpTokens)
+            val javaHelpSrcAbsPath = javaHelpSrcDir.asFile.absolutePath + File.separator
+            eachFile {
+                if (name.endsWith(".html") && file.absolutePath.startsWith(javaHelpSrcAbsPath)) {
+                    exclude()
+                }
+            }
+        }
     }
 }
 
