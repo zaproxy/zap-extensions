@@ -30,6 +30,8 @@ import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -210,6 +212,27 @@ class UserControlledHTMLAttributesScanRuleUnitTest
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "step, 1, viewport, 'width=device-width, initial-scale=1'",
+        "flag, y, apple-mobile-web-app-capable, yes"
+    })
+    void shouldNotRaiseAlertForSingleCharParamMatchingMetaContent(
+            String paramName, String paramValue, String metaName, String metaContent)
+            throws Exception {
+        // Given - Issue 9461: single-char params must not match meta content tokens
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader()
+                .setURI(new URI("http://example.com/i.php?" + paramName + "=" + paramValue, false));
+        msg.setResponseBody(
+                "<html><meta name=\"" + metaName + "\" content=\"" + metaContent + "\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test

@@ -193,7 +193,12 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
                     continue;
                 }
 
+                if (isShortValue(paramValue)) {
+                    continue;
+                }
+
                 for (String s : attrValue.split("[;=,]")) {
+                    s = s.trim();
                     if (s.equals(paramValue)) {
                         buildAlert(
                                         msg.getRequestHeader().getURI().toString(),
@@ -207,10 +212,7 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
                 }
             }
 
-            // False Positive Reduction
-            // I want the value length to be greater than 1 to avoid all the false positives
-            // we're seeing when the input is limited to a single character.
-            if (paramValue.length() > 1) {
+            if (!isShortValue(paramValue)) {
                 // See if the user-input can control the start of the attribute data.
                 if (attrValue.startsWith(paramValue)
                         || paramValue.equalsIgnoreCase(protocol)
@@ -254,6 +256,10 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
         return contentType.indexOf("text/html") != -1
                 || contentType.indexOf("application/xhtml+xml") != -1
                 || contentType.indexOf("application/xhtml") != -1;
+    }
+
+    private static boolean isShortValue(String paramValue) {
+        return paramValue.length() <= 1;
     }
 
     private AlertBuilder buildAlert(
