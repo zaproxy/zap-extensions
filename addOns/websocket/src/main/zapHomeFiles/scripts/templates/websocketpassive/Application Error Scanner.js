@@ -7,12 +7,37 @@
 // Author: Manos Kirtas (manolis.kirt@gmail.com)
 
 OPCODE_TEXT = 0x1;
-RISK_MEDIUM = 2;
-CONFIDENCE_MEDIUM = 2;
 
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110001
+name: Application Error Disclosure via WebSockets
+description: >-
+  This payload contains an error/warning message that may disclose sensitive information like
+  the location of the file that produced the unhandled exception. This information can be used
+  to launch further attacks against the web application.
+solution: >-
+  Review the error payloads which are piped directly to WebSockets. Handle the related
+  exceptions. Consider implementing a mechanism to provide a unique error reference/identifier
+  to the client (browser) while logging the details on the server side and not exposing them to
+  the user.
+category: info_gather
+risk: medium
+confidence: medium
+cweId: 209
+wascId: 13
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Application%20Error%20Scanner.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110001
+`);
+}
 
 var microsoftDbErrors = [
   /Microsoft OLE DB Provider for ODBC Drivers/gim,
@@ -167,41 +192,16 @@ function raiseAlert(helper, evidence) {
 }
 
 function createAlertBuilder(helper, evidence) {
-  return helper
-    .newAlert()
-    .setPluginId(getId())
-    .setRiskConfidence(RISK_MEDIUM, CONFIDENCE_MEDIUM)
-    .setName("Application Error Disclosure via WebSockets")
-    .setDescription(
-      "This payload contains an error/warning message that\
- may disclose sensitive information like the location of the file\
- that produced the unhandled exception. This information can be used\
- to launch further attacks against the web application.",
-    )
-    .setSolution(
-      "Review the error payloads which are piped directly to WebSockets.\
- Handle the related exceptions.\
- Consider implementing a mechanism to provide a unique\
- error reference/identifier to the client (browser) while logging the\
- details on the server side and not exposing them to the user.",
-    )
-    .setEvidence(evidence)
-    .setCweId(209) // Information Exposure Through an Error Message
-    .setWascId(13); // Information Leakage
+  return helper.newAlert().setEvidence(evidence);
 }
 
 function getExampleAlerts() {
   return [
-    createAlertBuilder(WebSocketPassiveScript.getExampleHelper(), "")
+    createAlertBuilder(
+      WebSocketPassiveScript.getExampleHelper(getMetadata()),
+      "",
+    )
       .build()
       .getAlert(),
   ];
-}
-
-function getName() {
-  return "Application Error Disclosure script";
-}
-
-function getId() {
-  return 110001;
 }

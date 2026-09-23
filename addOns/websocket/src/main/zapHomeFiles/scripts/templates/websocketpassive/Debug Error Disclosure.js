@@ -7,12 +7,32 @@
 // Author: Manos Kirtas (manolis.kirt@gmail.com)
 
 OPCODE_TEXT = 0x1;
-RISK_LOW = 1;
-CONFIDENCE_MEDIUM = 2;
 
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110003
+name: Information Disclosure - Debug Error Messages via WebSocket
+description: >-
+  The response appeared to contain common error messages returned by platforms such as ASP.NET,
+  and Web-servers such as IIS and Apache. You can configure the list of common debug messages.
+solution: Disable debugging messages before pushing to production.
+category: info_gather
+risk: low
+confidence: medium
+cweId: 209
+wascId: 13
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Debug%20Error%20Disclosure.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110003
+`);
+}
 
 var debug_messages = [
   /Error Occurred While Processing Request/gim,
@@ -67,34 +87,16 @@ function raiseAlert(helper, evidence) {
 }
 
 function createAlertBuilder(helper, evidence) {
-  return helper
-    .newAlert()
-    .setPluginId(getId())
-    .setName("Information Disclosure - Debug Error Messages via WebSocket")
-    .setRiskConfidence(RISK_LOW, CONFIDENCE_MEDIUM)
-    .setDescription(
-      "The response appeared to contain common error messages returned" +
-        " by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure" +
-        " the list of common debug messages.",
-    )
-    .setSolution("Disable debugging messages before pushing to production.")
-    .setEvidence(evidence)
-    .setCweId(209) // Information Exposure Through an Error Message
-    .setWascId(13); // WASC Id 13 - Info leakage
+  return helper.newAlert().setEvidence(evidence);
 }
 
 function getExampleAlerts() {
   return [
-    createAlertBuilder(WebSocketPassiveScript.getExampleHelper(), "")
+    createAlertBuilder(
+      WebSocketPassiveScript.getExampleHelper(getMetadata()),
+      "",
+    )
       .build()
       .getAlert(),
   ];
-}
-
-function getName() {
-  return "Debug Error Disclosure script";
-}
-
-function getId() {
-  return 110003;
 }

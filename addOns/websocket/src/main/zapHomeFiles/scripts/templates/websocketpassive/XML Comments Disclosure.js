@@ -7,8 +7,6 @@
 // Author: Manos Kirtas (manolis.kirt@gmail.com)
 
 OPCODE_TEXT = 0x1;
-RISK_INFO = 0;
-CONFIDENCE_MEDIUM = 2;
 
 var XmlUtils = Java.type("org.zaproxy.zap.utils.XmlUtils");
 var StringReader = Java.type("java.io.StringReader");
@@ -18,6 +16,29 @@ var Comment = Java.type("org.w3c.dom.Comment");
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110008
+name: Information Disclosure - Suspicious Comments in XML via WebSocket
+description: >-
+  The response appears to contain suspicious comments which may help an attacker.
+solution: >-
+  Remove all comments that return information that may help an attacker and fix any underlying
+  problems they refer to.
+category: info_gather
+risk: info
+confidence: medium
+cweId: 200
+wascId: 13
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/XML%20Comments%20Disclosure.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110008
+`);
+}
 
 var commentPatterns = [
   /\bTODO\b/gim,
@@ -65,27 +86,15 @@ function raiseAlert(helper, evidence) {
 }
 
 function createAlertBuilder(helper, evidence) {
-  return helper
-    .newAlert()
-    .setPluginId(getId())
-    .setRiskConfidence(RISK_INFO, CONFIDENCE_MEDIUM)
-    .setName(
-      "Information Disclosure - Suspicious Comments in XML via WebSocket",
-    )
-    .setDescription(
-      "The response appears to contain suspicious comments which may help an attacker.",
-    )
-    .setSolution(
-      "Remove all comments that return information that may help an attacker and fix any underlying problems they refer to.",
-    )
-    .setEvidence(evidence)
-    .setCweId(200) //CWE Id 200 - Information Exposure
-    .setWascId(13); //WASC Id 13 - Info Leakage
+  return helper.newAlert().setEvidence(evidence);
 }
 
 function getExampleAlerts() {
   return [
-    createAlertBuilder(WebSocketPassiveScript.getExampleHelper(), "")
+    createAlertBuilder(
+      WebSocketPassiveScript.getExampleHelper(getMetadata()),
+      "",
+    )
       .build()
       .getAlert(),
   ];
@@ -116,12 +125,4 @@ function getParsedDocument(message) {
     result = null;
   }
   return result;
-}
-
-function getName() {
-  return "Suspicious XML Comments Disclosure script";
-}
-
-function getId() {
-  return 110008;
 }

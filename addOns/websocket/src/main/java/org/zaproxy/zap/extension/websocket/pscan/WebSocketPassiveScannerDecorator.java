@@ -32,6 +32,11 @@ class WebSocketPassiveScannerDecorator implements WebSocketPassiveScanner, Enabl
         this.webSocketPassiveScanner = webSocketPassiveScanner;
     }
 
+    /** Returns the scanner this decorator wraps. */
+    WebSocketPassiveScanner getWrapped() {
+        return webSocketPassiveScanner;
+    }
+
     @Override
     public String getName() {
         return webSocketPassiveScanner.getName();
@@ -60,13 +65,8 @@ class WebSocketPassiveScannerDecorator implements WebSocketPassiveScanner, Enabl
         if (this == obj) {
             return true;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        WebSocketPassiveScanner other = (WebSocketPassiveScanner) obj;
-        if (this.getId() == other.getId() || this.getName() == other.getName()) {
-            return true;
+        if (obj instanceof WebSocketPassiveScanner scanner) {
+            return this.getId() == scanner.getId();
         }
         return false;
     }
