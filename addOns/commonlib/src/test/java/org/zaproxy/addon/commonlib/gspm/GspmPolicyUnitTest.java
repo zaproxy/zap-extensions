@@ -178,6 +178,29 @@ class GspmPolicyUnitTest {
     }
 
     @Test
+    void shouldResolvePhaseScopedThresholdForAnyToolInThatPhase() {
+        GspmPolicy policy = new GspmPolicy("P");
+        policy.findOrCreateCategoryRuleSet(GspmRuleSet.PHASE_PREFIX + "PASSIVE")
+                .setThresholdEnum(AlertThreshold.HIGH);
+        GspmRule rule = testRule("pscan", 10020);
+        assertThat(policy.getEffectiveThreshold(rule).get(), is(AlertThreshold.HIGH));
+    }
+
+    @Test
+    void shouldLetMoreSpecificCategoryOverridePhaseDefault() {
+        GspmPolicy policy = new GspmPolicy("P");
+        policy.findOrCreateCategoryRuleSet(GspmRuleSet.PHASE_PREFIX + "PASSIVE")
+                .setThresholdEnum(AlertThreshold.HIGH);
+        policy.findOrCreateCategoryRuleSet("all.pscan").setThresholdEnum(AlertThreshold.LOW);
+        GspmRule pscanRule = testRule("pscan", 10020);
+        GspmRule wspscanRule = testRule("wspscan", 110001);
+        // The more specific "all.pscan" override wins for pscan rules...
+        assertThat(policy.getEffectiveThreshold(pscanRule).get(), is(AlertThreshold.LOW));
+        // ...but wspscan rules still fall back to the broader phase-level default.
+        assertThat(policy.getEffectiveThreshold(wspscanRule).get(), is(AlertThreshold.HIGH));
+    }
+
+    @Test
     void shouldMatchByTag() {
         GspmPolicy policy = new GspmPolicy("P");
         GspmRuleSet rs = new GspmRuleSet();
@@ -515,6 +538,11 @@ class GspmPolicyUnitTest {
             @Override
             public String getTool() {
                 return tool;
+            }
+
+            @Override
+            public GspmPhase getPhase() {
+                return GspmPhase.PASSIVE;
             }
 
             @Override

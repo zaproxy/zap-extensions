@@ -37,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.commonlib.gspm.GspmCategory;
+import org.zaproxy.addon.commonlib.gspm.GspmPhase;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRule;
 import org.zaproxy.addon.commonlib.gspm.GspmScanRuleRegistrar;
@@ -71,6 +72,7 @@ public class GspmActiveScanRegistrar {
             new GspmScanRuleRegistrar(
                     TOOL,
                     () -> Constant.messages.getString("commonlib.gspm.ascan.tool"),
+                    GspmPhase.ACTIVE,
                     this::getAllCurrentRules,
                     this::getRulesForAddOn);
 
@@ -239,6 +241,11 @@ public class GspmActiveScanRegistrar {
         @Override
         public String getTool() {
             return TOOL;
+        }
+
+        @Override
+        public GspmPhase getPhase() {
+            return GspmPhase.ACTIVE;
         }
 
         @Override

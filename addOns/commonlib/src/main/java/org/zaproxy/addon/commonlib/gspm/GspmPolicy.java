@@ -357,9 +357,9 @@ public class GspmPolicy {
 
     /**
      * Returns the rule set for {@code categoryKey}, creating one if it does not exist. Rule sets
-     * are kept in ascending order of category-key length so that more specific categories (longer
-     * keys) appear later and win under last-match semantics. Per-rule rule sets always remain at
-     * the end.
+     * are kept in ascending order of category-key {@link #specificity(String)} so that more
+     * specific categories appear later and win under last-match semantics. Per-rule rule sets
+     * always remain at the end.
      */
     public GspmRuleSet findOrCreateCategoryRuleSet(String categoryKey) {
         if (categoryKey == null || GspmRuleSet.ALL_CATEGORY.equalsIgnoreCase(categoryKey)) {
@@ -374,19 +374,37 @@ public class GspmPolicy {
         // Find insertion point: after all less-or-equally-specific category ruleSets but before
         // the first per-rule ruleSet.
         int insertIdx = 0;
+        int newSpecificity = specificity(categoryKey);
         for (int i = 0; i < ruleSets.size(); i++) {
             GspmRuleSet rs = ruleSets.get(i);
             if (rs.getRules() != null && !rs.getRules().isEmpty()) {
                 break; // stop before per-rule ruleSets
             }
-            String existingCat = rs.getCategory();
-            int existingLen = existingCat == null ? 0 : existingCat.length();
-            if (existingLen <= categoryKey.length()) {
+            if (specificity(rs.getCategory()) <= newSpecificity) {
                 insertIdx = i + 1;
             }
         }
         ruleSets.add(insertIdx, newRs);
         return newRs;
+    }
+
+    /**
+     * Returns a specificity score used to order category-scoped rule sets so more specific ones win
+     * under last-match semantics: catch-all ({@code null}/{@code "all"}) is least specific, {@link
+     * GspmRuleSet#PHASE_PREFIX}-scoped keys (e.g. {@code "phase.passive"}) are more specific than
+     * the catch-all but less specific than any tool/category key (regardless of their own string
+     * length, which has no relation to {@link GspmRuleSet#ruleCategoryKey(GspmRule)}'s tool-first
+     * hierarchy), and tool/category keys fall back to string length, since {@code ruleCategoryKey}
+     * nests more specific segments onto longer strings.
+     */
+    private static int specificity(String categoryKey) {
+        if (categoryKey == null) {
+            return 0;
+        }
+        if (categoryKey.startsWith(GspmRuleSet.PHASE_PREFIX)) {
+            return 1;
+        }
+        return categoryKey.length() + 1;
     }
 
     /**

@@ -144,6 +144,47 @@ class GspmRuleSetUnitTest {
         }
 
         @Test
+        void categoryScopedToPhaseMatchesAnyToolInThatPhase() {
+            // Given
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory(GspmRuleSet.PHASE_PREFIX + "PASSIVE");
+
+            // When / Then — pscan and wspscan both report GspmPhase.PASSIVE
+            assertThat(rs.matches(ruleWithPhase("pscan", 1, GspmPhase.PASSIVE)), is(true));
+            assertThat(rs.matches(ruleWithPhase("wspscan", 2, GspmPhase.PASSIVE)), is(true));
+        }
+
+        @Test
+        void categoryScopedToPhaseDoesNotMatchOtherPhase() {
+            // Given
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory(GspmRuleSet.PHASE_PREFIX + "ACTIVE");
+
+            // When / Then
+            assertThat(rs.matches(ruleWithPhase("pscan", 1, GspmPhase.PASSIVE)), is(false));
+        }
+
+        @Test
+        void categoryScopedToPhaseIsCaseInsensitive() {
+            // Given
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory(GspmRuleSet.PHASE_PREFIX + "passive");
+
+            // When / Then
+            assertThat(rs.matches(ruleWithPhase("pscan", 1, GspmPhase.PASSIVE)), is(true));
+        }
+
+        @Test
+        void categoryScopedToUnrecognisedPhaseDoesNotMatchAndDoesNotThrow() {
+            // Given — e.g. a hand-edited or version-skewed .policy2 file
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory(GspmRuleSet.PHASE_PREFIX + "notaphase");
+
+            // When / Then
+            assertThat(rs.matches(ruleWithPhase("pscan", 1, GspmPhase.PASSIVE)), is(false));
+        }
+
+        @Test
         void statusMatchesSameStatus() {
             // Given
             GspmRuleSet rs = new GspmRuleSet();
@@ -247,12 +288,17 @@ class GspmRuleSetUnitTest {
         return new StubRule(tool, id, Collections.emptyList(), Collections.emptyMap(), status);
     }
 
+    private static GspmRule ruleWithPhase(String tool, int id, GspmPhase phase) {
+        return ((StubRule) rule(tool, id)).withPhase(phase);
+    }
+
     private static class StubRule implements GspmRule {
         private final String tool;
         private final int id;
         private final List<GspmCategory> categories;
         private final Map<String, String> alertTags;
         private final AddOn.Status status;
+        private GspmPhase phase = GspmPhase.PASSIVE;
 
         StubRule(
                 String tool,
@@ -265,6 +311,11 @@ class GspmRuleSetUnitTest {
             this.categories = categories;
             this.alertTags = alertTags;
             this.status = status;
+        }
+
+        StubRule withPhase(GspmPhase phase) {
+            this.phase = phase;
+            return this;
         }
 
         @Override
@@ -280,6 +331,11 @@ class GspmRuleSetUnitTest {
         @Override
         public String getTool() {
             return tool;
+        }
+
+        @Override
+        public GspmPhase getPhase() {
+            return phase;
         }
 
         @Override

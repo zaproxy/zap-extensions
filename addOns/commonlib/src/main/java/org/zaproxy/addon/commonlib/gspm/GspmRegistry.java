@@ -410,6 +410,11 @@ public class GspmRegistry {
         }
 
         @Override
+        public GspmPhase getPhase() {
+            return underlying.getPhase();
+        }
+
+        @Override
         public List<GspmCategory> getCategories() {
             return underlying.getCategories();
         }
