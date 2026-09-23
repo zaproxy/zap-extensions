@@ -45,10 +45,17 @@ public interface GspmRule {
     /**
      * Returns the key identifying the source tool for this rule.
      *
-     * <p>Conventional values: {@code "ascan"}, {@code "pscan"}, {@code "client"}, {@code
-     * "websockets"}, {@code "ptk"}.
+     * <p>Conventional values: {@code "ascan"}, {@code "pscan"}, {@code "wspscan"}, {@code
+     * "client"}, {@code "ptk"}.
      */
     String getTool();
+
+    /**
+     * Returns the fixed, tool-independent top-level grouping this rule appears under in the GSPM
+     * dialog's tree (e.g. "Active"/"Passive"). Several tools may share the same phase; see {@link
+     * GspmPhase}.
+     */
+    GspmPhase getPhase();
 
     /**
      * Returns the category hierarchy for this rule as {@link GspmCategory} entries, from broadest

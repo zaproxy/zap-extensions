@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -63,6 +64,7 @@ class GspmScanRuleRegistrarUnitTest {
                 new GspmScanRuleRegistrar(
                         TOOL,
                         () -> "Tool Display",
+                        GspmPhase.ACTIVE,
                         () -> new ArrayList<>(allRules),
                         addOn -> installedRules.getOrDefault(addOn, List.of()));
     }
@@ -245,6 +247,20 @@ class GspmScanRuleRegistrarUnitTest {
     }
 
     @Test
+    void shouldNotRegisterRuleAddedDirectlyWhenIdClashesWithAnotherTool() {
+        // Given — e.g. an id already used by an active-scan or HTTP passive-scan rule.
+        registrar.registerRulesWithGspm(registry);
+        registry.registerRule(fakeRule(30, "otherTool"));
+
+        // When
+        assertDoesNotThrow(() -> registrar.ruleAdded(fakeRule(30)));
+
+        // Then
+        assertThat(registry.getRule(30).map(GspmRule::getTool), is(Optional.of("otherTool")));
+        assertThat(registry.getRulesByTool(TOOL), is(empty()));
+    }
+
+    @Test
     void shouldDoNothingWhenRuleAddedDirectlyWhileNotRegisteredWithGspm() {
         // Given — registerRulesWithGspm was never called.
         // When / Then
@@ -296,9 +312,13 @@ class GspmScanRuleRegistrarUnitTest {
     }
 
     private static GspmRule fakeRule(int id) {
+        return fakeRule(id, TOOL);
+    }
+
+    private static GspmRule fakeRule(int id, String tool) {
         GspmRule rule = mock(GspmRule.class);
         lenient().when(rule.getId()).thenReturn(id);
-        lenient().when(rule.getTool()).thenReturn(TOOL);
+        lenient().when(rule.getTool()).thenReturn(tool);
         return rule;
     }
 

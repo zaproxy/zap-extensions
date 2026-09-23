@@ -17,6 +17,27 @@ PRINT_RESULTS = false;
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110002
+name: Base64 Disclosure script
+description: >
+  A Base64-encoded string has been found in the websocket incoming message. Base64-encoded data
+  may contain sensitive information such as usernames, passwords or cookies which should be
+  further inspected.
+solution: Base64-encoding should not be used to store or send sensitive information.
+category: info_gather
+risk: info
+confidence: medium
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Base64%20Disclosure.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110002
+`);
+}
 
 var base64Regex =
   /((?:[A-Za-z0-9+\/]{4}\n?)*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=))/gim;
