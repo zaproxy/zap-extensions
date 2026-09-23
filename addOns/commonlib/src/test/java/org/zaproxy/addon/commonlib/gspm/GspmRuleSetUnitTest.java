@@ -229,6 +229,87 @@ class GspmRuleSetUnitTest {
             assertThat(rs.matches(wrongStatus), is(false));
             assertThat(rs.matches(wrongCategory), is(false));
         }
+
+        @Test
+        void categoryStatusAndTagsAllMustMatch() {
+            // Given
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory("all.ascan");
+            rs.setStatus("alpha");
+            rs.setTags(List.of("POLICY_API"));
+
+            // When / Then
+            assertThat(
+                    rs.matches(
+                            ruleWithCategoryStatusAndTags(
+                                    "ascan",
+                                    1,
+                                    Collections.emptyList(),
+                                    AddOn.Status.alpha,
+                                    Map.of("POLICY_API", ""))),
+                    is(true));
+            // right category/status, missing tag
+            assertThat(
+                    rs.matches(
+                            ruleWithCategoryStatusAndTags(
+                                    "ascan",
+                                    2,
+                                    Collections.emptyList(),
+                                    AddOn.Status.alpha,
+                                    Map.of("OTHER_TAG", ""))),
+                    is(false));
+            // right category/tag, wrong status
+            assertThat(
+                    rs.matches(
+                            ruleWithCategoryStatusAndTags(
+                                    "ascan",
+                                    3,
+                                    Collections.emptyList(),
+                                    AddOn.Status.release,
+                                    Map.of("POLICY_API", ""))),
+                    is(false));
+            // right status/tag, wrong category
+            assertThat(
+                    rs.matches(
+                            ruleWithCategoryStatusAndTags(
+                                    "pscan",
+                                    4,
+                                    Collections.emptyList(),
+                                    AddOn.Status.alpha,
+                                    Map.of("POLICY_API", ""))),
+                    is(false));
+        }
+
+        @Test
+        void explicitRuleIdMatchesRegardlessOfOtherCriteria() {
+            // Given — rules is an exception: it ignores category/status/tags entirely
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory("all.pscan");
+            rs.setStatus("alpha");
+            rs.setTags(List.of("POLICY_API"));
+            rs.addRule(new GspmRuleRef(42, "Test Rule"));
+
+            // When / Then — id 42 matches even though tool/status/tags all disagree
+            assertThat(
+                    rs.matches(
+                            ruleWithCategoryStatusAndTags(
+                                    "ascan",
+                                    42,
+                                    Collections.emptyList(),
+                                    AddOn.Status.release,
+                                    Collections.emptyMap())),
+                    is(true));
+            // a different id, also not matching category/status/tags, is excluded
+            assertThat(
+                    rs.matches(
+                            ruleWithCategoryStatusAndTags(
+                                    "ascan",
+                                    99,
+                                    Collections.emptyList(),
+                                    AddOn.Status.release,
+                                    Collections.emptyMap())),
+                    is(false));
+        }
     }
 
     @Nested
@@ -270,6 +351,79 @@ class GspmRuleSetUnitTest {
         }
     }
 
+    @Nested
+    class NeedsDefaultName {
+
+        @Test
+        void catchAllDoesNotNeedOne() {
+            assertThat(new GspmRuleSet().needsDefaultName(), is(false));
+        }
+
+        @Test
+        void phaseScopeDoesNotNeedOne() {
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory(GspmRuleSet.PHASE_PREFIX + "PASSIVE");
+            assertThat(rs.needsDefaultName(), is(false));
+        }
+
+        @Test
+        void categoryScopeDoesNotNeedOne() {
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory("all.ascan");
+            assertThat(rs.needsDefaultName(), is(false));
+        }
+
+        @Test
+        void singleRuleOverrideDoesNotNeedOneRegardlessOfOtherFields() {
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.addRule(new GspmRuleRef(1, "Rule"));
+            rs.setTags(List.of("FOO"));
+            rs.setStatus("alpha");
+            assertThat(rs.needsDefaultName(), is(false));
+        }
+
+        @Test
+        void alreadyNamedDoesNotNeedOne() {
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setTags(List.of("FOO"));
+            rs.setName("My Tags");
+            assertThat(rs.needsDefaultName(), is(false));
+        }
+
+        @Test
+        void tagOnlyNeedsOne() {
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setTags(List.of("FOO"));
+            assertThat(rs.needsDefaultName(), is(true));
+        }
+
+        @Test
+        void statusOnlyNeedsOne() {
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setStatus("alpha");
+            assertThat(rs.needsDefaultName(), is(true));
+        }
+
+        @Test
+        void multiRuleOverrideWithNoCategoryNeedsOne() {
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.addRule(new GspmRuleRef(1, "Rule 1"));
+            rs.addRule(new GspmRuleRef(2, "Rule 2"));
+            assertThat(rs.needsDefaultName(), is(true));
+        }
+
+        @Test
+        void multiRuleOverrideWithCategoryDoesNotNeedOne() {
+            // Not ambiguous — falls through to the "Category: X" display, which isn't wrong, just
+            // silent about the extra rules constraint.
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory("all.ascan");
+            rs.addRule(new GspmRuleRef(1, "Rule 1"));
+            rs.addRule(new GspmRuleRef(2, "Rule 2"));
+            assertThat(rs.needsDefaultName(), is(false));
+        }
+    }
+
     // -- helpers --
 
     private static GspmRule rule(String tool, int id) {
@@ -286,6 +440,15 @@ class GspmRuleSetUnitTest {
 
     private static GspmRule ruleWithStatus(String tool, int id, AddOn.Status status) {
         return new StubRule(tool, id, Collections.emptyList(), Collections.emptyMap(), status);
+    }
+
+    private static GspmRule ruleWithCategoryStatusAndTags(
+            String tool,
+            int id,
+            List<GspmCategory> categories,
+            AddOn.Status status,
+            Map<String, String> tags) {
+        return new StubRule(tool, id, categories, tags, status);
     }
 
     private static GspmRule ruleWithPhase(String tool, int id, GspmPhase phase) {

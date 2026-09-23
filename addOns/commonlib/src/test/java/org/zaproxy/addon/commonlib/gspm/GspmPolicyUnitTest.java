@@ -35,14 +35,30 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.zap.testutils.TestUtils;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-class GspmPolicyUnitTest {
+class GspmPolicyUnitTest extends TestUtils {
+
+    @BeforeAll
+    static void setupMessages() {
+        // GspmPolicy.nextDefaultRuleSetName() reads Constant.messages.
+        mockMessages(new ExtensionCommonlib());
+    }
+
+    @AfterAll
+    static void cleanUpMessages() {
+        Constant.messages = null;
+    }
 
     @Test
     void shouldCreatePolicyWithName() {
@@ -154,6 +170,107 @@ class GspmPolicyUnitTest {
     }
 
     @Test
+    void shouldReturnFirstDefaultRuleSetNameWhenNoneUsedYet() {
+        GspmPolicy policy = new GspmPolicy("P");
+        assertThat(policy.nextDefaultRuleSetName(), is("Rule Set 1"));
+    }
+
+    @Test
+    void shouldAutoIncrementDefaultRuleSetNameFromExistingOnes() {
+        GspmPolicy policy = new GspmPolicy("P");
+        GspmRuleSet rs1 = new GspmRuleSet();
+        rs1.setName("Rule Set 1");
+        policy.addRuleSet(rs1);
+        GspmRuleSet rs2 = new GspmRuleSet();
+        rs2.setName("Rule Set 2");
+        policy.addRuleSet(rs2);
+
+        assertThat(policy.nextDefaultRuleSetName(), is("Rule Set 3"));
+    }
+
+    @Test
+    void shouldIgnoreUnrelatedOrModifiedNamesWhenComputingNextDefaultName() {
+        GspmPolicy policy = new GspmPolicy("P");
+        GspmRuleSet unrelated = new GspmRuleSet();
+        unrelated.setName("My custom rule set");
+        policy.addRuleSet(unrelated);
+        GspmRuleSet modified = new GspmRuleSet();
+        modified.setName("Rule Set 5 (copy)");
+        policy.addRuleSet(modified);
+
+        assertThat(policy.nextDefaultRuleSetName(), is("Rule Set 1"));
+    }
+
+    @Test
+    void shouldNotFillGapsWhenComputingNextDefaultName() {
+        GspmPolicy policy = new GspmPolicy("P");
+        GspmRuleSet rs = new GspmRuleSet();
+        rs.setName("Rule Set 5");
+        policy.addRuleSet(rs);
+
+        assertThat(policy.nextDefaultRuleSetName(), is("Rule Set 6"));
+    }
+
+    @Test
+    void shouldReturnNullCatchAllRuleSetWhenNoneExists() {
+        GspmPolicy policy = new GspmPolicy("P");
+        assertThat(policy.findCatchAllRuleSet(), is(nullValue()));
+    }
+
+    @Test
+    void shouldFindTheExistingCatchAllRuleSet() {
+        GspmPolicy policy = new GspmPolicy("P");
+        policy.setDefaultThreshold(AlertThreshold.HIGH);
+        GspmRuleSet catchAll = policy.getRuleSets().get(0);
+        assertThat(policy.findCatchAllRuleSet(), sameInstance(catchAll));
+        assertThat(policy.getRuleSets(), hasSize(1));
+    }
+
+    @Test
+    void shouldAssignDefaultNamesOnlyToAmbiguousRuleSets() {
+        // Given
+        GspmPolicy policy = new GspmPolicy("P");
+        GspmRuleSet catchAll = new GspmRuleSet();
+        policy.addRuleSet(catchAll);
+        GspmRuleSet category = new GspmRuleSet();
+        category.setCategory("all.ascan");
+        policy.addRuleSet(category);
+        GspmRuleSet tagOnly = new GspmRuleSet();
+        tagOnly.setTags(List.of("FOO"));
+        policy.addRuleSet(tagOnly);
+        GspmRuleSet multiRule = new GspmRuleSet();
+        multiRule.addRule(new GspmRuleRef(1, "Rule 1"));
+        multiRule.addRule(new GspmRuleRef(2, "Rule 2"));
+        policy.addRuleSet(multiRule);
+
+        // When
+        policy.assignDefaultNamesToAmbiguousRuleSets();
+
+        // Then
+        assertThat(catchAll.getName(), is(nullValue()));
+        assertThat(category.getName(), is(nullValue()));
+        assertThat(tagOnly.getName(), is("Rule Set 1"));
+        assertThat(multiRule.getName(), is("Rule Set 2"));
+    }
+
+    @Test
+    void shouldAssignDefaultNamesToAmbiguousRuleSetsOnLoad(@TempDir Path dir) throws Exception {
+        // Given — hand-crafted, as if from an externally authored or older file
+        GspmPolicy original = new GspmPolicy("My Policy");
+        GspmRuleSet tagOnly = new GspmRuleSet();
+        tagOnly.setTags(List.of("FOO"));
+        original.addRuleSet(tagOnly);
+        original.save(dir);
+
+        // When
+        GspmPolicy loaded = GspmPolicy.load(new File(dir.toFile(), "My Policy.policy2"));
+
+        // Then
+        assertThat(loaded.getRuleSets(), hasSize(1));
+        assertThat(loaded.getRuleSets().get(0).getName(), is("Rule Set 1"));
+    }
+
+    @Test
     void shouldReturnEmptyEffectiveThresholdWithNoRuleSets() {
         GspmPolicy policy = new GspmPolicy("P");
         GspmRule rule = testRule("pscan", 10020);
@@ -175,6 +292,32 @@ class GspmPolicyUnitTest {
         policy.setRuleThreshold(10020, "rule", AlertThreshold.LOW);
         GspmRule rule = testRule("pscan", 10020);
         assertThat(policy.getEffectiveThreshold(rule).get(), is(AlertThreshold.LOW));
+    }
+
+    @Test
+    void shouldReturnEmptyEffectiveThresholdRuleSetWithNoRuleSets() {
+        GspmPolicy policy = new GspmPolicy("P");
+        GspmRule rule = testRule("pscan", 10020);
+        assertThat(policy.getEffectiveThresholdRuleSet(rule).isPresent(), is(false));
+    }
+
+    @Test
+    void shouldReturnTheRuleSetTheEffectiveThresholdCameFrom() {
+        GspmPolicy policy = new GspmPolicy("P");
+        policy.setDefaultThreshold(AlertThreshold.HIGH);
+        GspmRuleSet catchAll = policy.getRuleSets().get(0);
+        GspmRule rule = testRule("pscan", 10020);
+        assertThat(policy.getEffectiveThresholdRuleSet(rule).get(), sameInstance(catchAll));
+    }
+
+    @Test
+    void shouldReturnTheLastMatchingRuleSetAsTheEffectiveThresholdRuleSet() {
+        GspmPolicy policy = new GspmPolicy("P");
+        policy.setDefaultThreshold(AlertThreshold.HIGH);
+        policy.setRuleThreshold(10020, "rule", AlertThreshold.LOW);
+        GspmRuleSet perRule = policy.getRuleSets().get(policy.getRuleSets().size() - 1);
+        GspmRule rule = testRule("pscan", 10020);
+        assertThat(policy.getEffectiveThresholdRuleSet(rule).get(), sameInstance(perRule));
     }
 
     @Test
@@ -516,6 +659,275 @@ class GspmPolicyUnitTest {
             // Then
             assertThat(second, is(first));
             assertThat(policy.getRuleSets(), hasSize(1));
+        }
+
+        @Test
+        void hasCategoryRuleSetShouldReflectExistence() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+
+            // Then
+            assertThat(policy.hasCategoryRuleSet("all.ascan"), is(false));
+            assertThat(policy.hasCategoryRuleSet(null), is(false));
+
+            // When
+            policy.findOrCreateCategoryRuleSet("all.ascan");
+            policy.setDefaultThreshold(AlertThreshold.HIGH);
+
+            // Then
+            assertThat(policy.hasCategoryRuleSet("all.ascan"), is(true));
+            assertThat(policy.hasCategoryRuleSet(GspmRuleSet.ALL_CATEGORY), is(true));
+            assertThat(policy.hasCategoryRuleSet(null), is(true));
+            assertThat(policy.hasCategoryRuleSet("all.pscan"), is(false));
+        }
+    }
+
+    @Nested
+    class PerRuleOverrideMerging {
+
+        @Test
+        void shouldCreateDedicatedRuleSetForFirstOverride() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+
+            // When
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.OFF);
+
+            // Then
+            assertThat(policy.getRuleSets(), hasSize(1));
+            GspmRuleSet rs = policy.getRuleSets().get(0);
+            assertThat(rs.getRules(), hasSize(1));
+            assertThat(rs.getThresholdEnum(), is(AlertThreshold.OFF));
+        }
+
+        @Test
+        void shouldMergeSecondIdenticalOverrideIntoExistingRuleSet() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.OFF);
+
+            // When
+            policy.setRuleThreshold(10021, "Rule B", AlertThreshold.OFF);
+
+            // Then
+            assertThat(policy.getRuleSets(), hasSize(1));
+            GspmRuleSet rs = policy.getRuleSets().get(0);
+            assertThat(rs.getRules(), hasSize(2));
+            assertThat(rs.isPerRule(10020), is(false));
+        }
+
+        @Test
+        void shouldNotMergeWhenThresholdDiffers() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.OFF);
+
+            // When
+            policy.setRuleThreshold(10021, "Rule B", AlertThreshold.LOW);
+
+            // Then
+            assertThat(policy.getRuleSets(), hasSize(2));
+        }
+
+        @Test
+        void shouldSplitRuleOutOfGroupWhenChangingItsThreshold() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.OFF);
+            policy.setRuleThreshold(10021, "Rule B", AlertThreshold.OFF);
+
+            // When
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.HIGH);
+
+            // Then
+            assertThat(policy.getRuleSets(), hasSize(2));
+            GspmRule ruleA = testRule("ascan", 10020);
+            GspmRule ruleB = testRule("ascan", 10021);
+            assertThat(policy.getEffectiveThreshold(ruleA).get(), is(AlertThreshold.HIGH));
+            assertThat(policy.getEffectiveThreshold(ruleB).get(), is(AlertThreshold.OFF));
+        }
+
+        @Test
+        void shouldSplitAndCarryOverOtherDimensionWhenSharedGroupNeedsDifferentStrength() {
+            // Given — A and B share one rule set overriding only threshold
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.OFF);
+            policy.setRuleThreshold(10021, "Rule B", AlertThreshold.OFF);
+
+            // When — A alone also needs a strength override
+            policy.setRuleStrength(10020, "Rule A", AttackStrength.HIGH);
+
+            // Then — A splits into its own rule set carrying the threshold it had, plus the new
+            // strength; B is left in the original group, unaffected
+            assertThat(policy.getRuleSets(), hasSize(2));
+            GspmRule ruleA = testRule("ascan", 10020);
+            GspmRule ruleB = testRule("ascan", 10021);
+            assertThat(policy.getEffectiveThreshold(ruleA).get(), is(AlertThreshold.OFF));
+            assertThat(policy.getEffectiveStrength(ruleA).get(), is(AttackStrength.HIGH));
+            assertThat(policy.getEffectiveThreshold(ruleB).get(), is(AlertThreshold.OFF));
+            assertThat(policy.getEffectiveStrength(ruleB).isPresent(), is(false));
+        }
+
+        @Test
+        void clearingOneRulesOverrideShouldLeaveGroupmateUnaffected() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.OFF);
+            policy.setRuleThreshold(10021, "Rule B", AlertThreshold.OFF);
+
+            // When
+            policy.setRuleThreshold(10020, "Rule A", null);
+
+            // Then
+            assertThat(policy.getRuleSets(), hasSize(1));
+            GspmRule ruleA = testRule("ascan", 10020);
+            GspmRule ruleB = testRule("ascan", 10021);
+            assertThat(policy.getEffectiveThreshold(ruleA).isPresent(), is(false));
+            assertThat(policy.getEffectiveThreshold(ruleB).get(), is(AlertThreshold.OFF));
+        }
+
+        @Test
+        void soleOwnedRuleSetShouldSupportIndependentThresholdAndStrengthWithoutSplitting() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.LOW);
+
+            // When
+            policy.setRuleStrength(10020, "Rule A", AttackStrength.HIGH);
+
+            // Then — still just the one rule set, now carrying both overrides
+            assertThat(policy.getRuleSets(), hasSize(1));
+            GspmRuleSet rs = policy.getRuleSets().get(0);
+            assertThat(rs.getThresholdEnum(), is(AlertThreshold.LOW));
+            assertThat(rs.getStrengthEnum(), is(AttackStrength.HIGH));
+        }
+
+        @Test
+        void shouldRejoinGroupWhenReSettingSameThreshold() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.OFF);
+            policy.setRuleThreshold(10021, "Rule B", AlertThreshold.OFF);
+
+            // When — redundant re-set of the value the group already has
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.OFF);
+
+            // Then — no split, still one shared rule set
+            assertThat(policy.getRuleSets(), hasSize(1));
+            assertThat(policy.getRuleSets().get(0).getRules(), hasSize(2));
+        }
+
+        @Test
+        void shouldNotMergeIntoTagScopedRuleSetEvenWithMatchingValues() {
+            // Given — a tag-scoped rule set that happens to have the same threshold
+            GspmPolicy policy = new GspmPolicy("P");
+            GspmRuleSet tagScoped = new GspmRuleSet();
+            tagScoped.setTags(List.of("POLICY_API"));
+            tagScoped.setThresholdEnum(AlertThreshold.OFF);
+            policy.getRuleSets().add(tagScoped);
+
+            // When
+            policy.setRuleThreshold(10020, "Rule A", AlertThreshold.OFF);
+
+            // Then — a new dedicated rule set is created instead of polluting the tag-scoped one
+            assertThat(policy.getRuleSets(), hasSize(2));
+            assertThat(tagScoped.getRules(), is(nullValue()));
+        }
+    }
+
+    @Nested
+    class RuleSetListMutation {
+
+        @Test
+        void shouldAppendNewRuleSetAtEnd() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.setDefaultThreshold(AlertThreshold.HIGH);
+            GspmRuleSet added = new GspmRuleSet();
+            added.setName("Custom");
+
+            // When
+            policy.addRuleSet(added);
+
+            // Then
+            List<GspmRuleSet> rs = policy.getRuleSets();
+            assertThat(rs, hasSize(2));
+            assertThat(rs.get(rs.size() - 1), is(sameInstance(added)));
+        }
+
+        @Test
+        void shouldRemoveRuleSet() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            GspmRuleSet rs = new GspmRuleSet();
+            policy.addRuleSet(rs);
+
+            // When
+            boolean removed = policy.removeRuleSet(rs);
+
+            // Then
+            assertThat(removed, is(true));
+            assertThat(policy.getRuleSets(), is(empty()));
+        }
+
+        @Test
+        void shouldReturnFalseRemovingRuleSetNotInList() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+
+            // When / Then
+            assertThat(policy.removeRuleSet(new GspmRuleSet()), is(false));
+        }
+
+        @Test
+        void shouldMoveRuleSetUpAndDown() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            GspmRuleSet a = new GspmRuleSet();
+            GspmRuleSet b = new GspmRuleSet();
+            GspmRuleSet c = new GspmRuleSet();
+            policy.addRuleSet(a);
+            policy.addRuleSet(b);
+            policy.addRuleSet(c);
+
+            // When
+            policy.moveRuleSet(c, -1);
+
+            // Then
+            assertThat(policy.getRuleSets(), is(List.of(a, c, b)));
+
+            // When
+            policy.moveRuleSet(a, 1);
+
+            // Then
+            assertThat(policy.getRuleSets(), is(List.of(c, a, b)));
+        }
+
+        @Test
+        void shouldNoOpMovingPastListBoundaries() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            GspmRuleSet a = new GspmRuleSet();
+            GspmRuleSet b = new GspmRuleSet();
+            policy.addRuleSet(a);
+            policy.addRuleSet(b);
+
+            // When
+            policy.moveRuleSet(a, -1);
+            policy.moveRuleSet(b, 1);
+
+            // Then
+            assertThat(policy.getRuleSets(), is(List.of(a, b)));
+        }
+
+        @Test
+        void shouldNoOpMovingRuleSetNotInList() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.addRuleSet(new GspmRuleSet());
+
+            // When / Then — no exception
+            policy.moveRuleSet(new GspmRuleSet(), -1);
         }
     }
 

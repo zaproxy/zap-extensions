@@ -24,13 +24,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -46,7 +42,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -64,20 +59,24 @@ import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRule;
 import org.zaproxy.addon.commonlib.gspm.GspmRuleSet;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.utils.ZapLabel;
+import org.zaproxy.zap.utils.ZapHtmlLabel;
 
 /**
  * Dialog for the Global Scan Policy Manager.
  *
- * <p>Extends {@link AbstractParamDialog}. The left-hand tree is provided by the base class; each
- * tree node corresponds to a {@link GspmRulesPanel}. The root node shows all rules and supports
- * policy-wide defaults; phase nodes (the fixed, tool-independent "Active"/"Passive" top level, see
- * {@link GspmPhase}) show every rule under that phase, regardless of which tool contributed it, and
- * support setting a phase-wide default via {@link GspmRuleSet#PHASE_PREFIX}-scoped rule sets (see
- * {@link GspmRuleSet#matches(GspmRule)}); category nodes (owned by exactly one tool, but a tool may
- * contribute several sibling categories under the same phase) show rules for that specific category
- * and support setting policy defaults scoped to it, same as before. More specific rule sets win
- * under last-match semantics regardless of which node created them.
+ * <p>Extends {@link AbstractParamDialog}. The left-hand tree is provided by the base class. When
+ * editing an actual policy, the root node is a {@link GspmSummaryPanel} ("Summary" — policy
+ * name/directory, an explanatory note, and a read-only enabled-rules report), with "All Rules" and
+ * "Rule Sets" ({@link GspmRuleSetsPanel}) as its children; in the tool-wide "browse all rules" mode
+ * (no policy), the root is "All Rules" directly, as there's nothing to summarize. Each other tree
+ * node corresponds to a {@link GspmRulesPanel}: phase nodes (the fixed, tool-independent
+ * "Active"/"Passive" top level, see {@link GspmPhase}) show every rule under that phase, regardless
+ * of which tool contributed it, and support setting a phase-wide default via {@link
+ * GspmRuleSet#PHASE_PREFIX}-scoped rule sets (see {@link GspmRuleSet#matches(GspmRule)}); category
+ * nodes (owned by exactly one tool, but a tool may contribute several sibling categories under the
+ * same phase) show rules for that specific category and support setting policy defaults scoped to
+ * it, same as before. More specific rule sets win under last-match semantics regardless of which
+ * node created them.
  *
  * @since 1.45.0
  */
@@ -94,17 +93,30 @@ public class GspmDialog extends AbstractParamDialog {
 
     private final GspmRegistry registry;
     private final GspmPolicy policy;
+    private final boolean newPolicy;
     private final String savedRuleSetsSnapshot;
     private boolean confirmed = false;
 
     private final List<GspmRulesPanel> panels = new ArrayList<>();
-    private JTextField policyNameField;
+    private GspmRuleSetsPanel ruleSetsPanel;
+    private GspmSummaryPanel summaryPanel;
 
     public GspmDialog(Window owner, GspmRegistry registry) {
-        this(owner, registry, null);
+        this(owner, registry, null, false);
     }
 
     public GspmDialog(Window owner, GspmRegistry registry, GspmPolicy policy) {
+        this(owner, registry, policy, false);
+    }
+
+    /**
+     * @param newPolicy {@code true} if {@code policy} was just created and has never been shown to
+     *     the user under a real name — in which case the "Summary" panel's name field starts blank
+     *     (rather than showing {@code policy}'s placeholder registration name) so the user is
+     *     prompted to choose one, which {@link #validateParam()} then requires to be non-blank
+     *     before the dialog can be saved. Ignored when {@code policy} is {@code null}.
+     */
+    public GspmDialog(Window owner, GspmRegistry registry, GspmPolicy policy, boolean newPolicy) {
         super(
                 owner,
                 true,
@@ -112,9 +124,16 @@ public class GspmDialog extends AbstractParamDialog {
                         ? Constant.messages.getString(
                                 "commonlib.gspm.dialog.policy.title", policy.getName())
                         : Constant.messages.getString("commonlib.gspm.dialog.title"),
-                Constant.messages.getString("commonlib.gspm.dialog.tree.root"));
+                // The root tree node is "Summary" (with "All Rules"/"Rule Sets" as its children —
+                // see buildPanels()) when editing an actual policy, since only then is there a
+                // policy name/directory/enabled-rules report to summarize; in the tool-wide
+                // "browse all rules" mode (no policy), the root stays plain "All Rules", as before.
+                policy != null
+                        ? Constant.messages.getString("commonlib.gspm.dialog.tree.summary")
+                        : Constant.messages.getString("commonlib.gspm.dialog.tree.allrules"));
         this.registry = registry;
         this.policy = policy;
+        this.newPolicy = policy != null && newPolicy;
         this.savedRuleSetsSnapshot = snapshotRuleSets(policy);
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -143,7 +162,7 @@ public class GspmDialog extends AbstractParamDialog {
         if (policy == null) {
             return;
         }
-        String newName = policyNameField.getText().trim();
+        String newName = summaryPanel.getPolicyNameText().trim();
         if (newName.isEmpty()) {
             throw new Exception(
                     Constant.messages.getString("commonlib.gspm.dialog.error.name.blank"));
@@ -172,7 +191,7 @@ public class GspmDialog extends AbstractParamDialog {
     @Override
     public void saveParam() throws Exception {
         if (policy != null) {
-            String newName = policyNameField.getText().trim();
+            String newName = summaryPanel.getPolicyNameText().trim();
             if (!newName.equals(policy.getName())) {
                 registry.renamePolicy(policy, newName);
             }
@@ -197,20 +216,59 @@ public class GspmDialog extends AbstractParamDialog {
             removeParamPanel(p);
         }
         panels.clear();
+        if (ruleSetsPanel != null) {
+            removeParamPanel(ruleSetsPanel);
+            ruleSetsPanel = null;
+        }
+        if (summaryPanel != null) {
+            removeParamPanel(summaryPanel);
+            summaryPanel = null;
+        }
         buildPanels();
     }
 
     private void buildPanels() {
         List<GspmRule> effectiveRules = getEffectiveRules();
 
-        // Top-level "All Rules" panel
+        String allRulesName = Constant.messages.getString("commonlib.gspm.dialog.tree.allrules");
         GspmRulesPanel allPanel =
-                new GspmRulesPanel(
-                        Constant.messages.getString("commonlib.gspm.dialog.tree.root"),
-                        GspmRuleSet.ALL_CATEGORY,
-                        effectiveRules);
-        addParamPanel(null, allPanel, false);
-        panels.add(allPanel);
+                new GspmRulesPanel(allRulesName, GspmRuleSet.ALL_CATEGORY, effectiveRules);
+
+        // Phase (and, in turn, category) nodes always nest under "All Rules" — when there's a
+        // policy, that's ["All Rules"] (itself a child of the "Summary" root, see below);
+        // without one, "All Rules" is the root's own content, so an empty path (root) already
+        // means the same place.
+        String[] phaseParent = policy != null ? new String[] {allRulesName} : new String[0];
+
+        if (policy != null) {
+            // "Summary" is the root's own content — the policy name/directory/enabled-rules
+            // report that used to live in the "All Rules" panel — with "All Rules" and "Rule
+            // Sets" as its children instead of top-level siblings of a plain "All Rules" root.
+            // Only meaningful when editing an actual policy (not the tool-wide "browse all
+            // rules" mode, which has no policy name/directory/rule sets to summarize).
+            summaryPanel =
+                    new GspmSummaryPanel(
+                            Constant.messages.getString("commonlib.gspm.dialog.tree.summary"),
+                            policy,
+                            this::getEffectiveRules,
+                            newPolicy);
+            addParamPanel(null, summaryPanel, false);
+
+            addParamPanel(new String[0], allPanel, true);
+            panels.add(allPanel);
+
+            ruleSetsPanel =
+                    new GspmRuleSetsPanel(
+                            Constant.messages.getString("commonlib.gspm.dialog.tree.rulesets"),
+                            policy,
+                            this::getEffectiveRules);
+            addParamPanel(new String[0], ruleSetsPanel, true);
+        } else {
+            // No policy: "All Rules" is the root's own content directly, same as before this
+            // tool-wide mode had no Summary/Rule Sets nodes at all.
+            addParamPanel(null, allPanel, false);
+            panels.add(allPanel);
+        }
 
         // Group rules by phase (fixed, tool-independent top level, e.g. "Active"/"Passive"), then
         // by tool, then by category id → display name. Each rule self-reports its phase (see
@@ -235,11 +293,17 @@ public class GspmDialog extends AbstractParamDialog {
                             .filter(r -> r.getPhase() == phase)
                             .collect(Collectors.toList());
 
+            // Category nodes nest one level further under the phase node, wherever that phase
+            // node itself lives (see phaseParent above).
+            String[] categoryParent = new String[phaseParent.length + 1];
+            System.arraycopy(phaseParent, 0, categoryParent, 0, phaseParent.length);
+            categoryParent[phaseParent.length] = phaseDisplay;
+
             // Phase nodes are an aggregate view across every tool sharing that phase, and also
             // support setting policy defaults for the whole phase — see
             // GspmRuleSet#PHASE_PREFIX/#matches(GspmRule).
             GspmRulesPanel phasePanel = new GspmRulesPanel(phaseDisplay, phaseKey, phaseRules);
-            addParamPanel(new String[0], phasePanel, true);
+            addParamPanel(phaseParent, phasePanel, true);
             panels.add(phasePanel);
 
             for (var toolEntry : phaseEntry.getValue().entrySet()) {
@@ -261,7 +325,7 @@ public class GspmDialog extends AbstractParamDialog {
                                     .collect(Collectors.toList());
 
                     GspmRulesPanel catPanel = new GspmRulesPanel(catDisplay, catFullKey, catRules);
-                    addParamPanel(new String[] {phaseDisplay}, catPanel, true);
+                    addParamPanel(categoryParent, catPanel, true);
                     panels.add(catPanel);
                 }
             }
@@ -308,6 +372,7 @@ public class GspmDialog extends AbstractParamDialog {
 
         private final String categoryKey;
         private GspmRuleTableModel tableModel;
+        private JTable table;
         private JComboBox<String> policyThresholdCombo;
         private JComboBox<String> policyStrengthCombo;
         private JLabel policyStrengthLabel;
@@ -321,15 +386,24 @@ public class GspmDialog extends AbstractParamDialog {
             tableModel = new GspmRuleTableModel();
             tableModel.setRules(initialRules);
             if (policy != null) {
-                JPanel north = new JPanel(new BorderLayout());
+                JPanel north = new JPanel(new BorderLayout(0, 2));
+                // Only "All Rules" gets this explanatory note — it's what makes that node
+                // different from its phase/category children again, per user request.
                 if (GspmRuleSet.ALL_CATEGORY.equals(categoryKey)) {
-                    north.add(buildPolicyInfoPanel(), BorderLayout.NORTH);
+                    north.add(
+                            new ZapHtmlLabel(
+                                    "<html>"
+                                            + Constant.messages.getString(
+                                                    "commonlib.gspm.dialog.allrules.note")
+                                            + "</html>"),
+                            BorderLayout.NORTH);
                 }
                 north.add(buildPolicyDefaultsPanel(), BorderLayout.SOUTH);
                 add(north, BorderLayout.NORTH);
                 tableModel.addTableModelListener(e -> updateCombos());
             }
-            add(new JScrollPane(buildTable()), BorderLayout.CENTER);
+            table = buildTable();
+            add(new JScrollPane(table), BorderLayout.CENTER);
         }
 
         @Override
@@ -340,6 +414,17 @@ public class GspmDialog extends AbstractParamDialog {
         @Override
         public void saveParam(Object obj) throws Exception {
             // no-op — editing is in-place
+        }
+
+        @Override
+        public void onHide() {
+            // Commit any in-progress cell edit (e.g. a threshold combo the user just picked from)
+            // before switching away — otherwise the edit only lands in the policy a moment after
+            // this panel is hidden, so a panel showing derived state (like the Rule Sets panel)
+            // can briefly show stale data on the very next tree selection.
+            if (table.isEditing()) {
+                table.getCellEditor().stopCellEditing();
+            }
         }
 
         @Override
@@ -369,57 +454,6 @@ public class GspmDialog extends AbstractParamDialog {
             }
             tableModel.setRules(filtered);
             updateCombos();
-        }
-
-        private JPanel buildPolicyInfoPanel() {
-            JPanel panel = new JPanel(new GridBagLayout());
-            panel.setBorder(BorderFactory.createEmptyBorder(4, 4, 0, 4));
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(2, 4, 2, 4);
-            gbc.anchor = GridBagConstraints.WEST;
-
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            JLabel nameLabel =
-                    new JLabel(Constant.messages.getString("commonlib.gspm.dialog.policy.name"));
-            panel.add(nameLabel, gbc);
-
-            policyNameField = new JTextField(policy.getName(), 30);
-            policyNameField.setEditable(
-                    !GspmRegistry.getDefaultPolicyName().equals(policy.getName()));
-            nameLabel.setLabelFor(policyNameField);
-            gbc.gridx = 1;
-            gbc.weightx = 1.0;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            panel.add(policyNameField, gbc);
-
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            gbc.weightx = 0.0;
-            gbc.fill = GridBagConstraints.NONE;
-            JLabel fileNameLabel =
-                    new JLabel(Constant.messages.getString("commonlib.gspm.dialog.policy.file"));
-            panel.add(fileNameLabel, gbc);
-
-            ZapLabel fileLabel = new ZapLabel(policyFilePath());
-            fileNameLabel.setLabelFor(fileLabel);
-            gbc.gridx = 1;
-            gbc.weightx = 1.0;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            panel.add(fileLabel, gbc);
-
-            return panel;
-        }
-
-        private String policyFilePath() {
-            File f = policy.getFile();
-            if (f == null) {
-                f =
-                        new File(
-                                Constant.getPoliciesDir(),
-                                policy.getFileName() + GspmPolicy.EXTENSION);
-            }
-            return f.getAbsolutePath();
         }
 
         private JPanel buildPolicyDefaultsPanel() {

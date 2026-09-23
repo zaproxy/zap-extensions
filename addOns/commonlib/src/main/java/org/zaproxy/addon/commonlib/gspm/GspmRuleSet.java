@@ -35,15 +35,14 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
  * A set of rules within a {@link GspmPolicy} that share a common threshold and/or strength
  * override.
  *
- * <p>A rule set may be:
+ * <p>A rule set can combine any of {@link #category}, {@link #status}, and {@link #tags} — when
+ * more than one is set, a rule must satisfy <em>all</em> of them (tags themselves use OR semantics:
+ * a rule matches if it has any of the specified tags). Leaving all three unset (and no explicit
+ * {@link #rules}) makes it a <em>catch-all</em> that applies to every rule in the policy.
  *
- * <ul>
- *   <li>A <em>catch-all</em> (no tags, no category, no status, no explicit rules) — applies to
- *       every rule in the policy.
- *   <li>A <em>tag-scoped</em> set — applies to rules whose alert tags contain any of the specified
- *       tags (OR semantics).
- *   <li>A <em>per-rule</em> set — explicitly lists one or more rule ids.
- * </ul>
+ * <p>The one exception is {@link #rules}: when a rule set has an explicit rules list, matching is
+ * decided purely by whether the candidate rule's id is in that list — {@link #category}, {@link
+ * #status}, and {@link #tags} are not consulted at all for that rule set.
  *
  * @since 1.45.0
  */
@@ -151,6 +150,31 @@ public class GspmRuleSet {
         return true;
     }
 
+    /**
+     * Returns {@code true} if this rule set has no {@link #name} of its own and its shape doesn't
+     * already have an unambiguous synthesized display: a true {@link #isCatchAll() catch-all}, a
+     * plain phase or category scope (a non-null, non-{@link #ALL_CATEGORY} {@link #category}), or a
+     * single explicit rule override ({@link #rules} of size 1, which is shown unambiguously as
+     * "Rule override: X" regardless of anything else — see {@code
+     * GspmRuleSetTableModel#displayName}, which this must stay in sync with).
+     *
+     * <p>What's left, and thus flagged here, is: a tag- and/or status-scoped rule set with no
+     * category, or a multi-rule override group with no category — both of which the display
+     * fallback would otherwise show as a plain, misleading "Catch-all". Used to decide which rule
+     * sets get a {@link GspmPolicy#nextDefaultRuleSetName() generated default name} after
+     * loading/importing a policy.
+     */
+    boolean needsDefaultName() {
+        if (name != null && !name.isBlank()) {
+            return false;
+        }
+        if (rules != null && rules.size() == 1) {
+            return false;
+        }
+        boolean categoryIsAllOrUnset = category == null || category.equalsIgnoreCase(ALL_CATEGORY);
+        return categoryIsAllOrUnset && !isCatchAll();
+    }
+
     /** Lazily initialises the rules list and appends the given ref. */
     public void addRule(GspmRuleRef ref) {
         if (rules == null) {
@@ -162,16 +186,18 @@ public class GspmRuleSet {
     /**
      * Returns {@code true} if this rule set applies to the given rule.
      *
-     * <p>Resolution order:
+     * <p>If an explicit rules list is present, match is decided solely by whether the rule's id is
+     * in that list — {@link #category}, {@link #status}, and {@link #tags} are ignored entirely.
      *
-     * <ol>
-     *   <li>If an explicit rules list is present, match if the rule's id is in the list.
-     *   <li>Else if a tags list is present, match if the rule's alert tags contain any of them.
-     *   <li>Otherwise, match if {@link #category} (when set, and not {@code "all"}) equals or is a
-     *       parent of the rule's category key, <em>and</em> {@link #status} (when set) equals the
-     *       rule's maturity status. Either or both may be unset, in which case that condition is
-     *       treated as satisfied; if both are unset this is the catch-all case and always matches.
-     * </ol>
+     * <p>Otherwise, all of the following that are set must be satisfied (unset ones are treated as
+     * satisfied, so a rule set with none of them set is a catch-all that matches everything):
+     *
+     * <ul>
+     *   <li>{@link #tags} — the rule's alert tags contain any of the specified tags (OR semantics).
+     *   <li>{@link #category} (when not {@code "all"}) — equals or is a parent of the rule's
+     *       category key.
+     *   <li>{@link #status} — equals the rule's maturity status.
+     * </ul>
      */
     public boolean matches(GspmRule rule) {
         if (rules != null && !rules.isEmpty()) {
@@ -183,17 +209,18 @@ public class GspmRuleSet {
             }
             return false;
         }
+        boolean tagsMatch = true;
         if (tags != null && !tags.isEmpty()) {
             java.util.Map<String, String> alertTags = rule.getAlertTags();
-            if (alertTags == null) {
-                return false;
-            }
-            for (String tag : tags) {
-                if (alertTags.containsKey(tag)) {
-                    return true;
+            tagsMatch = false;
+            if (alertTags != null) {
+                for (String tag : tags) {
+                    if (alertTags.containsKey(tag)) {
+                        tagsMatch = true;
+                        break;
+                    }
                 }
             }
-            return false;
         }
         boolean categoryMatches = true;
         if (category != null && !category.equalsIgnoreCase(ALL_CATEGORY)) {
@@ -205,7 +232,7 @@ public class GspmRuleSet {
             }
         }
         boolean statusMatches = status == null || status.equalsIgnoreCase(rule.getStatus().name());
-        return categoryMatches && statusMatches;
+        return tagsMatch && categoryMatches && statusMatches;
     }
 
     /**
