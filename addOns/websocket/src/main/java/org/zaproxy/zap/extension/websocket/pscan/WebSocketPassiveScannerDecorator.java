@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.websocket.pscan;
 
+import java.util.Objects;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.utils.EnableableInterface;
 
@@ -30,6 +31,11 @@ class WebSocketPassiveScannerDecorator implements WebSocketPassiveScanner, Enabl
 
     public WebSocketPassiveScannerDecorator(WebSocketPassiveScanner webSocketPassiveScanner) {
         this.webSocketPassiveScanner = webSocketPassiveScanner;
+    }
+
+    /** Returns the scanner this decorator wraps. */
+    WebSocketPassiveScanner getWrapped() {
+        return webSocketPassiveScanner;
     }
 
     @Override
@@ -60,13 +66,9 @@ class WebSocketPassiveScannerDecorator implements WebSocketPassiveScanner, Enabl
         if (this == obj) {
             return true;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        WebSocketPassiveScanner other = (WebSocketPassiveScanner) obj;
-        if (this.getId() == other.getId() || this.getName() == other.getName()) {
-            return true;
+        if (obj instanceof WebSocketPassiveScanner scanner) {
+            return this.getId() == scanner.getId()
+                    || Objects.equals(this.getName(), scanner.getName());
         }
         return false;
     }
