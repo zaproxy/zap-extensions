@@ -19,9 +19,7 @@
  */
 package org.zaproxy.zap.extension.websocket.pscan;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,13 +51,6 @@ public class WebSocketPassiveScannerManager {
 
     /** True if server proxies should be ignored */
     private boolean isServerModeIgnored = true;
-
-    /**
-     * Notified when a scanner is added/removed, regardless of source (compiled or script-backed),
-     * so it can be kept in sync with the Global Scan Policy Manager. {@code null} if GSPM isn't
-     * available.
-     */
-    private GspmWebSocketPassiveScanRegistrar gspmRegistrar;
 
     /**
      * Initiate a Passive Scanner Manager. By default passive scans are disabled. In order to enable
@@ -130,11 +121,7 @@ public class WebSocketPassiveScannerManager {
         }
         WebSocketPassiveScannerDecorator wsPlugin =
                 new WebSocketPassiveScannerDecorator(passiveScanner);
-        boolean added = addPlugin(wsPlugin);
-        if (added && gspmRegistrar != null) {
-            gspmRegistrar.ruleAdded(passiveScanner);
-        }
-        return added;
+        return addPlugin(wsPlugin);
     }
 
     /**
@@ -214,13 +201,7 @@ public class WebSocketPassiveScannerManager {
      * @return {@code true} if passive scanner is dropped from list successfully.
      */
     public synchronized boolean removeScanner(WebSocketPassiveScanner passiveScanner) {
-        boolean removed =
-                getPassiveScannersSet()
-                        .remove(new WebSocketPassiveScannerDecorator(passiveScanner));
-        if (removed && gspmRegistrar != null) {
-            gspmRegistrar.ruleRemoved(passiveScanner.getId());
-        }
-        return removed;
+        return getPassiveScannersSet().remove(new WebSocketPassiveScannerDecorator(passiveScanner));
     }
 
     /**
@@ -228,51 +209,6 @@ public class WebSocketPassiveScannerManager {
      */
     protected Iterator<WebSocketPassiveScannerDecorator> getIterator() {
         return getPassiveScannersSet().iterator();
-    }
-
-    /**
-     * Returns a snapshot of all registered WebSocket Passive Scanners.
-     *
-     * <p>Returns the original (undecorated) scanners, so callers can safely check their concrete
-     * type, e.g. via {@code instanceof}.
-     *
-     * @since 39
-     */
-    public List<WebSocketPassiveScanner> getScanners() {
-        List<WebSocketPassiveScanner> scanners = new ArrayList<>();
-        for (WebSocketPassiveScannerDecorator decorator : getPassiveScannersSet()) {
-            scanners.add(decorator.getWrapped());
-        }
-        return scanners;
-    }
-
-    /**
-     * Tells whether or not the given scanner is currently enabled.
-     *
-     * <p>The enabled state is tracked by this manager (via the internal decorator), not by the
-     * scanner itself, so it can't be read directly off {@code scanner}.
-     *
-     * @since 39
-     */
-    public boolean isEnabled(WebSocketPassiveScanner scanner) {
-        Iterator<WebSocketPassiveScannerDecorator> iterator = this.getIterator();
-        while (iterator.hasNext()) {
-            WebSocketPassiveScannerDecorator itScanner = iterator.next();
-            if (itScanner.equals(scanner)) {
-                return itScanner.isEnabled();
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Sets the registrar to be notified when scanners are added/removed, so they can be kept in
-     * sync with the Global Scan Policy Manager. {@code null} to stop notifying.
-     *
-     * @since 39
-     */
-    public void setGspmRegistrar(GspmWebSocketPassiveScanRegistrar gspmRegistrar) {
-        this.gspmRegistrar = gspmRegistrar;
     }
 
     public boolean isContained(WebSocketPassiveScanner webSocketPassiveScanner) {

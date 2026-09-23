@@ -159,6 +159,11 @@ public class GspmLegacyImporter {
             }
         }
         policy.getRuleSets().addAll(groups.values());
+        // A group covering more than one rule has no natural name of its own (unlike the
+        // catch-all/category rule sets above, which display fine unnamed via their category) —
+        // give it a default name so it isn't shown ambiguously as "Catch-all". A single-rule
+        // group is left unnamed; it already displays fine as "Rule override: <rule name>".
+        policy.assignDefaultNamesToAmbiguousRuleSets();
 
         return policy;
     }

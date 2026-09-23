@@ -231,58 +231,47 @@ public class GspmPolicyManagerDialog extends StandardFieldsDialog {
         return exportButton;
     }
 
+    /**
+     * Creates a new policy under a unique, internal placeholder name (never shown to the user — see
+     * {@link #uniquePlaceholderPolicyName()}) and opens it directly in the {@link GspmDialog},
+     * whose "Summary" panel shows a blank name field for it to prompt the user for a real one; the
+     * same dialog's {@code validateParam()} already rejects a blank, illegal, or already-used name
+     * before allowing the dialog to be saved, so none of that needs re-checking here.
+     */
     private void addPolicy() {
-        String name =
-                (String)
-                        JOptionPane.showInputDialog(
-                                this,
-                                Constant.messages.getString(
-                                        "commonlib.gspm.policymanager.add.message"),
-                                Constant.messages.getString(
-                                        "commonlib.gspm.policymanager.add.title"),
-                                JOptionPane.PLAIN_MESSAGE,
-                                null,
-                                null,
-                                "");
-        if (name == null || name.isBlank()) {
-            return;
-        }
-        if (!GspmPolicy.isLegalPolicyName(name)) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    MessageFormat.format(
-                            Constant.messages.getString(
-                                    "commonlib.gspm.policymanager.error.badname.message"),
-                            GspmPolicy.ILLEGAL_POLICY_NAME_CHRS),
-                    Constant.messages.getString("commonlib.gspm.policymanager.add.title"),
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (registry.getPolicy(name) != null) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    Constant.messages.getString(
-                            "commonlib.gspm.policymanager.error.exists.message"),
-                    Constant.messages.getString("commonlib.gspm.policymanager.add.title"),
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        GspmPolicy newPolicy = new GspmPolicy(name);
+        GspmPolicy newPolicy = new GspmPolicy(uniquePlaceholderPolicyName());
         newPolicy.setDefaultThreshold(AlertThreshold.MEDIUM);
         newPolicy.setDefaultStrength(AttackStrength.MEDIUM);
         registry.addPolicy(newPolicy);
-        GspmDialog dialog = new GspmDialog(this, registry, newPolicy);
+        GspmDialog dialog = new GspmDialog(this, registry, newPolicy, true);
         dialog.showDialog(true);
         if (dialog.isConfirmed()) {
             if (saveOrShowError(newPolicy)) {
-                refreshModel(name);
+                refreshModel(newPolicy.getName());
             } else {
                 // Not persisted: don't leave it registered as if it had been.
-                registry.removePolicy(name);
+                registry.removePolicy(newPolicy.getName());
                 refreshModel(null);
             }
         } else {
-            registry.removePolicy(name);
+            registry.removePolicy(newPolicy.getName());
+        }
+    }
+
+    /**
+     * Returns a policy name not currently registered, for temporary use until the user names the
+     * policy for real in the {@link GspmDialog} — see {@link #addPolicy()}.
+     */
+    private String uniquePlaceholderPolicyName() {
+        String base = Constant.messages.getString("commonlib.gspm.policymanager.newpolicy.name");
+        if (registry.getPolicy(base) == null) {
+            return base;
+        }
+        for (int suffix = 2; ; suffix++) {
+            String candidate = base + " " + suffix;
+            if (registry.getPolicy(candidate) == null) {
+                return candidate;
+            }
         }
     }
 
