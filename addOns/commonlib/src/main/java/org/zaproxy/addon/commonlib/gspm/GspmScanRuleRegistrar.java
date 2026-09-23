@@ -58,6 +58,7 @@ public class GspmScanRuleRegistrar implements GspmRuleSource, AddOnInstallationS
     private final Function<AddOn, List<GspmRule>> rulesForAddOn;
 
     private final Map<AddOn, List<GspmRule>> rulesByAddOn = new HashMap<>();
+    private final Map<Integer, GspmRule> registeredRules = new HashMap<>();
 
     private GspmRegistry registry;
 
@@ -96,8 +97,45 @@ public class GspmScanRuleRegistrar implements GspmRuleSource, AddOnInstallationS
     public void unregisterRulesFromGspm(GspmRegistry reg) {
         reg.unregisterByTool(toolId);
         rulesByAddOn.clear();
+        registeredRules.clear();
         this.registry = null;
         LOGGER.debug("GSPM: unregistered '{}' rules", toolId);
+    }
+
+    /**
+     * Registers a single rule directly, outside the bulk {@link #registerRulesWithGspm} and the
+     * add-on install/uninstall driven {@link #update} — e.g. a script-backed scan rule added by the
+     * user at runtime, not tied to any add-on's lifecycle.
+     *
+     * <p>No-op if {@link #registerRulesWithGspm} hasn't been called yet (or {@link
+     * #unregisterRulesFromGspm} has, since), or if a rule with this id is already registered by
+     * this source.
+     */
+    public void ruleAdded(GspmRule rule) {
+        if (registry == null) {
+            return;
+        }
+        if (registeredRules.containsKey(rule.getId())) {
+            LOGGER.error("Attempted to register a rule with a duplicate ID {}", rule.getId());
+            return;
+        }
+        registerRule(rule, null);
+    }
+
+    /**
+     * Unregisters a single previously-registered rule directly, by id — the counterpart to {@link
+     * #ruleAdded(GspmRule)}, e.g. a script-backed scan rule removed by the user at runtime.
+     *
+     * <p>No-op if this source doesn't currently have a rule registered under this id.
+     */
+    public void ruleRemoved(int id) {
+        if (registry == null) {
+            return;
+        }
+        GspmRule rule = registeredRules.remove(id);
+        if (rule != null) {
+            registry.unregisterRule(rule);
+        }
     }
 
     /**
@@ -152,7 +190,11 @@ public class GspmScanRuleRegistrar implements GspmRuleSource, AddOnInstallationS
         if (rules == null || rules.isEmpty()) {
             return;
         }
-        rules.forEach(registry::unregisterRule);
+        rules.forEach(
+                rule -> {
+                    registry.unregisterRule(rule);
+                    registeredRules.remove(rule.getId());
+                });
         LOGGER.debug(
                 "GSPM: unregistered {} '{}' rules for uninstalled add-on {}",
                 rules.size(),
@@ -162,6 +204,7 @@ public class GspmScanRuleRegistrar implements GspmRuleSource, AddOnInstallationS
 
     private void registerRule(GspmRule rule, AddOn addOn) {
         registry.registerRule(rule);
+        registeredRules.put(rule.getId(), rule);
         if (addOn != null) {
             rulesByAddOn.computeIfAbsent(addOn, a -> new ArrayList<>()).add(rule);
         }

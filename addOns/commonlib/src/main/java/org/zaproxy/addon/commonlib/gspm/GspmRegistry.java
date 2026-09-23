@@ -362,11 +362,25 @@ public class GspmRegistry {
     }
 
     private void notifyRegistered(GspmRule rule) {
-        listeners.forEach(l -> l.ruleRegistered(rule));
+        listeners.forEach(
+                l -> {
+                    try {
+                        l.ruleRegistered(rule);
+                    } catch (Exception e) {
+                        LOGGER.error("Failed to notify registered rule {}", rule.getId(), e);
+                    }
+                });
     }
 
     private void notifyUnregistered(GspmRule rule) {
-        listeners.forEach(l -> l.ruleUnregistered(rule));
+        listeners.forEach(
+                l -> {
+                    try {
+                        l.ruleUnregistered(rule);
+                    } catch (Exception e) {
+                        LOGGER.error("Failed to notify unregistered rule {}", rule.getId(), e);
+                    }
+                });
     }
 
     /**
