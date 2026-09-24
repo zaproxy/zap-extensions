@@ -65,6 +65,18 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.authhelper.llm.ExtensionAuthhelperLlm") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.authhelper.llm"))
+                }
+                dependencies {
+                    addOns {
+                        register("llm") {
+                            version.set(">=0.0.1")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -108,6 +120,7 @@ dependencies {
 
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("llm")
     zapAddOn("database")
     zapAddOn("network")
     zapAddOn("pscan")
