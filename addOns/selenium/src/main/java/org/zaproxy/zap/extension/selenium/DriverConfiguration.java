@@ -58,4 +58,9 @@ public class DriverConfiguration {
     @Builder.Default private final Map<String, String> preferences = Collections.emptyMap();
     @Builder.Default private final List<String> includeExtensions = Collections.emptyList();
     @Builder.Default private final List<String> excludeExtensions = Collections.emptyList();
+
+    /**
+     * @since 15.57.0
+     */
+    @Builder.Default private final boolean syncScriptExecution = false;
 }

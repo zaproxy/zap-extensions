@@ -1113,7 +1113,8 @@ public class ClientSpider implements GenericScanner2 {
                             .requester(initiator)
                             .proxyAddress(LOCAL_PROXY_IP)
                             .proxyPort(proxyPort)
-                            .enableExtensions(true);
+                            .enableExtensions(true)
+                            .syncScriptExecution(true);
             if (!scanOptions.getIncludeExtensions().isEmpty()) {
                 driverConfBuilder.includeExtensions(scanOptions.getIncludeExtensions());
             }

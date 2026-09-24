@@ -928,7 +928,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 });
 
         if (getExtScript() != null) {
-            boolean synchronously = requester == HttpSender.AJAX_SPIDER_INITIATOR;
+            boolean synchronously = driverConf.isSyncScriptExecution();
             List<ScriptWrapper> scripts = extScript.getScripts(SCRIPT_TYPE_SELENIUM);
             for (ScriptWrapper script : scripts) {
                 try {

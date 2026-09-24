@@ -11,9 +11,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated Chrome and Firefox full extensions to v0.2.3.
 - Update the Client Spider clear action title capitalization (Issue 2000).
+- Depend on newer version of Selenium add-on.
 
 ### Fixed
 - Respect spider and global exclusions (Issue 9439).
+- Execute Selenium scripts synchronously when the browser is launched (Issue 9472).
 
 ## [0.31.0] - 2026-08-14
 ### Changed

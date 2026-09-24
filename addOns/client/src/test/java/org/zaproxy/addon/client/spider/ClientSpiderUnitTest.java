@@ -227,6 +227,20 @@ class ClientSpiderUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldSetSynchronousScriptExecutionWhenStartingSpider() {
+        // Given
+        ArgumentCaptor<DriverConfiguration> driverConfCaptor = ArgumentCaptor.captor();
+        when(extSel.getWebDriver(anyString(), driverConfCaptor.capture())).thenReturn(wd);
+
+        // When
+        spider.run();
+        waitForProxy();
+
+        // Then
+        assertThat(driverConfCaptor.getValue().isSyncScriptExecution(), is(true));
+    }
+
+    @Test
     void shouldRemoveListenerFromClientMapWhenFinished() {
         // Given
         clientMapListener();
