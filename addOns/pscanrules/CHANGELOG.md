@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [76] - 2026-09-25
 ### Changed
 - Content Security Policy scan rule analyzes all active CSP headers and META policies together using browser-style intersection (Issue 9403).
 - Update dependency.
@@ -705,6 +705,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[76]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v76
 [75]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v75
 [74]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v74
 [73]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v73
