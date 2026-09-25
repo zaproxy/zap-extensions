@@ -843,6 +843,11 @@ class GspmRegistryUnitTest extends TestUtils {
         }
 
         @Override
+        public GspmPhase getPhase() {
+            return GspmPhase.PASSIVE;
+        }
+
+        @Override
         public List<GspmCategory> getCategories() {
             return Collections.emptyList();
         }
