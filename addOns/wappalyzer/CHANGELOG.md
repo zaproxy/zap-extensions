@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
 - Dependency update.
+- Maintenance changes.
 
 ## [21.57.0] - 2026-08-20
 ### Changed

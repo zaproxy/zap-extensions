@@ -10,7 +10,7 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/technology-detection/")
         extensions {
-            register("org.zaproxy.zap.extension.wappalyzer.automation.ExtensionWappalyzerAutomation") {
+            register("org.zaproxy.zap.extension.wappalyzer.automation.ExtensionTechDetectAutomation") {
                 classnames {
                     allowed.set(listOf("org.zaproxy.zap.extension.wappalyzer.automation"))
                 }

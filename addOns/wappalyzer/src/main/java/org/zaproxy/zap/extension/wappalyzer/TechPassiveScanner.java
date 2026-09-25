@@ -102,7 +102,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
 
     @Override
     public String getName() {
-        return Constant.messages.getString("wappalyzer.scanner");
+        return Constant.messages.getString("techdetect.scanner");
     }
 
     @Override
@@ -395,8 +395,8 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
         Result result = appPattern.findInString(content);
         if (!result.getVersions().isEmpty() || !result.getEvidence().isEmpty()) {
             appMatch = getAppMatch(appMatch, currentApp);
-            // TODO may need to account for the wappalyzer spec in dealing with version info:
-            // https://www.wappalyzer.com/docs/specification
+            // TODO may need to account for the spec in dealing with version info:
+            // https://github.com/enthec/webappanalyzer/#specification
             appMatch.addEvidence(result.getEvidence());
             result.getVersions().forEach(appMatch::addVersion);
             LOGGER.debug(
@@ -428,7 +428,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
 
         Builder builder = Alert.builder();
         builder.setPluginId(PLUGIN_ID)
-                .setName(Constant.messages.getString("wappalyzer.alert.name.prefix", app.getName()))
+                .setName(Constant.messages.getString("techdetect.alert.name.prefix", app.getName()))
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setUri(url)
@@ -447,14 +447,14 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     private static String getDesc(Application app) {
         String desc =
                 Constant.messages.getString(
-                        "wappalyzer.alert.desc",
+                        "techdetect.alert.desc",
                         collectionToString(app.getCategories()),
                         app.getName());
         if (app.getDescription() != null && !app.getDescription().isEmpty()) {
             desc =
                     desc
                             + Constant.messages.getString(
-                                    "wappalyzer.alert.desc.extended", app.getDescription());
+                                    "techdetect.alert.desc.extended", app.getDescription());
         }
         return desc;
     }
@@ -465,13 +465,13 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
                 && !appMatch.getApplication().getCpe().isBlank()) {
             cpeInfo =
                     Constant.messages.getString(
-                            "wappalyzer.alert.otherinfo.cpe", appMatch.getApplication().getCpe());
+                            "techdetect.alert.otherinfo.cpe", appMatch.getApplication().getCpe());
         }
         String versionInfo = "";
         if (appMatch.getVersion() != null && !appMatch.getVersions().isEmpty()) {
             versionInfo =
                     Constant.messages.getString(
-                            "wappalyzer.alert.otherinfo.version",
+                            "techdetect.alert.otherinfo.version",
                             collectionToString(appMatch.getVersions()));
         }
         return cpeInfo.isEmpty() ? versionInfo : cpeInfo + '\n' + versionInfo;
