@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [28] - 2026-09-25
 ### Fixed
 - The `alertFilter` automation framework job now correctly reads the `deleteGlobalAlerts` parameter.
 - Defaulting a new automation framework job rule to Directory Browsing (0) correctly recorded.
@@ -175,6 +175,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[28]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v25
