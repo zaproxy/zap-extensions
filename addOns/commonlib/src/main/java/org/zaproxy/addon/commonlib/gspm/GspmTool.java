@@ -22,13 +22,15 @@ package org.zaproxy.addon.commonlib.gspm;
 import java.util.Objects;
 
 /**
- * Identifies a scan tool with a stable id and an i18n display name.
+ * Identifies a scan tool with a stable id, an i18n display name, and the {@link GspmPhase} it
+ * appears under in the GSPM dialog's tree.
  *
  * @since 1.45.0
  */
-public record GspmTool(String id, String displayName) {
+public record GspmTool(String id, String displayName, GspmPhase phase) {
     public GspmTool {
         Objects.requireNonNull(id, "id must not be null");
         Objects.requireNonNull(displayName, "displayName must not be null");
+        Objects.requireNonNull(phase, "phase must not be null");
     }
 }

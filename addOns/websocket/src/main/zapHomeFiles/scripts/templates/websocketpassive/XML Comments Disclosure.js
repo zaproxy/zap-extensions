@@ -18,6 +18,29 @@ var Comment = Java.type("org.w3c.dom.Comment");
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110008
+name: Suspicious XML Comments Disclosure script
+description: >
+  The response appears to contain suspicious comments which may help an attacker.
+solution: >
+  Remove all comments that return information that may help an attacker and fix any underlying
+  problems they refer to.
+category: info_gather
+risk: info
+confidence: medium
+cweId: 200
+wascId: 13
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/XML%20Comments%20Disclosure.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110008
+`);
+}
 
 var commentPatterns = [
   /\bTODO\b/gim,

@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 
@@ -50,12 +52,23 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 @Setter
 public class GspmRuleSet {
 
+    private static final Logger LOGGER = LogManager.getLogger(GspmRuleSet.class);
+
     /**
      * The category id/key representing "all rules" (the catch-all root), e.g. as a rule set's
      * {@link #category}, or as the root segment of a {@link #ruleCategoryKey(GspmRule) category
      * key} such as {@code "all.ascan"}.
      */
     public static final String ALL_CATEGORY = "all";
+
+    /**
+     * Prefix for a {@link #category} value that scopes a rule set to a whole {@link GspmPhase}
+     * instead of a tool/category key, e.g. {@code "phase.passive"} matches every rule whose {@link
+     * GspmRule#getPhase()} is {@link GspmPhase#PASSIVE}, regardless of tool. Kept as a separate
+     * namespace from {@link #ruleCategoryKey(GspmRule)} (which stays tool-first, unaware of phase)
+     * so existing tool/category keys are unaffected; see {@link #matches(GspmRule)}.
+     */
+    public static final String PHASE_PREFIX = "phase.";
 
     private String name;
     private String category;
@@ -184,11 +197,34 @@ public class GspmRuleSet {
         }
         boolean categoryMatches = true;
         if (category != null && !category.equalsIgnoreCase(ALL_CATEGORY)) {
-            String ruleKey = ruleCategoryKey(rule);
-            categoryMatches = ruleKey.equals(category) || ruleKey.startsWith(category + ".");
+            if (category.startsWith(PHASE_PREFIX)) {
+                categoryMatches = matchesPhase(rule);
+            } else {
+                String ruleKey = ruleCategoryKey(rule);
+                categoryMatches = ruleKey.equals(category) || ruleKey.startsWith(category + ".");
+            }
         }
         boolean statusMatches = status == null || status.equalsIgnoreCase(rule.getStatus().name());
         return categoryMatches && statusMatches;
+    }
+
+    /**
+     * Returns {@code true} if {@code rule}'s phase matches this rule set's {@link #category}, which
+     * must already be confirmed to have the {@link #PHASE_PREFIX}. {@link #category} is a plain
+     * string deserialized from user-editable policy YAML, so an unrecognized phase name (e.g. from
+     * a hand-edited or version-skewed file) is treated as a non-match rather than thrown, to avoid
+     * breaking threshold/strength resolution for every other rule set.
+     */
+    private boolean matchesPhase(GspmRule rule) {
+        try {
+            GspmPhase phase =
+                    GspmPhase.valueOf(
+                            category.substring(PHASE_PREFIX.length()).toUpperCase(Locale.ROOT));
+            return rule.getPhase() == phase;
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("GSPM: ignoring rule set with unrecognised phase category '{}'", category);
+            return false;
+        }
     }
 
     /**
