@@ -43,13 +43,17 @@ public final class EncoderUtils {
                 && text.length() >= 2
                 && text.charAt(0) == '{'
                 && text.charAt(text.length() - 1) == '}') {
-            // Remove the first and last characters using substring
-            int first = text.indexOf('\n');
-            int last = text.lastIndexOf('\n');
-            if (first == -1 || last == -1)
+            String inner = text.substring(1, text.length() - 1);
+            // Empty nested messages are valid protobuf values. The editor representation can be
+            // either "{}" or "{\n}".
+            if (inner.isEmpty() || "\n".equals(inner)) {
+                return "";
+            }
+            if (inner.charAt(0) != '\n' || inner.charAt(inner.length() - 1) != '\n') {
                 throw new InvalidProtobufFormatException(
                         Constant.messages.getString("grpc.encoder.nested.message.newline.error"));
-            return text.substring(first + 1, last);
+            }
+            return inner.substring(1, inner.length() - 1);
         }
         throw new InvalidProtobufFormatException(
                 Constant.messages.getString("grpc.encoder.nested.message.braces.error"));
@@ -116,9 +120,83 @@ public final class EncoderUtils {
         return result;
     }
 
+    static String escapeString(String value) {
+        StringBuilder escaped = new StringBuilder(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            switch (ch) {
+                case '\\':
+                    escaped.append("\\\\");
+                    break;
+                case '"':
+                    escaped.append("\\\"");
+                    break;
+                case '\b':
+                    escaped.append("\\b");
+                    break;
+                case '\f':
+                    escaped.append("\\f");
+                    break;
+                case '\n':
+                    escaped.append("\\n");
+                    break;
+                case '\r':
+                    escaped.append("\\r");
+                    break;
+                case '\t':
+                    escaped.append("\\t");
+                    break;
+                default:
+                    escaped.append(ch);
+                    break;
+            }
+        }
+        return escaped.toString();
+    }
+
+    static String unescapeString(String value) {
+        StringBuilder unescaped = new StringBuilder(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (ch != '\\' || i + 1 >= value.length()) {
+                unescaped.append(ch);
+                continue;
+            }
+
+            char next = value.charAt(++i);
+            switch (next) {
+                case '\\':
+                    unescaped.append('\\');
+                    break;
+                case '"':
+                    unescaped.append('"');
+                    break;
+                case 'b':
+                    unescaped.append('\b');
+                    break;
+                case 'f':
+                    unescaped.append('\f');
+                    break;
+                case 'n':
+                    unescaped.append('\n');
+                    break;
+                case 'r':
+                    unescaped.append('\r');
+                    break;
+                case 't':
+                    unescaped.append('\t');
+                    break;
+                default:
+                    unescaped.append('\\').append(next);
+                    break;
+            }
+        }
+        return unescaped.toString();
+    }
+
     public static String removeDoubleQuotes(String str) throws InvalidProtobufFormatException {
         if (str.startsWith("\"") && str.endsWith("\"")) {
-            return str.substring(1, str.length() - 1);
+            return unescapeString(str.substring(1, str.length() - 1));
         }
         throw new InvalidProtobufFormatException(
                 Constant.messages.getString("grpc.encoder.message.missing.quotes.error"));
@@ -200,16 +278,10 @@ public final class EncoderUtils {
                         byte[] byteArray = hexStringToByteArray(inputArray[1]);
                         codedOutputStream.writeByteArray(fieldNumber, byteArray);
                     } else if (typeSpecifier == 'N') {
-                        // nested message
+                        // Nested messages are explicitly marked as such by the decoder/editor.
+                        // A zero-length byte array is a valid empty embedded message, not failure.
                         byte[] byteArray = getNestedMessageEncodedValue(val);
-                        // if failed to parsed as nested message
-                        // treat it as a string
-                        if (byteArray.length == 0) {
-                            codedOutputStream.writeString(fieldNumber, val);
-                        } else {
-                            // nested message
-                            codedOutputStream.writeByteArray(fieldNumber, byteArray);
-                        }
+                        codedOutputStream.writeByteArray(fieldNumber, byteArray);
                     } else {
                         // human readable string
                         // remove double quotes
@@ -235,12 +307,9 @@ public final class EncoderUtils {
         }
     }
 
-    static byte[] getNestedMessageEncodedValue(String nestedMessage) {
-        try {
-            return encodeNestedMessage(nestedMessage).toByteArray();
-        } catch (Exception e) {
-            return new byte[0];
-        }
+    static byte[] getNestedMessageEncodedValue(String nestedMessage)
+            throws IOException, InvalidProtobufFormatException {
+        return encodeNestedMessage(nestedMessage).toByteArray();
     }
 
     public static ByteArrayOutputStream encodeNestedMessage(String nestedMessage)
@@ -297,14 +366,7 @@ public final class EncoderUtils {
                         byte[] byteArray = hexStringToByteArray(inputArray[1]);
                         size += CodedOutputStream.computeByteArraySize(fieldNumber, byteArray);
                     } else if (typeSpecifier == 'N') {
-                        // nested message
-                        int nestedMessageSize = computeNestedMessageSize(fieldNumber, val);
-                        // if failed to get size treat it as simple string
-                        if (nestedMessageSize == 0) {
-                            size += CodedOutputStream.computeStringSize(fieldNumber, inputArray[1]);
-                        } else {
-                            size += nestedMessageSize;
-                        }
+                        size += computeNestedMessageSize(fieldNumber, val);
                     } else {
                         // human readable string
                         val = EncoderUtils.removeDoubleQuotes(inputArray[1]);
@@ -331,15 +393,12 @@ public final class EncoderUtils {
         return size;
     }
 
-    static int computeNestedMessageSize(int fieldNumber, String nestedMessage) {
-        int size = CodedOutputStream.computeTagSize(fieldNumber);
-        int nesMessageSize = 0;
-        try {
-            nesMessageSize = computeSize(nestedMessage);
-        } catch (InvalidProtobufFormatException e) {
-            return 0;
-        }
-        return size + nesMessageSize + CodedOutputStream.computeUInt32SizeNoTag(nesMessageSize);
+    static int computeNestedMessageSize(int fieldNumber, String nestedMessage)
+            throws InvalidProtobufFormatException {
+        int nestedMessageSize = computeSize(nestedMessage);
+        return CodedOutputStream.computeTagSize(fieldNumber)
+                + CodedOutputStream.computeUInt32SizeNoTag(nestedMessageSize)
+                + nestedMessageSize;
     }
 
     static int computeSize(String nestedMessage) throws InvalidProtobufFormatException {
