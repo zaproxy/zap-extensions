@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [76] - 2026-09-25
 ### Changed
 - Content Security Policy scan rule analyzes all active CSP headers and META policies together using browser-style intersection (Issue 9403).
