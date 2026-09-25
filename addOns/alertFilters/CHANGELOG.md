@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [28] - 2026-09-25
 ### Fixed
 - The `alertFilter` automation framework job now correctly reads the `deleteGlobalAlerts` parameter.
