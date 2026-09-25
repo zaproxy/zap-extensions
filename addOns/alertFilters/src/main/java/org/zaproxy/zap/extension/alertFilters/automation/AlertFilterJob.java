@@ -148,6 +148,12 @@ public class AlertFilterJob extends AutomationJob {
         if (jobData == null) {
             return;
         }
+        JobUtils.applyParamsToObject(
+                (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                this.getData().getParameters(),
+                this.getName(),
+                null,
+                progress);
         Object alertFiltersObject = jobData.get("alertFilters");
         if (alertFiltersObject == null) {
             progress.warn(

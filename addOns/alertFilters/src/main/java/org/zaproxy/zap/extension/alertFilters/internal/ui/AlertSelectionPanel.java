@@ -23,6 +23,7 @@ import java.awt.event.ItemEvent;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import org.apache.commons.lang3.StringUtils;
 import org.zaproxy.zap.extension.alertFilters.ExtensionAlertFilters;
 import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
 
@@ -82,6 +83,7 @@ public class AlertSelectionPanel {
     public void reset() {
         ids.removeAllItems();
         ExtensionAlertFilters.getScanRulesInfo().getIds().stream().sorted().forEach(ids::addItem);
+        ids.setSelectedIndex(0);
     }
 
     public String getSelectedId() {
@@ -90,7 +92,9 @@ public class AlertSelectionPanel {
     }
 
     public void setSelectedId(String id) {
-        ids.setSelectedItem(id);
+        if (StringUtils.isNotBlank(id)) {
+            ids.setSelectedItem(id);
+        }
     }
 
     public String getSelectedName() {

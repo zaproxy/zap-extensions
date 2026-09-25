@@ -185,6 +185,30 @@ class AlertFilterJobUnitTest {
     }
 
     @Test
+    void shouldParseDeleteGlobalAlertsParameter() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AlertFilterJob job = new AlertFilterJob();
+        String contextStr =
+                "parameters: \n"
+                        + "  deleteGlobalAlerts: true\n"
+                        + "alertFilters:\n"
+                        + "- ruleId: 1\n"
+                        + "  newRisk: 'High'\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(job.getParameters().getDeleteGlobalAlerts(), is(equalTo(true)));
+    }
+
+    @Test
     void shouldErrorOnMissingNewRisk() {
         // Given
         AutomationProgress progress = new AutomationProgress();
