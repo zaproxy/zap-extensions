@@ -103,7 +103,7 @@ public class NetworkUtilsUnitTest {
                 auth,
                 is(
                         equalTo(
-                                "Digest username=\"username\", realm=\"test\", nonce=\"e561a741e25a463317199abe129bb096\", uri=\"/digest/\", response=\"d7aaee78d91c0e29bca8a57fa26f1ea9\", algorithm=MD5")));
+                                "Digest username=\"username\", realm=\"test\", nonce=\"e561a741e25a463317199abe129bb096\", uri=\"/digest/\", response=\"d7aaee78d91c0e29bca8a57fa26f1ea9\"")));
     }
 
     @Test

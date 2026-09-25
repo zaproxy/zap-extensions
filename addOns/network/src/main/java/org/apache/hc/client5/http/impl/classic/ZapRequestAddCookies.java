@@ -61,11 +61,34 @@ import org.slf4j.LoggerFactory;
 import org.zaproxy.addon.network.internal.client.apachev5.ZapHttpClientContext;
 
 /**
- * Implementation from {@link RequestAddCookies} but with logic to keep just one cookie header.
+ * Implementation from {@link RequestAddCookies} but with logic to still add cookies and keep just one cookie header.
  */
 public class ZapRequestAddCookies implements HttpRequestInterceptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZapRequestAddCookies.class);
+
+    private static String normalizeRequestPath(final String rawPath) {
+        if (TextUtils.isBlank(rawPath)) {
+            return "/";
+        }
+        int end = rawPath.length();
+
+        final int queryIndex = rawPath.indexOf('?');
+        if (queryIndex >= 0) {
+            end = queryIndex;
+        }
+        final int fragmentIndex = rawPath.indexOf('#');
+        if (fragmentIndex >= 0 && fragmentIndex < end) {
+            end = fragmentIndex;
+        }
+        if (end == 0) {
+            return "/";
+        }
+        if (end == rawPath.length()) {
+            return rawPath;
+        }
+        return rawPath.substring(0, end);
+    }
 
     public ZapRequestAddCookies() {
         super();
@@ -82,7 +105,7 @@ public class ZapRequestAddCookies implements HttpRequestInterceptor {
             return;
         }
 
-        final HttpClientContext clientContext = HttpClientContext.adapt(context);
+        final HttpClientContext clientContext = HttpClientContext.cast(context);
         final String exchangeId = clientContext.getExchangeId();
 
         // Obtain cookie store
@@ -112,7 +135,7 @@ public class ZapRequestAddCookies implements HttpRequestInterceptor {
             return;
         }
 
-        final RequestConfig config = clientContext.getRequestConfig();
+        final RequestConfig config = clientContext.getRequestConfigOrDefault();
         String cookieSpecName = config.getCookieSpec();
         if (cookieSpecName == null) {
             cookieSpecName = StandardCookieSpec.STRICT;
@@ -122,10 +145,9 @@ public class ZapRequestAddCookies implements HttpRequestInterceptor {
         }
 
         final URIAuthority authority = request.getAuthority();
-        String path = request.getPath();
-        if (TextUtils.isEmpty(path)) {
-            path = "/";
-        }
+
+        final String path = normalizeRequestPath(request.getPath());
+
         String hostName = authority != null ? authority.getHostName() : null;
         if (hostName == null) {
             hostName = route.getTargetHost().getHostName();
@@ -183,8 +205,8 @@ public class ZapRequestAddCookies implements HttpRequestInterceptor {
 
         // Stick the CookieSpec and CookieOrigin instances to the HTTP context
         // so they could be obtained by the response interceptor
-        context.setAttribute(HttpClientContext.COOKIE_SPEC, cookieSpec);
-        context.setAttribute(HttpClientContext.COOKIE_ORIGIN, cookieOrigin);
+        clientContext.setCookieSpec(cookieSpec);
+        clientContext.setCookieOrigin(cookieOrigin);
 
         if (clientContext instanceof ZapHttpClientContext) {
             ZapHttpClientContext zapContext = (ZapHttpClientContext) clientContext;

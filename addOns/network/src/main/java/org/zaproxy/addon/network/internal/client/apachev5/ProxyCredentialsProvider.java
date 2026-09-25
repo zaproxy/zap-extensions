@@ -67,6 +67,11 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
                     credentials.getUserName(), credentials.getPassword());
         }
 
+        return createNtCredentials(credentials, proxy);
+    }
+
+    @SuppressWarnings("deprecation")
+    private Credentials createNtCredentials(PasswordAuthentication credentials, HttpProxy proxy) {
         return new NTCredentials(
                 credentials.getUserName(), credentials.getPassword(), "", proxy.getRealm());
     }

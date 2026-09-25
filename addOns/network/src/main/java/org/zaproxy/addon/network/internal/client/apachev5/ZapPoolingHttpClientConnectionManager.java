@@ -31,6 +31,7 @@ import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
 
 /** A {@link PoolingHttpClientConnectionManager} with custom configuration. */
+@SuppressWarnings("deprecation")
 public class ZapPoolingHttpClientConnectionManager extends PoolingHttpClientConnectionManager {
 
     public ZapPoolingHttpClientConnectionManager(

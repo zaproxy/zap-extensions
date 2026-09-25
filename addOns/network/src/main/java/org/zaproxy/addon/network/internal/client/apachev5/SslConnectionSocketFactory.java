@@ -47,6 +47,7 @@ import org.zaproxy.addon.network.internal.client.LaxTrustManager;
  * A {@link LayeredConnectionSocketFactory} that allows to trust all certificates, use a client
  * certificate, or verify all certificates.
  */
+@SuppressWarnings("deprecation")
 public class SslConnectionSocketFactory implements LayeredConnectionSocketFactory {
 
     static final String LAX_ATTR_NAME = "zap.ssl.lax";

@@ -101,7 +101,8 @@ public class CustomH2AsyncClientCreator {
                         new DefaultHttpProcessor((HttpRequestInterceptor[]) null, null),
                         (request, context) -> pushConsumerRegistry.get(request),
                         H2Config.DEFAULT,
-                        charCodingConfig);
+                        charCodingConfig,
+                        LoggingExceptionCallback.INSTANCE);
 
         DefaultConnectingIOReactor ioReactor =
                 new DefaultConnectingIOReactor(

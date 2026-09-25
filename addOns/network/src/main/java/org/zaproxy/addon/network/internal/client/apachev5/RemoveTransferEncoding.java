@@ -43,7 +43,7 @@ public class RemoveTransferEncoding implements HttpResponseInterceptor {
         if (response.removeHeaders(HttpHeaders.TRANSFER_ENCODING)) {
             context.setAttribute(ATTR_NAME, Boolean.TRUE);
             if (LOGGER.isDebugEnabled()) {
-                HttpClientContext clientContext = HttpClientContext.adapt(context);
+                HttpClientContext clientContext = HttpClientContext.cast(context);
                 LOGGER.debug(
                         "{} removing {} header",
                         clientContext.getExchangeId(),

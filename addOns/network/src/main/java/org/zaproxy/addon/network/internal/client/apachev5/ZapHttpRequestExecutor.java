@@ -46,6 +46,7 @@ import org.apache.hc.core5.io.Closer;
  * A {@link HttpRequestExecutor} that does not try to read the response if switching protocols or if
  * the response is an event stream.
  */
+@SuppressWarnings("deprecation")
 public class ZapHttpRequestExecutor extends HttpRequestExecutor {
 
     public static final String CONNECTION = "zap.connection";
@@ -81,7 +82,9 @@ public class ZapHttpRequestExecutor extends HttpRequestExecutor {
                     throw new ProtocolException("Invalid response: " + new StatusLine(response));
                 }
                 if (status < HttpStatus.SC_SUCCESS) {
-                    if (informationCallback != null && status != HttpStatus.SC_CONTINUE) {
+                    if (informationCallback != null
+                            && status != HttpStatus.SC_CONTINUE
+                            && status != HttpStatus.SC_SWITCHING_PROTOCOLS) {
                         informationCallback.execute(response, conn, context);
                     }
                     if (status != HttpStatus.SC_SWITCHING_PROTOCOLS) {

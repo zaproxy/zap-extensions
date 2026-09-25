@@ -29,7 +29,6 @@ package org.apache.hc.client5.http.impl.cookie;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -68,8 +67,8 @@ public class RFC6265CookieSpec implements CookieSpec {
 
     // IMPORTANT!
     // These private static variables must be treated as immutable and never exposed outside this class
-    private static final BitSet TOKEN_DELIMS = Tokenizer.INIT_BITSET(EQUAL_CHAR, PARAM_DELIMITER);
-    private static final BitSet VALUE_DELIMS = Tokenizer.INIT_BITSET(PARAM_DELIMITER);
+    private static final Tokenizer.Delimiter TOKEN_DELIMS = Tokenizer.delimiters(EQUAL_CHAR, PARAM_DELIMITER);
+    private static final Tokenizer.Delimiter VALUE_DELIMS = Tokenizer.delimiters(PARAM_DELIMITER);
 
     private final CookieAttributeHandler[] attribHandlers;
     private final Map<String, CookieAttributeHandler> attribHandlerMap;
@@ -234,24 +233,24 @@ public class RFC6265CookieSpec implements CookieSpec {
         return headers;
     }
 
-    private static String parseData(final CharSequence buf, final Cursor cursor, final BitSet delimiters) {
+    private static String parseData(final CharSequence buf, final Cursor cursor, final Tokenizer.Delimiter chars) {
         final StringBuilder dst = new StringBuilder();
         while (!cursor.atEnd()) {
-            if (delimiters != null && delimiters.get(buf.charAt(cursor.getPos()))) {
+            if (chars != null && chars.test(buf.charAt(cursor.getPos()))) {
                 break;
             }
-            copyData(buf, cursor, delimiters, dst);
+            copyData(buf, cursor, chars, dst);
         }
         return dst.toString();
     }
 
-    private static void copyData(final CharSequence buf, final Cursor cursor, final BitSet delimiters, final StringBuilder dst) {
+    private static void copyData(final CharSequence buf, final Cursor cursor, final Tokenizer.Delimiter chars, final StringBuilder dst) {
         int pos = cursor.getPos();
         final int indexFrom = cursor.getPos();
         final int indexTo = cursor.getUpperBound();
         for (int i = indexFrom; i < indexTo; i++) {
             final char current = buf.charAt(i);
-            if ((delimiters != null && delimiters.get(current))) {
+            if ((chars != null && chars.test(current))) {
                 break;
             }
             pos++;
