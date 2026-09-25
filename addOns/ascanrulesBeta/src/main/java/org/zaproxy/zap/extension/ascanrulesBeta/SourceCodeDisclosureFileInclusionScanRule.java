@@ -219,7 +219,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
      */
     @Override
     public void scan(HttpMessage originalmsg, String paramname, String paramvalue) {
-        if (isClientError(getBaseMsg()) || isServerError(getBaseMsg())) {
+        if (isClientOrServerError(getBaseMsg())) {
             return;
         }
         try {
@@ -310,6 +310,15 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                     // send the modified message (with the url filename), and see what we get back
                     sendAndReceive(sourceattackmsg, false); // do not follow redirects
 
+                    // Skip if attack response is a client/server error.
+                    // Error pages naturally differ from success pages and comparing
+                    // them leads to false positives (see zaproxy/zaproxy#9184).
+                    if (isClientOrServerError(sourceattackmsg)) {
+                        LOGGER.debug(
+                                "Skipping [{}] due to error response status", prefixedUrlfilename);
+                        continue;
+                    }
+
                     int randomversussourcefilenamematchpercentage =
                             DiceMatcher.getMatchPercentage(
                                     randomfileattackmsg.getResponseBody().toString(),
@@ -397,6 +406,15 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                         sendAndReceive(sourceattackmsg, false); // do not follow redirects
                         LOGGER.debug("Completed WAR/EAR file name [{}]", prefixedUrlfilename);
 
+                        // Skip if attack response is a client/server error
+                        // (zaproxy/zaproxy#9184).
+                        if (isClientOrServerError(sourceattackmsg)) {
+                            LOGGER.debug(
+                                    "Skipping WAR/EAR [{}] due to error response status",
+                                    prefixedUrlfilename);
+                            continue;
+                        }
+
                         // since the WAR/EAR file may be large, and since the LCS does not work well
                         // with such large files, lets just look at the file size,
                         // compared to the original
@@ -448,6 +466,10 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             LOGGER.debug(
                     "Error scanning parameters for Source Code Disclosure: {}", e.getMessage(), e);
         }
+    }
+
+    private boolean isClientOrServerError(HttpMessage msg) {
+        return isClientError(msg) || isServerError(msg);
     }
 
     private boolean isEmptyOrTooSimilar(HttpMessage msg, int matchPercentage) {
