@@ -35,6 +35,7 @@ public class ReportParam extends AbstractParam {
     private static final String PARAM_DESCRIPTION = PARAM_BASE_KEY + ".description";
     private static final String PARAM_TEMPLATE = PARAM_BASE_KEY + ".template";
     private static final String PARAM_DISPLAY = PARAM_BASE_KEY + ".display";
+    private static final String PARAM_ZIP = PARAM_BASE_KEY + ".zip";
     private static final String PARAM_TEMPLATE_DIRECTORY = PARAM_BASE_KEY + ".templateDir";
     private static final String PARAM_REPORT_DIRECTORY = PARAM_BASE_KEY + ".reportDir";
     private static final String PARAM_REPORT_NAME_PATTERN = PARAM_BASE_KEY + ".reportPattern";
@@ -61,6 +62,7 @@ public class ReportParam extends AbstractParam {
     private String reportDirectory;
     private String reportNamePattern;
     private boolean displayReport;
+    private boolean zipReport;
     private boolean incConfidence0;
     private boolean incConfidence1;
     private boolean incConfidence2;
@@ -89,6 +91,7 @@ public class ReportParam extends AbstractParam {
         reportDirectory = getString(PARAM_REPORT_DIRECTORY, System.getProperty("user.home"));
         reportNamePattern = getString(PARAM_REPORT_NAME_PATTERN, DEFAULT_NAME_PATTERN);
         displayReport = getBoolean(PARAM_DISPLAY, true);
+        zipReport = getBoolean(PARAM_ZIP, false);
 
         incConfidence0 = getBoolean(PARAM_INC_CONFIDENCE_0, false);
         incConfidence1 = getBoolean(PARAM_INC_CONFIDENCE_1, true);
@@ -163,6 +166,15 @@ public class ReportParam extends AbstractParam {
     public void setDisplayReport(boolean displayReport) {
         this.displayReport = displayReport;
         getConfig().setProperty(PARAM_DISPLAY, displayReport);
+    }
+
+    public boolean isZipReport() {
+        return zipReport;
+    }
+
+    public void setZipReport(boolean zipReport) {
+        this.zipReport = zipReport;
+        getConfig().setProperty(PARAM_ZIP, zipReport);
     }
 
     public boolean isIncConfidence0() {
