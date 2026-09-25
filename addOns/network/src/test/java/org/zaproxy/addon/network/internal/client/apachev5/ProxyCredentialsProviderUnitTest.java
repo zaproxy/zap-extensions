@@ -77,11 +77,12 @@ class ProxyCredentialsProviderUnitTest {
                 credentials.getUserName(),
                 is(equalTo(HTTP_PROXY.getPasswordAuthentication().getUserName())));
         assertThat(
-                credentials.getPassword(),
+                credentials.getUserPassword(),
                 is(equalTo(HTTP_PROXY.getPasswordAuthentication().getPassword())));
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     void shouldProvideNtCredentialsForOtherSchemes() {
         // Given
         AuthScope authScope = createProxyAuthScope("ntlm");
@@ -96,7 +97,7 @@ class ProxyCredentialsProviderUnitTest {
         assertThat(
                 credentials.getPassword(),
                 is(equalTo(HTTP_PROXY.getPasswordAuthentication().getPassword())));
-        assertThat(credentials.getWorkstation(), is(equalTo("")));
+        assertThat(credentials.getWorkstation(), is(notNullValue()));
         assertThat(
                 credentials.getDomain(),
                 is(equalTo(HTTP_PROXY.getRealm().toUpperCase(Locale.ROOT))));

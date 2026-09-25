@@ -33,7 +33,6 @@ import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.impl.io.HttpRequestExecutor;
 import org.apache.hc.core5.http.io.HttpConnectionFactory;
-import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 
 /** An HTTP connector, sends CONNECT request to a target and returns the connected socket. */
@@ -64,9 +63,9 @@ public class HttpConnector {
         HttpRoute route =
                 new HttpRoute(target, null, target, false, TunnelType.TUNNELLED, LayerType.PLAIN);
 
-        context.setAttribute(HttpCoreContext.HTTP_REQUEST, request);
-        context.setAttribute(HttpClientContext.HTTP_ROUTE, route);
-        context.setAttribute(HttpClientContext.REQUEST_CONFIG, requestConfig);
+        context.setRequest(request);
+        context.setRoute(route);
+        context.setRequestConfig(requestConfig);
 
         try {
             ManagedHttpClientConnection connection = connectionFactory.createConnection(null);

@@ -54,9 +54,21 @@ public class LenientMessageParserFactory implements HttpMessageParserFactory<Cla
                 }
             };
 
+    private final Http1Config http1Config;
+
+    public LenientMessageParserFactory(Http1Config http1Config) {
+        this.http1Config = http1Config;
+    }
+
     @Override
-    public HttpMessageParser<ClassicHttpResponse> create(Http1Config h1Config) {
+    @Deprecated
+    public HttpMessageParser<ClassicHttpResponse> create(Http1Config http1Config) {
+        return null;
+    }
+
+    @Override
+    public HttpMessageParser<ClassicHttpResponse> create() {
         return new DefaultHttpResponseParser(
-                LINE_PARSER, DefaultClassicHttpResponseFactory.INSTANCE, h1Config);
+                http1Config, LINE_PARSER, DefaultClassicHttpResponseFactory.INSTANCE);
     }
 }

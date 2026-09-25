@@ -30,6 +30,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Function;
+
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.HttpRoute;
 import org.apache.hc.client5.http.auth.AuthSchemeFactory;
@@ -50,13 +52,14 @@ import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.config.Lookup;
 import org.apache.hc.core5.http.impl.io.HttpRequestExecutor;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
-import org.apache.hc.core5.http.protocol.BasicHttpContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.io.ModalCloseable;
+import org.apache.hc.core5.net.URIAuthority;
 import org.apache.hc.core5.util.Args;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +85,7 @@ public class ZapInternalHttpClient extends CloseableHttpClient
     private final Lookup<AuthSchemeFactory> authSchemeRegistry;
     private final CookieStore cookieStore;
     private final CredentialsProvider credentialsProvider;
+    private final Function<HttpContext, HttpClientContext> contextAdaptor;
     private final RequestConfig defaultConfig;
     private final ConcurrentLinkedQueue<Closeable> closeables;
 
@@ -94,6 +98,7 @@ public class ZapInternalHttpClient extends CloseableHttpClient
             final Lookup<AuthSchemeFactory> authSchemeRegistry,
             final CookieStore cookieStore,
             final CredentialsProvider credentialsProvider,
+            final Function<HttpContext, HttpClientContext> contextAdaptor,
             final RequestConfig defaultConfig,
             final List<Closeable> closeables) {
         super();
@@ -105,29 +110,30 @@ public class ZapInternalHttpClient extends CloseableHttpClient
         this.authSchemeRegistry = authSchemeRegistry;
         this.cookieStore = cookieStore;
         this.credentialsProvider = credentialsProvider;
+        this.contextAdaptor = contextAdaptor;
         this.defaultConfig = defaultConfig;
         this.closeables = closeables != null ? new ConcurrentLinkedQueue<>(closeables) : null;
     }
 
-    private HttpRoute determineRoute(final HttpHost target, final HttpContext context) throws HttpException {
-        return this.routePlanner.determineRoute(target, context);
+    private HttpRoute determineRoute(final HttpHost target, final HttpRequest request, final HttpContext context) throws HttpException {
+        return this.routePlanner.determineRoute(target, request, context);
     }
 
     private void setupContext(final HttpClientContext context) {
-        if (context.getAttribute(HttpClientContext.AUTHSCHEME_REGISTRY) == null) {
-            context.setAttribute(HttpClientContext.AUTHSCHEME_REGISTRY, this.authSchemeRegistry);
+        if (context.getAuthSchemeRegistry() == null) {
+            context.setAuthSchemeRegistry(this.authSchemeRegistry);
         }
-        if (context.getAttribute(HttpClientContext.COOKIESPEC_REGISTRY) == null) {
-            context.setAttribute(HttpClientContext.COOKIESPEC_REGISTRY, this.cookieSpecRegistry);
+        if (context.getCookieSpecRegistry() == null) {
+            context.setCookieSpecRegistry(this.cookieSpecRegistry);
         }
-        if (context.getAttribute(HttpClientContext.COOKIE_STORE) == null) {
-            context.setAttribute(HttpClientContext.COOKIE_STORE, this.cookieStore);
+        if (context.getCookieStore() == null) {
+            context.setCookieStore(this.cookieStore);
         }
-        if (context.getAttribute(HttpClientContext.CREDS_PROVIDER) == null) {
-            context.setAttribute(HttpClientContext.CREDS_PROVIDER, this.credentialsProvider);
+        if (context.getCredentialsProvider() == null) {
+            context.setCredentialsProvider(this.credentialsProvider);
         }
-        if (context.getAttribute(HttpClientContext.REQUEST_CONFIG) == null) {
-            context.setAttribute(HttpClientContext.REQUEST_CONFIG, this.defaultConfig);
+        if (context.getRequestConfig() == null) {
+            context.setRequestConfig(this.defaultConfig);
         }
     }
 
@@ -138,8 +144,7 @@ public class ZapInternalHttpClient extends CloseableHttpClient
             final HttpContext context) throws IOException {
         Args.notNull(request, "HTTP request");
         try {
-            final HttpClientContext localcontext = HttpClientContext.adapt(
-                    context != null ? context : new BasicHttpContext());
+            final HttpClientContext localcontext = contextAdaptor.apply(context);
             RequestConfig config = null;
             if (request instanceof Configurable) {
                 config = ((Configurable) request).getConfig();
@@ -148,8 +153,19 @@ public class ZapInternalHttpClient extends CloseableHttpClient
                 localcontext.setRequestConfig(config);
             }
             setupContext(localcontext);
+
+            final HttpHost resolvedTarget = target != null ? target : RoutingSupport.determineHost(request);
+            if (resolvedTarget != null) {
+                if (request.getScheme() == null) {
+                    request.setScheme(resolvedTarget.getSchemeName());
+                }
+                if (request.getAuthority() == null) {
+                    request.setAuthority(new URIAuthority(resolvedTarget));
+                }
+            }
             final HttpRoute route = determineRoute(
-                            target != null ? target : RoutingSupport.determineHost(request),
+                    resolvedTarget,
+                    request,
                             localcontext);
             final String exchangeId = ExecSupport.getNextExchangeId();
             localcontext.setExchangeId(exchangeId);
@@ -170,8 +186,13 @@ public class ZapInternalHttpClient extends CloseableHttpClient
             localcontext.setAttribute(ZapHttpRequestExecutor.EXEC_RUNTIME, execRuntime);
 
             final ExecChain.Scope scope = new ExecChain.Scope(exchangeId, route, request, execRuntime, localcontext);
-            final ClassicHttpResponse response = this.execChain.execute(copy(request), scope);
-            return CloseableHttpResponse.adapt(response);
+            try {
+                final ClassicHttpResponse response = this.execChain.execute(copy(request), scope);
+                return CloseableHttpResponse.adapt(response);
+            } catch (final RuntimeException | HttpException | IOException ex) {
+                execRuntime.discardEndpoint();
+                throw ex;
+            }
         } catch (final HttpException httpException) {
             throw new ClientProtocolException(httpException.getMessage(), httpException);
         }

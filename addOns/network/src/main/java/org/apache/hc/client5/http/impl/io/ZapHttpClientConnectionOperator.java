@@ -41,6 +41,7 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.config.Lookup;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.net.NamedEndpoint;
 import org.apache.hc.core5.util.Args;
 import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link DefaultHttpClientConnectionOperator} that optionally does not resolve the host name.
  */
+@SuppressWarnings("deprecation")
 public class ZapHttpClientConnectionOperator extends DefaultHttpClientConnectionOperator {
 
     public static final String NO_RESOLVE_HOSTNAME = "zap.no-resolve-hostname";
@@ -71,20 +73,11 @@ public class ZapHttpClientConnectionOperator extends DefaultHttpClientConnection
                         : DefaultSchemePortResolver.INSTANCE;
     }
 
-    @SuppressWarnings("unchecked")
-    private Lookup<ConnectionSocketFactory> getSocketFactoryRegistry(final HttpContext context) {
-        Lookup<ConnectionSocketFactory> reg =
-                (Lookup<ConnectionSocketFactory>) context.getAttribute(SOCKET_FACTORY_REGISTRY);
-        if (reg == null) {
-            reg = this.socketFactoryRegistry;
-        }
-        return reg;
-    }
-
     @Override
     public void connect(
             final ManagedHttpClientConnection conn,
             final HttpHost host,
+            final NamedEndpoint endpointHost,
             final InetSocketAddress localAddress,
             final Timeout connectTimeout,
             final SocketConfig socketConfig,
@@ -93,7 +86,14 @@ public class ZapHttpClientConnectionOperator extends DefaultHttpClientConnection
             throws IOException {
         if (!isSet(context, NO_RESOLVE_HOSTNAME)) {
             super.connect(
-                    conn, host, localAddress, connectTimeout, socketConfig, attachment, context);
+                    conn,
+                    host,
+                    endpointHost,
+                    localAddress,
+                    connectTimeout,
+                    socketConfig,
+                    attachment,
+                    context);
             return;
         }
 
@@ -101,7 +101,7 @@ public class ZapHttpClientConnectionOperator extends DefaultHttpClientConnection
         Args.notNull(host, "Host");
         Args.notNull(socketConfig, "Socket config");
         Args.notNull(context, "Context");
-        final Lookup<ConnectionSocketFactory> registry = getSocketFactoryRegistry(context);
+        final Lookup<ConnectionSocketFactory> registry = this.socketFactoryRegistry;
         final ConnectionSocketFactory sf = registry.lookup(host.getSchemeName());
         if (sf == null) {
             throw new UnsupportedSchemeException(

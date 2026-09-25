@@ -66,6 +66,7 @@ import org.slf4j.LoggerFactory;
  * Implementation from {@link ProtocolExec} with custom request copy, TRACE with authentication,
  * and attribute to disable proxy authentication.
  */
+@SuppressWarnings("deprecation")
 public final class ZapProtocolExec implements ExecChainHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZapProtocolExec.class);

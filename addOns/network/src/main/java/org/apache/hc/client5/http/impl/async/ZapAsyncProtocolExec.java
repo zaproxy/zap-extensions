@@ -67,6 +67,7 @@ import org.slf4j.LoggerFactory;
  * Implementation from {@link AsyncProtocolExec} with TRACE with authentication,
  * and attribute to disable proxy authentication.
  */
+@SuppressWarnings("deprecation")
 public final class ZapAsyncProtocolExec implements AsyncExecChainHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncProtocolExec.class);

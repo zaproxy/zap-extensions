@@ -58,8 +58,8 @@ public class HttpStateCredentialsProvider implements CredentialsProvider {
 
     private static Credentials convertCredentials(
             AuthScope authScope, org.apache.commons.httpclient.Credentials credentials) {
-        if ((StandardAuthScheme.BASIC.equals(authScope.getSchemeName())
-                        || StandardAuthScheme.DIGEST.equals(authScope.getSchemeName()))
+        if ((StandardAuthScheme.BASIC.equalsIgnoreCase(authScope.getSchemeName())
+                        || StandardAuthScheme.DIGEST.equalsIgnoreCase(authScope.getSchemeName()))
                 && credentials
                         instanceof org.apache.commons.httpclient.UsernamePasswordCredentials) {
             org.apache.commons.httpclient.UsernamePasswordCredentials upCredentials =
@@ -68,15 +68,8 @@ public class HttpStateCredentialsProvider implements CredentialsProvider {
                     upCredentials.getUserName(), upCredentials.getPassword().toCharArray());
         }
 
-        if (credentials instanceof org.apache.commons.httpclient.NTCredentials) {
-            org.apache.commons.httpclient.NTCredentials ntCredentials =
-                    (org.apache.commons.httpclient.NTCredentials) credentials;
-            return new NTCredentials(
-                    ntCredentials.getUserName(),
-                    ntCredentials.getPassword().toCharArray(),
-                    ntCredentials.getHost(),
-                    ntCredentials.getDomain(),
-                    null);
+        if (credentials instanceof org.apache.commons.httpclient.NTCredentials ntCredentials) {
+            return convertNtCredentials(ntCredentials);
         }
 
         if (credentials instanceof org.apache.commons.httpclient.UsernamePasswordCredentials) {
@@ -86,5 +79,16 @@ public class HttpStateCredentialsProvider implements CredentialsProvider {
                     upCredentials.getUserName(), upCredentials.getPassword().toCharArray());
         }
         return null;
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Credentials convertNtCredentials(
+            org.apache.commons.httpclient.NTCredentials ntCredentials) {
+        return new NTCredentials(
+                ntCredentials.getUserName(),
+                ntCredentials.getPassword().toCharArray(),
+                ntCredentials.getHost(),
+                ntCredentials.getDomain(),
+                null);
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.network.internal.client.apachev5;
 
+import org.apache.hc.client5.http.HttpRoute;
 import org.apache.hc.client5.http.RouteInfo;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.cookie.CookieSpecFactory;
@@ -73,7 +74,7 @@ public class ZapHttpClientContext extends HttpClientContext {
         HttpClientContext context = new HttpClientContext();
         context.setCookieStore(cookieStore);
         context.setCookieSpecRegistry(registry);
-        context.setAttribute(HttpClientContext.HTTP_ROUTE, route);
+        context.setRoute((HttpRoute) route);
         context.setRequestConfig(config);
         return context;
     }

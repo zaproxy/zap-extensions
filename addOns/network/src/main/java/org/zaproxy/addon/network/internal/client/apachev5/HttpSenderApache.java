@@ -54,7 +54,6 @@ import org.apache.hc.client5.http.impl.classic.ZapRequestAddCookies;
 import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.ZapHttpClientConnectionOperator;
-import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.protocol.ResponseProcessCookies;
 import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
 import org.apache.hc.core5.concurrent.FutureCallback;
@@ -70,8 +69,10 @@ import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.MessageHeaders;
 import org.apache.hc.core5.http.ProtocolVersion;
 import org.apache.hc.core5.http.config.CharCodingConfig;
+import org.apache.hc.core5.http.config.Http1Config;
 import org.apache.hc.core5.http.config.Lookup;
 import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.impl.io.DefaultHttpRequestWriter;
 import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
@@ -113,6 +114,7 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
 
 /** A {@link BaseHttpSender} using Apache HttpComponents Client. */
+@SuppressWarnings("deprecation")
 public class HttpSenderApache
         extends BaseHttpSender<HttpSenderContextApache, ZapHttpClientContext, HttpEntity> {
 
@@ -185,7 +187,20 @@ public class HttpSenderApache
                 ManagedHttpClientConnectionFactory.builder()
                         .charCodingConfig(charCodingConfig)
                         .outgoingContentLengthStrategy(outgoingContentStrategy)
-                        .responseParserFactory(new LenientMessageParserFactory())
+                        .responseParserFactory(new LenientMessageParserFactory(Http1Config.DEFAULT))
+                        .requestWriterFactory(
+                                () ->
+                                        new DefaultHttpRequestWriter() {
+                                            @Override
+                                            protected HttpVersion protocolVersion(HttpRequest msg) {
+                                                ProtocolVersion v = msg.getVersion();
+                                                if (v != null) {
+                                                    return new HttpVersion(
+                                                            v.getMajor(), v.getMinor());
+                                                }
+                                                return HttpVersion.HTTP_1_1;
+                                            }
+                                        })
                         .build();
 
         sslSocketFactory = new SslConnectionSocketFactory(options, clientCertificatesOptions);
@@ -317,7 +332,13 @@ public class HttpSenderApache
             return null;
         }
 
-        int entityContentLength = (int) Args.checkContentLength(body);
+        int entityContentLength =
+                (int)
+                        Args.checkRange(
+                                body.getContentLength(),
+                                -1,
+                                Integer.MAX_VALUE,
+                                "HTTP entity too large to be buffered in memory)");
         int contentLength = entityContentLength < 0 ? BUFFER_SIZE : entityContentLength;
         try (InputStream is = body.getContent()) {
             if (is == null) {
@@ -395,7 +416,7 @@ public class HttpSenderApache
         message.setResponseFromTargetHost(false);
 
         RequestConfig.Builder requestConfigBuilder =
-                RequestConfig.copy(requestCtx.getRequestConfig());
+                RequestConfig.copy(requestCtx.getRequestConfigOrDefault());
 
         boolean reauthenticate = false;
         requestCtx.setAttribute(ZapProtocolExec.AUTH_DISABLED_ATTR, Boolean.TRUE);
@@ -515,12 +536,8 @@ public class HttpSenderApache
         }
 
         if (!isSet(requestCtx, "zap.initial-cookie-setup")) {
-            requestCtx.setAttribute(
-                    "zap.initial-cookie-origin",
-                    requestCtx.getAttribute(HttpClientContext.COOKIE_ORIGIN));
-            requestCtx.setAttribute(
-                    "zap.initial-cookie-spec",
-                    requestCtx.getAttribute(HttpClientContext.COOKIE_SPEC));
+            requestCtx.setAttribute("zap.initial-cookie-origin", requestCtx.getCookieOrigin());
+            requestCtx.setAttribute("zap.initial-cookie-spec", requestCtx.getCookieSpec());
         }
 
         updateRequestHeaders(message.getRequestHeader(), requestCtx.getRequest());

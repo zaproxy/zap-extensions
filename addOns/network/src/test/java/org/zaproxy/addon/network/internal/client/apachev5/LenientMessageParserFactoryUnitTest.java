@@ -65,9 +65,9 @@ class LenientMessageParserFactoryUnitTest {
     void shouldCreateMessageParser() {
         // Given
         Http1Config h1Config = Http1Config.DEFAULT;
-        LenientMessageParserFactory parserFactory = new LenientMessageParserFactory();
+        LenientMessageParserFactory parserFactory = new LenientMessageParserFactory(h1Config);
         // When
-        HttpMessageParser<ClassicHttpResponse> parser = parserFactory.create(h1Config);
+        HttpMessageParser<ClassicHttpResponse> parser = parserFactory.create();
         // Then
         assertThat(parser, is(notNullValue()));
     }

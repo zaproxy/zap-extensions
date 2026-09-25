@@ -37,6 +37,7 @@ import org.apache.hc.client5.http.impl.DefaultSchemePortResolver;
 import org.apache.hc.client5.http.impl.DefaultUserTokenHandler;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.routing.HttpRoutePlanner;
 import org.apache.hc.core5.http.ConnectionReuseStrategy;
 import org.apache.hc.core5.http.config.Lookup;
@@ -113,6 +114,7 @@ public final class CustomHttpClientCreator {
                 authSchemeRegistry,
                 new BasicCookieStore(),
                 credentialsProvider,
+                HttpClientContext::castOrCreate,
                 defaultRequestConfig,
                 closeables);
     }
