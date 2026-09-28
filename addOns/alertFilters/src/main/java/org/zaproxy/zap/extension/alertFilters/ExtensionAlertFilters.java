@@ -437,7 +437,6 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     private void updateAlert(Alert alert, AlertFilter filter) {
         Alert updAlert = alert;
-        Alert origAlert = updAlert.newInstance();
         if (filter.getNewRisk() == -1) {
             updAlert.setRiskConfidence(alert.getRisk(), Alert.CONFIDENCE_FALSE_POSITIVE);
         } else if (alert.getConfidence() == Alert.CONFIDENCE_FALSE_POSITIVE) {
@@ -451,8 +450,12 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                     "Setting Alert with plugin id : {} to {}",
                     alert.getPluginId(),
                     filter.getNewRisk());
+            // FIXME use ExtensionAlert.getAlert(id) when it becomes available
+            Map<String, String> tags = readStoredTags(updAlert.getAlertId());
+            if (!tags.isEmpty()) {
+                alert.setTags(tags);
+            }
             getExtAlert().updateAlert(updAlert);
-            getExtAlert().updateAlertInTree(updAlert);
             if (alert.getHistoryRef() != null) {
                 alert.getHistoryRef().updateAlert(updAlert);
                 if (alert.getHistoryRef().getSiteNode() != null) {
@@ -465,6 +468,20 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                     "stats.alertFilter." + alert.getAlertRef() + ".risk." + filter.getNewRisk());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    private Map<String, String> readStoredTags(int alertId) {
+        if (alertId < 0) {
+            return Map.of();
+        }
+        try {
+            Map<String, String> tags =
+                    Model.getSingleton().getDb().getTableAlertTag().getTagsByAlertId(alertId);
+            return tags != null ? tags : Map.of();
+        } catch (Exception e) {
+            LOGGER.error("Could not read the tags stored for alert {}", alertId, e);
+            return Map.of();
         }
     }
 
