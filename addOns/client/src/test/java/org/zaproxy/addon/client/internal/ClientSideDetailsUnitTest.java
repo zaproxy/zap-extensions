@@ -24,6 +24,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.client.internal.ClientSideComponent.Type;
 
@@ -159,6 +163,42 @@ class ClientSideDetailsUnitTest {
 
         // Then
         assertThat(found, is(nullValue()));
+    }
+
+    @Test
+    void shouldFindComponentsWhileAdding() throws Exception {
+        // Given
+        ClientSideDetails details = new ClientSideDetails("Page", EXAMPLE_URL);
+        int iterations = 5_000;
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        // When
+        executor.execute(
+                () -> {
+                    try {
+                        for (int i = 0; i < iterations; i++) {
+                            details.addComponent(component("BUTTON", "btn" + i));
+                        }
+                    } catch (Throwable t) {
+                        failure.compareAndSet(null, t);
+                    }
+                });
+        executor.execute(
+                () -> {
+                    try {
+                        for (int i = 0; i < iterations; i++) {
+                            details.findComponent("btn" + i, "BUTTON");
+                        }
+                    } catch (Throwable t) {
+                        failure.compareAndSet(null, t);
+                    }
+                });
+        executor.shutdown();
+        executor.awaitTermination(10, TimeUnit.SECONDS);
+
+        // Then
+        assertThat(failure.get(), is(nullValue()));
     }
 
     private static ClientSideComponent component(String tagName, String id) {
