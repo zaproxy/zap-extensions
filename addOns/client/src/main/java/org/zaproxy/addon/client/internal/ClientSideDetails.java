@@ -76,9 +76,11 @@ public class ClientSideDetails {
     }
 
     public ClientSideComponent findComponent(String id, String tagName) {
-        for (ClientSideComponent c : components) {
-            if (Objects.equals(c.getId(), id) && Objects.equals(c.getTagName(), tagName)) {
-                return c;
+        synchronized (components) {
+            for (ClientSideComponent c : components) {
+                if (Objects.equals(c.getId(), id) && Objects.equals(c.getTagName(), tagName)) {
+                    return c;
+                }
             }
         }
         return null;
