@@ -12,9 +12,7 @@
 <h2>全般設定</h2>
 
 <h3>信頼済みドメイン</h3>
-オプションの「ルール設定」パネルから <code>rules.domains.trusted</code> パラメーターを使用して、カンマ区切りのURL正規表現パターンリストを指定できます。
-これらのパターンに一致するリンクURLは信頼済みドメインと見なされ、アラートの対象外となります。
- 以下のルールが <b>信頼済みドメイン</b> をサポートしています：
+オプションの「ルール設定」パネルから <code>rules.domains.trusted</code> パラメーターを使用して、カンマ区切りのURL正規表現パターンリストを指定できます。これらのパターンに一致するリンクURLは信頼済みドメインと見なされ、アラートの対象外となります。以下のルールが <b>信頼済みドメイン</b> をサポートしています：
 <ul>
  <li>クロスドメインスクリプト・インクルージョン</li>
  <li>リバース・タブナビング</li>
@@ -35,8 +33,7 @@ LOW しきい値では、エラーやリダイレクトを含むすべてのテ�
  <li><b>X-Frame-Options Defined via META (Non-compliant with Spec)</b>: 仕様でサポートされていない X-Frame-Options を定義しようとする "http-equiv" エントリがレスポンスで見つかった場合。</li>
  <li><b>X-Frame-Options Setting Malformed</b>: ヘッダーが値なしで存在する場合、または値が期待通りでない場合 (つまり、"DENY" または "SAMEORIGIN" 以外)。</li>
 </ul>
-デフォルトでは、レスポンスに Content-Security-Policy の 'frame-ancestors' 要素が含まれている場合、アラートは発生しません。これは X-Frame-Options ヘッダーより優先されるためです。
-ただし、LOW しきい値では上記の問題が依然として報告されますが、リスクはLOWになります。 
+デフォルトでは、レスポンスに Content-Security-Policy の 'frame-ancestors' 要素が含まれている場合、アラートは発生しません。これは X-Frame-Options ヘッダーより優先されるためです。ただし、LOW しきい値では上記の問題が依然として報告されますが、リスクはLOWになります。 
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/AntiClickjackingScanRule.java">AntiClickjackingScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10020/">10020</a>
@@ -45,11 +42,10 @@ LOW しきい値では、エラーやリダイレクトを含むすべてのテ�
 HTTP 500 - Internal Server Errorタイプのレスポンス、または既知のエラー文字列を含むレスポンスをチェックします。 <br>
 <strong>注:</strong> スクリプトブロックやファイル内のマッチは、コメントだけでなくコンテンツ全体が対象となります。<br>
 ISO制御文字（バイナリファイルの可能性が高いもの）を含むレスポンスはスキップされます。<br>
-HIGH しきい値では、HTTP 500ではアラートを出しません (ただし、他のエラーパターンでは出します)。 また、既知のエラー文字列はJS/CSSなどの静的ページではあまり関連性がないため、これらのファイルはLOW しきい値でのみスキャンされます。<br>
+HIGH しきい値では、HTTP 500ではアラートを出しません (ただし、他のエラーパターンでは出します)。また、既知のエラー文字列はJS/CSSなどの静的ページではあまり関連性がないため、これらのファイルはLOW しきい値でのみスキャンされます。<br>
 Internal Server Error (HTTP 500) の場合、アラートは低リスクに設定され、その他の場合は中リスクに設定されます。
 
-<p><strong>注:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードオプションパネルで独自の Application Error の文字列 (ペイロード) を追加できます。 
-これらもパッシブスキャン実行時にレスポンス内で検索されます。 パッシブスキャン時にレスポンス内でこれらも検索されます。ペイロード数が多いほど、パッシブスキャンに必要な時間が長くなることに注意してください。<br>
+<p><strong>注:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードオプションパネルで独自の Application Error の文字列 (ペイロード) を追加できます。これらもパッシブスキャン実行時にレスポンス内で検索されます。パッシブスキャン時にレスポンス内でこれらも検索されます。ペイロード数が多いほど、パッシブスキャンに必要な時間が長くなることに注意してください。<br>
 このルールの カスタムペイロード カテゴリ: <code>Application-Errors</code>.
 <p>ZAPのユーザーディレクトリの <code>xml/application_errors.xml</code> ファイルにパターンを追加することも可能です。<br>
 <p>
@@ -57,9 +53,7 @@ Internal Server Error (HTTP 500) の場合、アラートは低リスクに設�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90022/">90022</a>
 
 <h2 id="id-10044">サイズの大きなリダイレクトを検出 (機密情報漏洩の可能性)</h2>
-このチェックは、さまざまなリダイレクトタイプのレスポンスのサイズを予測し、レスポンスが予測サイズより大きい場合にアラートを生成します。 
-大きなリダイレクトレスポンスは、リダイレクトが行われたにもかかわらず、ページに実際にはコンテンツ (機密情報、PIIなどを含む可能性がある) が含まれていることを示す可能性があります。
-また、リダイレクトレスポンスの本文に複数のHREFが含まれている場合もアラートを発生させます。
+このチェックは、さまざまなリダイレクトタイプのレスポンスのサイズを予測し、レスポンスが予測サイズより大きい場合にアラートを生成します。大きなリダイレクトレスポンスは、リダイレクトが行われたにもかかわらず、ページに実際にはコンテンツ (機密情報、PIIなどを含む可能性がある) が含まれていることを示す可能性があります。また、リダイレクトレスポンスの本文に複数のHREFが含まれている場合もアラートを発生させます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/BigRedirectsScanRule.java">BigRedirectsScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10044/">10044</a>
@@ -103,7 +97,7 @@ LOW しきい値では、エラーやリダイレクトを含むすべてのレ�
 <p>
 "X-Content-Security-Policy" または "X-WebKit-CSP" ヘッダーが見つかった場合、INFOアラートが発生します。これは古い実装を表している可能性があります。
 <p>
-レスポンスに "Content-Security-Policy-Report-Only" ヘッダーが見つかった場合、INFOアラートが発生します。 これは、積極的に改良または開発されている、または部分的にのみ実装されている実施の取り組みを表している可能性があります。
+レスポンスに "Content-Security-Policy-Report-Only" ヘッダーが見つかった場合、INFOアラートが発生します。これは、積極的に改良または開発されている、または部分的にのみ実装されている実施の取り組みを表している可能性があります。
 <p>
 注: このルールは、指定されたポリシーの実際の分析を行いません。それについては、CSPスキャンルールが有効になっていることを確認してください。
 <p>
@@ -123,14 +117,13 @@ Cookieが設定される際にHttpOnlyフラグが付けられていることを
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10010/">10010</a>
 
 <h2 id="id-90033">Cookie - 広いスコープ</h2>
-Cookieはドメインまたはパスでスコープを設定できます。 このチェックはドメインスコープのみに関係します。Cookieに適用されるドメインスコープは、どのドメインがそれにアクセスできるかを決定します。 例えば、Cookieはサブドメインに厳密にスコープを設定できます (例: <code>www.nottrusted.com</code>)、または親ドメインに緩くスコープを設定できます (例: <code>nottrusted.com</code>)。 後者の場合、<code>nottrusted.com</code>の任意のサブドメインがCookieにアクセスできます。 緩くスコープされたCookieは、<code>google.com</code>や<code>live.com</code>のようなメガアプリケーションでは一般的です。.
+Cookieはドメインまたはパスでスコープを設定できます。このチェックはドメインスコープのみに関係します。Cookieに適用されるドメインスコープは、どのドメインがそれにアクセスできるかを決定します。例えば、Cookieはサブドメインに厳密にスコープを設定できます (例: <code>www.nottrusted.com</code>)、または親ドメインに緩くスコープを設定できます (例: <code>nottrusted.com</code>)。後者の場合、<code>nottrusted.com</code>の任意のサブドメインがCookieにアクセスできます。緩くスコープされたCookieは、<code>google.com</code>や<code>live.com</code>のようなメガアプリケーションでは一般的です。.
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieLooselyScopedScanRule.java">CookieLooselyScopedScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90033/">90033</a>
 
 <h2 id="id-10029">Cookieポイズニング</h2>
-このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、Cookieパラメータが制御される可能性がある場所を特定します。 
-これはCookie poisoning攻撃と呼ばれ、攻撃者がさまざまな方法でCookieを操作できる場合に悪用可能になります。 場合によっては悪用できないこともありますが、URLパラメータでCookie値を設定できるようにすることは、一般的にバグと見なされます。
+このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、Cookieパラメータが制御される可能性がある場所を特定します。これはCookie poisoning攻撃と呼ばれ、攻撃者がさまざまな方法でCookieを操作できる場合に悪用可能になります。場合によっては悪用できないこともありますが、URLパラメータでCookie値を設定できるようにすることは、一般的にバグと見なされます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledCookieScanRule.java">UserControlledCookieScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10029/">10029</a>
@@ -175,9 +168,9 @@ HTMLレスポンスの "script" タグの "src" 属性を調べて、コンテ�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10098/">10098</a>
 
 <h2 id="id-10055">CSP (Content Security Policy)</h2>
-Content Security Policy (CSP) パッシブスキャンルールは、CSPヘッダーとMETA定義を解析および分析して、潜在的な誤設定や弱点を検出します。 このルールは、HtmlUnitの<a href="https://github.com/HtmlUnit/htmlunit-csp">htmlunit-csp</a>ライブラリを活用してCSPの解析と評価を行います。
+Content Security Policy (CSP) パッシブスキャンルールは、CSPヘッダーとMETA定義を解析および分析して、潜在的な誤設定や弱点を検出します。このルールは、HtmlUnitの<a href="https://github.com/HtmlUnit/htmlunit-csp">htmlunit-csp</a>ライブラリを活用してCSPの解析と評価を行います。
 <p>
-レスポンスに複数のCSPがある場合、それぞれが個別に分析されます。ポリシーを交差/マージする確実な方法がなく、さらにブラウザによってCSPのサポートと実施レベルが異なるためです。
+If a response has multiple Content-Security-Policy headers or CSP META definitions, they are analyzed together using browser-style intersection: a resource is allowed only if every policy allows it.
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyScanRule.java">ContentSecurityPolicyScanRule.java</a>
 <br>
@@ -188,10 +181,7 @@ Content Security Policy (CSP) パッシブスキャンルールは、CSPヘッ�
 このルールはHTMLページでないメッセージはスキャンしません。<br>
 HIGHアラートしきい値では、スコープ内のメッセージのみをスキャンします。<br>
 バージョン2.5.0以降、Optionsの「ルール設定」パネルで 
-<code> rules.csrf.ignorelist</code> パラメーターを使用して、カンマ区切りのURL正規表現パターンリストを指定できます。
-これらの識別子のいずれかに一致する name または ID を持つFORMは、Anti-CSRFトークンの欠落をスキャンする際に無視されます。
-この機能は、検索フォームなど、安全であることが確認されているFORMを無視する場合にのみ使用してください。
-フォーム要素名は、ZAPレポートに出力される際にソートおよび重複排除されます。
+<code> rules.csrf.ignorelist</code> パラメーターを使用して、カンマ区切りのURL正規表現パターンリストを指定できます。これらの識別子のいずれかに一致する name または ID を持つFORMは、Anti-CSRFトークンの欠落をスキャンする際に無視されます。この機能は、検索フォームなど、安全であることが確認されているFORMを無視する場合にのみ使用してください。フォーム要素名は、ZAPレポートに出力される際にソートおよび重複排除されます。
 <br>
 注:
 <ul>
@@ -218,8 +208,7 @@ MD4、MD5、SHA*など、パスワードハッシュ以外の目的で使用さ�
 <strong>注:</strong>
 <ul>
     <li>このスキャンルールはテキストレスポンスのみを分析し、JavaScriptレスポンスはLOWしきい値でのみ分析します<li>
-    <li>評価されるハッシュパターンの選択は、パターンに対する信頼度とスキャンルールに設定されたしきい値に関連しています。
-        言い換えると、信頼度の低いパターンはLowしきい値でのみ評価対象に含まれます。</li>
+    <li>評価されるハッシュパターンの選択は、パターンに対する信頼度とスキャンルールに設定されたしきい値に関連しています。言い換えると、信頼度の低いパターンはLowしきい値でのみ評価対象に含まれます。</li>
 </ul> 
 <p>
 最新のコード:  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/HashDisclosureScanRule.java">HashDisclosureScanRule.java</a><br>
@@ -239,21 +228,19 @@ LOWしきい値では、バージョン文字列が検出されたかどうか�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10036/">10036</a>
 
 <h2 id="id-10041">フォーム送信におけるHTTPからHTTPSへの安全でない遷移</h2>
-このチェックは、HTTPSフォームをホストする安全でないHTTPページを探します。 問題は、安全でないHTTPページがMITMを通じて簡単にハイジャックされ、安全なHTTPSフォームが置き換えられたり偽装されたりする可能性があることです。
+このチェックは、HTTPSフォームをホストする安全でないHTTPページを探します。問題は、安全でないHTTPページがMITMを通じて簡単にハイジャックされ、安全なHTTPSフォームが置き換えられたり偽装されたりする可能性があることです。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InsecureFormLoadScanRule.java">InsecureFormLoadScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10041/">10041</a>
 
 <h2 id="id-10042">フォーム送信におけるHTTPSからHTTPへの安全でない遷移</h2>
-このチェックは、安全でないHTTPフォームをホストする安全なHTTPSページを識別します。 問題は、フォームを通じてデータがアップロードされる際に、安全なページから安全でないページに移行していることです。 ユーザーは安全なページにデータを送信していると思っているかもしれませんが、実際にはそうではありません。
+このチェックは、安全でないHTTPフォームをホストする安全なHTTPSページを識別します。問題は、フォームを通じてデータがアップロードされる際に、安全なページから安全でないページに移行していることです。ユーザーは安全なページにデータを送信していると思っているかもしれませんが、実際にはそうではありません。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InsecureFormPostScanRule.java">InsecureFormPostScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10042/">10042</a>
 
 <h2 id="id-10023">情報漏洩: デバッグエラー</h2>
-このパッシブスキャンルールは、既知のデバッグエラーメッセージフラグメントについてWebレスポンスのコンテンツをチェックします。
-このような詳細へのアクセスは、悪意のある個人にWebサイトをさらに悪用する手段を与える可能性があります。
-また、エンドユーザーの消費を特に意図していないデータが漏洩する可能性があります。<br>
+このパッシブスキャンルールは、既知のデバッグエラーメッセージフラグメントについてWebレスポンスのコンテンツをチェックします。このような詳細へのアクセスは、悪意のある個人にWebサイトをさらに悪用する手段を与える可能性があります。また、エンドユーザーの消費を特に意図していないデータが漏洩する可能性があります。<br>
 注意: JavaScriptレスポンスはLOWしきい値でのみ評価されます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InformationDisclosureDebugErrorsScanRule.java">InformationDisclosureDebugErrorsScanRule.java</a><br>
@@ -268,14 +255,13 @@ LOWしきい値では、バージョン文字列が検出されたかどうか�
 <h2 id="id-10025">情報漏洩 - HTTP Referrerヘッダー内の機密情報</h2>
 HTTPリクエストの Referrer ヘッダーフィールド内に機密の詳細が存在するかどうかを識別します (これにはパラメータ、ドキュメント名、ディレクトリ名などが含まれる可能性があります)。
 <p>
-注意: Referrer値に疑わしいクレジットカード識別子がある場合、潜在的なクレジットカード番号は銀行識別番号リスト (BINList) と照合されます。 一致が見つかった場合、アラートは高信頼度で発生し、アラートの「その他の情報」フィールドに追加の詳細が追加されます。そうでない場合、アラートは中信頼度になります。
-詳細については<a href="https://github.com/iannuttall/binlist-data">binlist-data</a>を参照してください。
+Note: For suspected credit card values see the <a href="https://www.zaproxy.org/docs/desktop/addons/common-library/">Common Library</a> add-on help (BIN List).
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InformationDisclosureReferrerScanRule.java">InformationDisclosureReferrerScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10025/">10025</a>
 
 <h2 id="id-10027">情報漏洩 - 疑わしいコメント</h2>
-Webコンテンツを分析して、潜在的に機密の詳細を含むコメントを識別します。 これにより、さらなる攻撃や意図しないデータの暴露につながる可能性があります。
+Webコンテンツを分析して、潜在的に機密の詳細を含むコメントを識別します。これにより、さらなる攻撃や意図しないデータの暴露につながる可能性があります。
 <p><strong>注意:</strong> 検索する文字列は「カスタムペイロード」アドオンを使用して拡張できます。<br>
 このルールの「カスタムペイロード」カテゴリ: <code>Suspicious-Comments</code>.
 <p>
@@ -291,7 +277,7 @@ Webコンテンツを分析して、潜在的に機密の詳細を含むコメ�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10009/">10009</a>
 
 <h2 id="id-10105">安全でない認証</h2>
-HTTP基本認証またはダイジェスト認証が、安全でない接続で使用されています。 認証情報はネットワークにアクセスできる誰かによって読み取られ、再利用される可能性があります。
+HTTP基本認証またはダイジェスト認証が、安全でない接続で使用されています。認証情報はネットワークにアクセスできる誰かによって読み取られ、再利用される可能性があります。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InsecureAuthenticationScanRule.java">InsecureAuthenticationScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10105/">10105</a>
@@ -304,9 +290,9 @@ HTTP基本認証またはダイジェスト認証が、安全でない接続で�
 
 <h2 id="id-90002">Javaシリアライズオブジェクト</h2>
 Java Serialization Object (JSO) は、Javaアプリケーション間でオブジェクトを保存および交換する方法です。<br>
-JSOにはさまざまな問題が関連しています。 機密データがバイトストリームに漏洩する可能性があります。<br>
+JSOにはさまざまな問題が関連しています。機密データがバイトストリームに漏洩する可能性があります。<br>
 攻撃者はデータを変更し、JSOを悪用してサーバー上でリモートコード実行を行うこともできます。<br>
-JSOはJavaプログラムで使用すべきではありません。 シリアライズされたデータには強力な制御を行う必要があります。<br>
+JSOはJavaプログラムで使用すべきではありません。シリアライズされたデータには強力な制御を行う必要があります。<br>
 JSOは「A8:2017-安全でないデシリアライゼーション」に関連する脆弱性の一種です。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/JsoScanRule.java">JsoScanRule.java</a><br>
@@ -326,7 +312,7 @@ It does not indicate any potential vulnerabilities but it could indicate that th
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10109/">10109</a>
 
 <h2 id="id-10028">外部サイトへのリダイレクト</h2>
-このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、オープンリダイレクトが可能な場所を特定します。 オープンリダイレクトは、アプリケーションがユーザー入力 (例: http://nottrusted.com) でオフサイトの宛先を制御できるようにする場合に発生します。 これは通常、スパマーやフィッシング攻撃によって301または302リダイレクトが悪用される可能性がある場所を見つけるかなり正確な方法です。
+このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、オープンリダイレクトが可能な場所を特定します。オープンリダイレクトは、アプリケーションがユーザー入力 (例: http://nottrusted.com) でオフサイトの宛先を制御できるようにする場合に発生します。これは通常、スパマーやフィッシング攻撃によって301または302リダイレクトが悪用される可能性がある場所を見つけるかなり正確な方法です。
 <p>
 <strong>注意</strong>: パッシブチェックの目的では、オリジンと宛先のオーソリティ部分が比較されました。この発見の影響を検証するには、手動テストが必要になる場合があります。
 <p>
@@ -334,7 +320,7 @@ It does not indicate any potential vulnerabilities but it could indicate that th
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10028/">10028</a>
 
 <h2 id="id-10062">個人識別用情報の漏洩</h2>
-PIIは、クレジットカード番号、SSNなどの情報です。 このチェックは現在、クレジットカード番号に一致し、Luhnチェックサムに合格する番号のみを報告します。
+PIIは、クレジットカード番号、SSNなどの情報です。このチェックは現在、クレジットカード番号に一致し、Luhnチェックサムに合格する番号のみを報告します。
 <br>
 MEDIUMおよびHIGHしきい値では、潜在的な一致の両側の3文字のコンテキストを使用して、10進数のようなコンテンツやアンダースコアを含むコンテンツ内の一致を除外しようとします。
 LOWしきい値では、そのような一致に対してもアラートが発生します。
@@ -348,17 +334,15 @@ MEDIUMおよびHIGHしきい値では、以下のコンテンツタイプが評�
 画像およびCSSファイルは常に無視されます。
 その他のすべてのコンテンツタイプは、LOWしきい値で評価されます。さらに、LOWしきい値ではHTML全体のレスポンスが評価されます。
 <p>
-注: 疑わしいクレジットカード値の場合、潜在的なクレジットカード番号は銀行識別番号リスト (BINList) と照合されます。 一致が見つかった場合、アラートは高信頼度で発生し、アラートの「その他の情報」フィールドに追加の詳細が追加されます。そうでない場合、アラートは中信頼度になります。
-詳細については<a href="https://github.com/iannuttall/binlist-data">binlist-data</a>を参照してください。
+Note: For suspected credit card values see the <a href="https://www.zaproxy.org/docs/desktop/addons/common-library/">Common Library</a> add-on help (BIN List).
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/PiiScanRule.java">PiiScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10062/">10062</a>
 
 <h2 id="id-2">プライベートアドレスの漏洩</h2>
-レスポンスコンテンツに、RFC 1918 IPv4アドレスやAmazon EC2プライベートホスト名 (例: ip-10-0-56-78) が含まれているかどうかをチェックします。 この情報により、攻撃者は内部ネットワークのIPアドレススキームに関する有用な情報を得ることができ、内部システムを標的としたさらなる攻撃に役立つ可能性があります。
+レスポンスコンテンツに、RFC 1918 IPv4アドレスやAmazon EC2プライベートホスト名 (例: ip-10-0-56-78) が含まれているかどうかをチェックします。この情報により、攻撃者は内部ネットワークのIPアドレススキームに関する有用な情報を得ることができ、内部システムを標的としたさらなる攻撃に役立つ可能性があります。
 <p>
-このパッシブスキャンルールは、vp09.02.51.10.01.09.16のような大きなドット区切りの数値文字列の場合に誤検出 (偽陽性) を生成する可能性があります。ここでは、後半の4オクテットがRFC 1918 IPv4アドレスのように見えます。 
-アナリストはレビュー後、ZAPでそのようなアラートを誤検知としてマークすることができます。 繰り返しスキャン中の処理については、「コンテキストアラートフィルター」アドオンを活用できます。
+このパッシブスキャンルールは、vp09.02.51.10.01.09.16のような大きなドット区切りの数値文字列の場合に誤検出 (偽陽性) を生成する可能性があります。ここでは、後半の4オクテットがRFC 1918 IPv4アドレスのように見えます。アナリストはレビュー後、ZAPでそのようなアラートを誤検知としてマークすることができます。繰り返しスキャン中の処理については、「コンテキストアラートフィルター」アドオンを活用できます。
 <p>
 このスキャンルールはテキストレスポンスのみを分析します。 
 <p>
@@ -407,8 +391,7 @@ HIGHしきい値では、"_blank" ターゲットを使用するリンクのみ�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10037/">10037</a>
 
 <h2 id="id-3">URLリライト内のセッションID</h2>
-このスキャンルールは、セッショントークンタイプのパラメータがURLに書き換えられて存在するかどうかをチェックします。 
-誤検出を減らすために、ルールはトークン値の長さをチェックします。パラメータの値が8文字を超えない場合、そのパラメータは無視されます (つまり、survey?sId=5 は脆弱としてフラグ付けされません)。
+このスキャンルールは、セッショントークンタイプのパラメータがURLに書き換えられて存在するかどうかをチェックします。誤検出を減らすために、ルールはトークン値の長さをチェックします。パラメータの値が8文字を超えない場合、そのパラメータは無視されます (つまり、survey?sId=5 は脆弱としてフラグ付けされません)。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoSessionIdUrlScanRule.java">InfoSessionIdUrlScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/3/">3</a>
@@ -435,7 +418,7 @@ HIGHしきい値では、"_blank" ターゲットを使用するリンクのみ�
  <li><b>Strict-Transport-Security Defined via META (Non-compliant with Spec):</b> レスポンス本文にHSTSを定義しようとするMETAタグが含まれている場合。</li>
  <li><b>Strict-Transport-Security Header on Plain HTTP Response:</b> レスポンスがHTTPで、HSTSヘッダーが存在する場合。</li>
  <li><b>Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec):</b> レスポンスがHTTPSで、HSTSヘッダーが存在するが、max-age ディレクティブの前に引用符がある場合 (引用符は max-age 値の周りでは許可されますが、ディレクティブ自体の周りでは許可されません)。</li>
- <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec):</b> レスポンスがHTTPSで、HSTSヘッダーが存在するが、予期しないコンテンツ (巻き引用符など) がある場合。 印字可能なASCIIであることが期待されます。</li>
+ <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec):</b> レスポンスがHTTPSで、HSTSヘッダーが存在するが、予期しないコンテンツ (巻き引用符など) がある場合。印字可能なASCIIであることが期待されます。</li>
 </ul>
 
 同じドメイン上のHTTPS URLへのリダイレクトは、Lowしきい値でのみ報告されます。
@@ -455,29 +438,28 @@ MEDIUMしきい値では、このルールは10年を超える潜在的なタイ
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10096/">10096</a>
 
 <h2 id="id-10030">ユーザーが制御可能な文字コード</h2>
-このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、Content-Type または meta タグの charset 宣言がユーザーによって制御される可能性がある場所を特定します。 このような charset 宣言は、常にアプリケーションによって宣言されるべきです。 攻撃者がレスポンスの charset を制御できる場合、HTMLを操作してXSSやその他の攻撃を実行できる可能性があります。
+このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、Content-Type または meta タグの charset 宣言がユーザーによって制御される可能性がある場所を特定します。このような charset 宣言は、常にアプリケーションによって宣言されるべきです。攻撃者がレスポンスの charset を制御できる場合、HTMLを操作してXSSやその他の攻撃を実行できる可能性があります。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledCharsetScanRule.java">UserControlledCharsetScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10030/">10030</a>
 
 <h2 id="id-10031">ユーザーが制御可能なHTML要素属性 (XSSの可能性)</h2>
-このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、特定のHTML属性値が制御される可能性がある場所を特定します。 これは、XSS (クロスサイトスクリプティング) のホットスポット検出を提供し、悪用可能性を判断するにはセキュリティアナリストによるさらなるレビューが必要です。
+このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、特定のHTML属性値が制御される可能性がある場所を特定します。これは、XSS (クロスサイトスクリプティング) のホットスポット検出を提供し、悪用可能性を判断するにはセキュリティアナリストによるさらなるレビューが必要です。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledHTMLAttributesScanRule.java">UserControlledHTMLAttributesScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10031/">10031</a>
 
 <h2 id="id-10043">ユーザーが制御可能なJavaScriptイベント (XSS)</h2>
-このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、特定のHTML属性値が制御される可能性がある場所を特定します。 これは、XSS (クロスサイトスクリプティング) のホットスポット検出を提供し、悪用可能性を判断するにはセキュリティアナリストによるさらなるレビューが必要です。            
+このチェックは、クエリ文字列パラメータとPOSTデータのユーザー入力を調べて、特定のHTML属性値が制御される可能性がある場所を特定します。これは、XSS (クロスサイトスクリプティング) のホットスポット検出を提供し、悪用可能性を判断するにはセキュリティアナリストによるさらなるレビューが必要です。            
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UserControlledJavascriptEventScanRule.java">UserControlledJavascriptEventScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10043/">10043</a>
 
 <h2 id="id-10057">ユーザー名ハッシュの検出</h2>
 コンテキストに定義されたユーザーが含まれている場合、このスキャンルールはすべてのレスポンスでそれらのユーザー名を表すハッシュ値の存在をチェックします。
-<p><strong>注:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードオプションパネルで独自のUsername 文字列 (ペイロード) を追加できます。 
-パッシブスキャン時にレスポンス内でこれらもハッシュ化され検索されます。 ペイロード数が多いほど、パッシブスキャンに必要な時間が長くなることに注意してください。 （デフォルトのペイロードは "Admin" と "admin" です。）<br>
+<p><strong>注:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードオプションパネルで独自のUsername 文字列 (ペイロード) を追加できます。パッシブスキャン時にレスポンス内でこれらもハッシュ化され検索されます。ペイロード数が多いほど、パッシブスキャンに必要な時間が長くなることに注意してください。（デフォルトのペイロードは "Admin" と "admin" です。）<br>
 このルールのカスタムペイロードカテゴリ: <code>Username-Idor</code>.<br>
-<p>このような値の発見は、Insecure Direct Object Reference (IDOR) 脆弱性を表している可能性があります。 アラートは、影響を確認および評価するためにさらなる手動テストが必要なため、情報提供項目としてのみ発生します。
+<p>このような値の発見は、Insecure Direct Object Reference (IDOR) 脆弱性を表している可能性があります。アラートは、影響を確認および評価するためにさらなる手動テストが必要なため、情報提供項目としてのみ発生します。
 <p>
 このスキャンルールはテキストレスポンスのみを分析します。 
 <p>
@@ -525,8 +507,7 @@ LOWしきい値では、エラーやリダイレクトを含むすべてのレ�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10021/">10021</a>
 
 <h2 id="id-10056">X-Debug-Token ヘッダーによる情報漏洩</h2>
-レスポンスヘッダーに X-Debug-Token および X-Debug-Token-Link の詳細が存在するかどうかをチェックします。
-これは、SymfonyのProfilerの使用/露出を示しています。 SymfonyのProfilerは悪意のある個人やセキュリティテスターにとって関心のある大量の情報へのアクセスを提供します。
+レスポンスヘッダーに X-Debug-Token および X-Debug-Token-Link の詳細が存在するかどうかをチェックします。これは、SymfonyのProfilerの使用/露出を示しています。 SymfonyのProfilerは悪意のある個人やセキュリティテスターにとって関心のある大量の情報へのアクセスを提供します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/XDebugTokenScanRule.java">XDebugTokenScanRule.java</a>
 <br>
