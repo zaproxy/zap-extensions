@@ -108,7 +108,7 @@ public class ClientPassiveScanHelper {
 
     public void raiseAlert(Alert alert, HistoryReference hr) {
         if (hr == null) {
-            LOGGER.warn(
+            LOGGER.debug(
                     "Failed to find history reference for URL {}, unable to raise alert {}",
                     alert.getUri(),
                     alert.toPluginXML(ClientUtils.stripUrlFragment(alert.getUri())));
