@@ -24,8 +24,6 @@ import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage.HttpEncodingsHandler;
 import org.zaproxy.zap.network.HttpEncoding;
-import org.zaproxy.zap.network.HttpEncodingDeflate;
-import org.zaproxy.zap.network.HttpEncodingGzip;
 
 public class ContentEncodingsHandler implements HttpEncodingsHandler {
 

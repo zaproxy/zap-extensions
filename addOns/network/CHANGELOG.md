@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Allow other add-ons to know if an outbound proxy is enabled.
+- Provide own gzip/deflate content encodings.
 
 ### Changed
 - Update dependencies.

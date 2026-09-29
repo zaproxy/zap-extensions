@@ -33,8 +33,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
-import org.zaproxy.zap.network.HttpEncodingDeflate;
-import org.zaproxy.zap.network.HttpEncodingGzip;
 
 /** Unit test for {@link ContentEncodingsHandler}. */
 class ContentEncodingsHandlerUnitTest {
