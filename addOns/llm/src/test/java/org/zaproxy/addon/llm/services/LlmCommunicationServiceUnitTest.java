@@ -40,10 +40,12 @@ import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.addon.llm.LlmProviderConfig;
+import org.zaproxy.addon.llm.utils.Requestor;
 
 /** Unit test for {@link LlmCommunicationService}. */
 class LlmCommunicationServiceUnitTest {
@@ -175,6 +177,28 @@ class LlmCommunicationServiceUnitTest {
         assertThat(
                 liveService.getChatMemory().messages().get(1),
                 is(equalTo(UserMessage.from("prior turn"))));
+    }
+
+    @Nested
+    class Import {
+
+        private Requestor requestor;
+
+        @BeforeEach
+        void setUp() {
+            requestor = mock();
+            service = new LlmCommunicationService(mock(), requestor);
+        }
+
+        @Test
+        void shouldBeDoneThroughRequestor() throws Exception {
+            // Given
+            String url = "https://localhost/openapi";
+            // When
+            service.importOpenapiFromUrl(url);
+            // Then
+            verify(requestor).send("GET", url);
+        }
     }
 
     private static ChatResponse aiResponse(String text) {

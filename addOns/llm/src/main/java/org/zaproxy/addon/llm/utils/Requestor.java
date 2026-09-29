@@ -43,14 +43,14 @@ public class Requestor {
     }
 
     public String getResponseBody(HttpRequest httpRequest) throws IOException {
-        HttpMessage httpMessage = new HttpMessage();
-        httpMessage.setRequestHeader(
-                String.format(
-                        "%s %s %s",
-                        httpRequest.getMethod(), httpRequest.getUrl(), HttpHeader.HTTP11));
-        sender.sendAndReceive(httpMessage, true);
+        return send(httpRequest.getMethod(), httpRequest.getUrl()).getResponseBody().toString();
+    }
 
-        return httpMessage.getResponseBody().toString();
+    public HttpMessage send(String method, String url) throws IOException {
+        HttpMessage httpMessage = new HttpMessage();
+        httpMessage.setRequestHeader(String.format("%s %s %s", method, url, HttpHeader.HTTP11));
+        sender.sendAndReceive(httpMessage, true);
+        return httpMessage;
     }
 
     public void run(HttpRequestList httpRequests) {
