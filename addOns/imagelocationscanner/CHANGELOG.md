@@ -5,7 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Update dependency.
+- Updated to Image Location and Privacy Scanner version 1.3; merged from [source](https://github.com/veggiespam/ImageLocationScanner)
+- Updated dependency Metadata Extractor to 2.21.0
+- Unified filtering of false positives, e.g., location or owner name is `-`
+
+### Added
+- Re-implemented support for XMP image tags, scan many common tags names for privacy leakage
+- Support for proprietary DJI Drone camera location & altitude
+- Scan additional basic Exif tags for privacy exposure
+- Now scan HEIC extension and mimetype
 
 ## [8] - 2026-04-14
 ### Changed
