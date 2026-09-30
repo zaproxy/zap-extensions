@@ -112,6 +112,7 @@ import org.zaproxy.addon.network.internal.client.apachev5.h2.ZapClientTlsStrateg
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Stats;
 
 /** A {@link BaseHttpSender} using Apache HttpComponents Client. */
 @SuppressWarnings("deprecation")
@@ -386,6 +387,7 @@ public class HttpSenderApache
             sendImpl0(ctx, requestContext, message, responseBodyConsumer);
         } catch (SocketTimeoutException e) {
             LOGGER.debug("A timeout occurred while sending the request:", e);
+            Stats.incCounter("stats.network.timeout");
             throw new ZapSocketTimeoutException(e, options.getTimeoutInSecs());
         } catch (UnknownHostException e) {
             LOGGER.debug("An unknown host exception occurred while sending the request:", e);
