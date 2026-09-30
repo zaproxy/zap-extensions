@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -150,7 +151,7 @@ public class ClientSpider implements GenericScanner2 {
     private List<ClientSpiderTask> pausedTasks = new ArrayList<>();
     private long startTime;
     private long lastEventReceivedtime;
-    private long maxTime;
+    private ScheduledExecutorService maxDurationExecutor;
     private boolean paused;
     private final AtomicBoolean stopping = new AtomicBoolean(false);
     private volatile boolean finished;
@@ -238,6 +239,16 @@ public class ClientSpider implements GenericScanner2 {
         createOutOfScopeResponse(Constant.messages.getString("client.spider.outofscope.response"));
     }
 
+    private void stopDueToMaxDuration() {
+        if (stopping.get()) {
+            return;
+        }
+
+        LOGGER.debug("Exceeded max time, stopping");
+        Stats.incCounter("stats.client.spider.event.max.time");
+        stopScan();
+    }
+
     private static void addCompiled(List<String> source, List<Pattern> target) {
         source.stream().map(Pattern::compile).forEach(target::add);
     }
@@ -281,7 +292,16 @@ public class ClientSpider implements GenericScanner2 {
         startTime = System.currentTimeMillis();
         lastEventReceivedtime = startTime;
         if (options.getMaxDuration() > 0) {
-            maxTime = startTime + TimeUnit.MINUTES.toMillis(options.getMaxDuration());
+            maxDurationExecutor =
+                    Executors.newSingleThreadScheduledExecutor(
+                            r -> {
+                                Thread thread =
+                                        new Thread(r, "ZAP-ClientSpider-maxduration-" + scanId);
+                                thread.setDaemon(true);
+                                return thread;
+                            });
+            maxDurationExecutor.schedule(
+                    this::stopDueToMaxDuration, options.getMaxDuration(), TimeUnit.MINUTES);
         }
         Stats.incCounter("stats.client.spider.started");
         if (scanOptions.getUser() != null) {
@@ -601,12 +621,6 @@ public class ClientSpider implements GenericScanner2 {
             }
 
             lastEventReceivedtime = System.currentTimeMillis();
-            if (maxTime > 0 && lastEventReceivedtime > maxTime) {
-                LOGGER.debug("Exceeded max time, stopping");
-                Stats.incCounter("stats.client.spider.event.max.time");
-                stopScan();
-                return true;
-            }
 
             if (options.getMaxDepth() > 0) {
                 if (depth > options.getMaxDepth()) {
@@ -911,6 +925,9 @@ public class ClientSpider implements GenericScanner2 {
     private void finished() {
         if (!stopping.compareAndSet(false, true)) {
             return;
+        }
+        if (maxDurationExecutor != null) {
+            maxDurationExecutor.shutdownNow();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug(
