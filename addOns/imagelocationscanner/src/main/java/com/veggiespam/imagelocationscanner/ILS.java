@@ -468,8 +468,7 @@ public class ILS {
 		Collection<XmpDirectory> xmpDirColl = md.getDirectoriesOfType(XmpDirectory.class);
 
 		// Some of these results are Strings, others are fancy binary values.
-		// Sort this list before adding it to a HashSet for efficient searching.
-		final String xmp_tag_list[] = {
+		final Set<String> xmp_tag_set = Set.of(
 			"dc:description",
 			"drone-dji:AbsoluteAltitude",
 			"drone-dji:GpsLatitude",
@@ -487,12 +486,10 @@ public class ILS {
 			"exifEX:LensMake",
 			"exifEX:LensModel",
 			"exifEX:LensSerialNumber"
-		};
+		);
 
 		if (xmpDirColl != null) {
 			exposure.clear();
-
-			Set<String> xmp_tag_set = new HashSet<>(Arrays.asList(xmp_tag_list));
 
 			for (XmpDirectory xmpDir : xmpDirColl) {
 				try {				
