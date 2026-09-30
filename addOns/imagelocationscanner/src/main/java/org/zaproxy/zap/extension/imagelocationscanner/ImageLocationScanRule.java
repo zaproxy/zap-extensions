@@ -5,7 +5,7 @@
  * IPTC codes, and some proprietary camera codes which may contain things like
  * serial numbers.
  *
- * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / https://www.veggiespam.com/ils/
+ * @author Jay Ball | github: @veggiespam | linktr.ee/veggiespam | https://www.veggiespam.com/ils/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * privacy information, such as Exif GPS, IPTC codes, and some proprietary camera codes which may
  * contain things like serial numbers.
  *
- * @author Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
+ * @author Jay Ball | github: @veggiespam | linktr.ee/veggiespam | https://www.veggiespam.com/ils/
  * @license Apache License 2.0
- * @version 1.2
+ * @version 1.3
  * @see https://www.veggiespam.com/ils/
  */
 public class ImageLocationScanRule extends PluginPassiveScanner {
@@ -90,6 +90,14 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
             start = System.currentTimeMillis();
         }
 
+        /* // Mnemonic: CD ==> Content-Disposition
+        String CD = msg.getResponseHeader().getHeader("Content-Disposition");
+        if (null == CD) {
+            CD = "";
+        } else {
+            CD = CD.toLowerCase();
+        } */
+
         // Mnemonic: CT ==> Content-Type
         String CT = msg.getResponseHeader().getHeader("Content-Type");
         if (null == CT) {
@@ -115,6 +123,10 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
         int i = fileName.lastIndexOf('.');
         if (i > 0) {
             extension = fileName.substring(i + 1).toLowerCase();
+            i = extension.indexOf('?'); // remove query string if it exists
+            if (i > 0) {
+                extension = extension.substring(0, i);
+            }
         }
 
         if (LOGGER.isDebugEnabled()) {
@@ -130,6 +142,8 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
                 || extension.equals("png")
                 || CT.startsWith("image/heif")
                 || extension.equals("heif")
+                || CT.startsWith("image/heic")
+                || extension.equals("heic")
                 || CT.startsWith("image/tiff")
                 || extension.equals("tiff")
                 || extension.equals("tif")) {
@@ -139,6 +153,9 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
                             msg.getResponseBody().getBytes(), ILS.OutputFormat.out_text);
 
             if (!hasGPS.isEmpty()) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("\tData Leakage Found: {}", hasGPS);
+                }
                 buildAlert(hasGPS).raise();
             }
         }

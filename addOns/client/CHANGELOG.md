@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated Chrome and Firefox full extensions to v0.2.3.
 - Update the Client Spider clear action title capitalization (Issue 2000).
 - Depend on newer version of Selenium add-on.
+- Adjust log level to reduce log pollution.
 
 ### Fixed
 - Respect spider and global exclusions (Issue 9439).
