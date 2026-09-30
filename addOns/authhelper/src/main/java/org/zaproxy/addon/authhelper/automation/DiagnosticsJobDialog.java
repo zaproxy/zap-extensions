@@ -19,7 +19,15 @@
  */
 package org.zaproxy.addon.authhelper.automation;
 
+import java.awt.Component;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.authhelper.AuthDiagnosticsPolicy;
+import org.zaproxy.addon.authhelper.AuthDiagnosticsPolicy.Mode;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -31,22 +39,79 @@ public class DiagnosticsJobDialog extends StandardFieldsDialog {
     private static final String TITLE = "authhelper.automation.diagnostics.dialog.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
     private static final String ENABLED_PARAM = "authhelper.automation.diagnostics.dialog.enabled";
+    private static final String TYPE_PARAM = "authhelper.automation.diagnostics.dialog.type";
+    private static final String COUNT_PARAM = "authhelper.automation.diagnostics.dialog.count";
 
     private final DiagnosticsJob job;
+    private final DefaultComboBoxModel<Mode> typeModel;
+    private Component countField;
 
     public DiagnosticsJobDialog(DiagnosticsJob job) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(400, 180));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(400, 260));
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
         this.addCheckBoxField(ENABLED_PARAM, this.job.getParameters().isEnabled());
+
+        typeModel = new DefaultComboBoxModel<>(Mode.values());
+        typeModel.insertElementAt(null, 0);
+        typeModel.setSelectedItem(this.job.getParameters().getType());
+
+        if (AuthDiagnosticsPolicy.isSupported()) {
+            addTypeFields();
+        }
+
         this.addPadding();
+    }
+
+    private void addTypeFields() {
+        DefaultListCellRenderer renderer =
+                new DefaultListCellRenderer() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Component getListCellRendererComponent(
+                            JList<?> list,
+                            Object value,
+                            int index,
+                            boolean isSelected,
+                            boolean cellHasFocus) {
+                        JLabel label =
+                                (JLabel)
+                                        super.getListCellRendererComponent(
+                                                list, value, index, isSelected, cellHasFocus);
+                        // A non-breaking space keeps the row's height when blank, so it stays
+                        // clickable in the drop-down list.
+                        label.setText(value instanceof Mode ? ((Mode) value).getName() : " ");
+                        return label;
+                    }
+                };
+
+        this.addComboField(TYPE_PARAM, typeModel);
+        Component typeField = this.getField(TYPE_PARAM);
+        if (typeField instanceof JComboBox) {
+            ((JComboBox<?>) typeField).setRenderer(renderer);
+        }
+
+        this.addNumberField(COUNT_PARAM, 1, Integer.MAX_VALUE, this.job.getParameters().getCount());
+        countField = this.getField(COUNT_PARAM);
+
+        this.addFieldListener(TYPE_PARAM, e -> updateCountEnabled());
+        updateCountEnabled();
+    }
+
+    private void updateCountEnabled() {
+        countField.setEnabled(typeModel.getSelectedItem() == Mode.AUTH_FAILURE_ROLLING);
     }
 
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setEnabled(this.getBoolValue(ENABLED_PARAM));
+        if (AuthDiagnosticsPolicy.isSupported()) {
+            this.job.getParameters().setType((Mode) typeModel.getSelectedItem());
+            this.job.getParameters().setCount(this.getIntValue(COUNT_PARAM));
+        }
         this.job.resetAndSetChanged();
     }
 
