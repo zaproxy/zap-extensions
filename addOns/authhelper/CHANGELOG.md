@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Notify authentication successes/failures for browser login and error paths in Browser and Client Script Based Authentication.
+### Added
+- AI Assisted Authentication
 
 ## [0.42.0] - 2026-08-26
 ### Added
@@ -14,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Depend on newer Common Library add-on.
+- The Authentication Tester dialog now remembers the last authentication method used and selects it by default next time it's opened.
 - Tag diagnostic HTTP messages with an internal ID, to make it easier to cross reference them.
 - Obtain the minimal authentication diagnostics when aborting the authentication.
 - Authentication report: include summary with connection success and failure counts.

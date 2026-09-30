@@ -36,6 +36,7 @@ import org.zaproxy.addon.dev.api.openapi.simpleAuth.OpenApiSimpleAuthDir;
 import org.zaproxy.addon.dev.api.openapi.simpleUnauth.OpenApiSimpleUnauthDir;
 import org.zaproxy.addon.dev.auth.basicHttp.BasicHttpDir;
 import org.zaproxy.addon.dev.auth.jsonMultipleCookies.JsonMultipleCookiesDir;
+import org.zaproxy.addon.dev.auth.multiStepAuth.MultiStepAuthDir;
 import org.zaproxy.addon.dev.auth.nonStdJsonBearer.NonStdJsonBearerDir;
 import org.zaproxy.addon.dev.auth.passswordAddedNoSubmit.PasswordAddedNoSubmitDir;
 import org.zaproxy.addon.dev.auth.passwordAddedJson.PasswordAddedJsonDir;
@@ -103,6 +104,7 @@ public class TestProxyServer {
         authDir.addDirectory(new PasswordAddedJsonDir(this, "password-added-json"));
         authDir.addDirectory(new PasswordHiddenJsonDir(this, "password-hidden-json"));
         authDir.addDirectory(new PasswordNewPageDir(this, "password-new-page"));
+        authDir.addDirectory(new MultiStepAuthDir(this, "multi-step-auth"));
         authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-nosubmit"));
         authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
         authDir.addDirectory(new SSO1RootDir(this, "sso1"));

@@ -404,7 +404,11 @@ public class ContextWrapper {
                         || authMethod
                                 .getClass()
                                 .getCanonicalName()
-                                .equals(AuthenticationData.BROWSER_BASED_AUTH_METHOD_CLASSNAME)) {
+                                .equals(AuthenticationData.BROWSER_BASED_AUTH_METHOD_CLASSNAME)
+                        || authMethod
+                                .getClass()
+                                .getCanonicalName()
+                                .equals(AuthenticationData.AI_ASSISTED_AUTH_METHOD_CLASSNAME)) {
                     UsernamePasswordAuthenticationCredentials upCreds =
                             TotpSupport.createUsernamePasswordAuthenticationCredentials(
                                     authMethod,
