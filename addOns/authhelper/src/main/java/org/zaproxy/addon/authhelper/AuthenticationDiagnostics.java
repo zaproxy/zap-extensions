@@ -361,16 +361,20 @@ return getSelector(arguments[0], document)
             interrupted = true;
         }
 
+        String url = withInterruptHandled(wd::getCurrentUrl);
         currentStep.setCreateTimestamp(Instant.now());
-        currentStep.setUrl(withInterruptHandled(wd::getCurrentUrl));
+        currentStep.setUrl(url);
         currentStep.setDescription(description);
 
         if (wd instanceof TakesScreenshot ts) {
-            DiagnosticScreenshot screenshot = new DiagnosticScreenshot();
-            screenshot.setData(withInterruptHandled(() -> ts.getScreenshotAs(OutputType.BASE64)));
-            screenshot.setCreateTimestamp(Instant.now());
-            screenshot.setStep(currentStep);
-            currentStep.setScreenshot(screenshot);
+            String data = captureScreenshot(ts, url);
+            if (data != null) {
+                DiagnosticScreenshot screenshot = new DiagnosticScreenshot();
+                screenshot.setData(data);
+                screenshot.setCreateTimestamp(Instant.now());
+                screenshot.setStep(currentStep);
+                currentStep.setScreenshot(screenshot);
+            }
         }
 
         try {
@@ -435,6 +439,15 @@ return getSelector(arguments[0], document)
             interrupted |= Thread.interrupted();
 
             return function.get();
+        }
+    }
+
+    private static String captureScreenshot(TakesScreenshot ts, String url) {
+        try {
+            return ts.getScreenshotAs(OutputType.BASE64);
+        } catch (Exception e) {
+            LOGGER.warn("Failed to capture the screenshot at {}", url);
+            return null;
         }
     }
 
