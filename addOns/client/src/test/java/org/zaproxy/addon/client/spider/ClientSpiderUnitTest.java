@@ -106,7 +106,9 @@ import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.selenium.DriverConfiguration;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ClientSpiderUnitTest extends TestUtils {
@@ -126,6 +128,7 @@ class ClientSpiderUnitTest extends TestUtils {
     private Session session;
     private ExtensionNetwork network;
     private Server serverMock;
+    private InMemoryStats stats;
 
     private ClientSpider spider;
 
@@ -137,6 +140,8 @@ class ClientSpiderUnitTest extends TestUtils {
     @BeforeEach
     void setUp() throws Exception {
         logEvents = registerLogEvents(Level.ERROR);
+        stats = new InMemoryStats();
+        Stats.addListener(stats);
 
         Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         ExtensionLoader extensionLoader =
@@ -216,6 +221,7 @@ class ClientSpiderUnitTest extends TestUtils {
 
     @AfterEach
     void tearDown() throws Exception {
+        Stats.removeListener(stats);
         assertThat(logEvents, is(empty()));
 
         Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
@@ -477,6 +483,25 @@ class ClientSpiderUnitTest extends TestUtils {
         assertThat(statusPostStop.isRunning(), is(false));
         assertThat(statusPostStop.isPaused(), is(false));
         assertThat(statusPostStop.isStopped(), is(true));
+    }
+
+    @Test
+    void shouldStopWhenMaxDurationExceededWithNoFurtherEvents() {
+        // Given
+        clientOptions.setMaxDuration(1);
+        clientOptions.setShutdownTimeInSecs(120);
+        spider.run();
+        waitForProxy();
+        clientMapListener().nodeAdded("https://www.example.com/l1", 1, 0, PROXY_PORT);
+        clientMapListener().nodeAdded("https://www.example.com/l2", 1, 1, PROXY_PORT);
+        sleep();
+
+        // When
+        waitForStop(70_000);
+
+        // Then
+        assertThat(spider.isStopped(), is(true));
+        assertThat(stats.getStat("stats.client.spider.event.max.time"), is(1L));
     }
 
     @Test
@@ -1351,6 +1376,18 @@ class ClientSpiderUnitTest extends TestUtils {
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void waitForStop(long timeoutMs) {
+        long deadline = System.currentTimeMillis() + timeoutMs;
+        while (!spider.isStopped() && System.currentTimeMillis() < deadline) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
     }
 
