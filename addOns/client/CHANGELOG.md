@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Respect spider and global exclusions (Issue 9439).
 - Execute Selenium scripts synchronously when the browser is launched (Issue 9472).
 - Address exception while handling browser extension events.
+- Ensure the Client Spider stops when the maximum duration is exceeded when no new nodes/components are found (Related to Issue 9471).
 
 ## [0.31.0] - 2026-08-14
 ### Changed
