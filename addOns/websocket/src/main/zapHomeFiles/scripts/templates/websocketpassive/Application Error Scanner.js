@@ -13,6 +13,33 @@ CONFIDENCE_MEDIUM = 2;
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110001
+name: Application Error Disclosure script
+description: >
+  This payload contains an error/warning message that may disclose sensitive information like
+  the location of the file that produced the unhandled exception. This information can be used
+  to launch further attacks against the web application.
+solution: >
+  Review the error payloads which are piped directly to WebSockets. Handle the related
+  exceptions. Consider implementing a mechanism to provide a unique error reference/identifier
+  to the client (browser) while logging the details on the server side and not exposing them to
+  the user.
+category: info_gather
+risk: medium
+confidence: medium
+cweId: 209
+wascId: 13
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Application%20Error%20Scanner.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110001
+`);
+}
 
 var microsoftDbErrors = [
   /Microsoft OLE DB Provider for ODBC Drivers/gim,

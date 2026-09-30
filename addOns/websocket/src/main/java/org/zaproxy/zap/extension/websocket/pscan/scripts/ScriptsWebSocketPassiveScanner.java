@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.websocket.pscan.scripts;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptsCache;
@@ -40,9 +41,11 @@ public class ScriptsWebSocketPassiveScanner implements WebSocketPassiveScanner {
     public static final String PLUGIN_NAME = "WS.ScriptPassiveScan";
     public static final int PLUGIN_ID = 110000;
 
+    private final ExtensionScript extensionScript;
     private final ScriptsCache<WebSocketPassiveScript> scripts;
 
     public ScriptsWebSocketPassiveScanner(ExtensionScript extensionScript) {
+        this.extensionScript = extensionScript;
         InterfaceProvider<WebSocketPassiveScript> interfaceProvider =
                 (scriptWrapper, targetInterface) -> {
                     WebSocketPassiveScript s =
@@ -69,13 +72,21 @@ public class ScriptsWebSocketPassiveScanner implements WebSocketPassiveScanner {
     @Override
     public void scanMessage(WebSocketScanHelper helper, WebSocketMessageDTO webSocketMessage) {
         scripts.refreshAndExecute(
-                (sw, script) ->
-                        script.scan(
-                                () ->
-                                        WebSocketAlertRaiser.WebSocketAlertScriptRaiser
-                                                .getWebSocketAlertRaiser(
-                                                        helper.newAlert(), script.getId()),
-                                webSocketMessage));
+                (sw, script) -> {
+                    // Scripts that declare ScanRuleMetadata already run via their own
+                    // WebSocketPassiveScriptScanRule (see WebSocketScriptSynchronizer),
+                    // registered as an individual rule; running them again here would raise
+                    // every alert twice.
+                    if (extensionScript.getInterface(sw, ScanRuleMetadataProvider.class) != null) {
+                        return;
+                    }
+                    script.scan(
+                            () ->
+                                    WebSocketAlertRaiser.WebSocketAlertScriptRaiser
+                                            .getWebSocketAlertRaiser(
+                                                    helper.newAlert(), script.getId()),
+                            webSocketMessage);
+                });
     }
 
     @Override

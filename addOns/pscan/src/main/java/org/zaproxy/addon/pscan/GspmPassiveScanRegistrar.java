@@ -31,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.gspm.GspmCategory;
+import org.zaproxy.addon.commonlib.gspm.GspmPhase;
 import org.zaproxy.addon.commonlib.gspm.GspmRule;
 import org.zaproxy.addon.commonlib.gspm.GspmScanRuleRegistrar;
 import org.zaproxy.addon.commonlib.gspm.GspmScanRuleRegistrar.RuleOwner;
@@ -63,6 +64,7 @@ class GspmPassiveScanRegistrar {
             new GspmScanRuleRegistrar(
                     TOOL,
                     () -> Constant.messages.getString("pscan.gspm.tool"),
+                    GspmPhase.PASSIVE,
                     this::getAllCurrentRules,
                     // Add-on install/uninstall sync happens via ruleAdded/ruleRemoved instead (see
                     // class javadoc above), so there's nothing for GspmScanRuleRegistrar's own
@@ -216,6 +218,11 @@ class GspmPassiveScanRegistrar {
         @Override
         public String getTool() {
             return TOOL;
+        }
+
+        @Override
+        public GspmPhase getPhase() {
+            return GspmPhase.PASSIVE;
         }
 
         @Override

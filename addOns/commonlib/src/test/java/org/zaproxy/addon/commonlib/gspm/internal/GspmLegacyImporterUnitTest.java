@@ -26,13 +26,30 @@ import static org.hamcrest.Matchers.nullValue;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRuleRef;
 import org.zaproxy.addon.commonlib.gspm.GspmRuleSet;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class GspmLegacyImporterUnitTest {
+class GspmLegacyImporterUnitTest extends TestUtils {
+
+    @BeforeAll
+    static void setupMessages() {
+        // GspmPolicy.nextDefaultRuleSetName(), used to name imported per-rule-override groups,
+        // reads Constant.messages.
+        mockMessages(new ExtensionCommonlib());
+    }
+
+    @AfterAll
+    static void cleanUpMessages() {
+        Constant.messages = null;
+    }
 
     private static final String POLICY_XML =
             """
@@ -83,6 +100,37 @@ class GspmLegacyImporterUnitTest {
         // Then
         GspmRuleRef ref = findRuleRef(policy, 90001);
         assertThat(ref.getName(), is(nullValue()));
+    }
+
+    @Test
+    void shouldAssignDefaultNameToPerRuleOverrideGroup(@TempDir Path dir) throws Exception {
+        // Given — both p40012 and p90001 override to HIGH (default is MEDIUM), so they land in
+        // the same per-rule-override group, which has no name of its own from the legacy XML.
+        Path file = dir.resolve("My Policy.policy");
+        Files.writeString(file, POLICY_XML);
+
+        // When
+        GspmPolicy policy = GspmLegacyImporter.importPolicy(file.toFile());
+
+        // Then
+        GspmRuleSet group = ruleSetFor(policy, 40012);
+        assertThat(group, is(ruleSetFor(policy, 90001)));
+        assertThat(group.getName(), is("Rule Set 1"));
+    }
+
+    private static GspmRuleSet ruleSetFor(GspmPolicy policy, int ruleId) {
+        for (GspmRuleSet ruleSet : policy.getRuleSets()) {
+            List<GspmRuleRef> rules = ruleSet.getRules();
+            if (rules == null) {
+                continue;
+            }
+            for (GspmRuleRef ref : rules) {
+                if (ref.getId() == ruleId) {
+                    return ruleSet;
+                }
+            }
+        }
+        throw new AssertionError("No rule set found containing rule id " + ruleId);
     }
 
     private static GspmRuleRef findRuleRef(GspmPolicy policy, int ruleId) {

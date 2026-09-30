@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 
@@ -33,15 +35,14 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
  * A set of rules within a {@link GspmPolicy} that share a common threshold and/or strength
  * override.
  *
- * <p>A rule set may be:
+ * <p>A rule set can combine any of {@link #category}, {@link #status}, and {@link #tags} — when
+ * more than one is set, a rule must satisfy <em>all</em> of them (tags themselves use OR semantics:
+ * a rule matches if it has any of the specified tags). Leaving all three unset (and no explicit
+ * {@link #rules}) makes it a <em>catch-all</em> that applies to every rule in the policy.
  *
- * <ul>
- *   <li>A <em>catch-all</em> (no tags, no category, no status, no explicit rules) — applies to
- *       every rule in the policy.
- *   <li>A <em>tag-scoped</em> set — applies to rules whose alert tags contain any of the specified
- *       tags (OR semantics).
- *   <li>A <em>per-rule</em> set — explicitly lists one or more rule ids.
- * </ul>
+ * <p>The one exception is {@link #rules}: when a rule set has an explicit rules list, matching is
+ * decided purely by whether the candidate rule's id is in that list — {@link #category}, {@link
+ * #status}, and {@link #tags} are not consulted at all for that rule set.
  *
  * @since 1.45.0
  */
@@ -50,12 +51,23 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 @Setter
 public class GspmRuleSet {
 
+    private static final Logger LOGGER = LogManager.getLogger(GspmRuleSet.class);
+
     /**
      * The category id/key representing "all rules" (the catch-all root), e.g. as a rule set's
      * {@link #category}, or as the root segment of a {@link #ruleCategoryKey(GspmRule) category
      * key} such as {@code "all.ascan"}.
      */
     public static final String ALL_CATEGORY = "all";
+
+    /**
+     * Prefix for a {@link #category} value that scopes a rule set to a whole {@link GspmPhase}
+     * instead of a tool/category key, e.g. {@code "phase.passive"} matches every rule whose {@link
+     * GspmRule#getPhase()} is {@link GspmPhase#PASSIVE}, regardless of tool. Kept as a separate
+     * namespace from {@link #ruleCategoryKey(GspmRule)} (which stays tool-first, unaware of phase)
+     * so existing tool/category keys are unaffected; see {@link #matches(GspmRule)}.
+     */
+    public static final String PHASE_PREFIX = "phase.";
 
     private String name;
     private String category;
@@ -138,6 +150,31 @@ public class GspmRuleSet {
         return true;
     }
 
+    /**
+     * Returns {@code true} if this rule set has no {@link #name} of its own and its shape doesn't
+     * already have an unambiguous synthesized display: a true {@link #isCatchAll() catch-all}, a
+     * plain phase or category scope (a non-null, non-{@link #ALL_CATEGORY} {@link #category}), or a
+     * single explicit rule override ({@link #rules} of size 1, which is shown unambiguously as
+     * "Rule override: X" regardless of anything else — see {@code
+     * GspmRuleSetTableModel#displayName}, which this must stay in sync with).
+     *
+     * <p>What's left, and thus flagged here, is: a tag- and/or status-scoped rule set with no
+     * category, or a multi-rule override group with no category — both of which the display
+     * fallback would otherwise show as a plain, misleading "Catch-all". Used to decide which rule
+     * sets get a {@link GspmPolicy#nextDefaultRuleSetName() generated default name} after
+     * loading/importing a policy.
+     */
+    boolean needsDefaultName() {
+        if (name != null && !name.isBlank()) {
+            return false;
+        }
+        if (rules != null && rules.size() == 1) {
+            return false;
+        }
+        boolean categoryIsAllOrUnset = category == null || category.equalsIgnoreCase(ALL_CATEGORY);
+        return categoryIsAllOrUnset && !isCatchAll();
+    }
+
     /** Lazily initialises the rules list and appends the given ref. */
     public void addRule(GspmRuleRef ref) {
         if (rules == null) {
@@ -149,16 +186,18 @@ public class GspmRuleSet {
     /**
      * Returns {@code true} if this rule set applies to the given rule.
      *
-     * <p>Resolution order:
+     * <p>If an explicit rules list is present, match is decided solely by whether the rule's id is
+     * in that list — {@link #category}, {@link #status}, and {@link #tags} are ignored entirely.
      *
-     * <ol>
-     *   <li>If an explicit rules list is present, match if the rule's id is in the list.
-     *   <li>Else if a tags list is present, match if the rule's alert tags contain any of them.
-     *   <li>Otherwise, match if {@link #category} (when set, and not {@code "all"}) equals or is a
-     *       parent of the rule's category key, <em>and</em> {@link #status} (when set) equals the
-     *       rule's maturity status. Either or both may be unset, in which case that condition is
-     *       treated as satisfied; if both are unset this is the catch-all case and always matches.
-     * </ol>
+     * <p>Otherwise, all of the following that are set must be satisfied (unset ones are treated as
+     * satisfied, so a rule set with none of them set is a catch-all that matches everything):
+     *
+     * <ul>
+     *   <li>{@link #tags} — the rule's alert tags contain any of the specified tags (OR semantics).
+     *   <li>{@link #category} (when not {@code "all"}) — equals or is a parent of the rule's
+     *       category key.
+     *   <li>{@link #status} — equals the rule's maturity status.
+     * </ul>
      */
     public boolean matches(GspmRule rule) {
         if (rules != null && !rules.isEmpty()) {
@@ -170,25 +209,49 @@ public class GspmRuleSet {
             }
             return false;
         }
+        boolean tagsMatch = true;
         if (tags != null && !tags.isEmpty()) {
             java.util.Map<String, String> alertTags = rule.getAlertTags();
-            if (alertTags == null) {
-                return false;
-            }
-            for (String tag : tags) {
-                if (alertTags.containsKey(tag)) {
-                    return true;
+            tagsMatch = false;
+            if (alertTags != null) {
+                for (String tag : tags) {
+                    if (alertTags.containsKey(tag)) {
+                        tagsMatch = true;
+                        break;
+                    }
                 }
             }
-            return false;
         }
         boolean categoryMatches = true;
         if (category != null && !category.equalsIgnoreCase(ALL_CATEGORY)) {
-            String ruleKey = ruleCategoryKey(rule);
-            categoryMatches = ruleKey.equals(category) || ruleKey.startsWith(category + ".");
+            if (category.startsWith(PHASE_PREFIX)) {
+                categoryMatches = matchesPhase(rule);
+            } else {
+                String ruleKey = ruleCategoryKey(rule);
+                categoryMatches = ruleKey.equals(category) || ruleKey.startsWith(category + ".");
+            }
         }
         boolean statusMatches = status == null || status.equalsIgnoreCase(rule.getStatus().name());
-        return categoryMatches && statusMatches;
+        return tagsMatch && categoryMatches && statusMatches;
+    }
+
+    /**
+     * Returns {@code true} if {@code rule}'s phase matches this rule set's {@link #category}, which
+     * must already be confirmed to have the {@link #PHASE_PREFIX}. {@link #category} is a plain
+     * string deserialized from user-editable policy YAML, so an unrecognized phase name (e.g. from
+     * a hand-edited or version-skewed file) is treated as a non-match rather than thrown, to avoid
+     * breaking threshold/strength resolution for every other rule set.
+     */
+    private boolean matchesPhase(GspmRule rule) {
+        try {
+            GspmPhase phase =
+                    GspmPhase.valueOf(
+                            category.substring(PHASE_PREFIX.length()).toUpperCase(Locale.ROOT));
+            return rule.getPhase() == phase;
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("GSPM: ignoring rule set with unrecognised phase category '{}'", category);
+            return false;
+        }
     }
 
     /**

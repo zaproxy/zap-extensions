@@ -63,6 +63,7 @@ class GspmScanRuleRegistrarUnitTest {
                 new GspmScanRuleRegistrar(
                         TOOL,
                         () -> "Tool Display",
+                        GspmPhase.ACTIVE,
                         () -> new ArrayList<>(allRules),
                         addOn -> installedRules.getOrDefault(addOn, List.of()));
     }
