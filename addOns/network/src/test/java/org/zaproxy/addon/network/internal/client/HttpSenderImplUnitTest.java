@@ -112,9 +112,11 @@ import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListen
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.testutils.TestHttpServer;
 import org.zaproxy.addon.network.testutils.TestHttpServer.TestHttpMessageHandler;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link HttpSender} implementations. */
@@ -347,12 +349,19 @@ class HttpSenderImplUnitTest {
                     (ctx, msg) -> {
                         Thread.sleep(TimeUnit.SECONDS.toMillis(timeoutInSecs * 2));
                     });
-            // When / Then
-            ZapSocketTimeoutException exception =
-                    assertThrows(
-                            ZapSocketTimeoutException.class,
-                            () -> method.sendWith(httpSender, message));
-            assertThat(exception.getTimeout(), is(equalTo(timeoutInSecs)));
+            InMemoryStats stats = new InMemoryStats();
+            Stats.addListener(stats);
+            try {
+                // When / Then
+                ZapSocketTimeoutException exception =
+                        assertThrows(
+                                ZapSocketTimeoutException.class,
+                                () -> method.sendWith(httpSender, message));
+                assertThat(exception.getTimeout(), is(equalTo(timeoutInSecs)));
+                assertThat(stats.getStat("stats.network.timeout"), is(equalTo(1L)));
+            } finally {
+                Stats.removeListener(stats);
+            }
         }
 
         @ParameterizedTest
