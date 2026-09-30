@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-import javax.jdo.PersistenceManager;
-import javax.jdo.Transaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -49,11 +47,11 @@ import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticBrowserStorageItem;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticMessage;
+import org.zaproxy.addon.authhelper.internal.db.DiagnosticPersister;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticScreenshot;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement.SelectorType;
-import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpSenderListener;
@@ -200,6 +198,7 @@ return getSelector(arguments[0], document)
     private DiagnosticStep currentStep;
     private ScriptKey elementSelectorScriptKey;
     private boolean interrupted;
+    private CommitMode closedWith;
 
     public AuthenticationDiagnostics(
             boolean enabled, String authenticationMethod, String context, String user) {
@@ -212,7 +211,7 @@ return getSelector(arguments[0], document)
             String context,
             String user,
             String script) {
-        this.enabled = enabled;
+        this.enabled = enabled || AuthDiagnosticsPolicy.getInstance().isActive(context);
 
         messageAccessedListener =
                 new HttpSenderListener() {
@@ -239,7 +238,7 @@ return getSelector(arguments[0], document)
                 };
         HttpSender.addListener(messageAccessedListener);
 
-        if (!enabled) {
+        if (!this.enabled) {
             return;
         }
 
@@ -577,6 +576,21 @@ return getSelector(arguments[0], document)
 
     @Override
     public void close() {
+        close(CommitMode.COMMIT);
+    }
+
+    public void close(CommitMode mode) {
+        if (closedWith != null) {
+            if (closedWith != mode) {
+                LOGGER.warn(
+                        "Diagnostics already closed with {}, ignoring close({}).",
+                        closedWith,
+                        mode);
+            }
+            return;
+        }
+        closedWith = mode;
+
         HttpSender.removeListener(messageAccessedListener);
 
         if (!enabled) {
@@ -584,6 +598,10 @@ return getSelector(arguments[0], document)
         }
 
         HttpSender.removeListener(listener);
+
+        if (mode != CommitMode.COMMIT) {
+            return;
+        }
 
         diagnosticDataProviders.forEach(
                 provider -> {
@@ -594,27 +612,21 @@ return getSelector(arguments[0], document)
                     }
                 });
 
-        interrupted |= Thread.interrupted();
-
-        PersistenceManager pm = TableJdo.getPmf().getPersistenceManager();
-        Transaction tx = pm.currentTransaction();
-        try {
-            tx.begin();
-            pm.makePersistent(diagnostic);
-            tx.commit();
-        } catch (Exception e) {
-            LOGGER.warn("Failed to persist diagnostics:", e);
-        } finally {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
-            pm.close();
-
-            // JDO/DataNucleus does not restore the interruption.
-            if (interrupted) {
-                Thread.currentThread().interrupt();
-            }
+        AuthDiagnosticsPolicy policy = AuthDiagnosticsPolicy.getInstance();
+        if (policy.isActive(diagnostic.getContext())) {
+            policy.defer(diagnostic);
+            return;
         }
+
+        // JDO/DataNucleus does not restore the interruption.
+        if (DiagnosticPersister.persist(diagnostic, interrupted)) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public enum CommitMode {
+        COMMIT,
+        DISCARD
     }
 
     private class ZestClientScreenshotDiag extends ZestClientScreenshot {

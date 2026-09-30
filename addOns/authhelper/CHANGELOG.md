@@ -4,8 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- `type` and `count` parameters to the `diagnostics` automation job, to retain only the last failed authentication attempt (`auth_on_failure`) or a rolling window of failures (`auth_failure_rolling`), instead of recording all traffic for the whole plan.
+
 ### Fixed
 - Notify authentication successes/failures for browser login and error paths in Browser and Client Script Based Authentication.
+
+### Changed
+- Maintenance changes.
 
 ## [0.42.0] - 2026-08-26
 ### Added

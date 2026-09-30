@@ -25,6 +25,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.authhelper.AuthDiagnosticsPolicy;
 import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.automation.ExtensionAutomation;
@@ -67,6 +68,7 @@ public class ExtensionAuthhelperAutomation extends ExtensionAdaptor {
     @Override
     public void unload() {
         AuthenticationDiagnostics.setFlushHook(null);
+        AuthDiagnosticsPolicy.getInstance().clearAll();
         Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionAutomation.class)
