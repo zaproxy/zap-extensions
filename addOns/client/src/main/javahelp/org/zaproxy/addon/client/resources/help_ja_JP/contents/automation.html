@@ -16,21 +16,7 @@ spiderClient ジョブを使用すると、モダンなWebアプリケーショ�
 このジョブはモニターテストをサポートしています。
 
 <pre>
-  - type: spiderClient                 # The client spider - a spider which explores modern web apps more effectively
-    parameters:
-      context:                         # String: Name of the context to spider, default: first context
-      user:                            # String: An optional user to use for authentication, must be defined in the env
-      url:                             # String: URL to start spidering from, default: first context URL
-      maxDuration:                     # Int: The max time in minutes the spider will be allowed to run for, default: 0 unlimited
-      maxCrawlDepth:                   # Int: The maximum tree depth to explore, default 5
-      maxChildren:                     # Int: The maximum number of children to add to each node in the tree
-      numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: number of cores/2 max 8
-      browserId:                       # String: Browser ID to use, default: firefox-headless
-      initialLoadTime:                 # Int: The time in seconds to wait after the initial URL is loaded, default: 0
-      pageLoadTime:                    # Int: The time in seconds to wait after a new URL is loaded, default: 0
-      actionWaitTime:                  # Int: The time in seconds to wait after performing an action (e.g. clicking a button), default: 0
-      shutdownTime:                    # Int: The time in seconds to wait after no activity before shutting down, default: 5
-      scopeCheck:                      # String: The scope check, either Flexible or Strict, default: Flexible
+  
 </pre>
 
 <H2>ジョブ: export (Client Map)</H2>
@@ -38,43 +24,13 @@ spiderClient ジョブを使用すると、モダンなWebアプリケーショ�
 このジョブによって生成される YAML は、手動でのクライアントマップのエクスポートとは異なります。例えば、<code>url</code>フィールドが含まれており、<code>components</code>は省略されています。
 
 <pre>
-  - type: export            # Exports the Client Map
-    parameters:
-      context:            # String: Name of the context from which to export. Default: first context
-      type: yaml            # YAML is the only supported format for the Client Map
-      source: clientmap     # Export the Client Map
-      fileName:             # String: Name/path of the output file
+   
 </pre>
 
 生成されるYAMLの例:
 
 <pre>
-- node: "ClientMap"
-  children:
-  - node: "http://localhost:3000"
-    url: "http://localhost:3000/"
-    children:
-    - node: "/"
-      url: "http://localhost:3000/"
-      visited: false
-    - node: "/#"
-      url: "http://localhost:3000/#"
-      visited: false
-      children:
-      - node: "/"
-        url: "http://localhost:3000/#/"
-      - node: "/about"
-        url: "http://localhost:3000/#/about"
-      - node: "/contact"
-        url: "http://localhost:3000/#/contact"
-      - node: "/forgot-password"
-        url: "http://localhost:3000/#/forgot-password"
-      - node: "/login"
-        url: "http://localhost:3000/#/login"
-      - node: "/photo-wall"
-        url: "http://localhost:3000/#/photo-wall"
-      - node: "/register"
-        url: "http://localhost:3000/#/register"
+
 </pre>
 
 <H2>パッシブスキャンルール</H2>
