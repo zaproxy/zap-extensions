@@ -178,6 +178,29 @@ class GspmPolicyUnitTest {
     }
 
     @Test
+    void shouldResolvePhaseScopedThresholdForAnyToolInThatPhase() {
+        GspmPolicy policy = new GspmPolicy("P");
+        policy.findOrCreateCategoryRuleSet(GspmRuleSet.PHASE_PREFIX + "PASSIVE")
+                .setThresholdEnum(AlertThreshold.HIGH);
+        GspmRule rule = testRule("pscan", 10020);
+        assertThat(policy.getEffectiveThreshold(rule).get(), is(AlertThreshold.HIGH));
+    }
+
+    @Test
+    void shouldLetMoreSpecificCategoryOverridePhaseDefault() {
+        GspmPolicy policy = new GspmPolicy("P");
+        policy.findOrCreateCategoryRuleSet(GspmRuleSet.PHASE_PREFIX + "PASSIVE")
+                .setThresholdEnum(AlertThreshold.HIGH);
+        policy.findOrCreateCategoryRuleSet("all.pscan").setThresholdEnum(AlertThreshold.LOW);
+        GspmRule pscanRule = testRule("pscan", 10020);
+        GspmRule wspscanRule = testRule("wspscan", 110001);
+        // The more specific "all.pscan" override wins for pscan rules...
+        assertThat(policy.getEffectiveThreshold(pscanRule).get(), is(AlertThreshold.LOW));
+        // ...but wspscan rules still fall back to the broader phase-level default.
+        assertThat(policy.getEffectiveThreshold(wspscanRule).get(), is(AlertThreshold.HIGH));
+    }
+
+    @Test
     void shouldMatchByTag() {
         GspmPolicy policy = new GspmPolicy("P");
         GspmRuleSet rs = new GspmRuleSet();
@@ -481,6 +504,33 @@ class GspmPolicyUnitTest {
         }
 
         @Test
+        void shouldTreatLiteralAllCategoryAsCatchAllSpecificity() {
+            // Given — a rule set with category explicitly "all" (as isCatchAll() already treats
+            // it), e.g. from a hand-edited or legacy-imported policy file rather than the normal
+            // getOrCreateCatchAllRuleSet() path, which always leaves category unset
+            GspmPolicy policy = new GspmPolicy("P");
+            GspmRuleSet literalAll = new GspmRuleSet();
+            literalAll.setCategory("all");
+            literalAll.setThresholdEnum(AlertThreshold.HIGH);
+            policy.getRuleSets().add(literalAll);
+
+            // When — inserting a phase-scoped rule set, which must end up more specific than any
+            // catch-all
+            policy.findOrCreateCategoryRuleSet(GspmRuleSet.PHASE_PREFIX + "PASSIVE")
+                    .setThresholdEnum(AlertThreshold.LOW);
+
+            // Then — the literal "all" catch-all still sorts before (i.e. is less specific than)
+            // the phase-scoped rule set...
+            List<GspmRuleSet> rs = policy.getRuleSets();
+            assertThat(rs.get(0), is(sameInstance(literalAll)));
+            assertThat(rs.get(1).getCategory(), is(GspmRuleSet.PHASE_PREFIX + "PASSIVE"));
+            // ...so under last-match-wins, the phase default correctly overrides it for a
+            // wspscan rule
+            GspmRule wspscanRule = testRule("wspscan", 1);
+            assertThat(policy.getEffectiveThreshold(wspscanRule).get(), is(AlertThreshold.LOW));
+        }
+
+        @Test
         void shouldReturnExistingCategoryRuleSetWithoutCreatingDuplicate() {
             // Given
             GspmPolicy policy = new GspmPolicy("P");
@@ -515,6 +565,11 @@ class GspmPolicyUnitTest {
             @Override
             public String getTool() {
                 return tool;
+            }
+
+            @Override
+            public GspmPhase getPhase() {
+                return GspmPhase.PASSIVE;
             }
 
             @Override

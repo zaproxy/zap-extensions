@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -126,7 +127,12 @@ public class GspmRegistry {
 
     /** Returns {@code true} if a rule id is already registered. */
     public boolean isRegistered(int id) {
-        return rules.stream().anyMatch(r -> r.getId() == id);
+        return getRule(id).isPresent();
+    }
+
+    /** Returns the rule registered with the given id, if any. */
+    public Optional<GspmRule> getRule(int id) {
+        return rules.stream().filter(r -> r.getId() == id).findFirst();
     }
 
     /** Returns a snapshot of all currently registered rules. */
@@ -407,6 +413,11 @@ public class GspmRegistry {
         @Override
         public String getTool() {
             return underlying.getTool();
+        }
+
+        @Override
+        public GspmPhase getPhase() {
+            return underlying.getPhase();
         }
 
         @Override

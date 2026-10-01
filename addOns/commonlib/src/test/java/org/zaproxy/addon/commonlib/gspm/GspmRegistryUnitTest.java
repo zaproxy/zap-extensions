@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -198,6 +199,15 @@ class GspmRegistryUnitTest extends TestUtils {
 
             assertThat(registry.isRegistered(10020), is(true));
             assertThat(registry.isRegistered(10021), is(false));
+        }
+
+        @Test
+        void shouldGetRuleById() {
+            registry.registerRule(rule("pscan", 10020));
+
+            assertThat(
+                    registry.getRule(10020).map(GspmRule::getName), is(Optional.of("pscan-10020")));
+            assertThat(registry.getRule(10021), is(Optional.empty()));
         }
 
         @Test
@@ -840,6 +850,11 @@ class GspmRegistryUnitTest extends TestUtils {
         @Override
         public String getTool() {
             return tool;
+        }
+
+        @Override
+        public GspmPhase getPhase() {
+            return GspmPhase.PASSIVE;
         }
 
         @Override
