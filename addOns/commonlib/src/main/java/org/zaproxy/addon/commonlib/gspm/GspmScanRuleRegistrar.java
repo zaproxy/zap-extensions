@@ -54,6 +54,7 @@ public class GspmScanRuleRegistrar implements GspmRuleSource, AddOnInstallationS
 
     private final String toolId;
     private final Supplier<String> toolDisplayName;
+    private final GspmPhase phase;
     private final Supplier<List<RuleOwner>> allRulesSupplier;
     private final Function<AddOn, List<GspmRule>> rulesForAddOn;
 
@@ -66,6 +67,8 @@ public class GspmScanRuleRegistrar implements GspmRuleSource, AddOnInstallationS
      * @param toolId the stable tool key to register rules under, e.g. {@code "ascan"}
      * @param toolDisplayName supplies the tool's i18n display name; evaluated lazily so this can be
      *     constructed before i18n messages are available
+     * @param phase the fixed, tool-independent top-level grouping this tool's rules appear under in
+     *     the GSPM dialog's tree; multiple tools may share the same phase
      * @param allRulesSupplier supplies every currently available rule, paired with its owning
      *     add-on (or {@code null} if not contributed by an add-on), for the initial registration
      * @param rulesForAddOn supplies the rules contributed by a specific add-on, called when that
@@ -74,10 +77,12 @@ public class GspmScanRuleRegistrar implements GspmRuleSource, AddOnInstallationS
     public GspmScanRuleRegistrar(
             String toolId,
             Supplier<String> toolDisplayName,
+            GspmPhase phase,
             Supplier<List<RuleOwner>> allRulesSupplier,
             Function<AddOn, List<GspmRule>> rulesForAddOn) {
         this.toolId = toolId;
         this.toolDisplayName = toolDisplayName;
+        this.phase = phase;
         this.allRulesSupplier = allRulesSupplier;
         this.rulesForAddOn = rulesForAddOn;
     }
@@ -85,7 +90,7 @@ public class GspmScanRuleRegistrar implements GspmRuleSource, AddOnInstallationS
     @Override
     public void registerRulesWithGspm(GspmRegistry reg) {
         this.registry = reg;
-        reg.registerTool(new GspmTool(toolId, toolDisplayName.get()));
+        reg.registerTool(new GspmTool(toolId, toolDisplayName.get(), phase));
         List<RuleOwner> owners = allRulesSupplier.get();
         for (RuleOwner owner : owners) {
             registerRule(owner.rule(), owner.addOn());
@@ -108,18 +113,26 @@ public class GspmScanRuleRegistrar implements GspmRuleSource, AddOnInstallationS
      * user at runtime, not tied to any add-on's lifecycle.
      *
      * <p>No-op if {@link #registerRulesWithGspm} hasn't been called yet (or {@link
-     * #unregisterRulesFromGspm} has, since), or if a rule with this id is already registered by
-     * this source.
+     * #unregisterRulesFromGspm} has, since), or if a rule with this id is already registered —
+     * checked against the shared {@link GspmRegistry}, not just this source, so a runtime clash
+     * with another tool (e.g. active scan, HTTP passive scan) is rejected here rather than throwing
+     * out of {@link GspmRegistry#registerRule(GspmRule)}.
      */
     public void ruleAdded(GspmRule rule) {
         if (registry == null) {
             return;
         }
-        if (registeredRules.containsKey(rule.getId())) {
-            LOGGER.error("Attempted to register a rule with a duplicate ID {}", rule.getId());
-            return;
-        }
-        registerRule(rule, null);
+        registry.getRule(rule.getId())
+                .ifPresentOrElse(
+                        existing ->
+                                LOGGER.error(
+                                        "Attempted to register rule '{}' with ID {} already"
+                                                + " registered by tool '{}' as '{}'",
+                                        rule.getName(),
+                                        rule.getId(),
+                                        existing.getTool(),
+                                        existing.getName()),
+                        () -> registerRule(rule, null));
     }
 
     /**

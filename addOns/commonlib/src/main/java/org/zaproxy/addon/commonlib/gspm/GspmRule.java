@@ -51,6 +51,13 @@ public interface GspmRule {
     String getTool();
 
     /**
+     * Returns the fixed, tool-independent top-level grouping this rule appears under in the GSPM
+     * dialog's tree (e.g. "Active"/"Passive"). Several tools may share the same phase; see {@link
+     * GspmPhase}.
+     */
+    GspmPhase getPhase();
+
+    /**
      * Returns the category hierarchy for this rule as {@link GspmCategory} entries, from broadest
      * to most specific. Does not include the rule name itself. Must not be null or empty.
      */
