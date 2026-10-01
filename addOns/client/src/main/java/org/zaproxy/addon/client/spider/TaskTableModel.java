@@ -148,11 +148,17 @@ public class TaskTableModel extends AbstractTableModel {
     }
 
     public void updateTaskState(int id, String newState, String error) {
-        int row = taskIdToRow.get(id);
-        TaskRecord action = this.scanResults.get(row);
-        action.setStatus(newState);
-        action.setError(error);
+        synchronized (taskIdToRow) {
+            Integer row = taskIdToRow.get(id);
+            if (row == null) {
+                return;
+            }
 
-        withView(() -> fireTableRowsUpdated(row, row));
+            TaskRecord action = this.scanResults.get(row);
+            action.setStatus(newState);
+            action.setError(error);
+
+            withView(() -> fireTableRowsUpdated(row, row));
+        }
     }
 }

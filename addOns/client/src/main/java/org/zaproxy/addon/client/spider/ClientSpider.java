@@ -216,7 +216,7 @@ public class ClientSpider implements GenericScanner2 {
         this.valueProvider = valueProvider;
         this.scanOptions = scanOptions;
         this.addedNodesModel = new UrlTableModel();
-        this.tasksModel = new TaskTableModel();
+        this.tasksModel = extClient.getView() != null ? new TaskTableModel() : null;
         this.mode = Control.getSingleton().getMode();
 
         messagesTableModel = new MessagesTableModel();
@@ -826,14 +826,14 @@ public class ClientSpider implements GenericScanner2 {
     }
 
     void taskStateChange(final ClientSpiderTask task) {
-        if (isExternalControl()) {
+        if (tasksModel == null || isExternalControl()) {
             return;
         }
         tasksModel.updateTaskState(task.getId(), task.getStatus().toString(), task.getError());
     }
 
     private void addTaskToTasksModel(final ClientSpiderTask task, String url) {
-        if (isExternalControl()) {
+        if (tasksModel == null || isExternalControl()) {
             return;
         }
         tasksModel.addTask(
