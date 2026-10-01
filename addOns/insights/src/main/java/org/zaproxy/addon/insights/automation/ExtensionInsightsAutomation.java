@@ -75,11 +75,11 @@ public class ExtensionInsightsAutomation extends ExtensionAdaptor {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("alertFilters.automation.desc");
+        return Constant.messages.getString("insights.automation.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("alertFilters.automation.name");
+        return Constant.messages.getString("insights.automation.name");
     }
 }
