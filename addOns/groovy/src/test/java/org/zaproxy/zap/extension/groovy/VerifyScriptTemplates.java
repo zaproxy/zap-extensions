@@ -48,18 +48,6 @@ public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
     @Override
     protected void parseTemplate(Path template) throws Exception {
-        if (isExcluded(template)) {
-            return;
-        }
         groovyCl.parseClass(template.toFile());
-    }
-
-    private static boolean isExcluded(Path template) {
-        String parentDir = template.getParent().getFileName().toString();
-        // XXX Validate when the add-ons Fuzzer, Script Console, and encoder are included in the
-        // test classpath.
-        return parentDir.equals("httpfuzzerprocessor")
-                || parentDir.equals("extender")
-                || parentDir.equals("encode-decode");
     }
 }

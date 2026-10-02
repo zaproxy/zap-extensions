@@ -21,7 +21,6 @@ package org.zaproxy.addon.client.spider;
 
 import java.util.Collections;
 import java.util.List;
-import lombok.Builder;
 import lombok.Getter;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpSender;
@@ -30,7 +29,7 @@ import org.zaproxy.zap.users.User;
 
 /** Immutable options for a client spider scan. */
 @Getter
-@Builder(toBuilder = true, setterPrefix = "set", builderClassName = "Builder")
+@lombok.Builder(toBuilder = true, setterPrefix = "set", builderClassName = "Builder")
 public class ScanOptions {
 
     private final Context context;
@@ -41,9 +40,9 @@ public class ScanOptions {
      * When {@code true} the scan is controlled externally: results are not shown in the GUI and
      * scan notifications are not emitted.
      */
-    @Builder.Default private final boolean externalControl = false;
+    @lombok.Builder.Default private final boolean externalControl = false;
 
-    @Builder.Default private final int initiator = HttpSender.CLIENT_SPIDER_INITIATOR;
+    @lombok.Builder.Default private final int initiator = HttpSender.CLIENT_SPIDER_INITIATOR;
 
     /**
      * The {@code HttpSender} to use for browser proxy traffic. If not set a new {@code HttpSender}
@@ -53,11 +52,12 @@ public class ScanOptions {
      */
     private final HttpSender httpSender;
 
-    @Builder.Default private final int hrefType = HistoryReference.TYPE_CLIENT_SPIDER;
+    @lombok.Builder.Default private final int hrefType = HistoryReference.TYPE_CLIENT_SPIDER;
 
-    @Builder.Default private final int tmpHrefType = HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY;
+    @lombok.Builder.Default
+    private final int tmpHrefType = HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY;
 
-    @Builder.Default private final String threadPrefix = "ZAP-ClientSpiderThreadPool-";
+    @lombok.Builder.Default private final String threadPrefix = "ZAP-ClientSpiderThreadPool-";
 
     /**
      * Browser extension names to include when launching browsers, even if disabled in the Selenium
@@ -65,7 +65,7 @@ public class ScanOptions {
      *
      * @since 0.26.0
      */
-    @Builder.Default private final List<String> includeExtensions = Collections.emptyList();
+    @lombok.Builder.Default private final List<String> includeExtensions = Collections.emptyList();
 
     /**
      * Browser extension names to exclude when launching browsers, even if enabled in the Selenium
@@ -73,14 +73,14 @@ public class ScanOptions {
      *
      * @since 0.26.0
      */
-    @Builder.Default private final List<String> excludeExtensions = Collections.emptyList();
+    @lombok.Builder.Default private final List<String> excludeExtensions = Collections.emptyList();
 
     /**
      * When {@code true} the spider revisits all nodes already in the Client Map without discovering
      * or queuing any new URLs or components. Use this when active scan rules need a live browser
      * session for known pages without triggering further crawling.
      */
-    @Builder.Default private final boolean existingOnly = false;
+    @lombok.Builder.Default private final boolean existingOnly = false;
 
     /** A builder of options. */
     public static class Builder {
