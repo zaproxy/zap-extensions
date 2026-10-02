@@ -146,7 +146,7 @@ class ReportJobUnitTest extends TestUtils {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(7)));
+        assertThat(params.size(), is(equalTo(8)));
         assertThat(
                 params,
                 allOf(
@@ -156,7 +156,8 @@ class ReportJobUnitTest extends TestUtils {
                         hasKey("reportTitle"),
                         hasKey("reportDescription"),
                         hasKey("theme"),
-                        hasKey("displayReport")));
+                        hasKey("displayReport"),
+                        hasKey("zipReport")));
     }
 
     @Test
@@ -169,29 +170,29 @@ class ReportJobUnitTest extends TestUtils {
         String reportDescription = "reportDescription";
         String theme = "theme";
         Boolean displayReport = Boolean.TRUE;
+        Boolean zipReport = Boolean.TRUE;
         ReportJob job =
                 createReportJob(
-                        "parameters:\n"
-                                + "  template: "
-                                + template
-                                + "\n"
-                                + "  reportFile: "
-                                + reportFile
-                                + "\n"
-                                + "  reportDir: "
-                                + reportDir
-                                + "\n"
-                                + "  reportTitle: "
-                                + reportTitle
-                                + "\n"
-                                + "  reportDescription: "
-                                + reportDescription
-                                + "\n"
-                                + "  theme: "
-                                + theme
-                                + "\n"
-                                + "  displayReport: "
-                                + displayReport);
+                        """
+                        parameters:
+                          template: %s
+                          reportFile: %s
+                          reportDir: %s
+                          reportTitle: %s
+                          reportDescription: %s
+                          theme: %s
+                          displayReport: %s
+                          zipReport: %s
+                        """
+                                .formatted(
+                                        template,
+                                        reportFile,
+                                        reportDir,
+                                        reportTitle,
+                                        reportDescription,
+                                        theme,
+                                        displayReport,
+                                        zipReport));
         AutomationProgress progress = new AutomationProgress();
 
         // When
@@ -205,6 +206,61 @@ class ReportJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getReportDescription(), is(equalTo(reportDescription)));
         assertThat(job.getParameters().getTheme(), is(equalTo(theme)));
         assertThat(job.getParameters().getDisplayReport(), is(equalTo(displayReport)));
+        assertThat(job.getParameters().getZipReport(), is(equalTo(zipReport)));
+    }
+
+    @Test
+    void shouldWarnAndIgnoreDisplayWhenBothEnabled() throws IOException {
+        // Given
+        ReportJob job =
+                createReportJob(
+                        """
+                        parameters:
+                          template: template
+                          reportFile: report-file
+                          reportDir: report-dir
+                          zipReport: true
+                          displayReport: true
+                        """);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getUrls()).willReturn(Collections.singletonList(""));
+        env.setContexts(Arrays.asList(contextWrapper));
+
+        Template template = mock(Template.class);
+        given(template.getExtension()).willReturn("ext");
+        given(extensionReports.getTemplateByConfigName(anyString())).willReturn(template);
+
+        job.verifyParameters(progress);
+
+        ArgumentCaptor<ReportData> reportDataCapture = ArgumentCaptor.forClass(ReportData.class);
+        ArgumentCaptor<Boolean> displayCaptor = ArgumentCaptor.forClass(boolean.class);
+        given(
+                        extensionReports.generateReport(
+                                reportDataCapture.capture(),
+                                any(),
+                                anyString(),
+                                displayCaptor.capture()))
+                .willReturn(mock(File.class));
+
+        job.setPlan(plan);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(reportDataCapture.getValue().isZipReport(), is(equalTo(true)));
+        assertThat(displayCaptor.getValue(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0),
+                is(
+                        equalTo(
+                                Constant.messages.getString(
+                                        "reports.automation.warn.zipanddisplay", job.getName()))));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
     @Test
