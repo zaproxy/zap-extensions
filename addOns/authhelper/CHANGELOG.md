@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Notify authentication successes/failures for browser login and error paths in Browser and Client Script Based Authentication.
+- Collect authentication diagnostics also when authenticating in an existing browser (e.g. modern spiders) with Client Script Based Authentication
 
 ## [0.42.0] - 2026-08-26
 ### Added
