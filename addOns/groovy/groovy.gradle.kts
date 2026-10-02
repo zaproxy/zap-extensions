@@ -29,5 +29,7 @@ dependencies {
     implementation(libs.groovy.groovy)
 
     testImplementation(project(":testutils"))
+    testImplementation(project(":addOns:encoder"))
+    testImplementation(project(":addOns:fuzz"))
     testImplementation(project(":addOns:websocket"))
 }

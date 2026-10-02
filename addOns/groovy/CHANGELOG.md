@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Update dependency.
+- Update Groovy from 5 to 6.  
+  Existing Groovy scripts should work without issues,
+  but if you encounter problems, please refer to the following:
+  - [Groovy 6 Release Notes](https://groovy-lang.org/releasenotes/groovy-6.0.html#Groovy6.0-breaking)
 
 ## [4.0.0] - 2025-12-15
 ### Added
