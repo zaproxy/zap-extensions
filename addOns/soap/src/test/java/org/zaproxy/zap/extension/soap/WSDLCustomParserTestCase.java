@@ -31,15 +31,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.lenient;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,8 +61,17 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.extension.option.OptionsParamView;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 
 class WSDLCustomParserTestCase extends TestUtils {
@@ -66,6 +80,9 @@ class WSDLCustomParserTestCase extends TestUtils {
     private static final String FILL_PARAMETERS_WSDL = "fill-parameters.wsdl";
     private static final String DEGRADED_PARAMETERS_WSDL = "degraded-parameters.wsdl";
 
+    private static ExtensionLoader extensionLoader;
+    private static Session session;
+
     private ValueProvider valueProvider;
     private Supplier<Date> dateSupplier;
     private String wsdlContent;
@@ -73,6 +90,28 @@ class WSDLCustomParserTestCase extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
+        setUpZap();
+        startServer();
+
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+
+        session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getSession()).willReturn(session);
+
+        OptionsParam optionsParam =
+                mock(OptionsParam.class, withSettings().strictness(Strictness.LENIENT));
+        OptionsParamView viewParam =
+                mock(OptionsParamView.class, withSettings().strictness(Strictness.LENIENT));
+
+        given(model.getOptionsParam()).willReturn(optionsParam);
+        given(optionsParam.getViewParam()).willReturn(viewParam);
+        given(viewParam.getMode()).willReturn(Mode.standard.name());
+
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
         /* Gets test wsdl file and retrieves its content as String. */
         Path wsdlPath = getResourcePath("resources/test.wsdl");
         wsdlContent = new String(Files.readAllBytes(wsdlPath), StandardCharsets.UTF_8);
@@ -83,6 +122,12 @@ class WSDLCustomParserTestCase extends TestUtils {
                 .thenReturn(MOCK_FILL_VALUE);
         dateSupplier = mockLenientDateSupplier();
         parser = new WSDLCustomParser(() -> valueProvider, null, dateSupplier);
+    }
+
+    @AfterEach
+    void tearDown() {
+        stopServer();
+        Control.getSingleton().setMode(Mode.standard);
     }
 
     @Test
@@ -130,6 +175,96 @@ class WSDLCustomParserTestCase extends TestUtils {
         parser.syncImportWsdlFile(wsdl.toFile(), 1);
 
         assertThat(parser.getLastConfig().getBindOp().getName(), is(equalTo("sayByeWorld")));
+    }
+
+    @Test
+    void shouldNotFetchWsdlInSafeMode() throws Exception {
+        // Given
+        Control.getSingleton().setMode(Mode.safe);
+        // When
+        parser.syncImportWsdlUrl(serverUrl("/service.wsdl"), 0);
+        // Then
+        assertThat(nano.getRequestedUris().isEmpty(), is(true));
+    }
+
+    @Test
+    void shouldNotFetchOutOfScopeWsdlInScopedMode() throws Exception {
+        // Given
+        Control.getSingleton().setMode(Mode.protect);
+        // When
+        parser.syncImportWsdlUrl(serverUrl("/service.wsdl"), 0);
+        // Then
+        assertThat(nano.getRequestedUris().isEmpty(), is(true));
+    }
+
+    @Test
+    void shouldFetchInScopeWsdlInScopedMode() throws Exception {
+        // Given
+        addWsdlHandler("/service.wsdl", simpleWsdl());
+        Control.getSingleton().setMode(Mode.protect);
+        given(session.isInScope(anyString())).willReturn(true);
+        // When
+        parser.syncImportWsdlUrl(serverUrl("/service.wsdl"), 0);
+        // Then
+        assertThat(nano.getRequestedUris(), is(List.of("/service.wsdl")));
+    }
+
+    @Test
+    void shouldFetchRelativeSchemaImportThroughZapHttpSender() throws Exception {
+        // Given
+        addWsdlHandler("/service.wsdl", wsdlWithSchemaImport("schema/types.xsd"));
+        addWsdlHandler("/schema/types.xsd", simpleSchema());
+        // When
+        parser.syncImportWsdlUrl(serverUrl("/service.wsdl"), 0);
+        // Then
+        assertThat(nano.getRequestedUris(), is(List.of("/service.wsdl", "/schema/types.xsd")));
+    }
+
+    @Test
+    void shouldNotFetchImportedSchemaInSafeMode() throws Exception {
+        // Given
+        addWsdlHandler("/service.wsdl", wsdlWithSchemaImport("schema/types.xsd"));
+        addWsdlHandler("/schema/types.xsd", simpleSchema());
+
+        // Safe mode should block the initial WSDL request, so no imported resources are fetched
+        // either.
+        Control.getSingleton().setMode(Mode.safe);
+        // When
+        parser.syncImportWsdlUrl(serverUrl("/service.wsdl"), 0);
+        // Then
+        assertThat(nano.getRequestedUris().isEmpty(), is(true));
+    }
+
+    @Test
+    void shouldNotFetchOutOfScopeImportedSchemaInScopedMode() throws Exception {
+        // Given
+        addWsdlHandler("/service.wsdl", wsdlWithSchemaImport("schema/types.xsd"));
+        addWsdlHandler("/schema/types.xsd", simpleSchema());
+        Control.getSingleton().setMode(Mode.protect);
+        String wsdlUrl = serverUrl("/service.wsdl");
+        // Everything out of scope unless explicitly allowed.
+        given(session.isInScope(anyString())).willReturn(false);
+        given(session.isInScope(wsdlUrl)).willReturn(true);
+        // When
+        parser.syncImportWsdlUrl(wsdlUrl, 0);
+        // Then
+        assertThat(nano.getRequestedUris(), is(List.of("/service.wsdl")));
+    }
+
+    @Test
+    void shouldRejectFileSchemaImport() throws Exception {
+        // Given
+        Path schema = Files.createTempFile("soap-local-schema", ".xsd");
+        Files.writeString(
+                schema,
+                "<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><xsd:include schemaLocation=\""
+                        + serverUrl("/unexpected.xsd")
+                        + "\"/></xsd:schema>");
+        addWsdlHandler("/service.wsdl", wsdlWithSchemaImport(schema.toUri().toString()));
+        // When
+        parser.syncImportWsdlUrl(serverUrl("/service.wsdl"), 0);
+        // Then
+        assertThat(nano.getRequestedUris(), is(List.of("/service.wsdl")));
     }
 
     @ParameterizedTest
@@ -404,6 +539,119 @@ class WSDLCustomParserTestCase extends TestUtils {
         // Then
         assertThat(params, hasEntry("xpath:/Request/attrRefWrapper/@inlineKey", MOCK_FILL_VALUE));
         assertThat(params, not(hasKey("xpath:/Request/attrRefWrapper/@globalRefKey")));
+    }
+
+    @Test
+    void shouldFollowInScopeRedirectInScopedMode() throws Exception {
+        // Given
+        addRedirectHandler("/redirect.wsdl", serverUrl("/service.wsdl"));
+        addWsdlHandler("/service.wsdl", simpleWsdl());
+        Control.getSingleton().setMode(Mode.protect);
+        given(session.isInScope(anyString())).willReturn(true);
+        // When
+        parser.syncImportWsdlUrl(serverUrl("/redirect.wsdl"), 0);
+        // Then
+        assertThat(nano.getRequestedUris(), is(List.of("/redirect.wsdl", "/service.wsdl")));
+    }
+
+    @Test
+    void shouldNotFollowOutOfScopeRedirectInScopedMode() throws Exception {
+        // Given
+        String wsdlUrl = serverUrl("/redirect.wsdl");
+        addRedirectHandler("/redirect.wsdl", serverUrl("/out.wsdl"));
+        addWsdlHandler("/out.wsdl", simpleWsdl());
+        Control.getSingleton().setMode(Mode.protect);
+        given(session.isInScope(anyString())).willReturn(false);
+        given(session.isInScope(wsdlUrl)).willReturn(true);
+        // When
+        parser.syncImportWsdlUrl(wsdlUrl, 0);
+        // Then
+        assertThat(nano.getRequestedUris(), is(List.of("/redirect.wsdl")));
+    }
+
+    @Test
+    void shouldResolveRelativeImportAgainstRedirectedWsdlUrl() throws Exception {
+        // Given
+        String initialWsdlUrl = serverUrl("/redirect.wsdl");
+        String redirectedWsdlUrl = serverUrl("/foo/bar/service.wsdl");
+        // When
+        addRedirectHandler("/redirect.wsdl", redirectedWsdlUrl);
+        addWsdlHandler("/foo/bar/service.wsdl", wsdlWithSchemaImport("schema.xsd"));
+        addWsdlHandler("/foo/bar/schema.xsd", simpleSchema());
+        Control.getSingleton().setMode(Mode.standard);
+        parser.syncImportWsdlUrl(initialWsdlUrl, 0);
+        // Then
+        assertThat(
+                nano.getRequestedUris(),
+                is(List.of("/redirect.wsdl", "/foo/bar/service.wsdl", "/foo/bar/schema.xsd")));
+    }
+
+    private String serverUrl(String path) {
+        return "http://localhost:" + nano.getListeningPort() + path;
+    }
+
+    private void addWsdlHandler(String path, String body) {
+        nano.addHandler(
+                new NanoServerHandler(path) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return NanoHTTPD.newFixedLengthResponse(Status.OK, "text/xml", body);
+                    }
+                });
+    }
+
+    private void addRedirectHandler(String path, String location) {
+        nano.addHandler(
+                new NanoServerHandler(path) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        Response response =
+                                NanoHTTPD.newFixedLengthResponse(
+                                        Status.REDIRECT, NanoHTTPD.MIME_PLAINTEXT, "");
+                        response.addHeader(HttpHeader.LOCATION, location);
+                        return response;
+                    }
+                });
+    }
+
+    private static String simpleWsdl() {
+        return """
+                <?xml version="1.0"?>
+                <wsdl:definitions
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                    targetNamespace="http://example.com/test">
+                </wsdl:definitions>
+                """;
+    }
+
+    private static String wsdlWithSchemaImport(String schemaLocation) {
+        return """
+                <?xml version="1.0"?>
+                <wsdl:definitions
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    targetNamespace="http://example.com/test">
+                  <wsdl:types>
+                    <xsd:schema targetNamespace="http://example.com/test">
+                      <xsd:import
+                          namespace="http://example.com/types"
+                          schemaLocation="%s"/>
+                    </xsd:schema>
+                  </wsdl:types>
+                </wsdl:definitions>
+                """
+                .formatted(schemaLocation);
+    }
+
+    private static String simpleSchema() {
+        return """
+                <?xml version="1.0"?>
+                <xsd:schema
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    targetNamespace="http://example.com/types">
+                  <xsd:element name="value" type="xsd:string"/>
+                </xsd:schema>
+                """;
     }
 
     private Map<String, String> parseWsdlParams() throws Exception {
