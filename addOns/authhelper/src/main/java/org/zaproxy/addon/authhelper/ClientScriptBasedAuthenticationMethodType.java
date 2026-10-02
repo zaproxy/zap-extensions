@@ -278,24 +278,35 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 notifyAuthFailure(null, user);
                 return false;
             }
-            try {
-                ZestAuthRunner runner = new ZestAuthRunner();
-                // Always proxy via ZAP
-                ServerInfo mainProxyInfo =
-                        AuthUtils.getExtension(ExtensionNetwork.class).getMainProxyServerInfo();
-                runner.setProxy(mainProxyInfo.getAddress(), mainProxyInfo.getPort());
-                runner.setWebDriver(webDriver);
+            try (AuthenticationDiagnostics diags =
+                    new AuthenticationDiagnostics(
+                            diagnostics,
+                            getName(),
+                            user.getContext().getName(),
+                            user.getName(),
+                            getScript().getContents())) {
+                try {
+                    ZestAuthRunner runner = new ZestAuthRunner();
+                    // Always proxy via ZAP
+                    ServerInfo mainProxyInfo =
+                            AuthUtils.getExtension(ExtensionNetwork.class).getMainProxyServerInfo();
+                    runner.setProxy(mainProxyInfo.getAddress(), mainProxyInfo.getPort());
+                    runner.setWebDriver(webDriver);
 
-                executeZestAuthScript(runner, user);
-                AuthenticationHelper.notifyOutputAuthSuccessful(getFirstMessage(zestScript, user));
-                return true;
-            } catch (Exception e) {
-                LOGGER.warn(
-                        "An error occurred while trying to execute the Client Script Authentication script: {}",
-                        e.getMessage(),
-                        e);
-                notifyAuthFailure(zestScript, user);
-                return false;
+                    diags.insertDiagnostics(zestScript);
+                    executeZestAuthScript(runner, user);
+                    AuthenticationHelper.notifyOutputAuthSuccessful(
+                            getFirstMessage(zestScript, user));
+                    return true;
+                } catch (Exception e) {
+                    LOGGER.warn(
+                            "An error occurred while trying to execute the Client Script Authentication script: {}",
+                            e.getMessage(),
+                            e);
+                    diags.recordErrorStep(webDriver);
+                    notifyAuthFailure(zestScript, user);
+                    return false;
+                }
             }
         }
 
