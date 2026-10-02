@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update dependencies.
+- Issue 8987 : Use ZAP's networking instead of Java's when importing OpenAPI definitions from URLs.
 
 ## [0.0.1] - 2026-08-07
 
