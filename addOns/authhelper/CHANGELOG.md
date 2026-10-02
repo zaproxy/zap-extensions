@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Notify authentication successes/failures for browser login and error paths in Browser and Client Script Based Authentication.
 - Do not fail the authentication attempt when not able to take a screenshot for diagnostics.
+- Collect authentication diagnostics also when authenticating in an existing browser (e.g. modern spiders) with Client Script Based Authentication.
 
 ## [0.42.0] - 2026-08-26
 ### Added
