@@ -2089,6 +2089,22 @@
     "saas": true,
     "website": "https://www.peel.fr"
   },
+  "Peer39": {
+    "cats": [
+      36
+    ],
+    "description": "Peer39 is a contextual page-quality and ad-intelligence service used pre-bid in programmatic advertising.",
+    "html": [
+      "tags\\.peer39\\.com"
+    ],
+    "scriptSrc": [
+      "\\.peer39\\.(?:com|net)/"
+    ],
+    "website": "https://www.peer39.com",
+    "xhr": [
+      "\\.peer39\\.(?:com|net)"
+    ]
+  },
   "PeerBoard": {
     "cats": [
       2
@@ -4862,7 +4878,7 @@
     "cats": [
       9
     ],
-    "cpe": "cpe:2.3:a:parallels:parallels_plesk_panel:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:plesk:plesk:*:*:*:*:*:*:*:*",
     "description": "Plesk is a web hosting and server data centre automation software with a control panel developed for Linux and Windows-based retail hosting service providers.",
     "headers": {
       "X-Powered-By": "^Plesk(?:L|W)in",
@@ -5434,6 +5450,24 @@
       "static\\.getpodpage\\.com/"
     ],
     "website": "https://www.podpage.com"
+  },
+  "Podscribe": {
+    "cats": [
+      36
+    ],
+    "description": "Podscribe is an IAB-certified podcast and audio ad measurement platform; podcast sites link to their transcripts on app.podscribe.ai and advertiser sites load its attribution tags from podscribe hosts.",
+    "dom": [
+      "a[href*=\"app.podscribe.ai/\"]",
+      "img[src*=\"podscribe.com/\"]"
+    ],
+    "icon": "Podscribe.png",
+    "scriptSrc": [
+      "podscribe\\.(?:ai|com)/"
+    ],
+    "website": "https://podscribe.com",
+    "xhr": [
+      "podscribe\\.(?:ai|com)"
+    ]
   },
   "Podsights": {
     "cats": [
@@ -7632,7 +7666,7 @@
     "cookies": {
       "ppwp_wp_session": ""
     },
-    "cpe": "cpe:2.3:a:profilepress:profilepress:*:*:*:*:*:wordpress:*:*",
+    "cpe": "cpe:2.3:a:properfraction:profilepress:*:*:*:*:*:wordpress:*:*",
     "description": "ProfilePress is a WordPress registration plugin that lets you create login forms, registration forms, user profiles, and more.",
     "dom": [
       "link[href*='/wp-content/plugins/wp-user-avatar/']"
@@ -7749,6 +7783,7 @@
     "cats": [
       19
     ],
+    "cpe": "cpe:2.3:a:progress:moveit_transfer:*:*:*:*:*:*:*:*",
     "description": "Progress MOVEit is a managed file transfer solution that enables secure and compliant transfer of sensitive files while providing automation, central management, and auditing capabilities.",
     "headers": {
       "X-Moveitisapi-Version": "^(.+)$\\;version:\\1"
@@ -7808,8 +7843,9 @@
     "icon": "ProgressBar.js.png",
     "oss": true,
     "scriptSrc": [
-      "progressbar(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
-      "(?:((?:\\d+\\.)+\\d+)\\/)?progressbar(?:\\.min)?\\.js\\;version:\\1"
+      "cdnjs\\.cloudflare\\.com\\/ajax\\/libs\\/progressbar\\.js\\/([\\d\\.]+)\\/progressbar(?:\\.min)?\\.js\\;version:\\1",
+      "\\/progressbar\\.js@([\\d\\.]+)\\/dist\\/progressbar(?:\\.min)?\\.js\\;version:\\1",
+      "\\/progressbar\\.js\\/dist\\/progressbar(?:\\.min)?\\.js"
     ],
     "website": "https://kimmobrunfeldt.github.io/progressbar.js/"
   },
@@ -8494,6 +8530,18 @@
     ],
     "oss": true,
     "website": "https://pterodactyl.io"
+  },
+  "PTisp": {
+    "cats": [
+      88
+    ],
+    "description": "PTisp is a Portuguese hosting provider; hosted domains use mydnspt.net nameservers.",
+    "dns": {
+      "NS": [
+        "\\.mydnspt\\.net"
+      ]
+    },
+    "website": "https://ptisp.pt"
   },
   "PTminder": {
     "cats": [

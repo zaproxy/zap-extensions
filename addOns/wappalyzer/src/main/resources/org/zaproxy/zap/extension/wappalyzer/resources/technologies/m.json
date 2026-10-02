@@ -599,6 +599,7 @@
       87,
       32
     ],
+    "cpe": "cpe:2.3:a:ibericode:mailchimp:*:*:*:*:*:wordpress:*:*",
     "description": "MailChimp for WordPress is an email marketing plugin that enables you to build subscriber lists.",
     "dom": [
       "link[href*='/wp-content/plugins/mailchimp-for-wp/']"

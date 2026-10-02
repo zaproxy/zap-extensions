@@ -238,6 +238,35 @@
     "saas": true,
     "website": "https://dandomain.dk"
   },
+  "DanDomain email": {
+    "cats": [
+      75
+    ],
+    "description": "DanDomain email is the email hosting service provided by DanDomain, including webmail and Microsoft 365 plans.",
+    "dns": {
+      "MX": [
+        "mx\\d*\\.dandomain\\.dk"
+      ]
+    },
+    "icon": "DanDomain email.png",
+    "website": "https://dandomain.dk/e-mail"
+  },
+  "DanDomain hosting": {
+    "cats": [
+      88
+    ],
+    "description": "DanDomain hosting is a Danish web hosting and domain registration service, part of the team.blue group.",
+    "dns": {
+      "NS": [
+        "\\.dandomain\\.dk"
+      ],
+      "SOA": [
+        "\\.dandomain\\.dk"
+      ]
+    },
+    "icon": "DanDomain hosting.png",
+    "website": "https://dandomain.dk"
+  },
   "DanDomain Webshop": {
     "cats": [
       6
@@ -2544,6 +2573,7 @@
       80,
       87
     ],
+    "cpe": "cpe:2.3:a:elegantthemes:divi:*:*:*:*:*:wordpress:*:*",
     "description": "Divi is a WordPress Theme and standalone WordPress plugin from Elegant themes that allows users to build websites using the visual drag-and-drop Divi page builder.",
     "dom": {
       "style#divi-style-parent-inline-inline-css": {

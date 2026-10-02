@@ -1693,6 +1693,20 @@
     ],
     "website": "https://www.adloox.com"
   },
+  "Admatic": {
+    "cats": [
+      36
+    ],
+    "description": "Admatic is a Turkish advertising and supply-side platform (SSP) that serves ads via header bidding and programmatic exchanges.",
+    "icon": "Admatic.png",
+    "scriptSrc": [
+      "\\.admatic\\.com\\.tr/"
+    ],
+    "website": "https://www.admatic.com.tr",
+    "xhr": [
+      "\\.admatic\\.(?:com\\.tr|de|io)"
+    ]
+  },
   "AdminBuy": {
     "cats": [
       1
@@ -5576,7 +5590,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:2.3:a:angularjs:angular:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:angular:angular:*:*:*:*:*:*:*:*",
     "description": "Angular is a TypeScript-based open-source web application framework led by the Angular Team at Google.",
     "dom": {
       "[ng-version]": {
@@ -7726,6 +7740,23 @@
     "oss": true,
     "website": "https://artplayer.org"
   },
+  "ArtsAI": {
+    "cats": [
+      36
+    ],
+    "description": "ArtsAI is an AI-driven advertising attribution and measurement platform that tracks campaign performance via its arttrk.com pixel.",
+    "dom": [
+      "img[src*=\"arttrk.com/pixel\"]"
+    ],
+    "html": [
+      "arttrk\\.com/pixel"
+    ],
+    "icon": "ArtsAI.png",
+    "website": "https://artsai.com",
+    "xhr": [
+      "arttrk\\.com"
+    ]
+  },
   "Aruba.it": {
     "cats": [
       88,
@@ -9012,6 +9043,10 @@
     "headers": {
       "Content-Security-Policy": "\\.authorize\\.net\\s"
     },
+    "html": [
+      "authorizenet\\\\?/directpost_payment",
+      "js\\.authorize\\.net"
+    ],
     "icon": "authorize.net.svg",
     "js": {
       "config.authorizenet_public_client_key": ""

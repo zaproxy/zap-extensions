@@ -3932,6 +3932,20 @@
     "saas": true,
     "website": "https://www.loqate.com"
   },
+  "Lotame": {
+    "cats": [
+      97,
+      36
+    ],
+    "description": "Lotame is a data management platform (DMP) providing audience data collection, segmentation and identity solutions via its Crowd Control tag.",
+    "scriptSrc": [
+      "\\.crwdcntrl\\.net/"
+    ],
+    "website": "https://www.lotame.com",
+    "xhr": [
+      "\\.crwdcntrl\\.net"
+    ]
+  },
   "LotLinx": {
     "cats": [
       32

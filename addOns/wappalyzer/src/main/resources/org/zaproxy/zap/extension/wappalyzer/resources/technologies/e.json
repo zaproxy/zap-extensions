@@ -2215,6 +2215,24 @@
     ],
     "website": "https://www.emailjs.com"
   },
+  "EmailOctopus": {
+    "cats": [
+      75
+    ],
+    "description": "EmailOctopus is an email marketing and newsletter service whose signup forms are embedded on customer websites.",
+    "icon": "EmailOctopus.png",
+    "js": {
+      "emailOctopus": "",
+      "emailoctopus": ""
+    },
+    "scriptSrc": [
+      "emailoctopus\\.com/bundles"
+    ],
+    "website": "https://emailoctopus.com",
+    "xhr": [
+      "emailoctopus\\.com"
+    ]
+  },
   "Emanda": {
     "cats": [
       32
@@ -2657,6 +2675,28 @@
       "enamad": "^\\d+$"
     },
     "website": "https://enamad.ir/"
+  },
+  "Encharge": {
+    "cats": [
+      32,
+      75
+    ],
+    "cookies": {
+      "encheventsnippet": ""
+    },
+    "description": "Encharge is a marketing automation platform that sends behavior-based emails and tracks website visitor activity.",
+    "icon": "Encharge.png",
+    "js": {
+      "EncTracking": "",
+      "EnchargeTracking": ""
+    },
+    "scriptSrc": [
+      "resources-app\\.encharge\\.io/(?:encharge-tracking|embed-production)"
+    ],
+    "website": "https://encharge.io",
+    "xhr": [
+      "\\.encharge\\.io"
+    ]
   },
   "Endurance Page Cache": {
     "cats": [
@@ -3650,6 +3690,25 @@
     "icon": "Syncfusion.svg",
     "oss": true,
     "website": "https://www.syncfusion.com/javascript-ui-controls"
+  },
+  "eStat Streaming": {
+    "cats": [
+      10
+    ],
+    "description": "eStat Streaming is Médiamétrie's streaming audio/video audience measurement tag used by French radio, TV and media websites.",
+    "icon": "eStat Streaming.png",
+    "js": {
+      "eStat_PJS": "",
+      "_eStat_Whap_loaded_func": "",
+      "_eStat_Whap_loaded": ""
+    },
+    "scriptSrc": [
+      "(?:prof|w{1,2}|perso|playtime)\\.estat\\.com/"
+    ],
+    "website": "https://www.mediametrie.fr",
+    "xhr": [
+      "\\.estat\\.com"
+    ]
   },
   "Estate Track": {
     "cats": [

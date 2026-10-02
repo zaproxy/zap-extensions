@@ -794,6 +794,7 @@
     "cats": [
       28
     ],
+    "cpe": "cpe:2.3:a:ui:unifi_network_application:*:*:*:*:*:*:*:*",
     "description": "UniFi OS is the operating system for UniFi products, which provides a user interface.",
     "icon": "UniFi_OS.svg",
     "js": {

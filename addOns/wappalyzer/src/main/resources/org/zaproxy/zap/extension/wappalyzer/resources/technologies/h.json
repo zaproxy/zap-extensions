@@ -260,6 +260,24 @@
     ],
     "website": "https://www.hapana.com"
   },
+  "Happierleads": {
+    "cats": [
+      10
+    ],
+    "description": "Happierleads is a B2B visitor-identification and lead-generation platform that reveals the companies visiting a website.",
+    "icon": "Happierleads.png",
+    "js": {
+      "Happierleads": "",
+      "hlRunning": ""
+    },
+    "scriptSrc": [
+      "rest\\.happierleads\\.com"
+    ],
+    "website": "https://www.happierleads.com",
+    "xhr": [
+      "(?:rest|session-recordings)\\.happierleads\\.com"
+    ]
+  },
   "Happy Meal Prep": {
     "cats": [
       6,
@@ -3525,6 +3543,22 @@
       "\\.hyperlane\\.co/"
     ],
     "website": "https://hyperlane.co"
+  },
+  "Hypernode": {
+    "cats": [
+      88
+    ],
+    "description": "Hypernode is a managed ecommerce hosting platform by Byte (Netherlands); hosted domains use ns*.hypernode.com nameservers or point at *.hypernode.io via CNAME.",
+    "dns": {
+      "CNAME": [
+        "\\.hypernode\\.io"
+      ],
+      "NS": [
+        "\\.hypernode\\.com"
+      ]
+    },
+    "icon": "Hypernode.png",
+    "website": "https://www.hypernode.com"
   },
   "Hyperspeed": {
     "cats": [

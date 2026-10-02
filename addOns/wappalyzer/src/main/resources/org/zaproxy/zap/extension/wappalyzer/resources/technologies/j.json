@@ -797,6 +797,23 @@
     ],
     "website": "https://www.jobboardfire.com"
   },
+  "Job Boardly": {
+    "cats": [
+      101
+    ],
+    "cookies": {
+      "_job_boardly_session": ""
+    },
+    "description": "Job Boardly is a SaaS platform for creating and running hosted job boards without code.",
+    "icon": "Job Boardly.png",
+    "scriptSrc": [
+      "assets\\.jobboardly\\.com/"
+    ],
+    "website": "https://www.jobboardly.com",
+    "xhr": [
+      "(?:assets|cdn)\\.jobboardly\\.com"
+    ]
+  },
   "JobAdder": {
     "cats": [
       101
@@ -1281,7 +1298,7 @@
     "cats": [
       59
     ],
-    "cpe": "cpe:2.3:a:jquery:jquery_ui:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:jqueryui:jquery_ui:*:*:*:*:*:*:*:*",
     "description": "jQuery UI is a collection of GUI widgets, animated visual effects, and themes implemented with jQuery, Cascading Style Sheets, and HTML.",
     "icon": "jQuery UI.svg",
     "implies": [

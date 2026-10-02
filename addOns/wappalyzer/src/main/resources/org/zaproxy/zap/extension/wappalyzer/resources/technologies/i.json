@@ -959,14 +959,22 @@
     "cats": [
       71
     ],
+    "cookies": {
+      "ir_gbd": "",
+      "ir_pi": ""
+    },
     "description": "Impact helps businesses contract and pay partners.",
     "icon": "Impact.svg",
     "js": {
       "ImpactRadiusEvent": "",
-      "irEvent": ""
+      "irEvent": "",
+      "ire": "",
+      "ire_o": "",
+      "impactDataLayer": ""
     },
     "scriptSrc": [
-      "d\\.impactradius-event\\.com"
+      "d\\.impactradius-event\\.com",
+      "utt\\.impactcdn\\.com"
     ],
     "website": "https://impact.com/"
   },

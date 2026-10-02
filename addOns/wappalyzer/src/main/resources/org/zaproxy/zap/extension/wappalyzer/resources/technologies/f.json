@@ -2332,6 +2332,28 @@
     ],
     "website": "https://flexifunnels.com"
   },
+  "Flexmail": {
+    "cats": [
+      75,
+      32
+    ],
+    "description": "Flexmail is a Belgian email marketing platform offering campaign management, embeddable forms and surveys.",
+    "dom": [
+      "iframe[src*=\"flexmail.eu\"]",
+      "form[action*=\"flexmail.eu\"]"
+    ],
+    "headers": {
+      "Content-Security-Policy": "(?:^|[^a-z])flexmail\\.eu"
+    },
+    "icon": "Flexmail.png",
+    "scriptSrc": [
+      "\\.flexmail\\.eu/"
+    ],
+    "website": "https://flexmail.be",
+    "xhr": [
+      "\\.flexmail\\.eu"
+    ]
+  },
   "Flexmls": {
     "cats": [
       1
@@ -3000,6 +3022,19 @@
       "payg"
     ],
     "website": "https://fly.io"
+  },
+  "Flyads": {
+    "cats": [
+      36
+    ],
+    "cookies": {
+      "flyid": ""
+    },
+    "description": "Flyads is an ad network serving from fly.codes and displayfly.com hosts and setting the flyid cookie.",
+    "website": "https://displayfly.com",
+    "xhr": [
+      "(?:\\.fly\\.codes|\\.displayfly\\.com)"
+    ]
   },
   "Flybook": {
     "cats": [

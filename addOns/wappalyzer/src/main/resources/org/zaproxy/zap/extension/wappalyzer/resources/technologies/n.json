@@ -335,6 +335,19 @@
     ],
     "website": "https://www.nativo.com"
   },
+  "Natro": {
+    "cats": [
+      88
+    ],
+    "description": "Natro is a Turkish web hosting and domain registration provider; hosted domains use natrohost.com nameservers.",
+    "dns": {
+      "NS": [
+        "natrohost\\.com",
+        "natro\\.com"
+      ]
+    },
+    "website": "https://www.natro.com"
+  },
   "Natural Intelligence": {
     "cats": [
       96

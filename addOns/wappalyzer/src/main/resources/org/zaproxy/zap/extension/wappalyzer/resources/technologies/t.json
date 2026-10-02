@@ -1289,6 +1289,16 @@
     ],
     "website": "https://teachable.com"
   },
+  "teachworks": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "[id='teachworks-booking-button']"
+    ],
+    "icon": "teachworks.png",
+    "website": "https://teachworks.com"
+  },
   "Teads": {
     "cats": [
       36
@@ -2269,6 +2279,20 @@
       "the-dotcom-public-cdn\\.s3\\.amazonaws\\.com/"
     ],
     "website": "https://www.the.com"
+  },
+  "THEADX": {
+    "cats": [
+      36
+    ],
+    "description": "THEADX is a Turkish advertising network and ad exchange that serves ad tags and tracking pixels via theadx.com.",
+    "icon": "THEADX.png",
+    "scriptSrc": [
+      "app\\.theadx\\.com/"
+    ],
+    "website": "https://www.theadx.com",
+    "xhr": [
+      "\\.theadx\\.com"
+    ]
   },
   "Theasys": {
     "cats": [
@@ -5419,7 +5443,6 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:2.3:a:transifex:transifex:*:*:*:*:*:*:*:*",
     "description": "Transifex is a cloud-based platform for managing the translation and localization of digital content.",
     "icon": "transifex.svg",
     "js": {
@@ -6562,6 +6585,19 @@
       "(turf@[\\d.]+)?/?turf\\.min\\.js"
     ],
     "website": "https://turfjs.org/"
+  },
+  "Turhost": {
+    "cats": [
+      88
+    ],
+    "description": "Turhost is a Turkish hosting provider; hosted domains use turhost.com nameservers.",
+    "dns": {
+      "NS": [
+        "\\.turhost\\.com"
+      ]
+    },
+    "icon": "Turhost.png",
+    "website": "https://www.turhost.com"
   },
   "TuriTop": {
     "cats": [
