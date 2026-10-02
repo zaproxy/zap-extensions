@@ -13,6 +13,28 @@ CONFIDENCE_MEDIUM = 2;
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110003
+name: Debug Error Disclosure script
+description: >
+  The response appeared to contain common error messages returned by platforms such as ASP.NET,
+  and Web-servers such as IIS and Apache.
+solution: Disable debugging messages before pushing to production.
+category: info_gather
+risk: low
+confidence: medium
+cweId: 209
+wascId: 13
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Debug%20Error%20Disclosure.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110003
+`);
+}
 
 var debug_messages = [
   /Error Occurred While Processing Request/gim,
