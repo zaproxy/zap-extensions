@@ -417,7 +417,11 @@ public class ContextWrapper {
                 } else if (authMethod instanceof ManualAuthenticationMethod) {
                     user.setAuthenticationCredentials(
                             authMethod.getType().createAuthenticationCredentials());
-                } else if (authMethod instanceof ScriptBasedAuthenticationMethod) {
+                } else if (authMethod instanceof ScriptBasedAuthenticationMethod
+                        || authMethod
+                                .getClass()
+                                .getCanonicalName()
+                                .equals(AuthenticationData.OAUTH2_AUTH_METHOD_CLASSNAME)) {
                     GenericAuthenticationCredentials genCreds =
                             (GenericAuthenticationCredentials)
                                     authMethod.createAuthenticationCredentials();

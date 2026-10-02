@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +36,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -96,12 +98,14 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HeaderBasedSessionManagementMethod;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.users.User;
@@ -1731,6 +1735,116 @@ class AuthUtilsUnitTest extends TestUtils {
         private static void assertId(WebElement element, String id) {
             assertThat(element.getAttribute("id"), is(equalTo(id)));
         }
+    }
+
+    @Test
+    void shouldResolveAutoDetectSessionManagementToHeaderBased() {
+        // Given
+        Context context = new Context(null, -1);
+        context.setSessionManagementMethod(
+                new AutoDetectSessionManagementMethodType()
+                        .createSessionManagementMethod(context.getId()));
+
+        // When
+        AuthUtils.resolveAutoDetectSessionManagement(
+                context, "Authorization", "Bearer {%json:access_token%}");
+
+        // Then
+        SessionManagementMethod method = context.getSessionManagementMethod();
+        assertThat(method, is(instanceOf(HeaderBasedSessionManagementMethod.class)));
+        List<Pair<String, String>> headerConfigs =
+                ((HeaderBasedSessionManagementMethod) method).getHeaderConfigs();
+        assertThat(headerConfigs, hasSize(1));
+        assertThat(headerConfigs.get(0).first, is(equalTo("Authorization")));
+        assertThat(headerConfigs.get(0).second, is(equalTo("Bearer {%json:access_token%}")));
+    }
+
+    @Test
+    void shouldNotOverrideConfiguredSessionManagement() {
+        // Given
+        Context context = new Context(null, -1);
+        SessionManagementMethod existing = context.getSessionManagementMethod();
+
+        // When
+        AuthUtils.resolveAutoDetectSessionManagement(
+                context, "Authorization", "Bearer {%json:access_token%}");
+
+        // Then
+        assertThat(context.getSessionManagementMethod(), is(sameInstance(existing)));
+    }
+
+    @Test
+    void shouldResolveAutoDetectVerificationToResponseBased() {
+        // Given
+        AuthenticationMethod authMethod = mock(AuthenticationMethod.class);
+        given(authMethod.getAuthCheckingStrategy()).willReturn(AuthCheckingStrategy.AUTO_DETECT);
+
+        // When
+        AuthUtils.resolveAutoDetectVerification(
+                authMethod, "\\Qaccess_token\\E", "\\Qinvalid_token\\E");
+
+        // Then
+        verify(authMethod).setAuthCheckingStrategy(AuthCheckingStrategy.EACH_RESP);
+        verify(authMethod).setLoggedInIndicatorPattern("\\Qaccess_token\\E");
+        verify(authMethod).setLoggedOutIndicatorPattern("\\Qinvalid_token\\E");
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AuthCheckingStrategy.class, mode = Mode.EXCLUDE, names = "AUTO_DETECT")
+    void shouldNotOverrideConfiguredVerification(AuthCheckingStrategy strategy) {
+        // Given
+        AuthenticationMethod authMethod = mock(AuthenticationMethod.class);
+        given(authMethod.getAuthCheckingStrategy()).willReturn(strategy);
+
+        // When
+        AuthUtils.resolveAutoDetectVerification(
+                authMethod, "\\Qaccess_token\\E", "\\Qinvalid_token\\E");
+
+        // Then
+        verify(authMethod, never()).setAuthCheckingStrategy(any());
+        verify(authMethod, never()).setLoggedInIndicatorPattern(any());
+        verify(authMethod, never()).setLoggedOutIndicatorPattern(any());
+    }
+
+    @Test
+    void shouldResolveAutoDetectVerificationToPollBased() {
+        // Given
+        AuthenticationMethod authMethod = mock(AuthenticationMethod.class);
+        given(authMethod.getAuthCheckingStrategy()).willReturn(AuthCheckingStrategy.AUTO_DETECT);
+
+        // When
+        AuthUtils.resolveAutoDetectVerificationViaPoll(
+                authMethod,
+                "https://authserver.oauth2.zap/introspect",
+                "\"active\"\\s*:\\s*true",
+                "\"active\"\\s*:\\s*false");
+
+        // Then
+        verify(authMethod).setPollUrl("https://authserver.oauth2.zap/introspect");
+        verify(authMethod).setLoggedInIndicatorPattern("\"active\"\\s*:\\s*true");
+        verify(authMethod).setLoggedOutIndicatorPattern("\"active\"\\s*:\\s*false");
+        verify(authMethod).setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AuthCheckingStrategy.class, mode = Mode.EXCLUDE, names = "AUTO_DETECT")
+    void shouldNotOverridePollVerificationIfAlreadyConfigured(AuthCheckingStrategy strategy) {
+        // Given
+        AuthenticationMethod authMethod = mock(AuthenticationMethod.class);
+        given(authMethod.getAuthCheckingStrategy()).willReturn(strategy);
+
+        // When
+        AuthUtils.resolveAutoDetectVerificationViaPoll(
+                authMethod,
+                "https://authserver.oauth2.zap/introspect",
+                "\"active\"\\s*:\\s*true",
+                "\"active\"\\s*:\\s*false");
+
+        // Then
+        verify(authMethod, never()).setPollUrl(any());
+        verify(authMethod, never()).setLoggedInIndicatorPattern(any());
+        verify(authMethod, never()).setLoggedOutIndicatorPattern(any());
+        verify(authMethod, never()).setAuthCheckingStrategy(any());
     }
 
     static class LoginLinkVerification extends TestUtils {
