@@ -1061,6 +1061,22 @@
     },
     "website": "https://webedition.de/en"
   },
+  "Webempresa": {
+    "cats": [
+      88
+    ],
+    "description": "Webempresa is a Spanish web hosting provider specialised in WordPress, WooCommerce and Joomla hosting.",
+    "dns": {
+      "NS": [
+        "ns\\d+\\.webempresa\\.eu"
+      ],
+      "SOA": [
+        "ns\\d+\\.webempresa\\.eu"
+      ]
+    },
+    "icon": "Webempresa.png",
+    "website": "https://www.webempresa.com"
+  },
   "WebEngage": {
     "cats": [
       32,
@@ -1332,6 +1348,27 @@
     ],
     "website": "https://webim.ru"
   },
+  "WebinarGeek": {
+    "cats": [
+      103
+    ],
+    "description": "WebinarGeek is a Dutch webinar platform for hosting, embedding and marketing live and automated webinars.",
+    "dom": [
+      "iframe[src*='webinargeek.com'], script[src*='embed.webinargeek.com']"
+    ],
+    "icon": "WebinarGeek.svg",
+    "js": {
+      "GeekEmbedStart": "",
+      "GeekEmbedLoaded": ""
+    },
+    "scriptSrc": [
+      "embed\\.webinargeek\\.com"
+    ],
+    "website": "https://www.webinargeek.com",
+    "xhr": [
+      "\\.webinargeek\\.com"
+    ]
+  },
   "Webinaris": {
     "cats": [
       32
@@ -1486,6 +1523,7 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:oracle:weblogic_server:*:*:*:*:*:*:*:*",
     "description": "WebLogic Server is an Application Server that runs on a middle tier, between back-end databases and related applications and browser-based thin clients.",
     "headers": {
       "Server": "^WebLogic\\sServer\\s([\\d\\.]+)?\\;version:\\1"
@@ -3627,7 +3665,6 @@
     "scriptSrc": [
       "^(?!.*?/wp-content/plugins/[^/]+/js/integrations/woocommerce\\.js(?:\\?ver=[\\d.]+)?$).*woocommerce",
       "^(?!.*?/wp-content/plugins/[^/]+/js/integrations/woocommerce\\.js(?:\\?ver=[\\d.]+)?$).*/woocommerce(?:\\.min)?\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
-
     ],
     "website": "https://woocommerce.com"
   },
@@ -3741,7 +3778,12 @@
     ],
     "description": "WooCommerce Subscriptions primarily allows you to create and sell subscription products from your WooCommerce shop.",
     "dom": [
-      "link[href*='/wp-content/plugins/woocommerce-subscriptions/']"
+      "link[href*='/wp-content/plugins/woocommerce-subscriptions/']",
+      "link[href*=\"/plugins/woocommerce-subscriptions/\"]",
+      "script[src*=\"/plugins/woocommerce-subscriptions/\"]"
+    ],
+    "html": [
+      "/plugins/woocommerce-subscriptions/vendor/woocommerce/subscriptions-core/build"
     ],
     "icon": "WooCommerce.svg",
     "implies": [
@@ -5255,5 +5297,27 @@
       "/jquery\\.wysibb\\.min\\.js"
     ],
     "website": "https://wysibb.com"
+  },
+  "Wysistat": {
+    "cats": [
+      10
+    ],
+    "cookies": {
+      "wysistat": ""
+    },
+    "description": "Wysistat is a French web analytics and audience measurement service.",
+    "icon": "Wysistat.png",
+    "js": {
+      "_wsq": "",
+      "_wysistat": "",
+      "wysistat": ""
+    },
+    "scriptSrc": [
+      "www\\.wysistat\\.(?:com|net)/"
+    ],
+    "website": "https://www.wysistat.net",
+    "xhr": [
+      "wysistat\\.(?:com|net)"
+    ]
   }
 }

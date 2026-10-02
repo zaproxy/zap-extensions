@@ -1279,7 +1279,8 @@
     ],
     "saas": true,
     "scripts": [
-      "service\\.giosg\\.com"
+      "service\\.giosg\\.com",
+      "giosg\\.com"
     ],
     "website": "https://www.giosg.com"
   },
@@ -3165,6 +3166,20 @@
       "ajax\\.googleapis\\.com/ajax/libs/"
     ],
     "website": "https://developers.google.com/speed/libraries"
+  },
+  "Google Looker Studio": {
+    "cats": [
+      10
+    ],
+    "description": "Google Looker Studio (formerly Google Data Studio) is a free tool for creating and embedding interactive dashboards and reports.",
+    "dom": [
+      "iframe[src*='lookerstudio.google.com'], iframe[src*='datastudio.google.com']"
+    ],
+    "headers": {
+      "Content-Security-Policy": "(?:lookerstudio|datastudio)\\.google\\.com"
+    },
+    "icon": "Google Looker Studio.png",
+    "website": "https://cloud.google.com/looker-studio"
   },
   "Google Maps": {
     "cats": [

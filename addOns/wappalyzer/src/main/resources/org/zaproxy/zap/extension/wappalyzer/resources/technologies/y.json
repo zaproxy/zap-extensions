@@ -274,7 +274,11 @@
     },
     "scriptSrc": [
       "mc\\.yandex\\.ru/metrika/(?:tag|watch)\\.js",
-      "cdn\\.jsdelivr\\.net/npm/yandex\\-metrica\\-watch/watch\\.js"
+      "cdn\\.jsdelivr\\.net/npm/yandex\\-metrica\\-watch/(?:tag|watch)\\.js"
+    ],
+    "scripts": [
+      "mc\\.yandex\\.ru/metrika/(?:tag|watch)\\.js",
+      "cdn\\.jsdelivr\\.net/npm/yandex\\-metrica\\-watch/(?:tag|watch)\\.js"
     ],
     "website": "https://metrika.yandex.com"
   },

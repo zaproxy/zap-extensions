@@ -1742,6 +1742,23 @@
     "saas": true,
     "website": "https://recop.jp"
   },
+  "Recova": {
+    "cats": [
+      10
+    ],
+    "description": "Recova is an e-commerce conversion and cart-recovery tool that tracks shopper behavior to recover abandoned carts.",
+    "icon": "Recova.png",
+    "js": {
+      "recovaOrderTracking": ""
+    },
+    "scriptSrc": [
+      "api\\.recova\\.ai/recova_client(?:\\.min)?\\.js"
+    ],
+    "website": "https://recova.ai",
+    "xhr": [
+      "api\\.recova\\.ai"
+    ]
+  },
   "RecoverMyCart": {
     "cats": [
       76,
@@ -5096,9 +5113,9 @@
   },
   "Rofofk": {
     "cats": [
-		1,
-		6
-	],
+      1,
+      6
+    ],
     "description": "Rofofk is an Arabic multi-tenant e-commerce SaaS platform.",
     "headers": {
       "X-Powered-By": "Rofofk"
