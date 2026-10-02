@@ -84,7 +84,7 @@ public class TechsJsonParser {
         ExecutorService executor =
                 Executors.newFixedThreadPool(
                         Constants.getDefaultThreadCount(),
-                        new JsonParserThreadFactory("ZAP-WappalyzerJsonParserThreadPool-thread-"));
+                        new JsonParserThreadFactory("ZAP-TechDetectJsonParserThreadPool-thread-"));
         List<CompletableFuture<Void>> futures =
                 technologies.stream()
                         .map(

@@ -30,22 +30,25 @@ public class TechDetectParam extends VersionedAbstractParam {
      *
      * <p>It only needs to be updated for configurations changes (not releases of the add-on).
      */
-    private static final int PARAM_CURRENT_VERSION = 1;
+    private static final int PARAM_CURRENT_VERSION = 2;
 
-    /** The base configuration key for all "wappalyzer" configurations. */
-    private static final String PARAM_BASE_KEY = "wappalyzer";
+    /** The previous base configuration key, kept only to migrate old configurations. */
+    private static final String OLD_PARAM_BASE_KEY = "wappalyzer";
 
-    /** The configuration key for the state of wappalyzer functionality. */
-    private static final String PARAM_WAPPALYZER_STATE = PARAM_BASE_KEY + ".enabled";
+    /** The base configuration key for all "techdetect" configurations. */
+    private static final String PARAM_BASE_KEY = "techdetect";
+
+    /** The configuration key for the state of tech detection functionality. */
+    private static final String PARAM_STATE = PARAM_BASE_KEY + ".enabled";
 
     /** The configuration key for the mode of tech detection behavior. */
-    private static final String PARAM_WAPPALYZER_MODE = PARAM_BASE_KEY + ".mode";
+    private static final String PARAM_MODE = PARAM_BASE_KEY + ".mode";
 
-    private static final String PARAM_WAPPALYZER_ALERTS = PARAM_BASE_KEY + ".alerts";
+    private static final String PARAM_ALERTS = PARAM_BASE_KEY + ".alerts";
 
-    private static final boolean PARAM_WAPPALYZER_STATE_DEFAULT_VALUE = true;
-    private static final Mode PARAM_WAPPALYZER_MODE_DEFAULT_VALUE = Mode.QUICK;
-    private static final boolean PARAM_WAPPALYZER_ALERTS_DEAULT = true;
+    private static final boolean PARAM_STATE_DEFAULT_VALUE = true;
+    private static final Mode PARAM_MODE_DEFAULT_VALUE = Mode.QUICK;
+    private static final boolean PARAM_ALERTS_DEAULT = true;
 
     private boolean enabled;
     private Mode mode;
@@ -59,7 +62,7 @@ public class TechDetectParam extends VersionedAbstractParam {
         if (this.enabled != enabled) {
             this.enabled = enabled;
 
-            getConfig().setProperty(PARAM_WAPPALYZER_STATE, Boolean.valueOf(enabled));
+            getConfig().setProperty(PARAM_STATE, Boolean.valueOf(enabled));
         }
     }
 
@@ -71,7 +74,7 @@ public class TechDetectParam extends VersionedAbstractParam {
         if (!this.mode.equals(mode)) {
             this.mode = mode;
 
-            getConfig().setProperty(PARAM_WAPPALYZER_MODE, mode.name());
+            getConfig().setProperty(PARAM_MODE, mode.name());
         }
     }
 
@@ -79,7 +82,7 @@ public class TechDetectParam extends VersionedAbstractParam {
         if (this.raiseAlerts != raiseAlerts) {
             this.raiseAlerts = raiseAlerts;
 
-            getConfig().setProperty(PARAM_WAPPALYZER_ALERTS, Boolean.valueOf(raiseAlerts));
+            getConfig().setProperty(PARAM_ALERTS, Boolean.valueOf(raiseAlerts));
         }
     }
 
@@ -89,9 +92,9 @@ public class TechDetectParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        enabled = getBoolean(PARAM_WAPPALYZER_STATE, PARAM_WAPPALYZER_STATE_DEFAULT_VALUE);
-        mode = getEnum(PARAM_WAPPALYZER_MODE, PARAM_WAPPALYZER_MODE_DEFAULT_VALUE);
-        raiseAlerts = getBoolean(PARAM_WAPPALYZER_ALERTS, PARAM_WAPPALYZER_ALERTS_DEAULT);
+        enabled = getBoolean(PARAM_STATE, PARAM_STATE_DEFAULT_VALUE);
+        mode = getEnum(PARAM_MODE, PARAM_MODE_DEFAULT_VALUE);
+        raiseAlerts = getBoolean(PARAM_ALERTS, PARAM_ALERTS_DEAULT);
     }
 
     @Override
@@ -106,6 +109,22 @@ public class TechDetectParam extends VersionedAbstractParam {
 
     @Override
     protected void updateConfigsImpl(int fileVersion) {
-        // Nothing to do.
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+            case 1:
+                migrateConfig(OLD_PARAM_BASE_KEY + ".enabled", PARAM_STATE);
+                migrateConfig(OLD_PARAM_BASE_KEY + ".mode", PARAM_MODE);
+                migrateConfig(OLD_PARAM_BASE_KEY + ".alerts", PARAM_ALERTS);
+                break;
+            default:
+        }
+    }
+
+    private void migrateConfig(String oldKey, String newKey) {
+        Object oldValue = getConfig().getProperty(oldKey);
+        if (oldValue != null) {
+            getConfig().setProperty(newKey, oldValue);
+            getConfig().clearProperty(oldKey);
+        }
     }
 }

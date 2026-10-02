@@ -40,9 +40,9 @@ public class TechOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = -4195576861254405033L;
 
-    private static final String NAME = Constant.messages.getString("wappalyzer.optionspanel.name");
+    private static final String NAME = Constant.messages.getString("techdetect.optionspanel.name");
     private static final String MODE_LABEL =
-            Constant.messages.getString("wappalyzer.optionspanel.mode");
+            Constant.messages.getString("techdetect.optionspanel.mode");
 
     private JComboBox<Mode> modeComboBox;
     private JCheckBox raiseAlertsCheckBox;
@@ -87,7 +87,7 @@ public class TechOptionsPanel extends AbstractParamPanel {
         if (raiseAlertsCheckBox == null) {
             raiseAlertsCheckBox =
                     new JCheckBox(
-                            Constant.messages.getString("wappalyzer.optionspanel.raisealerts"));
+                            Constant.messages.getString("techdetect.optionspanel.raisealerts"));
             raiseAlertsCheckBox.setHorizontalTextPosition(SwingConstants.LEADING);
         }
         return raiseAlertsCheckBox;
@@ -113,6 +113,6 @@ public class TechOptionsPanel extends AbstractParamPanel {
 
     @Override
     public String getHelpIndex() {
-        return "addon.wappalyzer.options";
+        return "addon.techdetect.options";
     }
 }
