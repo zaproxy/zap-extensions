@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- The Bypassing 403 scan rule no longer alerts on successful responses identical to the site index or a random sibling path (Issue 8596).
+
 ### Changed
 - Dependency update.
 - Maintenance changes.
