@@ -29,12 +29,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -93,6 +96,188 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
         // Then
         assertThat(alertsRaised, hasSize(0));
         assertThat(httpMessagesSent, hasSize(greaterThan(20)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {GENERIC_RESPONSE, ""})
+    void shouldNotAlertIfPathPayloadReturnsSpaFallback(String fallbackBody) throws Exception {
+        // Given
+        nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse(
+                                PROTECTED_PATH.equals(session.getUri())
+                                        ? Response.Status.FORBIDDEN
+                                        : Response.Status.OK,
+                                "text/html",
+                                fallbackBody);
+                    }
+                });
+        rule.init(getHttpMessage(PROTECTED_PATH), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createIgnoredHeaderPaths")
+    void shouldNotAlertIfRoutingHeaderIsIgnored(String publicPath) throws Exception {
+        // Given
+        nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse(
+                                "/".equals(session.getUri()) || publicPath.equals(session.getUri())
+                                        ? Response.Status.OK
+                                        : Response.Status.FORBIDDEN,
+                                "text/html",
+                                GENERIC_RESPONSE);
+                    }
+                });
+        rule.init(getHttpMessage(PROTECTED_PATH), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    private static Stream<Arguments> createIgnoredHeaderPaths() {
+        return Stream.of(Arguments.of("/"), Arguments.of("/anything"));
+    }
+
+    @Test
+    void shouldNotAlertIfOnlySiblingBaselineReturnsSpaFallback() throws Exception {
+        // Given
+        nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse(
+                                PROTECTED_PATH.equals(session.getUri())
+                                                || "/".equals(session.getUri())
+                                        ? Response.Status.FORBIDDEN
+                                        : Response.Status.OK,
+                                "text/html",
+                                GENERIC_RESPONSE);
+                    }
+                });
+        rule.init(getHttpMessage(PROTECTED_PATH), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Response.Status.class,
+            names = {"FORBIDDEN", "NOT_FOUND", "INTERNAL_ERROR"})
+    void shouldAlertWhenOnlyErrorBaselinesHaveMatchingBodies(Response.Status baselineStatus)
+            throws Exception {
+        // Given
+        nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse(
+                                PROTECTED_PATH.equals(session.getUri())
+                                        ? Response.Status.FORBIDDEN
+                                        : (PROTECTED_PATH + "/").equals(session.getUri())
+                                                ? Response.Status.OK
+                                                : baselineStatus,
+                                "text/html",
+                                GENERIC_RESPONSE);
+                    }
+                });
+        rule.init(getHttpMessage(PROTECTED_PATH), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertEquals(PROTECTED_PATH + "/", alertsRaised.get(0).getAttack());
+    }
+
+    @Test
+    void shouldContinueIfIndexBaselineCannotBeFetched() throws Exception {
+        // Given
+        nano.addHandler(new ForbiddenResponse(PROTECTED_PATH + "/./"));
+        nano.addHandler(new OkResponse(PROTECTED_PATH + "/"));
+        nano.addHandler(new ForbiddenResponse(PROTECTED_PATH));
+        rule =
+                new ForbiddenBypassScanRule() {
+                    @Override
+                    protected void sendAndReceive(HttpMessage message) throws IOException {
+                        if ("/".equals(message.getRequestHeader().getURI().getPath())) {
+                            throw new IOException("Baseline connection failed");
+                        }
+                        super.sendAndReceive(message);
+                    }
+                };
+        rule.init(getHttpMessage(PROTECTED_PATH), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertEquals(PROTECTED_PATH + "/", alertsRaised.get(0).getAttack());
+    }
+
+    @Test
+    void shouldAlertOnDistinctPathBypassAfterSpaFallback() throws Exception {
+        // Given
+        nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        if (PROTECTED_PATH.equals(session.getUri())) {
+                            return newFixedLengthResponse(
+                                    Response.Status.FORBIDDEN, "text/html", "Forbidden");
+                        }
+                        return newFixedLengthResponse(
+                                Response.Status.OK,
+                                "text/html",
+                                (PROTECTED_PATH + "/").equals(session.getUri())
+                                        ? "Protected content"
+                                        : GENERIC_RESPONSE);
+                    }
+                });
+        rule.init(getHttpMessage(PROTECTED_PATH), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertEquals(PROTECTED_PATH + "/", alertsRaised.get(0).getAttack());
+        assertAlert(alertsRaised.get(0));
+    }
+
+    @Test
+    void shouldAlertOnDistinctHeaderBypassAfterSpaFallback() throws Exception {
+        // Given
+        nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        if (session.getHeaders().containsKey("x-custom-ip-authorization")) {
+                            return newFixedLengthResponse(
+                                    Response.Status.OK, "text/html", "Protected content");
+                        }
+                        return newFixedLengthResponse(
+                                PROTECTED_PATH.equals(session.getUri())
+                                        ? Response.Status.FORBIDDEN
+                                        : Response.Status.OK,
+                                "text/html",
+                                GENERIC_RESPONSE);
+                    }
+                });
+        rule.init(getHttpMessage(PROTECTED_PATH), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertEquals("x-custom-ip-authorization: 127.0.0.1", alertsRaised.get(0).getAttack());
+        assertAlert(alertsRaised.get(0));
     }
 
     @ParameterizedTest
