@@ -22,8 +22,7 @@
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10094/">10094</a>.
 
 <h2 id="id-90005">Fetch Metadataリクエストヘッダースキャンルール</h2>
-Fetch Metadata リクエストヘッダーは、HTTP リクエストヘッダーで、リクエストのオリジンに関する追加情報を提供します。
-この追加情報は、サーバーがリソース隔離ポリシーを実装するのを助け、外部サイトが共有を意図したリソースのみをリクエストし、適切に使用されるようにします。 このアプローチは、CSRF、クロスサイトスクリプトインジェクション、タイミング攻撃、クロスオリジン情報漏洩などの一般的なクロスサイトウェブ脆弱性を緩和するのに役立ちます。
+Fetch Metadata リクエストヘッダーは、HTTP リクエストヘッダーで、リクエストのオリジンに関する追加情報を提供します。この追加情報は、サーバーがリソース隔離ポリシーを実装するのを助け、外部サイトが共有を意図したリソースのみをリクエストし、適切に使用されるようにします。このアプローチは、CSRF、クロスサイトスクリプトインジェクション、タイミング攻撃、クロスオリジン情報漏洩などの一般的なクロスサイトウェブ脆弱性を緩和するのに役立ちます。
 Fetch Metadata リクエストヘッダーは以下の通りです：
 <ul>
  <li>Sec-Fetch-Site</li>
@@ -66,10 +65,9 @@ Sec-Fetch-User は、ユーザーアクティベーションによって開始�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90005/">90005</a>.
 
 <h2 id="id-110009">フルパスの露見スキャンルール</h2>
-<p>フルパス露見の脆弱性とは、アプリケーションのルートパスが攻撃者に貴重な情報を提供するものです。
-フルパス露見の脆弱性の例: /home/omg/htdocs/file/ または C:\Users\username\server\
+<p>フルパス露見の脆弱性とは、アプリケーションのルートパスが攻撃者に貴重な情報を提供するものです。フルパス露見の脆弱性の例: /home/omg/htdocs/file/ または C:\Users\username\server\
 </p>
-<p>攻撃者はこのパスを使用して、資格情報や他のプライベート情報を窃取する可能性があります。 詳細については <a href="https://owasp.org/www-community/attacks/Full_Path_Disclosure">OWASP 記事</a> を参照してください。</p>
+<p>攻撃者はこのパスを使用して、資格情報や他のプライベート情報を窃取する可能性があります。詳細については <a href="https://owasp.org/www-community/attacks/Full_Path_Disclosure">OWASP 記事</a> を参照してください。</p>
 
 <p>最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FullPathDisclosureScanRule.java">FullPathDisclosureScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/110009/">110009</a>.

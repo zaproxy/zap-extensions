@@ -11,11 +11,9 @@
 このアドオンは自動化フレームワークに対応しています。
 
 <H2>ジョブ: diagnostics</H2>
-diagnostics ジョブは、プランレベルでの認証関連診断の記録を開始または停止します。
-記録された診断データは認証診断UIに表示され、<a href="reports.html">認証レポート</a>に含めることができます。
+diagnostics ジョブは、プランレベルでの認証関連診断の記録を開始または停止します。記録された診断データは認証診断UIに表示され、<a href="reports.html">認証レポート</a>に含めることができます。
 <p>
-1つのプランに複数の diagnostics ジョブを含めることができます。 記録は <code>enabled</code> が <code>true</code> の場合に開始され、<code>enabled</code> が <code>false</code> の場合に停止（および永続化）されます。
-プラン終了時に記録がオンのままになっている場合、自動的に停止され、永続化されます。
+1つのプランに複数の diagnostics ジョブを含めることができます。記録は <code>enabled</code> が <code>true</code> の場合に開始され、<code>enabled</code> が <code>false</code> の場合に停止（および永続化）されます。プラン終了時に記録がオンのままになっている場合、自動的に停止され、永続化されます。
 <pre>
   - type: diagnostics                  # プランレベルの診断記録を有効または無効にします
     parameters:

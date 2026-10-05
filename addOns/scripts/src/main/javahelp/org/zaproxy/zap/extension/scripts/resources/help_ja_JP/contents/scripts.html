@@ -42,7 +42,7 @@
 </p>
 <p>
 
-すべてのスクリプト言語はすべてのスクリプトタイプに使用できますが、ZAP マーケットプレイスからダウンロードされた言語のみが通常テンプレートを持っています。 ただし、別の言語のテンプレートを適応させることができる場合があります。<br/>
+すべてのスクリプト言語はすべてのスクリプトタイプに使用できますが、ZAP マーケットプレイスからダウンロードされた言語のみが通常テンプレートを持っています。ただし、別の言語のテンプレートを適応させることができる場合があります。<br/>
 お気に入りの言語がマーケットプレイスで利用できない場合は、「オンライン / 問題の報告」メニュー項目から新しい問題を報告してください。<br/>
 </p>
 
@@ -62,8 +62,7 @@ org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name
 org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
 </code>
 <br/>
-これらのメソッドは、ScriptContext へのアクセスを提供するスクリプト言語 (JavaScriptなど) からのみ使用可能であることに注意してください。
-他のスクリプト言語の場合、ZAPバージョン2.7.0以降で変数はスクリプトの名前を手動で指定することでアクセス/設定できます：<br/><br/>
+これらのメソッドは、ScriptContext へのアクセスを提供するスクリプト言語 (JavaScriptなど) からのみ使用可能であることに注意してください。他のスクリプト言語の場合、ZAPバージョン2.7.0以降で変数はスクリプトの名前を手動で指定することでアクセス/設定できます：<br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setScriptVar("ScriptName", "var.name","value")<br/>
 org.zaproxy.zap.extension.script.ScriptVars.getScriptVar("ScriptName", "var.name")<br/>

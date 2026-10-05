@@ -34,6 +34,10 @@ You will need to change the "Record Type" to "Client (browser) side script" and 
 ZAP will launch your chosen browser and record the Zest statements in the Script Console as you perform actions in the browser.
 
 <h2>Recorder Advice and Guidance</h2>
+If you have any problems recording or replaying client side scripts then start by making sure that
+you have the latest version of the ZAP Recorder (if you have installed that) or the Client Side Integration
+(if you are launching the recording from ZAP).
+<p>
 If you are going to use the recorded script for authentication then you need to make sure that the browser
 will be in the same state as when it is launched from ZAP.
 <p>
@@ -49,6 +53,32 @@ application state.
 <p>
 The 'buttons' on some modern web apps can be complicated HTML components that are sometimes hard to click on using automation.
 If your forms can be submitted using the RETURN key then that is often a better option to use when recording.
+<p>
+Try recording the same script twice, making sure you perform exactly the same actions.
+Then diff the scripts - if they are significantly different then its possible that ZAP is using 
+values to reference HTML elements that are not consistent.
+If that is the case then you may need to manually edit the script in order to use values which are consistent.
+
+<h2>Recorder Diagnostics</h2>
+If you still have problems recording or replaying client side scripts then please report them to the ZAP team
+via a <a href="https://github.com/zaproxy/zaproxy/issues/new?template=bug-report.yml">new issue</a>.
+<p>
+We will need to know:
+<ul>
+<li>The ZAP and add-on versions - Help / Support Info...
+<li>The browser extension version
+<li>The failing Zest statement, obfuscating anything sensitive
+<li>A detailed description of what you are doing, and what goes wrong
+<li>Whether the problem is consistent
+<li>Any relevant error messages
+<li>The HTML for the element that is causing problems:
+  <ul>
+  <li>In your browser, right click the element and "Inspect"
+  <li>In the Dev Tools (Chrome, Edge) / Inspector (Firefox) right click the element
+  <li>Select "Copy" -> "Copy outerHTML" / "Outer HTML"
+  </ul>
+</ul>
+
 
 </BODY>
 </HTML>

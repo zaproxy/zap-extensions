@@ -12,9 +12,7 @@
 <h2>全般設定</h2>
 
 <h3>信頼済みドメイン</h3>
-オプションの「ルール設定」パネルから <code>rules.domains.trusted</code> パラメーターを使用して、カンマ区切りのURL正規表現パターンリストを指定できます。
-これらのパターンに一致するリンクURLは信頼済みドメインと見なされ、アラートの対象外となります。
- 以下のルールが <b>信頼済みドメイン</b> 機能をサポートしています：
+オプションの「ルール設定」パネルから <code>rules.domains.trusted</code> パラメーターを使用して、カンマ区切りのURL正規表現パターンリストを指定できます。これらのパターンに一致するリンクURLは信頼済みドメインと見なされ、アラートの対象外となります。以下のルールが <b>信頼済みドメイン</b> 機能をサポートしています：
 <ul>
  <li>サブリソース整合性属性の欠落</li>
 </ul>
@@ -38,8 +36,7 @@
 
 <h2 id="id-10110">危険なJavaScript関数</h2>
 このスキャンルールは、サイトのレスポンスに存在する危険なJavaScript関数をチェックします。<br>
-<strong>注意:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードのオプションパネルで独自の関数名 (ペイロード) を追加できます。
-これらもパッシブスキャン実行時にレスポンス内で検索されます。 ペイロードの数が多いほど、パッシブスキャンに必要な時間が長くなることに注意してください。
+<strong>注意:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードのオプションパネルで独自の関数名 (ペイロード) を追加できます。これらもパッシブスキャン実行時にレスポンス内で検索されます。ペイロードの数が多いほど、パッシブスキャンに必要な時間が長くなることに注意してください。
 <br>
 このルールのカスタムペイロードカテゴリ: <code>JS-Function</code>
 <br>
@@ -49,14 +46,14 @@
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10110/">10110</a>
 
 <h2 id="id-10063">Permissions-Policy ヘッダー未設定</h2>
-このルールは、(HTMLおよびJavaScriptレスポンスの) HTTPレスポンスヘッダーに「Permissions-Policy」ヘッダーが含まれているかをチェックし、 見つからない場合にアラートを発行します。 また、非推奨のヘッダー「Feature-Policy」が見つかった場合もアラートを発行します。<br>
+このルールは、(HTMLおよびJavaScriptレスポンスの) HTTPレスポンスヘッダーに「Permissions-Policy」ヘッダーが含まれているかをチェックし、 見つからない場合にアラートを発行します。また、非推奨のヘッダー「Feature-Policy」が見つかった場合もアラートを発行します。<br>
 リダイレクトは、しきい値が Low の場合を除いて無視されます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10063/">10063</a>
 
 <h2 id="id-90004">サイト分離スキャンルール</h2>
-Spectreは、攻撃者がメモリからデータを読み取ることを可能にするサイドチャネル攻撃です。 対策の1つは、機密データが メモリに入るのを防ぎ、信頼されたドキュメントと信頼されていないドキュメントを 異なるブラウジングコンテキストで分離することです。 これを実現するために3つのヘッダーが定義されています：
+Spectreは、攻撃者がメモリからデータを読み取ることを可能にするサイドチャネル攻撃です。対策の1つは、機密データが メモリに入るのを防ぎ、信頼されたドキュメントと信頼されていないドキュメントを 異なるブラウジングコンテキストで分離することです。これを実現するために3つのヘッダーが定義されています：
 <ul>
  <li>Cross-Origin-Resource-Policy</li>
  <li>Cross-Origin-Embedder-Policy</li>
@@ -65,9 +62,9 @@ Spectreは、攻撃者がメモリからデータを読み取ることを可能�
 Cross-Origin-Embedder-Policy (COEP) ヘッダーは <q>ドキュメントが読み込まれることを明示的に許可していない すべての非同一オリジンリソースを、ドキュメントが読み込むことを防ぎます。</q> (出典:
 <a href="https://docs.google.com/document/d/1zDlfvfTJ_9e8Jdc8ehuV4zMEu9ySMCiTGMS9y0GU92k/edit">COOP and COEP explained</a>).
 <blockquote cite="https://resourcepolicy.fyi/">
- Cross-Origin-Resource-Policy (CORP) ヘッダーを使用すると、 リソースを含めることが許可されるオリジンのセットを制御できます。 これは、Spectre のような攻撃に対する堅牢な防御であり、 ブラウザが攻撃者のプロセスに入る前に特定のレスポンスをブロックすることを可能にします。
+ Cross-Origin-Resource-Policy (CORP) ヘッダーを使用すると、 リソースを含めることが許可されるオリジンのセットを制御できます。これは、Spectre のような攻撃に対する堅牢な防御であり、 ブラウザが攻撃者のプロセスに入る前に特定のレスポンスをブロックすることを可能にします。
 </blockquote>
-例えば、攻撃者のサイトは、内部コンテンツへの src 属性を持つ image タグを含めることができます。 ブラウザはデータを読み込みます。 サイドチャネル攻撃により、攻撃者はそれを読み取ることができます。
+例えば、攻撃者のサイトは、内部コンテンツへの src 属性を持つ image タグを含めることができます。ブラウザはデータを読み込みます。サイドチャネル攻撃により、攻撃者はそれを読み取ることができます。
 
  Cross-Origin-Opener-Policy (COOP) ヘッダーは、ブラウザに複数のブラウジングコンテキストを作成させ、 信頼されたドキュメントと信頼されていないドキュメントを分離します。
 
@@ -85,8 +82,7 @@ Cross-Origin-Embedder-Policy (COEP) ヘッダーは <q>ドキュメントが読�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90004/">90004</a>
 
 <h2 id="id-10026">サーブレットパラメーター汚染</h2>
-action 要素の指定に失敗したHTMLフォームをレスポンスコンテンツ内で検索します。 Java Servlet仕様のバージョン3では、 クエリ文字列とPOSTデータ要素の集約が求められており、これによりユーザー制御データの意図しない処理が発生する可能性があります。 これは他のフレームワークやテクノロジーにも影響を与える可能性があります。
-<strong>注:</strong> このスキャンルールは、しきい値が LOW かつ Tech JSP/Servlet が適用可能なコンテキストURL内のレスポンスのみを分析します。
+action 要素の指定に失敗したHTMLフォームをレスポンスコンテンツ内で検索します。 Java Servlet仕様のバージョン3では、 クエリ文字列とPOSTデータ要素の集約が求められており、これによりユーザー制御データの意図しない処理が発生する可能性があります。これは他のフレームワークやテクノロジーにも影響を与える可能性があります。<strong>注:</strong> このスキャンルールは、しきい値が LOW かつ Tech JSP/Servlet が適用可能なコンテキストURL内のレスポンスのみを分析します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServletParameterPollutionScanRule.java">ServletParameterPollutionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10026/">10026</a>

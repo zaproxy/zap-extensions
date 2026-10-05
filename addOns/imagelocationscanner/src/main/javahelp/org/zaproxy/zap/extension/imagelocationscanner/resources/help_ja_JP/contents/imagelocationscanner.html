@@ -12,13 +12,13 @@
 
 <p>Webサイトの通常のセキュリティ評価中に、画像内のGPS位置情報やその他のプライバシー関連の露出を受動的にスキャンします。 Image Location and Privacy Scanner (ILS、画像位置情報・プライバシースキャナー) は、エンドユーザーがプロフィール画像を投稿し、自宅の位置を漏らす可能性がある状況（例: 出会い系サイトや子供向けチャットルーム）で役立ちます。 </p>
 <p>このトピックに関する詳細情報（OWASP組織のニュージャージー支部でのプレゼンテーションとして行われた実際のサイト監査に基づくホワイトペーパーを含む）は、<a href="https://www.veggiespam.com/ils/">https://www.veggiespam.com/ils/</a>でご覧いただけます。</p>    
-<p>このソフトウェアは、画像をスキャンしてExifタグ、IPTCコード、カメラ独自タグ内のGPS情報を検出します。 その後、ILSはZAPのアラートリストに検出結果を情報メッセージとしてフラグ付けします。 位置情報の露出が文脈に基づいて真にセキュリティリスクとなるかどうかを判断するのは監査者の役割です。</p>
+<p>このソフトウェアは、画像をスキャンしてExifタグ、IPTCコード、カメラ独自タグ内のGPS情報を検出します。その後、ILSはZAPのアラートリストに検出結果を情報メッセージとしてフラグ付けします。位置情報の露出が文脈に基づいて真にセキュリティリスクとなるかどうかを判断するのは監査者の役割です。</p>
 
 <h2>サンプル検出結果</h2>
 <p>WebブラウザをZAP経由でプロキシするように設定し、以下のサンプルサイトを閲覧してアラートが発生する様子を確認してください：</p>
 
 <ul>
-<li>MetaData Extractorの <a href="https://github.com/drewnoakes/metadata-extractor/wiki/SampleOutput">SampleOutput ページ</a> には良好な画像がいくつか含まれています。  <em>(注: 一部のURLでは<a href="https://github.com/drewnoakes/metadata-extractor-images/tree/master/jpg">GitHubセッションクッキー</a>が必要です)
+<li>MetaData Extractorの <a href="https://github.com/drewnoakes/metadata-extractor/wiki/SampleOutput">SampleOutput ページ</a> には良好な画像がいくつか含まれています。<em>(注: 一部のURLでは<a href="https://github.com/drewnoakes/metadata-extractor-images/tree/master/jpg">GitHubセッションクッキー</a>が必要です)
 <ul>
 <li><a href="https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/jpg/Apple%20iPhone%204.jpg" rel="nofollow">iPhone 4</a> はGPSデータを表示します。</li>
 <li><a href="https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/jpg/FujiFilm%20FinePixS1Pro%20(1).jpg" rel="nofollow">FujiFilm FinePix S1 Pro</a> には埋め込まれたIPTC位置情報とキーワードがあります。</li>
@@ -32,7 +32,7 @@
 <h2>使用上の注意</h2>
 <ul>
     <li>ZAP 2.7.x以前では、ILSが機能するために画像スキャンを手動で有効にする必要があります: ツール → オプション → 表示 → 「HTTP リクエスト/レスポンス内の画像を処理する」</li>
-    <li>デフォルトでは、ZAPは履歴に画像を表示しませんが、ILSはこれらの画像を検出結果についてスキャンします。  アラートがトリガーされた場合、画像とそのアラートはアラートタブに表示されますが、履歴タブには表示されません。  アラートの有無にかかわらず履歴に画像を表示するには、上記の「HTTPで画像を処理する」を有効にしてください。</li>
+    <li>デフォルトでは、ZAPは履歴に画像を表示しませんが、ILSはこれらの画像を検出結果についてスキャンします。アラートがトリガーされた場合、画像とそのアラートはアラートタブに表示されますが、履歴タブには表示されません。アラートの有無にかかわらず履歴に画像を表示するには、上記の「HTTPで画像を処理する」を有効にしてください。</li>
     <li>ツール → オプション → ネットワーク → グローバル除外 → 拡張子 - 画像（旧称：グローバル除外URL）を使用して画像処理を完全に無効にしている場合、ILSのようなパッシブ画像スキャナーは画像を認識できず、プライバシー問題を報告できません。</li>
 </ul>
 

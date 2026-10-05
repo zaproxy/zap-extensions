@@ -11,10 +11,9 @@
 以下のリリースステータスのアクティブスキャンルールがこのアドオンに含まれています：
 
 <h2 id="id-40034">.env からの情報漏洩</h2>
-Web経由でアクセス可能な .env ファイルをチェックし、機密情報 (ユーザー名、パスワード、APIキー、アプリケーションキーなど) が漏洩する可能性があるかを確認します。
-環境ファイルには多くの種類がありますが、ほとんどは KEY=VALUE 形式です。 <br>
+Web経由でアクセス可能な .env ファイルをチェックし、機密情報 (ユーザー名、パスワード、APIキー、アプリケーションキーなど) が漏洩する可能性があるかを確認します。環境ファイルには多くの種類がありますが、ほとんどは KEY=VALUE 形式です。 <br>
 このルールは、サーバーがデフォルトでどのように配信するかをチェックします。
-NGINXは binary/octet-stream コンテンツタイプとして返し、Apacheはコンテンツタイプなしでテキストを返します。 このルールは、500文字を超えるコンテンツ長もチェックし、より大きな意図的なファイルの可能性を除外しようとします。
+NGINXは binary/octet-stream コンテンツタイプとして返し、Apacheはコンテンツタイプなしでテキストを返します。このルールは、500文字を超えるコンテンツ長もチェックし、より大きな意図的なファイルの可能性を除外しようとします。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/EnvFileScanRule.java">EnvFileScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40034/">40034</a>
@@ -27,7 +26,7 @@ Web経由でアクセス可能な .htaccess ファイルをチェックし、機
 
 <h2 id="id-30001">バッファオーバーフロー</h2>
 
-コンパイル済みコード内のバッファオーバーフローの兆候を探します。  大量の入力テキスト文字列を送信し、コードのクラッシュや異常なセッション終了を検出します。
+コンパイル済みコード内のバッファオーバーフローの兆候を探します。大量の入力テキスト文字列を送信し、コードのクラッシュや異常なセッション終了を検出します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/BufferOverflowScanRule.java">BufferOverflowScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/30001/">30001</a>
@@ -41,22 +40,21 @@ Web経由でアクセス可能な .htaccess ファイルをチェックし、機
 
 <h2 id="id-90019">コードインジェクション</h2>
 
-このルールは、PHPおよびASP攻撃文字列をリクエストのURLパラメーターの値として送信し、レスポンスを調べてそれらの値がサーバーによって評価されているかを確認します。 まず、トークンを出力するように指示する注入されたPHP命令を含むリクエストを構築して送信します。 トークンとレスポンスボディのコンテンツが一致した場合、スキャナーはアラートを発生させ、すぐに終了します。
-一致がない場合、スキャナーは、レスポンスに2つのランダムに生成された整数の積を書き込むようにサーバーに指示する、いくつかの注入されたASP文字列を含むリクエストを構築します。 レスポンスのボディが積と一致する場合、アラートが発生します。
+このルールは、PHPおよびASP攻撃文字列をリクエストのURLパラメーターの値として送信し、レスポンスを調べてそれらの値がサーバーによって評価されているかを確認します。まず、トークンを出力するように指示する注入されたPHP命令を含むリクエストを構築して送信します。トークンとレスポンスボディのコンテンツが一致した場合、スキャナーはアラートを発生させ、すぐに終了します。一致がない場合、スキャナーは、レスポンスに2つのランダムに生成された整数の積を書き込むようにサーバーに指示する、いくつかの注入されたASP文字列を含むリクエストを構築します。レスポンスのボディが積と一致する場合、アラートが発生します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CodeInjectionScanRule.java">CodeInjectionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90019/">90019</a>
 
 <h2 id="id-90020">リモートOSコマンドインジェクション</h2>
 
-このルールは、*NIXおよびWindows OSコマンドを注入して、Webアプリケーションがチェックされていないユーザー入力を基盤となるOSに直接渡しているかどうかを判断します。 注入文字列は、OSによって結合コマンドとして解釈される可能性のあるメタ文字と、アプリケーションが脆弱な場合にレスポンスに出力を生成するペイロードで構成されています。
+このルールは、*NIXおよびWindows OSコマンドを注入して、Webアプリケーションがチェックされていないユーザー入力を基盤となるOSに直接渡しているかどうかを判断します。注入文字列は、OSによって結合コマンドとして解釈される可能性のあるメタ文字と、アプリケーションが脆弱な場合にレスポンスに出力を生成するペイロードで構成されています。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionScanRule.java">CommandInjectionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90020/">90020</a>
 
 <h2 id="id-90037">リモートOSコマンドインジェクション (時間ベース)</h2>
 
-このルールは、*NIXおよびWindows OSコマンドを注入して、Webアプリケーションがチェックされていないユーザー入力を基盤となるOSに直接渡しているかどうかを判断します。 このルールは、スリープ命令をペイロードとして送信することでブラインドインジェクション攻撃を試み、リクエスト送信からレスポンス受信までの経過時間をヒューリスティックな時間遅延下限値と比較します。
+このルールは、*NIXおよびWindows OSコマンドを注入して、Webアプリケーションがチェックされていないユーザー入力を基盤となるOSに直接渡しているかどうかを判断します。このルールは、スリープ命令をペイロードとして送信することでブラインドインジェクション攻撃を試み、リクエスト送信からレスポンス受信までの経過時間をヒューリスティックな時間遅延下限値と比較します。
 <br>
 バージョン2.5.0以降、オプションの「ルール設定」パネルから <code>rules.common.sleep</code> パラメーターを変更することで、ブラインドインジェクション攻撃に使用する時間の長さを変更できます。
 <p>
@@ -69,8 +67,7 @@ Web経由でアクセス可能な .htaccess ファイルをチェックし、機
 そして、サブミットしたそれぞれの値が出力された箇所毎に用意された一連の攻撃を実行します。この箇所には、タグ属性・URL 属性・src 属性をサポートするタグの属性・HTMLコメント等の種類があります。 <br>
 注: <br>
 このルールは、しきい値が LOW の場合にのみHTTP PUTリクエストをスキャンします。<br>
-アラートしきい値が LOW に設定されている場合、JSONレスポンス内にあるXSSインジェクションは、LOW リスクおよびLOW 信頼度のアラートを発生させます。
-他のレスポンスコンテンツタイプの場合、LOW 信頼度のアラートが発生します。<br>
+アラートしきい値が LOW に設定されている場合、JSONレスポンス内にあるXSSインジェクションは、LOW リスクおよびLOW 信頼度のアラートを発生させます。他のレスポンスコンテンツタイプの場合、LOW 信頼度のアラートが発生します。<br>
 アラートしきい値が MEDIUM または HIGH に設定されている場合、HTML以外のレスポンスにあるXSSインジェクションはアラートを生成しません。<br>
 <p>
 反射されたペイロードから特定の文字が除去される場合、同じ効果を持つ可能性のある代替文字で攻撃が繰り返されます。
@@ -91,7 +88,7 @@ JSONレスポンス内にXSSインジェクションが検出された場合、L
 
 <h2 id="id-40003">CRLFインジェクション</h2>
 
-このルールは、注入された「Set-Cookie」ヘッダーの前にさまざまなCRLF特殊文字をパラメーターとしてサーバーに送信します。 レスポンスに同一の Set-Cookie ヘッダーが含まれている場合、アラートが発生し、スキャナーはすぐに終了します。
+このルールは、注入された「Set-Cookie」ヘッダーの前にさまざまなCRLF特殊文字をパラメーターとしてサーバーに送信します。レスポンスに同一の Set-Cookie ヘッダーが含まれている場合、アラートが発生し、スキャナーはすぐに終了します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrlfInjectionScanRule.java">CrlfInjectionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40003/">40003</a>
@@ -104,7 +101,7 @@ JSONレスポンス内にXSSインジェクションが検出された場合、L
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/0/">0</a>
 
 <h2 id="id-40028">ELMAH 情報漏洩</h2>
-Error Logging Modules and Handlers (elmah.axd) HTTPモジュールが利用可能かどうかをテストします。 このモジュールは開発者や他の関係者にとって便利ですが、セキュリティアナリストや悪意のある個人が関心を持つ可能性のある大量の情報を漏洩することもあります。<br>
+Error Logging Modules and Handlers (elmah.axd) HTTPモジュールが利用可能かどうかをテストします。このモジュールは開発者や他の関係者にとって便利ですが、セキュリティアナリストや悪意のある個人が関心を持つ可能性のある大量の情報を漏洩することもあります。<br>
 <br>
 ELMAH スキャンルールは、Microsoftベースのテクノロジー (IIS、Windows、ASP、MSSQL) を対象としています。<br>
 ファイルは、しきい値が LOW に設定されていない限り、「Error Log for」というテキストが含まれている場合にのみ報告されます。
@@ -120,41 +117,36 @@ ELMAH スキャンルールは、Microsoftベースのテクノロジー (IIS、
 
 <h2 id="id-20019">外部リダイレクト</h2>
 
-このルールは、さまざまなURLリダイレクト文字列をリクエストのパラメーター値として送信し、レスポンスのヘッダーとボディを調べて、リダイレクトが発生したかどうか、およびそのタイプを判断します。 リダイレクトの原因は、「Location」および「Refresh」ヘッダーフィールド、およびレスポンスボディ内のHTMLメタタグとJavaScriptで検索されます。 リダイレクトタイプを含むアラートが発生し、スキャナーはすぐに終了します。
+このルールは、さまざまなURLリダイレクト文字列をリクエストのパラメーター値として送信し、レスポンスのヘッダーとボディを調べて、リダイレクトが発生したかどうか、およびそのタイプを判断します。リダイレクトの原因は、「Location」および「Refresh」ヘッダーフィールド、およびレスポンスボディ内のHTMLメタタグとJavaScriptで検索されます。リダイレクトタイプを含むアラートが発生し、スキャナーはすぐに終了します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ExternalRedirectScanRule.java">ExternalRedirectScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/20019/">20019</a>
 
 <h2 id="id-30002">書式文字列エラー</h2>
-コンパイル済みコード内の書式文字列処理エラーの兆候を探します。  コンパイル済みCコードが書式化された出力を生成することを想定している文字に基づいた入力テキスト文字列を送信し、コードのクラッシュや異常なセッション終了を検出します。
+コンパイル済みコード内の書式文字列処理エラーの兆候を探します。コンパイル済みCコードが書式化された出力を生成することを想定している文字に基づいた入力テキスト文字列を送信し、コードのクラッシュや異常なセッション終了を検出します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/FormatStringScanRule.java">FormatStringScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/30002/">30002</a>
 
 <h2 id="id-10058">GET for POST</h2>
 このスキャンルールは、<code>application/x-www-form-urlencoded</code> 形式のPOSTリクエストを受け取り、パラメーターをPOSTからGETに変更してリクエストを再送信します。 
-GETレスポンスが元のPOSTレスポンスと同じ場合、アラートが発生します。 これ自体は必ずしもセキュリティ上の弱点を表すものではありませんが、他の攻撃や弱点を拡大または単純化できる可能性があることを示している場合があります。
+GETレスポンスが元のPOSTレスポンスと同じ場合、アラートが発生します。これ自体は必ずしもセキュリティ上の弱点を表すものではありませんが、他の攻撃や弱点を拡大または単純化できる可能性があることを示している場合があります。
 （POSTベースのクロスサイトスクリプティング (XSS) 攻撃がGETに変更される場合など）
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/GetForPostScanRule.java">GetForPostScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10058/">10058</a>
 
 <h2 id="id-20015">Heartbleed OpenSSL脆弱性</h2>
-Webサーバーが悪用することでHeartbleed OpenSSL脆弱性に対して脆弱かどうかを検出します。
-詳細については、CVE-2014-0160を参照してください。
+Webサーバーが悪用することでHeartbleed OpenSSL脆弱性に対して脆弱かどうかを検出します。詳細については、CVE-2014-0160を参照してください。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HeartBleedActiveScanRule.java">HeartBleedActiveScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/20015/">20015</a>
 
 <h2 id="id-40035">隠しファイルファインダー</h2>
-このスキャンルールは、管理情報、設定情報、または認証情報が漏洩する可能性のあるさまざまなWeb経由でアクセス可能なファイルをチェックします。
-元の含まれるペイロードのセットは、Hanno Böck氏による<a href="https://github.com/hannob/snallygaster">Snallygaster</a>に基づいています。
-このようなペイロードは、レスポンスコードとコンテンツをチェックすることで検証されます。 レスポンスコードが200 (Ok) の場合、アラートの信頼度を高めるために追加のコンテンツチェックが実行されます。
-レスポンスコードが401 (Unauthorized) または403 (Forbidden) の場合、またはコンテンツチェックが失敗した場合、低い信頼度でアラートが発生します（しきい値が LOW の場合）。
-<strong>注:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードのオプションパネルで独自の隠しファイルパス (ペイロード) を追加できます。 
+このスキャンルールは、管理情報、設定情報、または認証情報が漏洩する可能性のあるさまざまなWeb経由でアクセス可能なファイルをチェックします。元の含まれるペイロードのセットは、Hanno Böck氏による<a href="https://github.com/hannob/snallygaster">Snallygaster</a>に基づいています。このようなペイロードは、レスポンスコードとコンテンツをチェックすることで検証されます。レスポンスコードが200 (Ok) の場合、アラートの信頼度を高めるために追加のコンテンツチェックが実行されます。レスポンスコードが401 (Unauthorized) または403 (Forbidden) の場合、またはコンテンツチェックが失敗した場合、低い信頼度でアラートが発生します（しきい値が LOW の場合）。<strong>注:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードのオプションパネルで独自の隠しファイルパス (ペイロード) を追加できます。 
 <br>
 このルールのカスタムペイロードカテゴリ: <code>Hidden-File</code><br>
-カスタムペイロードの場合、レスポンスステータスコードのみがチェックされます。 コンテンツチェックを含める必要がある場合は、ZAPのユーザーディレクトリにある <code>json/hidden_files.json</code> ファイルにペイロードを追加することも可能です (その場合、含まれるペイロードとして扱われます)。
+カスタムペイロードの場合、レスポンスステータスコードのみがチェックされます。コンテンツチェックを含める必要がある場合は、ZAPのユーザーディレクトリにある <code>json/hidden_files.json</code> ファイルにペイロードを追加することも可能です (その場合、含まれるペイロードとして扱われます)。
 <p>
 JSONエントリのフィールドについて以下に説明します。
 <pre><code>
@@ -203,9 +195,7 @@ JSONエントリのフィールドについて以下に説明します。
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>
 
 <h2 id="id-40043">Log4Shell (CVE-2021-44228 および CVE-2021-45046)</h2>
-このルールは、Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">CVE-2021-44228</a> および <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-45046">CVE-2021-45046</a>) 脆弱性を検出しようとします。
-アラートオブバンドペイロードを生成し、DNS相互作用を検証するために、OASTアドオンに依存しています。
-最大のカバレッジを得るために、ヘッダーインジェクションを有効にしてこのスキャンルールを使用することを推奨します。
+このルールは、Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">CVE-2021-44228</a> および <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-45046">CVE-2021-45046</a>) 脆弱性を検出しようとします。アラートオブバンドペイロードを生成し、DNS相互作用を検証するために、OASTアドオンに依存しています。最大のカバレッジを得るために、ヘッダーインジェクションを有効にしてこのスキャンルールを使用することを推奨します。
 <p>
 参照: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
@@ -213,22 +203,21 @@ JSONエントリのフィールドについて以下に説明します。
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40043/">40043</a>
 
 <h2 id="id-90024">パディングオラクル</h2>
-このルールは、暗号化された文字列のパディングを操作してエラーレスポンスをトリガーし、パディングオラクル脆弱性の可能性を示そうとします。 
-このような脆弱性は、ASP.netの一部のバージョン、Java Server Faces、Monoなど、暗号化を不適切に使用するアプリケーションやフレームワークに影響を与える可能性があります。
+このルールは、暗号化された文字列のパディングを操作してエラーレスポンスをトリガーし、パディングオラクル脆弱性の可能性を示そうとします。このような脆弱性は、ASP.netの一部のバージョン、Java Server Faces、Monoなど、暗号化を不適切に使用するアプリケーションやフレームワークに影響を与える可能性があります。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PaddingOracleScanRule.java">PaddingOracleScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90024/">90024</a>
 
 <h2 id="id-40008">パラメーター改ざん</h2>
 
-このルールは、不適切に処理された場合にユーザーにエラーが表示されることが知られているパラメーター値を持つリクエストを送信します。 レスポンスがサーバーエラーステータスコードを返すことを確認し、通常のHTTPレスポンスと比較して、不正なパラメーターが出力に影響を与えない場合にアラートを発生させないようにします。 最後に、レスポンスボディのコンテンツを、Java サーブレット、Microsoft VBScript、OLE DB、JET、PHP、Tomcatのエラーに見られる可能性のあるさまざまなパターンと比較します。 一致が見つかった場合、アラートが発生し、スキャナーはすぐに終了します。
+このルールは、不適切に処理された場合にユーザーにエラーが表示されることが知られているパラメーター値を持つリクエストを送信します。レスポンスがサーバーエラーステータスコードを返すことを確認し、通常のHTTPレスポンスと比較して、不正なパラメーターが出力に影響を与えない場合にアラートを発生させないようにします。最後に、レスポンスボディのコンテンツを、Java サーブレット、Microsoft VBScript、OLE DB、JET、PHP、Tomcatのエラーに見られる可能性のあるさまざまなパターンと比較します。一致が見つかった場合、アラートが発生し、スキャナーはすぐに終了します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ParameterTamperScanRule.java">ParameterTamperScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40008/">40008</a>
 
 <h2 id="id-6">パストラバーサル</h2>
 
-このルールは、Windowsおよび*NIXシステム、およびJavaサーブレット用のパス名プレフィックスとローカルファイルターゲットのさまざまな組み合わせを構築することで、Webドキュメントルートの外部のファイルとディレクトリにアクセスしようとします。 レスポンスのボディが現在のターゲットファイルに対応するパターンと一致する場合、アラートが発生し、スキャナーはすぐに終了します。 一般的なローカルファイルターゲットがすべて成功しない場合、URL内のファイル名を使用してパストラバーサルが試行されます。 任意のファイル名を送信してもOKステータスコードが返されないが、実際のファイル名では返される限り、アラートが発生し、スキャナーはすぐに終了します。
+このルールは、Windowsおよび*NIXシステム、およびJavaサーブレット用のパス名プレフィックスとローカルファイルターゲットのさまざまな組み合わせを構築することで、Webドキュメントルートの外部のファイルとディレクトリにアクセスしようとします。レスポンスのボディが現在のターゲットファイルに対応するパターンと一致する場合、アラートが発生し、スキャナーはすぐに終了します。一般的なローカルファイルターゲットがすべて成功しない場合、URL内のファイル名を使用してパストラバーサルが試行されます。任意のファイル名を送信してもOKステータスコードが返されないが、実際のファイル名では返される限り、アラートが発生し、スキャナーはすぐに終了します。
 <p>
 注: このスキャンルールには、アラートしきい値が High の場合に除外されるチェックが1つあります。
 <p>
@@ -240,8 +229,7 @@ JSONエントリのフィールドについて以下に説明します。
 <p>
 このルールは、<a href="https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/">https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/</a>で詳述されているPoCに基づいています.
 <p>
-サーバーが脆弱なReact Server Components (Next.js使用) を実行していること、およびリモートコード実行 (RCE) の脆弱性が存在することを、実害を与えることなく検証します。
- 不正な形式の multipart リクエストによって意図的にエラーを発生させ、RCEが可能であることを確認する文字列の存在をチェックします。
+サーバーが脆弱なReact Server Components (Next.js使用) を実行していること、およびリモートコード実行 (RCE) の脆弱性が存在することを、実害を与えることなく検証します。不正な形式の multipart リクエストによって意図的にエラーを発生させ、RCEが可能であることを確認する文字列の存在をチェックします。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/React2ShellScanRule.java">React2ShellScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40048/">40048</a>
@@ -254,14 +242,14 @@ PHP-CGIベースのWebサーバー上でリモートコード実行を実行す�
 
 <h2 id="id-7">リモートファイルインクルード</h2>
 
-このルールは、外部URLをパラメーター値として持つ一連のリクエストを送信し、レスポンスボディとそれらのURLでホストされているページのタイトルとの一致を探します。 期待される文字列とレスポンスボディの間に一致があり、ヘッダーがステータスコード200を返した場合、アラートが発生し、スキャナーはすぐに終了します。
+このルールは、外部URLをパラメーター値として持つ一連のリクエストを送信し、レスポンスボディとそれらのURLでホストされているページのタイトルとの一致を探します。期待される文字列とレスポンスボディの間に一致があり、ヘッダーがステータスコード200を返した場合、アラートが発生し、スキャナーはすぐに終了します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/RemoteFileIncludeScanRule.java">RemoteFileIncludeScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/7/">7</a>
 
 <h2 id="id-40009">サーバーサイドインクルード</h2>
 
-このルールは、サーバーが実行されているOSを確認し、対応するHTML SSIディレクティブをパラメーター値として持つリクエストを送信します。 レスポンスボディがSSIが成功したことを示すパターンと一致する場合、アラートが発生し、スキャナーはすぐに終了します。
+このルールは、サーバーが実行されているOSを確認し、対応するHTML SSIディレクティブをパラメーター値として持つリクエストを送信します。レスポンスボディがSSIが成功したことを示すパターンと一致する場合、アラートが発生し、スキャナーはすぐに終了します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ServerSideIncludeScanRule.java">ServerSideIncludeScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40009/">40009</a>
@@ -273,8 +261,7 @@ PHP-CGIベースのWebサーバー上でリモートコード実行を実行す�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90035/">90035</a>
 
 <h2 id="id-90036">サーバーサイドテンプレートインジェクション (ブラインド)</h2>
-このルールは、SSTIスキャンルールよりも一歩進んで、管理パネル、レポート出力、請求書などで使用される場合など、ユーザー入力の影響が即座に明らかでない場所を見つけようとします。
-アウトオブバンド相互作用のためにOASTアドオンを活用します。
+このルールは、SSTIスキャンルールよりも一歩進んで、管理パネル、レポート出力、請求書などで使用される場合など、ユーザー入力の影響が即座に明らかでない場所を見つけようとします。アウトオブバンド相互作用のためにOASTアドオンを活用します。
 <p>
 参照: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
@@ -306,15 +293,13 @@ JavaScriptレスポンスは、アラートしきい値が LOW に設定され�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10045/">10045</a>
 
 <h2 id="id-40045">Spring4Shell (CVE-2022-22965)</h2>
-このルールは、Spring4Shell (<a href="https://tanzu.vmware.com/security/cve-2022-22965">CVE-2022-22965</a>) 脆弱性を検出しようとします。
-すべてのノードに <code>class.module.classLoader.DefaultAssertionStatus=nonsense</code> のペイロードを使用し、このペイロードが 400 レスポンスを引き起こす場合にアラートを発生させます。
-類似しているが安全なペイロードも 400 レスポンスを引き起こす場合、アラートは発生しません。
+このルールは、Spring4Shell (<a href="https://tanzu.vmware.com/security/cve-2022-22965">CVE-2022-22965</a>) 脆弱性を検出しようとします。すべてのノードに <code>class.module.classLoader.DefaultAssertionStatus=nonsense</code> のペイロードを使用し、このペイロードが 400 レスポンスを引き起こす場合にアラートを発生させます。類似しているが安全なペイロードも 400 レスポンスを引き起こす場合、アラートは発生しません。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/Spring4ShellScanRule.java">Spring4ShellScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40045/">40045</a>
 
 <h2 id="id-40042">Spring Actuators</h2>
-このルールは、Spring Actuatorsが有効になっているかどうかを識別しようとします。 アプリケーション内のデフォルトの /actuator/health ルートをテストします。
+このルールは、Spring Actuatorsが有効になっているかどうかを識別しようとします。アプリケーション内のデフォルトの /actuator/health ルートをテストします。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40042/">40042</a>
@@ -387,7 +372,7 @@ JavaScriptレスポンスは、アラートしきい値が LOW に設定され�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40022/">40022</a>
 
 <h2 id="id-40029">Trace.axd 情報漏洩</h2>
-Trace Viewer (trace.axd) が利用可能かどうかをテストします。 このコンポーネントは開発者や他の関係者にとって便利ですが、セキュリティアナリストや悪意のある個人が関心を持つ可能性のある大量の情報を漏洩することがあります。<br>
+Trace Viewer (trace.axd) が利用可能かどうかをテストします。このコンポーネントは開発者や他の関係者にとって便利ですが、セキュリティアナリストや悪意のある個人が関心を持つ可能性のある大量の情報を漏洩することがあります。<br>
 <br>
 trace.axd スキャンルールは、Microsoftベースのテクノロジー (IIS、Windows、ASP、MSSQL) を対象としています。
 <p>
@@ -395,7 +380,7 @@ trace.axd スキャンルールは、Microsoftベースのテクノロジー (II
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40029/">40029</a>
 
 <h2 id="id-10104">ユーザーエージェントファザー</h2>
-このアクティブスキャンルールは、ファジングされたUser Agent ( モバイルサイト、検索エンジンクローラーとしてのアクセスなど) に基づくレスポンスの違いをチェックします。 このルールは、レスポンスのステータスコードとレスポンスボディのハッシュコードを元のレスポンスと比較します。<br>
+このアクティブスキャンルールは、ファジングされたUser Agent ( モバイルサイト、検索エンジンクローラーとしてのアクセスなど) に基づくレスポンスの違いをチェックします。このルールは、レスポンスのステータスコードとレスポンスボディのハッシュコードを元のレスポンスと比較します。<br>
 <strong>注:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードのオプションパネルで独自のUser Agent文字列 (ペイロード) を追加できます。
 <br>
 このルールのカスタムペイロードカテゴリ: <code>User-Agent</code>.
@@ -404,9 +389,8 @@ trace.axd スキャンルールは、Microsoftベースのテクノロジー (II
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10104/">10104</a>
 
 <h2 id="id-90021">XPathインジェクション</h2>
-OWASPによる説明:「XPathインジェクション攻撃は、Webサイトがユーザー提供の情報を使用してXMLデータのXPathクエリを構築する場合に発生します。 意図的に不正な形式の情報をWebサイトに送信することで、攻撃者はXMLデータがどのように構造化されているかを知ることができ、通常はアクセスできないデータにアクセスできる可能性があります。 XMLデータが認証 (XMLベースのユーザーファイルなど) または承認に使用されている場合、Webサイト上で権限を昇格できる可能性もあります。」このルールは、このような弱点を識別しようとします。
-<p><strong>注:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードのオプションパネルで独自のエラー文字列 (ペイロード) を追加できます。 
-これらもスキャン時にレスポンス内で検索されます。
+OWASPによる説明:「XPathインジェクション攻撃は、Webサイトがユーザー提供の情報を使用してXMLデータのXPathクエリを構築する場合に発生します。意図的に不正な形式の情報をWebサイトに送信することで、攻撃者はXMLデータがどのように構造化されているかを知ることができ、通常はアクセスできないデータにアクセスできる可能性があります。 XMLデータが認証 (XMLベースのユーザーファイルなど) または承認に使用されている場合、Webサイト上で権限を昇格できる可能性もあります。」このルールは、このような弱点を識別しようとします。
+<p><strong>注:</strong> カスタムペイロードアドオンがインストールされている場合、カスタムペイロードのオプションパネルで独自のエラー文字列 (ペイロード) を追加できます。これらもスキャン時にレスポンス内で検索されます。
 <p>
 このルールのカスタムペイロードカテゴリ: <code>XPath-Errors</code><br>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/XpathInjectionScanRule.java">XpathInjectionScanRule.java</a><br>
@@ -421,11 +405,10 @@ OWASPによる説明:「XPathインジェクション攻撃は、Webサイトが
 
 <h2 id="id-90023">XXE</h2>
 このコンポーネントは、XML eXternal Entity (XXE) 攻撃の対象となるアプリケーションを識別しようとします。
-XML入力を解析するアプリケーションは、弱くまたは不十分に設定されたパーサーが、ローカルファイル、内部またはサードパーティシステムへのHTTPリクエストなどの外部エンティティへの参照を含むXML入力を処理する場合、XXEの影響を受ける可能性があります。 個別にテストされるタグの数は、ルールの強度に依存します。<br>
+XML入力を解析するアプリケーションは、弱くまたは不十分に設定されたパーサーが、ローカルファイル、内部またはサードパーティシステムへのHTTPリクエストなどの外部エンティティへの参照を含むXML入力を処理する場合、XXEの影響を受ける可能性があります。個別にテストされるタグの数は、ルールの強度に依存します。<br>
 <br>
 このスキャンルールは、OASTアドオンがインストールされ利用可能な場合にのみ実行されます。 
-OASTアドオンのコールバックサービスがターゲットサイトに対して正しく設定されていることをテストすることを推奨します。 
-ターゲットシステムがコールバックアドレスに接続できない場合、一部のXXE脆弱性は検出されません。 
+OASTアドオンのコールバックサービスがターゲットサイトに対して正しく設定されていることをテストすることを推奨します。ターゲットシステムがコールバックアドレスに接続できない場合、一部のXXE脆弱性は検出されません。 
 <p>
 参照: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
