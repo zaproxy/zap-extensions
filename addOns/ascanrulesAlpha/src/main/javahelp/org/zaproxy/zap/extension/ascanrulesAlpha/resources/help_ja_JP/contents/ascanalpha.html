@@ -10,8 +10,7 @@
 以下のアルファステータスのアクティブスキャンルールがこのアドオンに含まれています：
 
 <h2 id="id-40015">LDAPインジェクション</h2>
-LDAPインジェクションの可能性があります。 攻撃者が認証制御をバイパスし、LDAPディレクトリ内の任意のデータを閲覧および変更できる可能性があります。
-クライアントまたはサーバーエラーのレスポンスステータスコードが元々返されたメッセージはスキップされます。
+LDAPインジェクションの可能性があります。攻撃者が認証制御をバイパスし、LDAPディレクトリ内の任意のデータを閲覧および変更できる可能性があります。クライアントまたはサーバーエラーのレスポンスステータスコードが元々返されたメッセージはスキップされます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
 <br>
@@ -34,7 +33,7 @@ LDAPインジェクションの可能性があります。 攻撃者が認証制
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
 
 <h2 id="id-100044">疑わしい入力変換</h2>
-これはアクティブスキャンルール (スクリプト) です。 テンプレートインジェクション、式評価、引用符の消費、Unicode正規化に関連する問題など、潜在的なセキュリティ脆弱性を示す可能性のある様々な種類の疑わしい入力変換を検出します。
+これはアクティブスキャンルール (スクリプト) です。テンプレートインジェクション、式評価、引用符の消費、Unicode正規化に関連する問題など、潜在的なセキュリティ脆弱性を示す可能性のある様々な種類の疑わしい入力変換を検出します。
 <p>
 このルールは、Albinowax氏によるBurp Suite用ActiveScan++拡張機能に含まれる「Suspect Transform」チェック (<a href="https://github.com/albinowax/ActiveScanPlusPlus/blob/master/src/burp/SuspectTransform.java">SuspectTransform.java</a>) を基に作成されています。.
 

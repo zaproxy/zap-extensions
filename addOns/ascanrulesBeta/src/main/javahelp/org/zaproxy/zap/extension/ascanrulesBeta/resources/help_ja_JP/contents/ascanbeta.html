@@ -23,13 +23,13 @@ Cookieをテストし、省略してもレスポンスサイズに影響しな�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90027/">90027</a>
 
 <h2 id="id-40040">CORSヘッダー</h2>
-このルールはCORSヘッダーの識別とCORS設定ミスの検出を試みます。 すべてのオリジン、より脆弱なプロトコルのオリジン、またはnullオリジンを許可している場合、CORSは設定ミスと見なされます。<br>
+このルールはCORSヘッダーの識別とCORS設定ミスの検出を試みます。すべてのオリジン、より脆弱なプロトコルのオリジン、またはnullオリジンを許可している場合、CORSは設定ミスと見なされます。<br>
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CorsScanRule.java">CorsScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40040/">40040</a>
 
 <h2 id="id-20016">クロスドメイン設定ミス</h2>
-Webサーバーが悪意のあるサードパーティサービスなどからのクロスドメインアクセスを許可するように設定されているかどうかをチェックします。 現在、Adobeの crossdomain.xml とSilverLightの clientaccesspolicy.xml でワイルドカードをチェックします。 
+Webサーバーが悪意のあるサードパーティサービスなどからのクロスドメインアクセスを許可するように設定されているかどうかをチェックします。現在、Adobeの crossdomain.xml とSilverLightの clientaccesspolicy.xml でワイルドカードをチェックします。 
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CrossDomainScanRule.java">CrossDomainScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/20016/">20016</a>
@@ -38,9 +38,7 @@ Webサーバーが悪意のあるサードパーティサービスなどから�
 HTMLベースのメッセージでAnti-CSRFトークンの存在をスキャンします。 <br>
 Anti-CSRFトークンを含んでいないと思われるリクエストに対してアラートを発行します。<br>
 HIGH アラートしきい値では、スコープ内のメッセージのみをスキャンします。<br>
-バージョン2.5.0以降では、オプションの「ルール設定」パネルから <code>rules.csrf.ignorelist</code> パラメーターでカンマ区切りの識別子リストを指定できます。
-これらの識別子のいずれかに一致する name または ID を持つFORMは、Anti-CSRFトークンの欠落をスキャンする際に無視されます。
-この機能は、検索フォームなど、安全であることが確認されているFORMを無視する場合にのみ使用してください。
+バージョン2.5.0以降では、オプションの「ルール設定」パネルから <code>rules.csrf.ignorelist</code> パラメーターでカンマ区切りの識別子リストを指定できます。これらの識別子のいずれかに一致する name または ID を持つFORMは、Anti-CSRFトークンの欠落をスキャンする際に無視されます。この機能は、検索フォームなど、安全であることが確認されているFORMを無視する場合にのみ使用してください。
 <p>
 注: GETリクエストは LOW アラートしきい値でのみ評価されます。 
 <p>
@@ -55,36 +53,32 @@ Webアプリケーションが式言語 (EL) インジェクション攻撃の�
 
 <h2 id="id-10107">HttPoxy - Proxyヘッダーの誤用</h2>
 このアクティブスキャンルールは、サイトがリクエストで指定されたHTTP Proxyヘッダーを使用しているかどうかをチェックします。<br>
-ランダムに割り当てられた空きポートですべてのインターフェースをリッスンするHTTPプロキシを設定します。
-その後、利用可能な各IPアドレスとリッスンしているポートにHTTP Proxyヘッダーを設定した一連のリクエストをターゲットサーバーに送信します。
-新しいポートでリクエストが受信された場合、サーバーは脆弱である可能性が非常に高くなります。<br>
+ランダムに割り当てられた空きポートですべてのインターフェースをリッスンするHTTPプロキシを設定します。その後、利用可能な各IPアドレスとリッスンしているポートにHTTP Proxyヘッダーを設定した一連のリクエストをターゲットサーバーに送信します。新しいポートでリクエストが受信された場合、サーバーは脆弱である可能性が非常に高くなります。<br>
 <b>重要</b> - ZAPが実行されているコンピュータは任意のポートで着信リクエストを受け入れる必要があります。ファイアウォールが着信接続を妨げる場合、このルールは機能しません。 
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttPoxyScanRule.java">HttPoxyScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10107/">10107</a>
 
 <h2 id="id-20014">HTTPパラメーター汚染 (HPP)</h2>
-同じ名前の重複または多数のHTTPパラメーターを提供すると、アプリケーションやWebサイトが意図しない方法で値を解釈する可能性があります。 これらの効果を利用することで、悪意のある個人は入力検証をバイパスしたり、エラーをトリガーしたり、内部変数の値を変更したりできる可能性があります。 
-重複パラメーターの処理には、クライアント (ブラウザ) とサーバーの両方に影響を与える違いがあります。
+同じ名前の重複または多数のHTTPパラメーターを提供すると、アプリケーションやWebサイトが意図しない方法で値を解釈する可能性があります。これらの効果を利用することで、悪意のある個人は入力検証をバイパスしたり、エラーをトリガーしたり、内部変数の値を変更したりできる可能性があります。重複パラメーターの処理には、クライアント (ブラウザ) とサーバーの両方に影響を与える違いがあります。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpParameterPollutionScanRule.java">HttpParameterPollutionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/20014/">20014</a>
 
 <h2 id="id-90028">安全でないHTTPメソッド</h2>
-URLに対して有効になっている既知の安全でないHTTPメソッドを検出 (およびスキャン設定に応じて悪用) します。 デフォルトではPUT/PATCHを安全でないメソッドと見なしますが、レスポンスでJSONやXMLなどの構造化データを返す場合は許可します。
+URLに対して有効になっている既知の安全でないHTTPメソッドを検出 (およびスキャン設定に応じて悪用) します。デフォルトではPUT/PATCHを安全でないメソッドと見なしますが、レスポンスでJSONやXMLなどの構造化データを返す場合は許可します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/InsecureHttpMethodScanRule.java">InsecureHttpMethodScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/90028/">90028</a>
 
 <h2 id="id-30003">整数オーバーフローエラー</h2>
-コンパイル済みコードの整数オーバーフローによってWebサーバーをクラッシュさせる兆候を探します。  異常なレスポンスを引き起こすように設計された複数の整数文字列を送信します。
+コンパイル済みコードの整数オーバーフローによってWebサーバーをクラッシュさせる兆候を探します。異常なレスポンスを引き起こすように設計された複数の整数文字列を送信します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/IntegerOverflowScanRule.java">IntegerOverflowScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/30003/">30003</a>
 
 <h2 id="id-40033">NoSQL インジェクション - MongoDB</h2>
-このルールは、MongoDB固有のNoSQLインジェクション脆弱性の特定を試みます。 真偽値ベース、エラーベース、認証バイパスなど、さまざまなタイプの攻撃を試行します。 
-時間ベースの攻撃は含まれません。 また、スキャンがJSONパラメーターバリアントを含むように設定されている場合、JSONパラメーター固有のペイロードも試行します。
+このルールは、MongoDB固有のNoSQLインジェクション脆弱性の特定を試みます。真偽値ベース、エラーベース、認証バイパスなど、さまざまなタイプの攻撃を試行します。時間ベースの攻撃は含まれません。また、スキャンがJSONパラメーターバリアントを含むように設定されている場合、JSONパラメーター固有のペイロードも試行します。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>
@@ -114,14 +108,13 @@ URLに対して有効になっている既知の安全でないHTTPメソッド�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40025/">40025</a>
 
 <h2 id="id-10051">相対パス混乱</h2>
-Webサーバーが、URLの正しい「相対パス」について混乱を招く可能性のある方法で、曖昧なURLに対するレスポンスを提供するように設定されているかどうかをテストします。 
-レスポンス内でリソース (CSS、画像など) が絶対URLではなく相対URLで参照されている場合、攻撃者はWebブラウザを騙して「クロスコンテンツ」レスポンスを寛容に解析させる可能性があります (フレーミングなどの技術を使用)。 これにより、WebブラウザがHTMLをCSS (または他のコンテンツタイプ) として誤って解釈し、XSS脆弱性につながる可能性があります。
+Webサーバーが、URLの正しい「相対パス」について混乱を招く可能性のある方法で、曖昧なURLに対するレスポンスを提供するように設定されているかどうかをテストします。レスポンス内でリソース (CSS、画像など) が絶対URLではなく相対URLで参照されている場合、攻撃者はWebブラウザを騙して「クロスコンテンツ」レスポンスを寛容に解析させる可能性があります (フレーミングなどの技術を使用)。これにより、WebブラウザがHTMLをCSS (または他のコンテンツタイプ) として誤って解釈し、XSS脆弱性につながる可能性があります。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/RelativePathConfusionScanRule.java">RelativePathConfusionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/10051/">10051</a>
 
 <h2 id="id-40013">セッション固定</h2>
-セッション固定が可能である可能性があります。 この問題がログインURL（ユーザーがアプリケーションに対して自身を認証する場所）で発生する場合、攻撃者は固定されたセッションIDとともにURLを被害者に提供し、後でその与えられたセッションIDを使用して被害者のIDを引き受けることができます。 この問題が非ログインページで発生する場合、URLと固定されたセッションIDは、攻撃者が認証されていないユーザーのアクションを追跡するためにのみ使用される可能性があります。 脆弱性がURL (GET) パラメーターではなくCookieフィールドまたはフォームフィールド (POSTパラメーター) で発生する場合、脆弱性を悪用できるようにするには、被害者のブラウザでCookieフィールドを設定するために他の脆弱性も必要になる可能性があります。
+セッション固定が可能である可能性があります。この問題がログインURL（ユーザーがアプリケーションに対して自身を認証する場所）で発生する場合、攻撃者は固定されたセッションIDとともにURLを被害者に提供し、後でその与えられたセッションIDを使用して被害者のIDを引き受けることができます。この問題が非ログインページで発生する場合、URLと固定されたセッションIDは、攻撃者が認証されていないユーザーのアクションを追跡するためにのみ使用される可能性があります。脆弱性がURL (GET) パラメーターではなくCookieフィールドまたはフォームフィールド (POSTパラメーター) で発生する場合、脆弱性を悪用できるようにするには、被害者のブラウザでCookieフィールドを設定するために他の脆弱性も必要になる可能性があります。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SessionFixationScanRule.java">SessionFixationScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40013/">40013</a>
@@ -134,8 +127,7 @@ LOW アラートしきい値では、潜在的なコードを識別するため�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/42/">42</a>
 
 <h2 id="id-43">ソースコード漏洩 - ファイルインクルージョン</h2>
-ローカルファイルインクルージョン技術を使用して、Webサーバー上のソースコードを含むファイルをスキャンします。
-クライアントまたはサーバーエラーのレスポンスステータスコードが元々返されたメッセージはスキップされます。
+ローカルファイルインクルージョン技術を使用して、Webサーバー上のソースコードを含むファイルをスキャンします。クライアントまたはサーバーエラーのレスポンスステータスコードが元々返されたメッセージはスキップされます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureFileInclusionScanRule.java">SourceCodeDisclosureFileInclusionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/43/">43</a>
@@ -155,8 +147,7 @@ Gitソースコードリポジトリのメタデータを使用して、Webサ�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40046/">40046</a>
 
 <h2 id="id-40047">Text4shell (CVE-2022-42889)</h2>
-このルールはText4shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2022-42889">CVE-2022-42889</a>) 脆弱性の発見を試みます。
-アラートオブバンドペイロードを生成し、DNS相互作用を検証するために、OASTアドオンに依存しています。
+このルールはText4shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2022-42889">CVE-2022-42889</a>) 脆弱性の発見を試みます。アラートオブバンドペイロードを生成し、DNS相互作用を検証するために、OASTアドオンに依存しています。
 <p>
 参照: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
@@ -164,8 +155,7 @@ Gitソースコードリポジトリのメタデータを使用して、Webサ�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40047/">40047</a>
 
 <h2 id="id-40023">ユーザー名列挙</h2>
-有効なユーザー名と無効なユーザー名が提供された場合のHTTPレスポンスの違いに基づいて、ユーザー名を列挙できる可能性があります。 これにより、システムに対するパスワードブルートフォース攻撃の成功確率が大幅に向上します。 ZAPの「攻撃強度」オプションを上げることで、誤検出を最小限に抑えられる場合があります。  実際に脆弱性であるかどうかを確認するには、「その他の情報」フィールドを手動で確認してください。
- このルールは、フォームベース認証を使用するコンテキストが定義されていない場合はスキップされ、コンテキストのログインURLとして識別されたURLに対してのみ実行されます。
+有効なユーザー名と無効なユーザー名が提供された場合のHTTPレスポンスの違いに基づいて、ユーザー名を列挙できる可能性があります。これにより、システムに対するパスワードブルートフォース攻撃の成功確率が大幅に向上します。 ZAPの「攻撃強度」オプションを上げることで、誤検出を最小限に抑えられる場合があります。実際に脆弱性であるかどうかを確認するには、「その他の情報」フィールドを手動で確認してください。このルールは、フォームベース認証を使用するコンテキストが定義されていない場合はスキップされ、コンテキストのログインURLとして識別されたURLに対してのみ実行されます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/UsernameEnumerationScanRule.java">UsernameEnumerationScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40023/">40023</a>.

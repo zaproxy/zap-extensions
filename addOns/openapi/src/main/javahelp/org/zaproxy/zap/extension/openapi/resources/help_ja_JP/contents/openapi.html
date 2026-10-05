@@ -44,7 +44,7 @@ Note that redirects are followed when importing, so this is a soft limit and the
 <h3>ターゲットURLの形式</h3>
 ターゲットURLの形式は次のとおりです：<br>
 <code>scheme://authority/path</code><br>
-すべてのURIコンポーネントはオプションです。 注: 通常すべてのURIコンポーネントはオプションです。ただし、ローカルファイルからインポートする場合で、定義にサーバーやスキームの指定がないときは、scheme と authority の指定が必須になります。<br>
+すべてのURIコンポーネントはオプションです。注: 通常すべてのURIコンポーネントはオプションです。ただし、ローカルファイルからインポートする場合で、定義にサーバーやスキームの指定がないときは、scheme と authority の指定が必須になります。<br>
 以下は上書き例です：
 <ul>
 <li>authority と path を上書き: <code>localhost/api/</code></li>
@@ -65,7 +65,7 @@ The optional <code>maxMessages</code> parameter limits the number of messages im
 The definitions will be imported synchronously and any warnings will be returned.
 
 <h2>データ駆動型ノード</h2>
-OpenAPI定義にパスパラメーターが含まれており、インポート時にコンテキストが指定されている場合、アドオンは自動的にデータ駆動ノードを生成します。 コンテキストが指定されていない場合、データ駆動型ノードは生成されません。
+OpenAPI定義にパスパラメーターが含まれており、インポート時にコンテキストが指定されている場合、アドオンは自動的にデータ駆動ノードを生成します。コンテキストが指定されていない場合、データ駆動型ノードは生成されません。
 
 例えば、以下のOpenAPI定義は少なくとも1つのデータ駆動ノードを生成します。 
 

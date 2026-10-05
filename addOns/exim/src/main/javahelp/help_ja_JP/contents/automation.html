@@ -21,11 +21,10 @@
       sendRequests:                    # Bool: If true and type is har, send the requests instead of importing recorded responses, default: false
       maxMessages:                     # Int: Maximum number of messages to import (har), default: 0, import all messages
 </pre>
-<code>sendRequests</code> が true の場合、リダイレクトが追跡されるため、<code>maxMessages</code> はあくまで目安の制限値となります。指定された値よりも多くの HTTP リクエストが行われる可能性があります。 このモードは、リクエストの送信時 (およびその後のリダイレクト時) に適用されます。
+<code>sendRequests</code> が true の場合、リダイレクトが追跡されるため、<code>maxMessages</code> はあくまで目安の制限値となります。指定された値よりも多くの HTTP リクエストが行われる可能性があります。このモードは、リクエストの送信時 (およびその後のリダイレクト時) に適用されます。
 
 <H2>ジョブ: export</H2>
-エクスポートジョブを使用すると、メッセージをHAR形式またはURLとしてもエクスポートできるほか、<a href="sitestreeformat.html">サイトツリー形式</a>でサイトツリーをエクスポートできます。
-サポートされているソースは次のとおりです：
+エクスポートジョブを使用すると、メッセージをHAR形式またはURLとしてもエクスポートできるほか、<a href="sitestreeformat.html">サイトツリー形式</a>でサイトツリーをエクスポートできます。サポートされているソースは次のとおりです：
 <ul>
 <li>all: ZAPによって生成されたものを含むすべてのメッセージ。'har' および 'url' をサポート
 <li>history: 手動でまたはプロキシ経由で取得されたメッセージ。'har' および 'url' をサポート
@@ -34,15 +33,14 @@
 <pre>
   - type: export            # データをファイルにエクスポートします
       parameters:
-        context:            # 文字列: エクスポート元のコンテキストの名前。 デフォルト: 最初のコンテキスト
-        type:               # 文字列: 'har'、'url'、'yaml'のいずれか。 デフォルト: 'har'
-        source:             # 文字列: 'history'、'sitestree'、'all' のいずれか。 デフォルト: 'history'
+        context:            # 文字列: エクスポート元のコンテキストの名前。デフォルト: 最初のコンテキスト
+        type:               # 文字列: 'har'、'url'、'yaml'のいずれか。デフォルト: 'har'
+        source:             # 文字列: 'history'、'sitestree'、'all' のいずれか。デフォルト: 'history'
         fileName:           # 文字列: ファイルの名前/パス
 </pre>
 
 <H2>ジョブ: prune</H2>
-prune ジョブを使用すると、ファイルからのデータを使用してサイトツリーからノードを剪定 (削除) できます。
-ファイルは<a href="sitestreeformat.html">サイトツリー形式</a>を使用する必要があります。
+prune ジョブを使用すると、ファイルからのデータを使用してサイトツリーからノードを剪定 (削除) できます。ファイルは<a href="sitestreeformat.html">サイトツリー形式</a>を使用する必要があります。
 <pre>
   - type: prune           # ファイルからのサイトツリーデータ (YAML) を使用して、サイトツリーからノードを剪定します
     parameters:

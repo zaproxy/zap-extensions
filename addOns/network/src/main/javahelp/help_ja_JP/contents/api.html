@@ -54,10 +54,10 @@
 		<li>
 			addRateLimitRule (description* enabled* matchRegex matchString requestsPerSecond* groupBy*): レート制限ルールを追加します。
 			<ul>
-				<li>description: ルールを識別するための説明。 各ルールには一意の説明が必要です。</li>
+				<li>description: ルールを識別するための説明。各ルールには一意の説明が必要です。</li>
 				<li>enabled: 有効状態 (true または false)</li>
 				<li>matchRegex: matchString が正規表現かプレーンな文字列かを決定します: trueまたはfalse。</li>
-				<li>matchString: プレーンな文字列マッチはDNS規約に基づいて処理されます。 文字列が1つまたは2つのコンポーネントを持つ場合。 matchRegex が true の場合、これは正規表現です。</li>
+				<li>matchString: プレーンな文字列マッチはDNS規約に基づいて処理されます。文字列が1つまたは2つのコンポーネントを持つ場合。 matchRegex が true の場合、これは正規表現です。</li>
 				<li>requestsPerSecond: 1秒あたりの最大リクエスト数</li>
 				<li>groupBy: レート制限を適用する際のホストのグループ化方法: rule または host</li>
 			</ul>
@@ -121,7 +121,7 @@
 		<li>
 			setDnsTtlSuccessfulQueries (ttl*): 成功したDNSクエリのTTLを設定します。
 			<ul>
-				<li>ttl: TTL (秒) 負の数の場合は永続的にキャッシュします。 0の場合はキャッシュを無効にします。 正の数の場合は成功したDNSクエリがキャッシュされる秒数。</li>
+				<li>ttl: TTL (秒)負の数の場合は永続的にキャッシュします。 0の場合はキャッシュを無効にします。正の数の場合は成功したDNSクエリがキャッシュされる秒数。</li>
 			</ul>
 		</li>
 		<li>
@@ -168,13 +168,13 @@
 			</ul>
 		</li>
 		<li>
-			setRootCaCertValidity (validity*): ルートCA証明書の有効期間を設定します。 新しいルートCA証明書を生成する際に使用されます。
+			setRootCaCertValidity (validity*): ルートCA証明書の有効期間を設定します。新しいルートCA証明書を生成する際に使用されます。
 			<ul>
 				<li>validity: 生成されるルートCA証明書が有効となる日数</li>
 			</ul>
 		</li>
 		<li>
-			setServerCertValidity (validity*): サーバー証明書の有効期間を設定します。 サーバー証明書を生成する際に使用されます。
+			setServerCertValidity (validity*): サーバー証明書の有効期間を設定します。サーバー証明書を生成する際に使用されます。
 			<ul>
 				<li>validity: 生成されるサーバー証明書が有効となる日数</li>
 			</ul>
@@ -221,8 +221,8 @@
 		<li>getLocalServers: ローカルサーバー/プロキシを取得します。</li>
 		<li>getPassThroughs: ローカルプロキシを通過する権限を取得します。</li>
 		<li>getRateLimitRules: レート制限ルールを取得します。</li>
-		<li>getRootCaCertValidity: ルートCA証明書の有効期間を日数で取得します。 新しいルートCA証明書を生成する際に使用されます。</li>
-		<li>getServerCertValidity: サーバー証明書の有効期間を日数で取得します。 サーバー証明書を生成する際に使用されます。</li>
+		<li>getRootCaCertValidity: ルートCA証明書の有効期間を日数で取得します。新しいルートCA証明書を生成する際に使用されます。</li>
+		<li>getServerCertValidity: サーバー証明書の有効期間を日数で取得します。サーバー証明書を生成する際に使用されます。</li>
 		<li>getSocksProxy: SOCKSプロキシを取得します。</li>
 		<li>isHttpProxyAuthEnabled: HTTPプロキシ認証が有効かどうかを返します。</li>
 		<li>isHttpProxyEnabled: HTTPプロキシが有効かどうかを返します。</li>
@@ -235,7 +235,7 @@
 		<li>
 			proxy.pac: メインプロキシを経由してプロキシするPACファイルを提供します。
 		</li>
-		<li>rootCaCert: サーバー証明書の発行に使用されるルートCA証明書を取得します。 クライアントアプリケーション(ブラウザなど)へのインポートに適しています。</li>
+		<li>rootCaCert: サーバー証明書の発行に使用されるルートCA証明書を取得します。クライアントアプリケーション(ブラウザなど)へのインポートに適しています。</li>
 		<li>
 			setProxy (proxy*): HTTPプロキシ設定を構成します。
 			<ul>

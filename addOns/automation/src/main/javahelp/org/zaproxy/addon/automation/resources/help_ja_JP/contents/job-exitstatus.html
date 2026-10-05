@@ -8,14 +8,11 @@
 <BODY>
 <H1>自動化フレームワーク - exitStatus ジョブ</H1>
 
-このジョブは、スキャン結果に基づいて<a href="automation.html#exit-codes">ZAPの終了コード</a>を設定します。
-また、どの終了値を使用するかを選択できます。
-通常、これはプランの最後のジョブとして設定する必要があります。
+このジョブは、スキャン結果に基づいて<a href="automation.html#exit-codes">ZAPの終了コード</a>を設定します。また、どの終了値を使用するかを選択できます。通常、これはプランの最後のジョブとして設定する必要があります。
 <p>
 warnLevel または errorLevel が設定されている場合、このジョブは、そのリスクレベル以上のアラートが1つでも発生した場合に警告またはエラーを報告します。
 <p>
-デフォルトでは、ZAPが <code>-cmd</code> および <code>-autorun</code> オプションで実行された場合、エラーがあれば 1 で、警告があれば 2 で終了し、すべて正常な場合は 0 で終了します。
-これらの値は、<code>*ExitValue</code> オプションで上書きできます。 <code>*ExitValues</code>は、warn/errorLevel と併用することも、それらとは完全に独立して使用することもできます。
+デフォルトでは、ZAPが <code>-cmd</code> および <code>-autorun</code> オプションで実行された場合、エラーがあれば 1 で、警告があれば 2 で終了し、すべて正常な場合は 0 で終了します。これらの値は、<code>*ExitValue</code> オプションで上書きできます。 <code>*ExitValues</code>は、warn/errorLevel と併用することも、それらとは完全に独立して使用することもできます。
 
 <H2>YAML</H2>
 
