@@ -31,7 +31,7 @@ import org.zaproxy.addon.dev.TestProxyServer;
  */
 public class JsonMultipleCookiesDir extends TestAuthDirectory {
 
-    private Map<String, String> tempTokens = new HashMap<>();
+    private Map<String, String> tempTokens = state(new HashMap<>());
 
     public JsonMultipleCookiesDir(TestProxyServer server, String name) {
         super(server, name);
