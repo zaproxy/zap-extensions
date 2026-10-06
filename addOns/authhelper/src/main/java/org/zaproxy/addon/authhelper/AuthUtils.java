@@ -1591,6 +1591,46 @@ public class AuthUtils {
     }
 
     /**
+     * If the context's session management is still set to autodetect, replaces it with a concrete
+     * Header Based session management method using the given header name/value template. Intended
+     * for authentication methods (e.g. OAuth2) that already know, deterministically, what the
+     * session token looks like, and so don't need to rely on the traffic-based autodetection that
+     * {@link SessionDetectionScanRule} performs for methods that don't. A no-op if session
+     * management has already been resolved to something concrete.
+     */
+    public static void resolveAutoDetectSessionManagement(
+            Context context, String headerName, String headerValueTemplate) {
+        if (!(context.getSessionManagementMethod().getType()
+                instanceof AutoDetectSessionManagementMethodType)) {
+            return;
+        }
+        HeaderBasedSessionManagementMethodType type = new HeaderBasedSessionManagementMethodType();
+        HeaderBasedSessionManagementMethod method =
+                type.createSessionManagementMethod(context.getId());
+        method.setHeaderConfigs(List.of(new Pair<>(headerName, headerValueTemplate)));
+        context.setSessionManagementMethod(method);
+    }
+
+    /**
+     * If the given authentication method's checking strategy is still autodetect, resolves it to
+     * response based checking using the given logged-in/logged-out indicator patterns. Intended for
+     * authentication methods (e.g. OAuth2) that already know, deterministically, what a
+     * successful/failed response looks like, and so don't need {@link #checkLoginLinkVerification}
+     * or the differential probing performed by {@link VerificationDetectionProcessor}, neither of
+     * which apply to methods with no navigable HTML. A no-op if already resolved to something
+     * concrete.
+     */
+    public static void resolveAutoDetectVerification(
+            AuthenticationMethod authMethod, String loggedInPattern, String loggedOutPattern) {
+        if (authMethod.getAuthCheckingStrategy() != AuthCheckingStrategy.AUTO_DETECT) {
+            return;
+        }
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.EACH_RESP);
+        authMethod.setLoggedInIndicatorPattern(loggedInPattern);
+        authMethod.setLoggedOutIndicatorPattern(loggedOutPattern);
+    }
+
+    /**
      * If the auth checking strategy is set to auto-detect then this method will try to find a
      * suitable verification URL. This works best with more traditional web apps where a login link
      * is returned in HTML. The method first tries the URL without a path before falling back to the
