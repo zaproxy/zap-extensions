@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Ensure the Client Spider stops when the maximum duration is exceeded when no new nodes/components are found (Related to Issue 9471).
+
 ## [0.32.0] - 2026-10-02
 ### Added
 - Stand in for the AJAX Spider's `spiderAjax` automation job and `ajaxSpider` API, using the Client Spider, when the AJAX Spider add-on is not installed.
