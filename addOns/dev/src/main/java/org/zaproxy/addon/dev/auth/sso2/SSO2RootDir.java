@@ -49,8 +49,8 @@ import org.zaproxy.addon.dev.TestProxyServer;
  */
 public class SSO2RootDir extends TestAuthDirectory {
 
-    private Set<String> loginTokens = new HashSet<>();
-    private Set<String> apiTokens = new HashSet<>();
+    private Set<String> loginTokens = state(new HashSet<>());
+    private Set<String> apiTokens = state(new HashSet<>());
 
     private static final Logger LOGGER = LogManager.getLogger(SSO2RootDir.class);
 

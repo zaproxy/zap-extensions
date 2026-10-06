@@ -30,47 +30,27 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class TestDirectory implements HttpMessageHandler {
+public class TestDirectory extends TestNode {
 
     private static final Logger LOGGER = LogManager.getLogger(TestDirectory.class);
 
     public static final String INDEX_PAGE = "index.html";
 
-    private String name;
-    private TestProxyServer server;
-    private TestDirectory parent;
     private Map<String, TestDirectory> subDirs = new HashMap<>();
     private Map<String, TestPage> pages = new HashMap<>();
 
     public TestDirectory(TestProxyServer server, String name) {
-        this.server = server;
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public TestProxyServer getServer() {
-        return this.server;
-    }
-
-    public TestDirectory getParent() {
-        return parent;
-    }
-
-    public void setParent(TestDirectory parent) {
-        this.parent = parent;
+        super(server, name);
     }
 
     public String getHierarchicName() {
+        TestDirectory parent = getParent();
         if (parent == null) {
-            return name;
+            return getName();
         }
-        return parent.getHierarchicName() + "/" + name;
+        return parent.getHierarchicName() + "/" + getName();
     }
 
     public String getPageName(HttpMessage msg) {
@@ -102,9 +82,9 @@ public class TestDirectory implements HttpMessageHandler {
                 return;
             }
 
-            String body = server.getTextFile(this, name);
+            String body = getServer().getTextFile(this, name);
             if (body == null && isIndex) {
-                body = server.getTextFile(name);
+                body = getServer().getTextFile(name);
             }
 
             if (body == null) {
@@ -114,7 +94,7 @@ public class TestDirectory implements HttpMessageHandler {
                     return;
                 }
                 LOGGER.debug("Failed to find tutorial file {}", name);
-                body = server.getTextFile("404.html");
+                body = getServer().getTextFile("404.html");
                 msg.setResponseBody(body);
                 msg.setResponseHeader(
                         TestProxyServer.getDefaultResponseHeader(
@@ -187,6 +167,18 @@ public class TestDirectory implements HttpMessageHandler {
         } catch (HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Resets the state of the directory, as well as that of its sub directories and pages.
+     *
+     * @see TestNode#reset()
+     */
+    @Override
+    public void reset() {
+        super.reset();
+        subDirs.values().forEach(TestDirectory::reset);
+        pages.values().forEach(TestPage::reset);
     }
 
     public void addDirectory(TestDirectory td) {

@@ -34,7 +34,8 @@ public class AltDomainListener implements HttpSenderListener {
 
     private Map<String, HttpSenderListener> domainMap = new HashMap<>();
 
-    private static final String ZAP_SSO_HEADER = "zap-dev-sso";
+    /** The request header with the URL originally requested, as requests are redirected. */
+    static final String ZAP_SSO_HEADER = "zap-dev-sso";
 
     private static final Logger LOGGER = LogManager.getLogger(AltDomainListener.class);
 
@@ -62,7 +63,8 @@ public class AltDomainListener implements HttpSenderListener {
         try {
             String url = msg.getRequestHeader().getHeader(ZAP_SSO_HEADER);
             if (url != null) {
-                URI uri = new URI(url, false);
+                // The header has the escaped URL.
+                URI uri = new URI(url, true);
                 String host = SessionStructure.getHostName(uri);
                 HttpSenderListener listener = domainMap.get(host);
                 if (listener != null) {

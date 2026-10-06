@@ -43,7 +43,7 @@ public class SequencePage extends TestPage {
     private static int numberOfFields = 3;
     private static boolean checkSequence = true;
 
-    private Map<UUID, Integer> seqMap = new HashMap<>();
+    private Map<UUID, Integer> seqMap = state(new HashMap<>());
 
     public SequencePage(TestProxyServer server) {
         super(server, "seq");

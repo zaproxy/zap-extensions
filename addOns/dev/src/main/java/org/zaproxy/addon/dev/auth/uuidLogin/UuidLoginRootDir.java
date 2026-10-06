@@ -51,13 +51,13 @@ import org.zaproxy.addon.dev.TestProxyServer;
  */
 public class UuidLoginRootDir extends TestAuthDirectory {
 
-    private Set<String> tokens = new HashSet<>();
+    private Set<String> tokens = state(new HashSet<>());
 
     private static final Logger LOGGER = LogManager.getLogger(UuidLoginRootDir.class);
 
     private static final List<String> TEST_PAGES = List.of("test1", "test2", "test3", "test4");
 
-    private Set<String> loginPages = new HashSet<>();
+    private Set<String> loginPages = state(new HashSet<>());
 
     public UuidLoginRootDir(TestProxyServer server, String name) {
         super(server, name);
