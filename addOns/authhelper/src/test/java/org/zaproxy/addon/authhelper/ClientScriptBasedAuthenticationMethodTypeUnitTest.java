@@ -45,6 +45,7 @@ import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.I18N;
@@ -150,9 +151,17 @@ class ClientScriptBasedAuthenticationMethodTypeUnitTest {
                 spy(new ClientScriptBasedAuthenticationMethodType().createAuthenticationMethod(0));
         doReturn(script).when(method).getZestScript();
 
+        ScriptWrapper scriptWrapper = mock();
+        given(scriptWrapper.getContents()).willReturn("script contents");
+        method.setScriptWrapper(scriptWrapper);
+
+        User user = mock();
+        Context context = mock();
+        given(user.getContext()).willReturn(context);
+
         try (MockedStatic<AuthenticationHelper> authMock = mockStatic()) {
             // When
-            boolean result = method.authenticate(mock(), mock());
+            boolean result = method.authenticate(mock(), user);
 
             // Then
             assertThat(result, is(false));
