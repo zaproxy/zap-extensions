@@ -40,11 +40,24 @@ public class ScriptsWebSocketPassiveScanner implements WebSocketPassiveScanner {
     public static final String PLUGIN_NAME = "WS.ScriptPassiveScan";
     public static final int PLUGIN_ID = 110000;
 
+    private final ExtensionScript extensionScript;
     private final ScriptsCache<WebSocketPassiveScript> scripts;
 
-    public ScriptsWebSocketPassiveScanner(ExtensionScript extensionScript) {
+    public ScriptsWebSocketPassiveScanner(
+            ExtensionScript extensionScript, WebSocketScriptSynchronizer scriptSynchronizer) {
+        this.extensionScript = extensionScript;
         InterfaceProvider<WebSocketPassiveScript> interfaceProvider =
                 (scriptWrapper, targetInterface) -> {
+                    // A script with its own successfully synchronized scan rule (see
+                    // WebSocketScriptSynchronizer) already runs through that individual rule;
+                    // running it again here would raise every alert twice. A script that declares
+                    // metadata but failed to synchronize (e.g. a clashing id) is NOT excluded, so
+                    // it still runs somewhere rather than being silently dropped. Checked here
+                    // (only re-evaluated when the cache detects the script changed) rather than in
+                    // scanMessage, which runs per message.
+                    if (scriptSynchronizer.isSynchronized(scriptWrapper)) {
+                        return null;
+                    }
                     WebSocketPassiveScript s =
                             extensionScript.getInterface(scriptWrapper, targetInterface);
                     if (s != null) {
