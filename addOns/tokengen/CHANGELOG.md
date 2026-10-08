@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [17] - 2026-10-08
 ### Changed
 - Maintenance changes.
 - Now depends on the params add-on (Issue 9210).
@@ -95,6 +95,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[17]: https://github.com/zaproxy/zap-extensions/releases/tokengen-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/tokengen-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/tokengen-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/tokengen-v14
