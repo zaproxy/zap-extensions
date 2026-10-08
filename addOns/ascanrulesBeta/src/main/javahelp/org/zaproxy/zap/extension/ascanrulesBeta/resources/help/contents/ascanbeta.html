@@ -17,6 +17,16 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10095/">10095</a>.
 
+<H2 id="id-40038">Bypassing 403</H2>
+Attempts to bypass a 403 response using alternate paths and request headers.
+The rule compares successful payload responses with successful responses from the site root and a random path in the same directory as the protected endpoint.
+Responses with identical bodies are ignored to avoid reporting public index pages or single-page application fallbacks as bypasses.
+The comparison uses exact response bodies, so dynamically changing fallback pages may still produce false positives.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ForbiddenBypassScanRule.java">ForbiddenBypassScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40038/">40038</a>.
+
 <H2 id="id-90027">Cookie Slack Detector</H2>
 Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid".
 <p>

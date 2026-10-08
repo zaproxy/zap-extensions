@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -89,10 +90,11 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
             String host = uri.getEscapedAuthority();
             String path = uri.getEscapedPath();
             String schema = uri.getScheme();
-            if (sendPathPayloads(path, host, schema, uri)) {
+            List<String> baselineBodies = getBaselineBodies(path, host, schema);
+            if (sendPathPayloads(path, host, schema, uri, baselineBodies)) {
                 return;
             }
-            if (sendHeaderPayloads(path, host, schema, uri)) {
+            if (sendHeaderPayloads(path, host, schema, uri, baselineBodies)) {
                 return;
             }
 
@@ -101,7 +103,35 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
         }
     }
 
-    private boolean sendPathPayloads(String path, String host, String schema, URI uri)
+    private List<String> getBaselineBodies(String path, String host, String schema) {
+        List<String> baselineBodies = new ArrayList<>(2);
+        String randomPath =
+                path.substring(0, path.lastIndexOf('/') + 1)
+                        + RandomStringUtils.secure().nextAlphanumeric(16);
+        for (String baselinePath : List.of("/", randomPath)) {
+            try {
+                HttpMessage baseline =
+                        new HttpMessage(new URI(schema + "://" + host + baselinePath, true));
+                baseline.getRequestHeader()
+                        .setVersion(getBaseMsg().getRequestHeader().getVersion());
+                sendAndReceive(baseline);
+                if (baseline.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+                    baselineBodies.add(baseline.getResponseBody().toString());
+                }
+            } catch (IOException e) {
+                LOGGER.debug("Failed to obtain baseline response for {}", baselinePath, e);
+            }
+        }
+        return baselineBodies;
+    }
+
+    private static boolean isBypassResponse(HttpMessage message, List<String> baselineBodies) {
+        return message.getResponseHeader().getStatusCode() == HttpStatusCode.OK
+                && !baselineBodies.contains(message.getResponseBody().toString());
+    }
+
+    private boolean sendPathPayloads(
+            String path, String host, String schema, URI uri, List<String> baselineBodies)
             throws IOException {
         String[] pathPayloads = {
             "/%2e" + path,
@@ -127,7 +157,7 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
                     .getRequestHeader()
                     .setVersion(getBaseMsg().getRequestHeader().getVersion());
             sendAndReceive(reqWithPayload);
-            if (reqWithPayload.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+            if (isBypassResponse(reqWithPayload, baselineBodies)) {
                 createAlert(uri.toString(), reqWithPayload, pathPayload).raise();
                 return true;
             }
@@ -135,7 +165,8 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
         return false;
     }
 
-    private boolean sendHeaderPayloads(String path, String host, String schema, URI uri)
+    private boolean sendHeaderPayloads(
+            String path, String host, String schema, URI uri, List<String> baselineBodies)
             throws IOException {
         String[] headerPayloads = {
             HttpFieldsNames.X_REWRITE_URL + ": " + path,
@@ -172,7 +203,7 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
             reqWithPayload.getRequestHeader().setHeader(headerPayload[0], headerPayload[1]);
             sendAndReceive(reqWithPayload);
 
-            if (reqWithPayload.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+            if (isBypassResponse(reqWithPayload, baselineBodies)) {
                 createAlert(uri.toString(), reqWithPayload, header).raise();
                 return true;
             }
