@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -32,6 +33,9 @@ import java.net.InetSocketAddress;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
@@ -370,6 +374,62 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
 
         // Then
         verify(clientMap).handleReportEvent(reportedEvent, localPort);
+    }
+
+    @Test
+    void shouldHandleCallBackWhileBrowserClosingHookIsRunning() throws Exception {
+        // Given
+        AtomicReference<String> response = new AtomicReference<>();
+        api.registerClientCallBack(new CallBackImp("test"));
+        api.registerClientCallBack(
+                new BrowserEventCallBackImp("closer") {
+                    @Override
+                    public void browserClosing(ClientCallBackUtils ccbu) {
+                        response.set(
+                                CompletableFuture.supplyAsync(this::callBack)
+                                        .orTimeout(5, TimeUnit.SECONDS)
+                                        .join());
+                    }
+
+                    private String callBack() {
+                        try {
+                            return api.handleCallBack(
+                                    getMsg(
+                                            "GET",
+                                            api.getCallbackUrl() + "/test",
+                                            new InetSocketAddress(9999)));
+                        } catch (Exception e) {
+                            throw new IllegalStateException(e);
+                        }
+                    }
+                });
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+        api.browserLaunched(ccbu);
+
+        // When
+        api.browserClosing(ccbu.getWebDriver());
+
+        // Then
+        assertThat(response.get(), is("Test1"));
+    }
+
+    @Test
+    void shouldAllowCallBackChangesWhileBrowserClosingHookIsRunning() {
+        // Given
+        CallBackImp added = new CallBackImp("added");
+        api.registerClientCallBack(
+                new BrowserEventCallBackImp("modifier") {
+                    @Override
+                    public void browserClosing(ClientCallBackUtils ccbu) {
+                        api.registerClientCallBack(added);
+                        api.unregisterClientCallBack(this);
+                    }
+                });
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+        api.browserLaunched(ccbu);
+
+        // When / Then
+        assertDoesNotThrow(() -> api.browserClosing(ccbu.getWebDriver()));
     }
 
     private static ClientCallBackUtils createClientCallBackUtils() {

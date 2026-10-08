@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -66,8 +67,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
 
     private String callbackUrl;
 
-    private Map<String, ClientCallBackImplementor> clientCallBacks =
-            Collections.synchronizedMap(new HashMap<>());
+    private Map<String, ClientCallBackImplementor> clientCallBacks = new ConcurrentHashMap<>();
 
     private Map<WebDriver, ClientCallBackUtils> wdMap =
             Collections.synchronizedMap(new HashMap<>());
