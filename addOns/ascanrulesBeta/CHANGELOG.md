@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [67] - 2026-10-08
 ### Changed
 - Dependency update.
 - Maintenance changes.
@@ -643,6 +643,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[67]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v67
 [66]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v66
 [65]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v65
 [64]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v64

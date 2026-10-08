@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.43.0] - 2026-10-08
 ### Added
 - OAuth2 Authentication method, supporting the `client_credentials` and `password` grant types.
 - `type` and `count` parameters to the `diagnostics` automation job, to retain only the last failed authentication attempt (`auth_on_failure`) or a rolling window of failures (`auth_failure_rolling`). With `auth_on_failure` only the error step is recorded, with just its screenshot.
@@ -416,6 +416,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.43.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.43.0
 [0.42.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.42.0
 [0.41.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.41.0
 [0.40.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.40.0

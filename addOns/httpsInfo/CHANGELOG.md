@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [17] - 2026-10-08
 ### Changed
 - Depend on newer version of Network add-on.
 - The HTTPS Configuration scan rule now skips the scan when an outbound proxy (HTTP or SOCKS) is configured.
@@ -86,6 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[17]: https://github.com/zaproxy/zap-extensions/releases/httpsInfo-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/httpsInfo-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/httpsInfo-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/httpsInfo-v14
