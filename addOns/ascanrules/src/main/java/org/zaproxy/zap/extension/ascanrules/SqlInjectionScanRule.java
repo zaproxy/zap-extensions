@@ -1228,9 +1228,11 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             String mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
 
             // if the results of the "OR 1=1" exceed the original query (unstripped, by more
-            // than a 20% size difference, say), we may be onto something.
-            // TODO: change the percentage difference threshold based on the alert threshold
-            if ((resBodyORTrueUnstripped.length() > (mResBodyNormalUnstripped.length() * 1.2))) {
+            // than a 40% size difference), we may be onto something.
+            // Raised threshold from 1.2x to 1.4x to reduce false positives on dynamic pages (#9289)
+            int normalLen = mResBodyNormalUnstripped.length();
+            int orTrueLen = resBodyORTrueUnstripped.length();
+            if (orTrueLen > (normalLen * 1.4)) {
                 LOGGER.debug(
                         "Check 2a, unstripped html output for OR TRUE condition [{}] produced sufficiently larger results than the original message",
                         sqlBooleanOrTrueValue);
