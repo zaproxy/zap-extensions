@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -2626,6 +2627,64 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                 equalTo("</p>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<p>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldNotReportXssWhenMutationRetryFails() throws NullPointerException, IOException {
+        // Given - like shouldReportXssInParagraphFilteredGtLt but without normalising full-width
+        // brackets, so the bracket mutation retry cannot succeed. Parentheses are stripped only
+        // once full-width brackets are sent so a failed bracket retry can trigger parenthesis
+        // mutation only when mutateAttack is not set on the retry performAttack call.
+        String test = "/shouldNotReportXssWhenMutationRetryFails/";
+        List<String> nameParams = new ArrayList<>();
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            nameParams.add(name);
+                            name = name.replace("<", "").replace(">", "");
+                            // Strip parentheses only after bracket mutation so parenthesis
+                            // mutation is not triggered before the bracket retry path
+                            if (name.contains("＜")) {
+                                name = name.replace("(", "").replace(")", "");
+                            }
+                            response =
+                                    getHtml(
+                                            "InputInParagraph.html",
+                                            new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.init(msg, this.parent);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+        assertThat(hasParenMutationAfterFailedBracketMutation(nameParams), is(false));
+    }
+
+    private static boolean hasParenMutationAfterFailedBracketMutation(List<String> nameParams) {
+        boolean seenBracketOnlyMutation = false;
+        for (String param : nameParams) {
+            if (param.contains("＜") && param.contains("alert(1)") && !param.contains("alert`1`")) {
+                seenBracketOnlyMutation = true;
+            } else if (seenBracketOnlyMutation
+                    && param.contains("＜")
+                    && param.contains("alert`1`")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Test
