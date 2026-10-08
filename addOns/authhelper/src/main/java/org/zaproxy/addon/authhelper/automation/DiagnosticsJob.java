@@ -30,6 +30,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.authhelper.AuthDiagnosticsPolicy;
+import org.zaproxy.addon.authhelper.AuthDiagnosticsPolicy.Mode;
 import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -38,6 +40,7 @@ import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.zap.model.Context;
 
 public class DiagnosticsJob extends AutomationJob {
 
@@ -84,7 +87,29 @@ public class DiagnosticsJob extends AutomationJob {
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         AutomationPlan plan = env.getPlan();
+        String contextName = env.getDefaultContext().getName();
         if (parameters.isEnabled()) {
+            if (parameters.getType() != null) {
+                AuthDiagnosticsPolicy policy = AuthDiagnosticsPolicy.getInstance();
+                if (policy.isActive(contextName)) {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "authhelper.automation.diagnostics.warn.alreadyenabled",
+                                    getName()));
+                    return;
+                }
+                if (!policy.configure(contextName, parameters.getType(), parameters.getCount())) {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "authhelper.automation.diagnostics.warn.unsupported",
+                                    getName()));
+                    return;
+                }
+                progress.info(
+                        Constant.messages.getString(
+                                "authhelper.automation.diagnostics.info.enabled", getName()));
+                return;
+            }
             if (recordings.containsKey(plan)) {
                 progress.warn(
                         Constant.messages.getString(
@@ -92,11 +117,11 @@ public class DiagnosticsJob extends AutomationJob {
                                 getName()));
                 return;
             }
-            startRecording(plan, env.getDefaultContext().getName());
+            startRecording(plan, contextName);
             progress.info(
                     Constant.messages.getString(
                             "authhelper.automation.diagnostics.info.enabled", getName()));
-        } else if (stopRecording(plan)) {
+        } else if (stopRecording(plan) || stopPolicy(contextName)) {
             progress.info(
                     Constant.messages.getString(
                             "authhelper.automation.diagnostics.info.disabled", getName()));
@@ -110,6 +135,21 @@ public class DiagnosticsJob extends AutomationJob {
     @Override
     public void planFinished() {
         stopRecording(getPlan());
+        // Always the default context, matching runJob() configuring the policy for it; if a
+        // context parameter is ever added, this needs to track the context the job configured.
+        Context defaultContext = getPlan().getEnv().getDefaultContext();
+        if (defaultContext != null) {
+            stopPolicy(defaultContext.getName());
+        }
+    }
+
+    private static boolean stopPolicy(String contextName) {
+        AuthDiagnosticsPolicy policy = AuthDiagnosticsPolicy.getInstance();
+        if (!policy.isActive(contextName)) {
+            return false;
+        }
+        policy.clear(contextName);
+        return true;
     }
 
     /**
@@ -229,5 +269,7 @@ public class DiagnosticsJob extends AutomationJob {
     @Setter
     public static class Parameters extends AutomationData {
         private boolean enabled;
+        private Mode type;
+        private int count = 5;
     }
 }

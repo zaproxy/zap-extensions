@@ -1,3 +1,5 @@
   - type: diagnostics                  # Enable or disable plan-level diagnostics recording
     parameters:
       enabled:                         # Bool: If true, start diagnostics recording, default: false
+      type:                            # String: omit for whole-plan recording, or auth_on_failure / auth_failure_rolling to retain only failed authentication attempts
+      count:                           # Int: number of failures to retain, only used by auth_failure_rolling, default: 5

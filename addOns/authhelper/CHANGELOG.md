@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - OAuth2 Authentication method, supporting the `client_credentials` and `password` grant types.
+- `type` and `count` parameters to the `diagnostics` automation job, to retain only the last failed authentication attempt (`auth_on_failure`) or a rolling window of failures (`auth_failure_rolling`). With `auth_on_failure` only the error step is recorded, with just its screenshot.
+
 ### Fixed
 - Notify authentication successes/failures for browser login and error paths in Browser and Client Script Based Authentication.
 - Do not fail the authentication attempt when not able to take a screenshot for diagnostics.

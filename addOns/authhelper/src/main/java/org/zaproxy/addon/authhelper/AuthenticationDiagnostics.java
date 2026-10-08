@@ -77,6 +77,8 @@ public class AuthenticationDiagnostics implements AutoCloseable {
     private static final List<MessageAccessedConsumer> messageAccessedConsumers =
             Collections.synchronizedList(new ArrayList<>());
 
+    private static volatile Retention retention;
+
     private static final String ELEMENT_SELECTOR_SCRIPT =
             """
 function isElementPathUnique(path, documentElement) {
@@ -194,6 +196,7 @@ return getSelector(arguments[0], document)
     private final HttpSenderListener messageAccessedListener;
 
     private final boolean enabled;
+    private final boolean failureOnly;
 
     private Diagnostic diagnostic;
     private HttpSenderListener listener;
@@ -212,7 +215,11 @@ return getSelector(arguments[0], document)
             String context,
             String user,
             String script) {
-        this.enabled = enabled;
+        Retention currentRetention = retention;
+        boolean retained = currentRetention != null && currentRetention.isActive(context);
+        this.enabled = enabled || retained;
+        boolean retainedOnly = !enabled && retained;
+        this.failureOnly = retainedOnly && !currentRetention.isDetailed(context);
 
         messageAccessedListener =
                 new HttpSenderListener() {
@@ -237,9 +244,11 @@ return getSelector(arguments[0], document)
                         return 0;
                     }
                 };
-        HttpSender.addListener(messageAccessedListener);
+        if (!retainedOnly) {
+            HttpSender.addListener(messageAccessedListener);
+        }
 
-        if (!enabled) {
+        if (!this.enabled) {
             return;
         }
 
@@ -248,6 +257,10 @@ return getSelector(arguments[0], document)
         diagnostic.setCreateTimestamp(Instant.now());
 
         createStep();
+
+        if (failureOnly) {
+            return;
+        }
 
         listener =
                 new HttpSenderListener() {
@@ -299,7 +312,7 @@ return getSelector(arguments[0], document)
     }
 
     public void insertDiagnostics(ZestScript zestScript) {
-        if (!enabled) {
+        if (!enabled || failureOnly) {
             return;
         }
 
@@ -351,10 +364,13 @@ return getSelector(arguments[0], document)
     }
 
     public void recordStep(WebDriver wd, String description, WebElement element) {
-        if (!enabled) {
+        if (!enabled || failureOnly) {
             return;
         }
+        recordStepImpl(wd, description, element);
+    }
 
+    private void recordStepImpl(WebDriver wd, String description, WebElement element) {
         try {
             Thread.sleep(150);
         } catch (InterruptedException e) {
@@ -378,8 +394,10 @@ return getSelector(arguments[0], document)
         }
 
         try {
-            recordElements(wd, element);
-            recordStorage(wd);
+            if (!failureOnly) {
+                recordElements(wd, element);
+                recordStorage(wd);
+            }
         } catch (WebDriverException e) {
             if (!(e.getCause() instanceof InterruptedException)) {
                 throw e;
@@ -556,9 +574,9 @@ return getSelector(arguments[0], document)
             String description =
                     Constant.messages.getString("authhelper.auth.method.diags.steps.error");
             if (webDriver == null) {
-                recordStep(description);
+                recordStepImpl(description);
             } else {
-                recordStep(webDriver, description);
+                recordStepImpl(webDriver, description, null);
             }
         } catch (Exception e) {
             LOGGER.warn("An error occurred while recording the error step:", e);
@@ -574,14 +592,18 @@ return getSelector(arguments[0], document)
     }
 
     public void recordStep(String description) {
-        if (!enabled) {
+        if (!enabled || failureOnly) {
             return;
         }
+        recordStepImpl(description);
+    }
+
+    private void recordStepImpl(String description) {
         finishCurrentStep("", description);
     }
 
     public void recordStep(HttpMessage message, String description) {
-        if (!enabled) {
+        if (!enabled || failureOnly) {
             return;
         }
         addMessageToStep(message);
@@ -596,7 +618,9 @@ return getSelector(arguments[0], document)
             return;
         }
 
-        HttpSender.removeListener(listener);
+        if (listener != null) {
+            HttpSender.removeListener(listener);
+        }
 
         diagnosticDataProviders.forEach(
                 provider -> {
@@ -607,6 +631,22 @@ return getSelector(arguments[0], document)
                     }
                 });
 
+        Retention currentRetention = retention;
+        if (currentRetention != null && currentRetention.isActive(diagnostic.getContext())) {
+            currentRetention.defer(diagnostic);
+            return;
+        }
+
+        persist(diagnostic, interrupted);
+    }
+
+    /**
+     * Persists the given diagnostic, populating its identity on success.
+     *
+     * @param diagnostic the diagnostic to persist.
+     * @param interrupted whether the current thread was already found interrupted.
+     */
+    static void persist(Diagnostic diagnostic, boolean interrupted) {
         interrupted |= Thread.interrupted();
 
         PersistenceManager pm = TableJdo.getPmf().getPersistenceManager();
@@ -627,6 +667,28 @@ return getSelector(arguments[0], document)
             if (interrupted) {
                 Thread.currentThread().interrupt();
             }
+        }
+    }
+
+    /**
+     * Deletes the diagnostic with the given id, if it still exists.
+     *
+     * @param id the id of the diagnostic to delete.
+     */
+    public static void delete(int id) {
+        PersistenceManager pm = TableJdo.getPmf().getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+        try {
+            tx.begin();
+            pm.deletePersistent(pm.getObjectById(Diagnostic.class, id));
+            tx.commit();
+        } catch (Exception e) {
+            LOGGER.warn("Failed to delete diagnostic {}:", id, e);
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            pm.close();
         }
     }
 
@@ -720,6 +782,29 @@ return getSelector(arguments[0], document)
     public interface DiagnosticDataProvider {
 
         void addDiagnostics(Diagnostic diagnostic);
+    }
+
+    /**
+     * Sets the retention that takes over the persistence of diagnostics for the contexts it is
+     * active for.
+     *
+     * @param retention the retention, or {@code null} to always persist on {@link #close()}.
+     */
+    public static void setRetention(Retention retention) {
+        AuthenticationDiagnostics.retention = retention;
+    }
+
+    /** Decides what happens to a diagnostic when it is closed, instead of persisting it. */
+    public interface Retention {
+
+        /** Tells whether this retention applies to the given context. */
+        boolean isActive(String context);
+
+        /** Tells whether the retention keeps all the data of the steps, or just the essentials. */
+        boolean isDetailed(String context);
+
+        /** Takes ownership of the diagnostic, which is not persisted by {@link #close()}. */
+        void defer(Diagnostic diagnostic);
     }
 
     public interface FlushRunnable {
