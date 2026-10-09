@@ -57,8 +57,11 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.dev.auth.certAuth.CertAuthDir;
 import org.zaproxy.addon.dev.error.LoggedErrorsHandler;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -96,6 +99,7 @@ public class ExtensionDev extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         loggedErrorsHandler.hook(extensionHook);
+        extensionHook.addSessionListener(new ResetTestAppsOnSessionChange());
 
         extensionHook.addOptionsParamSet(this.getDevParam());
         extensionHook.addHttpSenderListener(altDomainListener);
@@ -296,5 +300,35 @@ public class ExtensionDev extends ExtensionAdaptor {
         return new JcaX509CertificateConverter()
                 .setProvider(BouncyCastleProvider.PROVIDER_NAME)
                 .getCertificate(builder.build(signer));
+    }
+
+    /**
+     * Resets the state of the test apps (for example the tokens they have issued) when ZAP's
+     * session changes, so that what happened in an earlier session, or plan, does not affect the
+     * next.
+     */
+    private class ResetTestAppsOnSessionChange implements SessionChangedListener {
+
+        @Override
+        public void sessionChanged(Session session) {
+            if (tutorialServer != null) {
+                tutorialServer.reset();
+            }
+        }
+
+        @Override
+        public void sessionAboutToChange(Session session) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void sessionScopeChanged(Session session) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void sessionModeChanged(Mode mode) {
+            // Nothing to do.
+        }
     }
 }

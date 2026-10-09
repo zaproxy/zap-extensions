@@ -27,11 +27,15 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.sf.json.JSON;
+import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.dev.api.openapi.simpleAuth.OpenApiSimpleAuthDir;
 import org.zaproxy.addon.dev.api.openapi.simpleUnauth.OpenApiSimpleUnauthDir;
 import org.zaproxy.addon.dev.auth.basicHttp.BasicHttpDir;
@@ -61,6 +65,7 @@ import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.network.HttpSenderListener;
 
 public class TestProxyServer {
@@ -68,6 +73,7 @@ public class TestProxyServer {
     public static final String STATUS_OK = "200 OK";
     public static final String STATUS_FORBIDDEN = "403 Forbidden";
     public static final String STATUS_NOT_FOUND = "404 Not Found";
+    public static final String STATUS_INTERNAL_SERVER_ERROR = "500 Internal Server Error";
     public static final String STATUS_REDIRECT = "302 Found";
 
     public static final String CONTENT_TYPE_HTML_UTF8 = "text/html; charset=UTF-8";
@@ -79,6 +85,8 @@ public class TestProxyServer {
     private Server server;
 
     private TestDirectory root;
+
+    private final Map<String, DomainHandler> domainHandlers = new ConcurrentHashMap<>();
 
     public TestProxyServer(ExtensionDev extension, ExtensionNetwork extensionNetwork) {
         this.extension = extension;
@@ -147,6 +155,14 @@ public class TestProxyServer {
         root.addDirectory(htmlDir);
         root.addDirectory(rndDir);
         root.addDirectory(seqDir);
+    }
+
+    /**
+     * Resets the state of all of the test directories and pages, for example the tokens that have
+     * been issued, called when ZAP's session changes.
+     */
+    public void reset() {
+        root.reset();
     }
 
     private Server getServer() {
@@ -265,11 +281,7 @@ public class TestProxyServer {
 
             if (body == null) {
                 LOGGER.debug("Failed to find file {}", name);
-                body = getTextFile(root, "404.html");
-                msg.setResponseBody(body);
-                msg.setResponseHeader(
-                        getDefaultResponseHeader(
-                                STATUS_NOT_FOUND, "text/html", msg.getResponseBody().length()));
+                setNotFound(msg);
             } else {
                 boolean allowCache = false;
                 msg.setResponseBody(body);
@@ -315,6 +327,89 @@ public class TestProxyServer {
         this.extension.addDomainListener(domain, listener);
     }
 
+    /**
+     * Adds a handler for a fake domain. Requests to the domain are redirected to this server, which
+     * passes them to the handler, so the responses are real responses from the server.
+     *
+     * @param domain the domain, with the scheme, for example {@code https://api.oauth2.zap}.
+     * @param handler the handler of the requests to the domain.
+     */
+    public void addDomainHandler(String domain, DomainHandler handler) {
+        domainHandlers.put(domain, handler);
+        addDomainListener(
+                domain,
+                new DevHttpSenderListener(this) {
+                    @Override
+                    public void onHttpResponseReceive(
+                            HttpMessage msg, int initiator, HttpSender sender) {
+                        // Nothing to do, the response is from the handler.
+                    }
+                });
+    }
+
+    /**
+     * Passes a request that was redirected to this server to the handler of its original domain.
+     *
+     * <p>The message is changed to be as it was sent to the original domain, it is not the message
+     * ZAP is sending, which is restored when the response is received.
+     *
+     * @param msg the request received.
+     * @return {@code true} if the request was for a domain with a handler, in which case the
+     *     response was set, {@code false} otherwise.
+     */
+    boolean handleDomainRequest(HttpMessage msg) {
+        String originalUrl = msg.getRequestHeader().getHeader(AltDomainListener.ZAP_SSO_HEADER);
+        if (originalUrl == null) {
+            return false;
+        }
+        try {
+            // The header has the escaped URL.
+            URI uri = new URI(originalUrl, true);
+            String domain = SessionStructure.getHostName(uri);
+            DomainHandler handler = domainHandlers.get(domain);
+            if (handler == null) {
+                return false;
+            }
+            msg.getRequestHeader().setURI(uri);
+            // https:// - the 8 chrs we're stripping off
+            msg.getRequestHeader().setHeader("host", domain.substring(8));
+            LOGGER.debug("Passing the request to {} to the handler of the domain", originalUrl);
+            try {
+                handler.handle(msg);
+                if (msg.getResponseHeader().isEmpty()) {
+                    // Not one of the handler's pages.
+                    setNotFound(msg);
+                }
+            } catch (Exception e) {
+                LOGGER.error(
+                        "Failed to handle the request to {}: {}", originalUrl, e.getMessage(), e);
+                setServerError(msg);
+            }
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    private void setNotFound(HttpMessage msg) throws HttpMalformedHeaderException {
+        String body = getTextFile(root, "404.html");
+        msg.setResponseBody(body != null ? body : "Not Found");
+        msg.setResponseHeader(
+                getDefaultResponseHeader(
+                        STATUS_NOT_FOUND, "text/html", msg.getResponseBody().length()));
+    }
+
+    private static void setServerError(HttpMessage msg) {
+        try {
+            msg.setResponseBody("");
+            msg.setResponseHeader(
+                    getDefaultResponseHeader(STATUS_INTERNAL_SERVER_ERROR, "text/plain", 0));
+        } catch (HttpMalformedHeaderException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
     public String getHost() {
         return extension.getDevParam().getTestHost();
     }
@@ -328,6 +423,10 @@ public class TestProxyServer {
         @Override
         public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
             ctx.overridden();
+
+            if (handleDomainRequest(msg)) {
+                return;
+            }
 
             String path = msg.getRequestHeader().getURI().getEscapedPath();
             TestDirectory dir = root;

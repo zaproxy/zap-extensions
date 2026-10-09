@@ -62,6 +62,8 @@ public class BasicCsrfDir extends TestDirectory {
                     .forEach(i -> addDirectory(new BasicCsrfSubDir(this, Integer.toString(i), 0)));
             if (subDirs == 0) {
                 page = new BasicCsrfPage(this, name);
+                // So that it is reset with the directory.
+                addPage(page);
             }
         }
 
@@ -78,6 +80,7 @@ public class BasicCsrfDir extends TestDirectory {
         public BasicCsrfPage(TestDirectory parent, String name) {
             super(parent.getServer(), name);
             this.setParent(parent);
+            onReset(() -> csrfToken = null);
         }
 
         private boolean hasValidToken(TreeSet<HtmlParameter> params) {

@@ -49,7 +49,7 @@ import org.zaproxy.addon.dev.TestProxyServer;
  */
 public class SSO1RootDir extends TestAuthDirectory {
 
-    private Set<String> tokens = new HashSet<>();
+    private Set<String> tokens = state(new HashSet<>());
 
     private static final Logger LOGGER = LogManager.getLogger(SSO1RootDir.class);
 
