@@ -6,11 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Added
-- Payload and alert-registration overloads for HTTPS callbacks. Interactsh uses a single hostname label for HTTPS while retaining prefix-safe generic payloads.
-
 ### Fixed
-- Parse Interactsh HTTPS interactions and preserve their secure request URI.
+- Fix certificate validation failures for Interactsh HTTPS callbacks.
+- Fix HTTPS interactions from Interactsh not being recorded.
 
 
 ## [0.26.0] - 2026-09-16

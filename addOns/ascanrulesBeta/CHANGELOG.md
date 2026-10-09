@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Fixed
-- Use HTTPS-compatible OAST payloads for the SSRF and out-of-band XSS scan rules.
+- Fix HTTPS callback certificate validation failures in the SSRF and Out-of-band XSS scan rules.
 
 
 ## [67] - 2026-10-08
