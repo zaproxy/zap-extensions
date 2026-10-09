@@ -195,7 +195,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin
                                 .setMessage(msg)
                                 .setSource(Alert.Source.ACTIVE)
                                 .build();
-                String payload = "https://" + extOast.registerAlertAndGetPayload(alert);
+                String payload = "https://" + extOast.registerAlertAndGetPayload(alert, true);
                 String attackString = MessageFormat.format(attackStringPattern, payload);
                 alert.setAttack(attackString);
                 setParameter(msg, param, attackString);

@@ -109,7 +109,7 @@ public class InteractshEvent {
                         new HttpResponseHeader(),
                         new HttpResponseBody());
         msg.setTimeSentMillis(timestamp.toEpochMilli());
-        if ("http".equals(protocol)) {
+        if ("http".equals(protocol) || "https".equals(protocol)) {
             extractAndSetMsg(msg.getRequestHeader(), msg.getRequestBody(), rawRequest);
             extractAndSetMsg(msg.getResponseHeader(), msg.getResponseBody(), rawResponse);
         } else if ("dns".equals(protocol)) {
@@ -141,7 +141,11 @@ public class InteractshEvent {
             int separatorIndex = rawMsg.indexOf("\r\n\r\n") + 4;
             String headerString = rawMsg.substring(0, separatorIndex);
             String bodyString = rawMsg.substring(separatorIndex);
-            header.setMessage(headerString);
+            if (header instanceof HttpRequestHeader requestHeader) {
+                requestHeader.setMessage(headerString, "https".equals(protocol));
+            } else {
+                header.setMessage(headerString);
+            }
             body.setBody(bodyString);
         } catch (HttpMalformedHeaderException e) {
             body.setBody(rawMsg);

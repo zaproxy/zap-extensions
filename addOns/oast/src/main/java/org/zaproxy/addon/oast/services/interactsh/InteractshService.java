@@ -311,27 +311,36 @@ public class InteractshService extends OastService implements OptionsChangedList
 
     @Override
     public String getNewPayload() throws URIException, InteractshException {
+        return getNewPayload(false);
+    }
+
+    @Override
+    public String getNewPayload(boolean secure) throws URIException, InteractshException {
         if (!isRegistered) {
             register();
         }
         Stats.incCounter("stats.oast.interactsh.payloadsGenerated");
-        return randomAlphanumericLc(1)
-                + '.'
-                + correlationId
-                + randomAlphanumericLc(13)
-                + '.'
-                + serverUrl.getHost();
+        String prefix = secure ? "" : randomAlphanumericLc(1) + '.';
+        return prefix + correlationId + randomAlphanumericLc(13) + '.' + serverUrl.getHost();
     }
 
     @Override
     public OastPayload getNewOastPayload() throws URIException, InteractshException {
+        return getNewOastPayload(false);
+    }
+
+    @Override
+    public OastPayload getNewOastPayload(boolean secure) throws URIException, InteractshException {
         if (!isRegistered) {
             register();
         }
         Stats.incCounter("stats.oast.interactsh.payloadsGenerated");
         String payloadId = correlationId + randomAlphanumericLc(13);
         String canary = StringUtils.reverse(payloadId);
-        String payload = randomAlphanumericLc(1) + '.' + payloadId + '.' + serverUrl.getHost();
+        // Preserve a separate ID label for generic callbacks with prepended data (e.g. SMTP).
+        // HTTPS instead needs one label beneath the service's wildcard certificate.
+        String prefix = secure ? "" : randomAlphanumericLc(1) + '.';
+        String payload = prefix + payloadId + '.' + serverUrl.getHost();
         return new OastPayload(payload, canary);
     }
 

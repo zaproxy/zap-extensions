@@ -22,6 +22,9 @@ package org.zaproxy.addon.oast.services.interactsh;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.io.ByteArrayOutputStream;
@@ -44,6 +47,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.zaproxy.addon.oast.OastPayload;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -82,6 +86,70 @@ class InteractshServiceUnitTests extends TestUtils {
         assertThat(request.containsKey("public-key"), is(true));
         assertThat(request.containsKey("secret-key"), is(true));
         assertThat(request.containsKey("correlation-id"), is(true));
+    }
+
+    @Test
+    void shouldGenerateSingleLabelPayloadWithRegisteredCorrelationId() throws Exception {
+        // Given
+        StaticInteractshServerHandler handler = new StaticInteractshServerHandler("/register", "");
+        nano.addHandler(handler);
+        // When
+        String payload = service.getNewPayload(true);
+        String otherPayload = service.getNewPayload(true);
+        // Then
+        String correlationId =
+                JSONObject.fromObject(handler.getRequestBody()).getString("correlation-id");
+        assertThat(payload, matchesPattern("[a-z0-9]{33}\\.localhost"));
+        assertThat(payload, startsWith(correlationId));
+        assertThat(otherPayload, matchesPattern("[a-z0-9]{33}\\.localhost"));
+        assertThat(otherPayload, startsWith(correlationId));
+        assertThat(otherPayload, is(not(payload)));
+    }
+
+    @Test
+    void shouldGenerateSingleLabelOastPayloadWithMatchingCanary() throws Exception {
+        // Given
+        StaticInteractshServerHandler handler = new StaticInteractshServerHandler("/register", "");
+        nano.addHandler(handler);
+        // When
+        OastPayload payload = service.getNewOastPayload(true);
+        // Then
+        String correlationId =
+                JSONObject.fromObject(handler.getRequestBody()).getString("correlation-id");
+        assertThat(payload.getPayload(), matchesPattern("[a-z0-9]{33}\\.localhost"));
+        assertThat(payload.getPayload(), startsWith(correlationId));
+        String payloadId = payload.getPayload().substring(0, 33);
+        assertThat(payload.getCanary(), is(new StringBuilder(payloadId).reverse().toString()));
+    }
+
+    @Test
+    void shouldKeepSeparateCorrelationLabelForGenericPayloads() throws Exception {
+        // Given
+        StaticInteractshServerHandler handler = new StaticInteractshServerHandler("/register", "");
+        nano.addHandler(handler);
+        // When
+        String payload = service.getNewPayload();
+        String explicitPayload = service.getNewPayload(false);
+        OastPayload oastPayload = service.getNewOastPayload();
+        OastPayload explicitOastPayload = service.getNewOastPayload(false);
+        // Then
+        String correlationId =
+                JSONObject.fromObject(handler.getRequestBody()).getString("correlation-id");
+        for (String value :
+                List.of(
+                        payload,
+                        explicitPayload,
+                        oastPayload.getPayload(),
+                        explicitOastPayload.getPayload())) {
+            assertThat(value, matchesPattern("[a-z0-9]\\.[a-z0-9]{33}\\.localhost"));
+            assertThat(value.substring(2), startsWith(correlationId));
+            // Adjacent prefixes leave the complete correlation ID label intact (issue 7003).
+            assertThat(("abc" + value).split("\\.")[1], startsWith(correlationId));
+        }
+        for (OastPayload value : List.of(oastPayload, explicitOastPayload)) {
+            String payloadId = value.getPayload().split("\\.")[1];
+            assertThat(value.getCanary(), is(new StringBuilder(payloadId).reverse().toString()));
+        }
     }
 
     @Test

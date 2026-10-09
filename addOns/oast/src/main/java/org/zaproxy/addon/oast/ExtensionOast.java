@@ -301,9 +301,38 @@ public class ExtensionOast extends ExtensionAdaptor {
         return registerAlertAndGetOastPayload(alert).getPayload();
     }
 
+    /**
+     * Registers an alert with a new payload, optionally suitable for an HTTPS callback.
+     *
+     * @param alert the alert to register.
+     * @param secure whether the payload will be used for HTTPS. Use its hostname as supplied.
+     * @return the payload.
+     * @throws Exception if it is unable to get a new payload or register the alert.
+     * @since 0.27.0
+     * @see OastService#getNewPayload(boolean)
+     */
+    public String registerAlertAndGetPayload(Alert alert, boolean secure) throws Exception {
+        return registerAlertAndGetOastPayload(alert, secure).getPayload();
+    }
+
     public OastPayload registerAlertAndGetOastPayload(Alert alert) throws Exception {
+        return registerAlertAndGetOastPayload(alert, false);
+    }
+
+    /**
+     * Registers an alert with a new payload and canary, optionally suitable for an HTTPS callback.
+     *
+     * @param alert the alert to register.
+     * @param secure whether the payload will be used for HTTPS. Use its hostname as supplied.
+     * @return the payload and canary, or {@code null} if no service is selected.
+     * @throws Exception if it is unable to get a new payload or register the alert.
+     * @since 0.27.0
+     * @see OastService#getNewOastPayload(boolean)
+     */
+    public OastPayload registerAlertAndGetOastPayload(Alert alert, boolean secure)
+            throws Exception {
         if (getActiveScanOastService() != null) {
-            OastPayload payload = getActiveScanOastService().getNewOastPayload();
+            OastPayload payload = getActiveScanOastService().getNewOastPayload(secure);
             persistAlert(payload.getPayload(), alert);
             return payload;
         }
