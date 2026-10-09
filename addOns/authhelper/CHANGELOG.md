@@ -3,10 +3,17 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+### Added
+- AI Assisted Authentication
+
 ## [0.43.0] - 2026-10-08
 ### Added
 - OAuth2 Authentication method, supporting the `client_credentials` and `password` grant types.
 - `type` and `count` parameters to the `diagnostics` automation job, to retain only the last failed authentication attempt (`auth_on_failure`) or a rolling window of failures (`auth_failure_rolling`). With `auth_on_failure` only the error step is recorded, with just its screenshot.
+
+### Changed
+- The Authentication Tester dialog now remembers the last authentication method used and selects it by default next time it's opened.
 
 ### Fixed
 - Notify authentication successes/failures for browser login and error paths in Browser and Client Script Based Authentication.
