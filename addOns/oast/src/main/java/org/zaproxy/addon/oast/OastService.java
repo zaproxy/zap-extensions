@@ -73,11 +73,40 @@ public abstract class OastService {
      */
     public abstract String getNewPayload() throws Exception;
 
+    /**
+     * Returns a new payload, optionally suitable for an HTTPS callback.
+     *
+     * <p>Use the returned HTTPS hostname as supplied: adding a hostname label can invalidate the
+     * service's wildcard certificate. The default implementation uses the service's normal payload.
+     *
+     * @param secure whether the payload will be used for HTTPS.
+     * @return a new payload, never {@code null}.
+     * @throws Exception if it is unable to get a new payload.
+     * @since 0.27.0
+     */
+    public String getNewPayload(boolean secure) throws Exception {
+        return getNewPayload();
+    }
+
     public OastEntity getLastRegisteredServerEntity() {
         return null;
     }
 
     public abstract OastPayload getNewOastPayload() throws Exception;
+
+    /**
+     * Returns a new payload and canary, optionally suitable for an HTTPS callback.
+     *
+     * <p>The same hostname considerations as {@link #getNewPayload(boolean)} apply.
+     *
+     * @param secure whether the payload will be used for HTTPS.
+     * @return a new payload and its canary, never {@code null}.
+     * @throws Exception if it is unable to get a new payload.
+     * @since 0.27.0
+     */
+    public OastPayload getNewOastPayload(boolean secure) throws Exception {
+        return getNewOastPayload();
+    }
 
     public void poll() {}
 

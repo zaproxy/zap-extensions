@@ -266,7 +266,8 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
                                 .setMessage(msg)
                                 .setSource(Alert.Source.ACTIVE)
                                 .build();
-                String oastPayload = extOast.registerAlertAndGetPayload(alert);
+                // The same payload is used for both HTTP and HTTPS.
+                String oastPayload = extOast.registerAlertAndGetPayload(alert, true);
                 String payload = MessageFormat.format(ATTACK_MESSAGE, "http://" + oastPayload);
                 alert.setAttack(payload);
                 msg.setRequestBody(payload);

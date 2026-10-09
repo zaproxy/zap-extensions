@@ -19,21 +19,69 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import fi.iki.elonen.NanoHTTPD;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.oast.ExtensionOast;
+import org.zaproxy.addon.oast.OastService;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class OutOfBandXssScanRuleUnitTest extends ActiveScannerTest<OutOfBandXssScanRule> {
 
     @Override
     protected OutOfBandXssScanRule createScanner() {
         return new OutOfBandXssScanRule();
+    }
+
+    @Test
+    void shouldRequestHttpsPayloadForEveryExternalProbe() throws Exception {
+        // Given
+        nano.addHandler(
+                new NanoServerHandler("/blind") {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        return newFixedLengthResponse("No callback reflected");
+                    }
+                });
+        ExtensionOast extensionOast = mock(ExtensionOast.class);
+        Control.initSingletonForTesting(Model.getSingleton(), mock(ExtensionLoader.class));
+        when(Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class))
+                .thenReturn(extensionOast);
+        when(extensionOast.getActiveScanOastService()).thenReturn(mock(OastService.class));
+        when(extensionOast.registerAlertAndGetPayload(any(), eq(true)))
+                .thenReturn("secure.example.test");
+        HttpMessage message = getHttpMessage("/blind?value=original");
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        verify(extensionOast, times(4)).registerAlertAndGetPayload(any(), eq(true));
+        assertThat(httpMessagesSent, hasSize(4));
+        for (HttpMessage sent : httpMessagesSent.subList(0, 2)) {
+            assertThat(
+                    sent.getRequestHeader().getURI().getQuery(),
+                    containsString("https://secure.example.test"));
+        }
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
