@@ -107,12 +107,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
                     @Override
                     public void optionsChanged(OptionsParam optionsParam) {
-                        if (options.hasCommsChanged(prevOptions)) {
-                            optionsReset();
-                            if (llmChatPanel != null) {
-                                SwingUtilities.invokeLater(llmChatPanel::refreshProviders);
-                            }
-                        }
+                        commsOptionsChanged();
                     }
                 });
 
@@ -169,13 +164,31 @@ public class ExtensionLlm extends ExtensionAdaptor {
         return options != null ? options.getCommsIssue() : "";
     }
 
-    /**
-     * Only for testing purposes.
-     *
-     * @return the options
-     */
-    protected LlmOptions getOptions() {
+    public LlmOptions getOptions() {
         return this.options;
+    }
+
+    /**
+     * Replaces the configured providers and the default provider selection, refreshing anything
+     * that depends on them.
+     */
+    public void updateProviders(
+            List<LlmProviderConfig> providerConfigs,
+            String defaultProviderName,
+            String defaultModelName) {
+        options.setProviderConfigs(providerConfigs);
+        options.setDefaultProviderName(defaultProviderName);
+        options.setDefaultModelName(defaultModelName);
+        commsOptionsChanged();
+    }
+
+    private void commsOptionsChanged() {
+        if (options.hasCommsChanged(prevOptions)) {
+            optionsReset();
+            if (llmChatPanel != null) {
+                SwingUtilities.invokeLater(llmChatPanel::refreshProviders);
+            }
+        }
     }
 
     private LlmChatTabPanel getChatTab(String commsKey, String panelName) {
