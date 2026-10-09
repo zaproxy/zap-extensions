@@ -15,6 +15,18 @@ zapAddOn {
             }
         }
         extensions {
+            register("org.zaproxy.addon.llm.automation.ExtensionLlmAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.llm.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.61.0")
+                        }
+                    }
+                }
+            }
             register("org.zaproxy.addon.llm.mcp.ExtensionLlmMcp") {
                 classnames {
                     allowed.set(listOf("org.zaproxy.addon.llm.mcp"))
@@ -40,6 +52,7 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("mcp")
 
