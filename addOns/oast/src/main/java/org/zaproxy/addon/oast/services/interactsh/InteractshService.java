@@ -76,6 +76,10 @@ public class InteractshService extends OastService implements OptionsChangedList
     // The Interactsh client methods in this class are based on the official Interactsh CLI client:
     // https://github.com/projectdiscovery/interactsh/blob/f5b53a7b8be329ee6d4936ed753e3c46472e5726/pkg/client/client.go
 
+    // Interactsh recognizes the session ID in the xid alphabet and the nonce in z-base-32.
+    private static final String CORRELATION_ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
+    private static final String NONCE_ALPHABET = "ybndrfg8ejkmcpqxot1uwisza345h769";
+
     private static final Logger LOGGER = LogManager.getLogger(InteractshService.class);
 
     private final ScheduledExecutorService executorService =
@@ -102,7 +106,7 @@ public class InteractshService extends OastService implements OptionsChangedList
     InteractshService(InteractshParam param) {
         httpSender = new HttpSender(HttpSender.OAST_INITIATOR);
         secretKey = UUID.randomUUID();
-        correlationId = randomAlphanumericLc(20);
+        correlationId = RandomStringUtils.secure().next(20, CORRELATION_ID_ALPHABET);
         this.param = param;
     }
 
@@ -318,7 +322,7 @@ public class InteractshService extends OastService implements OptionsChangedList
         return randomAlphanumericLc(1)
                 + '.'
                 + correlationId
-                + randomAlphanumericLc(13)
+                + RandomStringUtils.secure().next(13, NONCE_ALPHABET)
                 + '.'
                 + serverUrl.getHost();
     }
@@ -329,7 +333,7 @@ public class InteractshService extends OastService implements OptionsChangedList
             register();
         }
         Stats.incCounter("stats.oast.interactsh.payloadsGenerated");
-        String payloadId = correlationId + randomAlphanumericLc(13);
+        String payloadId = correlationId + RandomStringUtils.secure().next(13, NONCE_ALPHABET);
         String canary = StringUtils.reverse(payloadId);
         String payload = randomAlphanumericLc(1) + '.' + payloadId + '.' + serverUrl.getHost();
         return new OastPayload(payload, canary);
