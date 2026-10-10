@@ -1,0 +1,27 @@
+[
+  {
+    "match": "\"url\"\\s*:\\s*\"[^\"]*home\\.html",
+    "reply": {
+      "state": "SUCCESS",
+      "reasoning": "The URL is now home.html so the login worked.",
+      "actions": [],
+      "successIndicator": {"type": "URL_PATTERN", "value": "home.html"}
+    }
+  },
+  {
+    "match": "^(?=.*\"id\"\\s*:\\s*\"user\")(?=.*\"id\"\\s*:\\s*\"password\").*",
+    "reply": {
+      "state": "IN_PROGRESS",
+      "reasoning": "I can see a username and password field, I will fill them in and click Login.",
+      "actions": [
+        {"type": "SEND_KEYS", "selectors": ["#user", "[name='user']"], "value": "{{username}}"},
+        {"type": "SEND_KEYS", "selectors": ["#password", "[name='password']"], "value": "{{password}}"},
+        {"type": "CLICK", "selectors": ["#login", "button"], "value": null}
+      ],
+      "successIndicator": null
+    }
+  },
+  {"match": "\\bping\\b", "reply": "pong"},
+  {"match": "capital of france", "reply": "The capital of France is Paris."},
+  {"match": "^\\s*(hello|hi|hey)\\b", "reply": "Hello from the ZAP dev add-on fake LLM."}
+]

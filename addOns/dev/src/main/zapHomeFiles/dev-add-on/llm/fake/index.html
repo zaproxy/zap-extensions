@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Fake LLM</H1>
+	<p>
+	An OpenAI compatible endpoint which replies to prompts using pattern matching rules.
+	Add an <b>OpenAI compatible</b> provider to the LLM add-on with:
+	<ul>
+		<li>Endpoint = <code>http://localhost:&lt;this port&gt;/llm/fake/v1</code>
+		<li>Model = <code>fake-llm</code> (any name works)
+		<li>API key = empty
+	</ul>
+	<p>
+	The first rule whose regex is found in the last user message supplies the reply.
+	The rules are in <code>llm/fake/rules.json</code> in the dev add-on directory, as a JSON array
+	of <code>match</code> (regex) and <code>reply</code> (a string or a JSON object) pairs.
+	The file is re-read on every request.
+	<div class="buttonsDiv">
+		<a href="../"><button>Up</button></a>
+	</div>
+</div>
+
+</body>
+</html>

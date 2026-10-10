@@ -27,6 +27,39 @@ A set of pages which store various types of data in localStorage and sessionStor
 <H2>Full Apps</H2>
 A set of more complete apps for testing ZAP functionality end-to-end.
 
+<H2>Fake LLM</H2>
+A fake OpenAI compatible LLM, for testing add-ons which use an LLM without needing a real model.
+It replies to prompts with fixed responses, chosen by matching the prompt against a set of rules.
+<p>
+To use it add a provider to the LLM add-on, via Tools / Options / LLM, with:
+<ul>
+<li>Type: <code>OpenAI Compatible</code>
+<li>Endpoint: <code>http://localhost:9091/llm/fake/v1</code> (change the host and port if you have changed them in the dev add-on options)
+<li>Model: <code>fake-llm</code> (any name will work)
+<li>API key: leave empty
+</ul>
+Then select it as the default provider and model.
+<p>
+The rules are in the <code>llm/fake/rules.json</code> file in the dev add-on directory under the ZAP home directory.
+It is a JSON array of rules, each with:
+<ul>
+<li><code>match</code> - a case insensitive regular expression, which is searched for in the last user message of the request
+<li><code>reply</code> - the response to send, either a string or a JSON object (which is sent as a string)
+</ul>
+The first rule that matches supplies the reply.
+If no rule matches then a message saying so is returned.
+The file is read for every request, so it can be edited while ZAP is running.
+<p>
+For example:
+<pre>
+[
+  {"match": "\\bping\\b", "reply": "pong"},
+  {"match": "capital of france", "reply": "The capital of France is Paris."}
+]
+</pre>
+The default rules include replies for the prompts <code>ping</code>, <code>What is the capital of France?</code> and <code>Hello</code>,
+plus a scripted AI assisted login for the <code>/auth/simple-json/</code> page.
+
 <H2>Random Pages</H2>
 Dynamically generated sites for testing scalability.
 
