@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -142,16 +143,122 @@ public class GspmPolicy {
     }
 
     /**
+     * Appends a new rule set to the end of the list, giving it the highest precedence under
+     * last-match-wins semantics — the same position new per-rule overrides are given by {@link
+     * #resolveRuleSetForOverride}.
+     */
+    public void addRuleSet(GspmRuleSet rs) {
+        ruleSets.add(rs);
+    }
+
+    /**
+     * Removes a rule set from the list.
+     *
+     * @return {@code true} if the rule set was present and removed
+     */
+    public boolean removeRuleSet(GspmRuleSet rs) {
+        return ruleSets.remove(rs);
+    }
+
+    /**
+     * Swaps {@code rs} with its neighbour {@code delta} positions away (e.g. {@code -1} to move it
+     * up, {@code 1} to move it down), changing its precedence under last-match-wins semantics.
+     * No-op if {@code rs} isn't in the list, or the target position is out of range.
+     */
+    public void moveRuleSet(GspmRuleSet rs, int delta) {
+        int index = ruleSets.indexOf(rs);
+        int target = index + delta;
+        if (index < 0 || target < 0 || target >= ruleSets.size()) {
+            return;
+        }
+        Collections.swap(ruleSets, index, target);
+    }
+
+    /**
+     * Returns the next auto-incrementing default name for a new rule set in this policy, e.g.
+     * {@code "Rule Set 1"}, then {@code "Rule Set 2"}, and so on — one higher than the highest
+     * number already used by an existing rule set matching the same {@code
+     * commonlib.gspm.ruleset.name.default} pattern. Used both to name rule sets that come from an
+     * import with no name of their own, and to pre-fill the name field when adding a new rule set
+     * interactively.
+     */
+    public String nextDefaultRuleSetName() {
+        int max = 0;
+        for (GspmRuleSet rs : ruleSets) {
+            Integer n = parseDefaultRuleSetNumber(rs.getName());
+            if (n != null) {
+                max = Math.max(max, n);
+            }
+        }
+        return Constant.messages.getString("commonlib.gspm.ruleset.name.default", max + 1);
+    }
+
+    /**
+     * Assigns a generated {@link #nextDefaultRuleSetName() default name} to every rule set in this
+     * policy that {@link GspmRuleSet#needsDefaultName() needs one} — i.e. has no name and would
+     * otherwise be shown under the misleading "Catch-all" display fallback (a tag/status-scoped
+     * rule set, or a multi-rule override group, with no category). Rule sets that already display
+     * fine without a name (a true catch-all, a phase/category scope, or a single-rule override) are
+     * left alone.
+     *
+     * <p>Called after {@link #load(File) loading} or importing a policy, so hand-edited or
+     * externally authored files end up with sensible names too, not just rule sets created
+     * interactively (which already get one from {@link #nextDefaultRuleSetName()} via the Add Rule
+     * Set dialog).
+     */
+    public void assignDefaultNamesToAmbiguousRuleSets() {
+        for (GspmRuleSet rs : ruleSets) {
+            if (rs.needsDefaultName()) {
+                rs.setName(nextDefaultRuleSetName());
+            }
+        }
+    }
+
+    /**
+     * Returns the number carried by {@code name} if it matches the {@code
+     * commonlib.gspm.ruleset.name.default} pattern (i.e. the literal text before its {@code {0}}
+     * placeholder, followed by an integer), or {@code null} otherwise — e.g. for a name that isn't
+     * one of ours, or one a user has since appended text to (like {@code "Rule Set 5 (copy)"}).
+     */
+    private static Integer parseDefaultRuleSetNumber(String name) {
+        if (name == null) {
+            return null;
+        }
+        String pattern = Constant.messages.getString("commonlib.gspm.ruleset.name.default");
+        int placeholder = pattern.indexOf("{0}");
+        if (placeholder < 0 || !name.startsWith(pattern.substring(0, placeholder))) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(name.substring(placeholder).trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    /**
      * Returns the effective {@link AlertThreshold} for the given rule by iterating all rule sets in
      * order; the last matching rule set whose threshold string is non-null wins.
      *
      * @return the effective threshold, or empty if no rule set matches with a non-null threshold
      */
     public Optional<AlertThreshold> getEffectiveThreshold(GspmRule rule) {
-        AlertThreshold result = null;
+        GspmRuleSet rs = getEffectiveThresholdRuleSet(rule).orElse(null);
+        return rs == null ? Optional.empty() : Optional.of(rs.getThresholdEnum());
+    }
+
+    /**
+     * Returns the rule set responsible for the given rule's {@link #getEffectiveThreshold(GspmRule)
+     * effective threshold} — i.e. the same last-match-wins rule set {@code
+     * getEffectiveThreshold(rule)} takes its value from — or empty if none matches with a non-null
+     * threshold. Used to show the user which rule set is responsible for a rule's current
+     * enabled/disabled state (a threshold of {@link AlertThreshold#OFF} disables it).
+     */
+    public Optional<GspmRuleSet> getEffectiveThresholdRuleSet(GspmRule rule) {
+        GspmRuleSet result = null;
         for (GspmRuleSet rs : ruleSets) {
             if (rs.getThreshold() != null && rs.matches(rule)) {
-                result = rs.getThresholdEnum();
+                result = rs;
             }
         }
         return Optional.ofNullable(result);
@@ -174,57 +281,50 @@ public class GspmPolicy {
     }
 
     /**
-     * Sets the threshold for a specific rule, creating a dedicated single-rule rule set if one does
-     * not already exist. The per-rule rule set is always appended to the end of the list so it
-     * overrides any catch-all or tag-scoped entries.
+     * Sets the threshold for a specific rule.
+     *
+     * <p>If the rule already solely owns a rule set, or an override for it already resolves to the
+     * same (threshold, strength) pair this would produce, that rule set is reused in place.
+     * Otherwise, if another rule-only rule set already has exactly the resulting pair, this rule is
+     * added to it instead of creating a duplicate — so several rules given the same override
+     * collapse into one shared rule set. If the rule was sharing a rule set that needs a genuinely
+     * different pair, it is detached from that rule set first (see {@link
+     * #detachRuleFromAnyGroup(int)}) so the change never leaks onto the rules it was sharing with.
+     * Only once none of those apply is a brand new dedicated rule set created, appended to the end
+     * of the list so it overrides any catch-all or tag-scoped entries.
      *
      * <p>Passing {@code null} clears the per-rule threshold override; if the rule set then has
      * neither a threshold nor a strength override, it is removed entirely rather than left behind
      * as a dead entry.
      */
     public void setRuleThreshold(int id, String ruleName, AlertThreshold threshold) {
-        GspmRuleSet rs = findOrCreatePerRuleRuleSet(id, ruleName);
-        rs.setThresholdEnum(threshold);
+        String newValue = threshold == null ? null : threshold.name();
+        GspmRuleSet rs = resolveRuleSetForOverride(id, ruleName, true, newValue);
+        rs.setThreshold(newValue);
         removeIfEmptyPerRuleRuleSet(rs);
     }
 
     /**
-     * Sets the strength for a specific rule, creating a dedicated single-rule rule set if one does
-     * not already exist.
+     * Sets the strength for a specific rule. See {@link #setRuleThreshold} for how an existing rule
+     * set is reused, shared, or split.
      *
      * <p>Passing {@code null} clears the per-rule strength override; if the rule set then has
      * neither a threshold nor a strength override, it is removed entirely rather than left behind
      * as a dead entry.
      */
     public void setRuleStrength(int id, String ruleName, AttackStrength strength) {
-        GspmRuleSet rs = findOrCreatePerRuleRuleSet(id, ruleName);
-        rs.setStrengthEnum(strength);
+        String newValue = strength == null ? null : strength.name();
+        GspmRuleSet rs = resolveRuleSetForOverride(id, ruleName, false, newValue);
+        rs.setStrength(newValue);
         removeIfEmptyPerRuleRuleSet(rs);
     }
 
     /**
      * Removes any threshold/strength override for the given rule id, so it falls back to the
-     * resolved category/catch-all default.
-     *
-     * <p>Unlike {@link #setRuleThreshold} / {@link #setRuleStrength} (which only ever look at a
-     * dedicated single-rule rule set), this also detects and cleans up rule sets shared by several
-     * rules with the same value, as created by legacy policy migration: the rule id is removed from
-     * any rule set that explicitly lists it, and the rule set itself is removed once it no longer
-     * references any rule, without affecting other rules that still share it. No-op if no override
-     * exists for this rule id.
+     * resolved category/catch-all default. No-op if no override exists for this rule id.
      */
     public void clearRuleOverride(int id) {
-        Iterator<GspmRuleSet> it = ruleSets.iterator();
-        while (it.hasNext()) {
-            GspmRuleSet rs = it.next();
-            List<GspmRuleRef> refs = rs.getRules();
-            if (refs == null || refs.isEmpty()) {
-                continue;
-            }
-            if (refs.removeIf(ref -> ref.getId() == id) && refs.isEmpty()) {
-                it.remove();
-            }
-        }
+        detachRuleFromAnyGroup(id);
     }
 
     /**
@@ -299,7 +399,10 @@ public class GspmPolicy {
      *
      * <p>Records the file's base name via {@link #setFileName(String)} so later saves reuse the
      * same file rather than deriving a path from {@link #getName()}, and remembers {@code file}
-     * itself so it can later be removed via {@link #deleteFile()}.
+     * itself so it can later be removed via {@link #deleteFile()}. Also {@link
+     * #assignDefaultNamesToAmbiguousRuleSets() assigns default names} to any loaded rule set that
+     * needs one — covers hand-edited or externally authored files, not just ones round-tripped
+     * through this application.
      *
      * @throws IOException if the file cannot be read or parsed
      */
@@ -310,6 +413,7 @@ public class GspmPolicy {
             policy.setFileName(loadedName.substring(0, loadedName.length() - EXTENSION.length()));
         }
         policy.file = file;
+        policy.assignDefaultNamesToAmbiguousRuleSets();
         return policy;
     }
 
@@ -353,6 +457,14 @@ public class GspmPolicy {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns {@code true} if a rule set already exists for {@code categoryKey} (or for the
+     * catch-all, when passing {@code "all"} or {@code null}).
+     */
+    public boolean hasCategoryRuleSet(String categoryKey) {
+        return findCategoryRuleSet(categoryKey) != null;
     }
 
     /**
@@ -431,8 +543,14 @@ public class GspmPolicy {
         return Optional.of(rs.getStrengthEnum());
     }
 
-    /** Returns the first catch-all rule set, or {@code null} if none exists. */
-    private GspmRuleSet findCatchAllRuleSet() {
+    /**
+     * Returns the first catch-all rule set, or {@code null} if none exists — unlike {@link
+     * #findOrCreateCategoryRuleSet}/{@link #getOrCreateCatchAllRuleSet}, never creates one, so it's
+     * safe to call from a read-only view (e.g. to show its {@link GspmRuleSet#getName()
+     * name}/display as the fallback "responsible" rule set for a rule with no more specific
+     * override).
+     */
+    public GspmRuleSet findCatchAllRuleSet() {
         for (GspmRuleSet rs : ruleSets) {
             if (rs.isCatchAll()) {
                 return rs;
@@ -453,24 +571,120 @@ public class GspmPolicy {
     }
 
     /**
-     * Finds a dedicated single-rule rule set for the given id, or creates a new one and appends it
-     * to the end of the list.
+     * Resolves the rule set that should carry a per-rule override for {@code id} on the dimension
+     * identified by {@code isThreshold} (threshold when {@code true}, strength when {@code false}),
+     * given the new value for that dimension ({@code newValue}, or {@code null} to clear it):
+     *
+     * <ol>
+     *   <li>If {@code id} already belongs to a rule set that either solely owns it, or already
+     *       resolves to the same resulting (threshold, strength) pair, that rule set is reused in
+     *       place — safe either way, since nothing else is affected.
+     *   <li>Otherwise, if {@code id} was sharing a rule set that needs a genuinely different pair,
+     *       it is detached from that rule set first (see {@link #detachRuleFromAnyGroup(int)}) so
+     *       the change doesn't leak onto the other rules still referencing it.
+     *   <li>If the resulting pair has at least one non-null value, an existing {@link
+     *       #isRuleOnlyGroup rule-only} rule set that already has exactly that pair is reused,
+     *       adding {@code id} to it — collapsing identical per-rule overrides into one shared rule
+     *       set instead of each getting its own.
+     *   <li>Otherwise, a brand new rule set dedicated to just {@code id} is created and appended.
+     * </ol>
      */
-    private GspmRuleSet findOrCreatePerRuleRuleSet(int id, String ruleName) {
+    private GspmRuleSet resolveRuleSetForOverride(
+            int id, String ruleName, boolean isThreshold, String newValue) {
+        GspmRuleSet existing = null;
         for (GspmRuleSet rs : ruleSets) {
-            if (rs.isPerRule(id)) {
-                return rs;
+            if (hasRuleRef(rs, id)) {
+                existing = rs;
+                break;
             }
         }
+
+        String finalThreshold = isThreshold ? newValue : null;
+        String finalStrength = isThreshold ? null : newValue;
+        if (existing != null) {
+            List<GspmRuleRef> refs = existing.getRules();
+            String currentThreshold = existing.getThreshold();
+            String currentStrength = existing.getStrength();
+            finalThreshold = isThreshold ? newValue : currentThreshold;
+            finalStrength = isThreshold ? currentStrength : newValue;
+            boolean soleMember = refs != null && refs.size() == 1;
+            if (soleMember
+                    || (Objects.equals(currentThreshold, finalThreshold)
+                            && Objects.equals(currentStrength, finalStrength))) {
+                return existing;
+            }
+            detachRuleFromAnyGroup(id);
+        }
+
+        if (finalThreshold != null || finalStrength != null) {
+            for (GspmRuleSet rs : ruleSets) {
+                if (isRuleOnlyGroup(rs)
+                        && Objects.equals(rs.getThreshold(), finalThreshold)
+                        && Objects.equals(rs.getStrength(), finalStrength)) {
+                    rs.addRule(new GspmRuleRef(id, ruleName));
+                    return rs;
+                }
+            }
+        }
+
         GspmRuleSet newRs = new GspmRuleSet();
         newRs.addRule(new GspmRuleRef(id, ruleName));
+        newRs.setThreshold(finalThreshold);
+        newRs.setStrength(finalStrength);
         ruleSets.add(newRs);
         return newRs;
     }
 
+    /** Returns {@code true} if {@code rs}'s explicit rules list references {@code id}. */
+    private static boolean hasRuleRef(GspmRuleSet rs, int id) {
+        List<GspmRuleRef> refs = rs.getRules();
+        if (refs == null) {
+            return false;
+        }
+        for (GspmRuleRef ref : refs) {
+            if (ref.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
-     * Removes {@code rs} (a per-rule rule set returned by {@link #findOrCreatePerRuleRuleSet}) if
-     * it no longer has a threshold or strength override, so cleared overrides don't linger as dead
+     * Returns {@code true} if {@code rs} matches purely by a non-empty explicit rules list — no
+     * tags, category, or status — making it safe to add another rule id to without changing what it
+     * matches beyond that one extra rule.
+     */
+    private static boolean isRuleOnlyGroup(GspmRuleSet rs) {
+        List<GspmRuleRef> refs = rs.getRules();
+        return refs != null
+                && !refs.isEmpty()
+                && (rs.getTags() == null || rs.getTags().isEmpty())
+                && rs.getCategory() == null
+                && rs.getStatus() == null;
+    }
+
+    /**
+     * Removes {@code id} from whatever rule set currently references it in its explicit rules list
+     * (regardless of any tags/category/status also present, e.g. on a legacy-migrated rule set),
+     * deleting that rule set once it no longer references any rule. No-op if not found.
+     */
+    private void detachRuleFromAnyGroup(int id) {
+        Iterator<GspmRuleSet> it = ruleSets.iterator();
+        while (it.hasNext()) {
+            GspmRuleSet rs = it.next();
+            List<GspmRuleRef> refs = rs.getRules();
+            if (refs == null || refs.isEmpty()) {
+                continue;
+            }
+            if (refs.removeIf(ref -> ref.getId() == id) && refs.isEmpty()) {
+                it.remove();
+            }
+        }
+    }
+
+    /**
+     * Removes {@code rs} (a per-rule rule set returned by {@link #resolveRuleSetForOverride}) if it
+     * no longer has a threshold or strength override, so cleared overrides don't linger as dead
      * entries in the saved policy.
      */
     private void removeIfEmptyPerRuleRuleSet(GspmRuleSet rs) {
