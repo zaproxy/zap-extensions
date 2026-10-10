@@ -1,0 +1,14 @@
+  - type: llm-config                   # Configure the LLM providers
+    parameters:
+      deleteExisting: false            # Bool: Remove all existing providers first, default: false
+      defaultProvider:                 # String: Name of the default provider, default: the current default, or the first provider
+      defaultModel:                    # String: The default model, must be one of the default provider's models, default: the current default if valid, or the first model
+    providers:                         # List: Each provider is added, or updates the existing one with the same name
+      - name:                          # String: Unique provider name
+        type:                          # String: OLLAMA, OPENAI_COMPATIBLE, AZURE_OPENAI, GOOGLE_GEMINI or CLAUDE
+        apiKey:                        # String: The API key, use an environment variable, e.g. ${LLM_API_KEY}
+        endpoint:                      # String: The endpoint URL, required for OLLAMA, OPENAI_COMPATIBLE and AZURE_OPENAI
+        models:                        # List: The model names, at least one is required
+          - 
+        trusted:                       # Bool: Whether the provider is trusted, default: true for OLLAMA, otherwise false
+        timeout:                       # Int: Request timeout in seconds, default: 60
