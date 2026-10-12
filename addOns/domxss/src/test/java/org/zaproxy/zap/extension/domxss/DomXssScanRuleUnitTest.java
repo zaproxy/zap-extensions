@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
@@ -174,6 +175,42 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
 
         // When / Then
         assertThat(this.rule.getBrowser(), equalTo(Browser.getBrowserWithId(browser)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("testBrowsers")
+    void shouldReturnDriverToPoolAfterScan(String browser) throws IOException {
+        // Given
+        String test = "/shouldReturnDriverToPoolAfterScan/";
+        this.nano.addHandler(new TestNanoServerHandler(test, "LocationHashAssign.html"));
+        HttpMessage msg = this.getHttpMessage(test);
+        this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
+        this.rule.init(msg, this.parent);
+        this.rule.setAttackStrength(AttackStrength.LOW);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertThat(DomXssScanRule.getFreeDriversCount(), equalTo(1));
+    }
+
+    @ParameterizedTest
+    @MethodSource("testBrowsers")
+    void shouldQuitDriverInsteadOfReturningToPoolIfSkipped(String browser) throws IOException {
+        // Given
+        String test = "/shouldQuitDriverInsteadOfReturningToPoolIfSkipped/";
+        this.nano.addHandler(new TestNanoServerHandler(test, "LocationHashAssign.html"));
+        HttpMessage msg = this.getHttpMessage(test);
+        this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
+        this.rule.init(msg, this.parent);
+        willReturn(true).given(this.parent).isSkipped(this.rule);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertThat(DomXssScanRule.getFreeDriversCount(), equalTo(0));
     }
 
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/assign */

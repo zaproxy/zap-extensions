@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -374,19 +373,28 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
 
     private void returnDriver(WebDriverWrapper driver) {
         synchronized (takenDrivers) {
-            try {
-                driver.getDriver().switchTo().alert().accept();
-            } catch (Exception e) {
-                // ignore
-            }
-            driver.getDriver().get("about:blank");
-            if (takenDrivers.remove(driver)) {
-                freeDrivers.computeIfAbsent(driver.getBrowser(), k -> new Stack<>()).push(driver);
+            if (!isStop()) {
+                try {
+                    driver.getDriver().switchTo().alert().accept();
+                } catch (Exception e) {
+                    // ignore
+                }
+                driver.getDriver().get("about:blank");
+                if (takenDrivers.remove(driver)) {
+                    freeDrivers
+                            .computeIfAbsent(driver.getBrowser(), k -> new Stack<>())
+                            .push(driver);
 
-            } else {
-                LOGGER.debug("Driver not in 'taken' list");
+                } else {
+                    LOGGER.debug("Driver not in 'taken' list");
+                }
+                return;
             }
+            // The scan rule was stopped or skipped, setTimeFinished() (and so tidyUp()) might have
+            // already been called, so the driver would never be quit if returned to the pool.
+            takenDrivers.remove(driver);
         }
+        quitDriver(driver);
     }
 
     @Override
@@ -395,19 +403,33 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         tidyUp();
     }
 
+    static int getFreeDriversCount() {
+        synchronized (takenDrivers) {
+            return freeDrivers.values().stream().mapToInt(Stack::size).sum();
+        }
+    }
+
     static void tidyUp() {
         // Tidy up...
         // Dont kill drivers in the 'taken' list as there may be multiple scans
-        WebDriverWrapper driver;
-        for (Entry<Browser, Stack<WebDriverWrapper>> map : freeDrivers.entrySet()) {
-            while (!map.getValue().isEmpty()) {
-                try {
-                    driver = map.getValue().pop();
-                    driver.getDriver().quit();
-                } catch (Exception e) {
-                    // Ignore
-                }
-            }
+        List<WebDriverWrapper> drivers = new ArrayList<>();
+        synchronized (takenDrivers) {
+            freeDrivers
+                    .values()
+                    .forEach(
+                            stack -> {
+                                drivers.addAll(stack);
+                                stack.clear();
+                            });
+        }
+        drivers.forEach(DomXssScanRule::quitDriver);
+    }
+
+    private static void quitDriver(WebDriverWrapper driver) {
+        try {
+            driver.getDriver().quit();
+        } catch (Exception e) {
+            LOGGER.debug("Failed to quit the driver: {}", e.getMessage());
         }
     }
 
