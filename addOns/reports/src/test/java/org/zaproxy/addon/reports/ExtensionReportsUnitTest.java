@@ -84,6 +84,8 @@ class ExtensionReportsUnitTest extends TestUtils {
     private static final String HTML_REPORT_ALERT_DETAILS_SECTION_TITLE = "Alert Detail";
     // The Passing rules section is defined in the report specific i18n file
     private static final String HTML_REPORT_PASSING_RULES_SECTION_TITLE = "Passing Rules";
+    private static final String HTML_REPORT_NODES_ACTIVELY_SCANNED =
+            "Number of Sites tree nodes actively scanned:";
 
     private List<String> logEvents;
     private ExtensionLoader extensionLoader;
@@ -730,6 +732,43 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(false));
         assertThat(report.contains(HTML_REPORT_ALERT_DETAILS_SECTION_TITLE), is(false));
         assertThat(report.contains(HTML_REPORT_PASSING_RULES_SECTION_TITLE), is(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"modern", "traditional-html-plus"})
+    void shouldIncludeNumberOfNodesActivelyScannedInReport(String reportName) throws Exception {
+        // Given
+        File f = File.createTempFile("zap.reports.test", "x");
+        Template template = ReportTestUtils.getTemplateFromYamlFile(reportName);
+
+        // When
+        File r = ReportTestUtils.generateReportWithActiveScanData(template, f, 5);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        assertThat(
+                report.replaceAll("\\s+", " "),
+                containsString(HTML_REPORT_NODES_ACTIVELY_SCANNED + "</strong> 5 "));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"modern", "traditional-html-plus"})
+    void shouldIncludeZeroNodesActivelyScannedInReportWithoutActiveScanData(String reportName)
+            throws Exception {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = ReportTestUtils.getTestReportData();
+        File f = File.createTempFile("zap.reports.test", "x");
+        Template template = ReportTestUtils.getTemplateFromYamlFile(reportName);
+
+        // When
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        assertThat(
+                report.replaceAll("\\s+", " "),
+                containsString(HTML_REPORT_NODES_ACTIVELY_SCANNED + "</strong> 0 "));
     }
 
     private static String cleanReport(String str) {
