@@ -11,14 +11,24 @@
 このアドオンは自動化フレームワークに対応しています。
 
 <H2>ジョブ: diagnostics</H2>
-diagnostics ジョブは、プランレベルでの認証関連診断の記録を開始または停止します。記録された診断データは認証診断UIに表示され、<a href="reports.html">認証レポート</a>に含めることができます。
+diagnostics ジョブは、プランレベルでの認証関連診断の記録を開始または停止します。
+記録された診断データは認証診断UIに表示され、<a href="reports.html">認証レポート</a>に含めることができます。
 <p>
-1つのプランに複数の diagnostics ジョブを含めることができます。記録は <code>enabled</code> が <code>true</code> の場合に開始され、<code>enabled</code> が <code>false</code> の場合に停止（および永続化）されます。プラン終了時に記録がオンのままになっている場合、自動的に停止され、永続化されます。
+1つのプランに複数の diagnostics ジョブを含めることができます。記録は <code>enabled</code> が <code>true</code> の場合に開始され、<code>enabled</code> が <code>false</code> の場合に停止（および永続化）されます。
+プラン終了時に記録がオンのままになっている場合、自動的に停止され、永続化されます。
 <pre>
-  - type: diagnostics                  # プランレベルの診断記録を有効または無効にします
+  - type: diagnostics                  # Enable or disable plan-level diagnostics recording
     parameters:
-      enabled:                         # Bool: true の場合、診断記録を開始します。デフォルト: false
+      enabled:                         # Bool: If true, start diagnostics recording, default: false
+      type:                            # String: omit for whole-plan recording, or auth_on_failure / auth_failure_rolling to retain only failed authentication attempts
+      count:                           # Int: number of failures to retain, only used by auth_failure_rolling, default: 5
 </pre>
+<p>
+By default (<code>type</code> omitted) the job records all traffic for the whole plan,
+as described above. Setting <code>type</code> to <code>auth_on_failure</code> or
+<code>auth_failure_rolling</code> switches to per-attempt recording instead: only failed authentication
+attempts are retained (successes are discarded), either just the latest one, or the last <code>count</code>
+of them. With <code>auth_on_failure</code>, to keep the overhead low, only the error step is recorded, with just its screenshot.
 <p>
 同一プラン内でこのジョブと <code>env</code> 認証診断（ブラウザ/クライアントの <code>authentication.parameters.diagnostics</code>）の両方を有効にすることは推奨されず、診断レコードが重複する可能性があります。 1つのプランにつき1つの診断メカニズムを使用することを推奨します。
 </BODY>

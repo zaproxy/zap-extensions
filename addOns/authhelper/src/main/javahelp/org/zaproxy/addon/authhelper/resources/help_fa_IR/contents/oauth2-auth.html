@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+OAuth2 Authentication
+</TITLE>
+</HEAD>
+<BODY>
+<H1>OAuth2 Authentication</H1>
+
+This <a href="authhelper.html">add-on</a> adds an authentication method which gets an OAuth2 access token directly from
+the token endpoint, without using a browser. It supports these grant types:
+
+<ul>
+<li><code>client_credentials</code>
+<li><code>password</code> (Resource Owner Password Credentials)
+</ul>
+
+<h3>Configuration</h3>
+The following fields are set on the authentication method, and are shared by all of the users of the context:
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td>Grant Type</td><td>The grant type to use.</td></tr>
+  <tr><td>Token Endpoint</td><td>The URL of the token endpoint. This is the only mandatory field.</td></tr>
+  <tr><td>Client ID, Client Secret</td><td>The credentials of the OAuth2 client (see <em>Client Authentication</em> below).</td></tr>
+  <tr><td>Client Authentication Method</td><td>How the client credentials are sent (see below).</td></tr>
+  <tr><td>Scope</td><td>The scope(s) to request.</td></tr>
+  <tr><td>Access Token Field, Refresh Token Field</td><td>The names of the fields in the token response which hold the tokens. Only change these if the server does not use the standard <code>access_token</code> and <code>refresh_token</code>.</td></tr>
+  <tr><td>Extra Token Parameters</td><td>Optional, see below.</td></tr>
+  <tr><td>Record Diagnostics</td><td>Records each token request and response, to help troubleshoot a failing authentication. They can be viewed in the add-on's Diagnostics panel.</td></tr>
+</table>
+
+<p>
+The <code>password</code> grant type also needs a <code>username</code> and <code>password</code>, which are set in the
+credentials of each user. The <code>client_credentials</code> grant type needs no user credentials.
+
+<h3>Client Authentication</h3>
+The Client Authentication Method controls how the Client ID and Client Secret are sent to the token endpoint:
+<table>
+  <tr><th>Value</th><th>Description</th></tr>
+  <tr><td><code>client_secret_basic</code></td><td>Sent using HTTP Basic Authentication. This is the default.</td></tr>
+  <tr><td><code>client_secret_post</code></td><td>Sent as parameters in the request body.</td></tr>
+  <tr><td><code>none</code></td><td>Only the Client ID is sent, in the request body. Use this for public clients that do not have a secret.</td></tr>
+</table>
+
+<h3>Extra Token Parameters</h3>
+Some servers need additional parameters in the token request, for example <code>audience</code> for Auth0. Add them to the
+Extra Token Parameters table, which is sent with every token request. Use the Add, Modify and Remove buttons to manage the
+entries, each of which has a name and a value.
+<p>
+If a name is the same as one of the standard parameters, such as <code>scope</code>, the value from the table is used.
+
+<h3>Using the Access Token</h3>
+The token response is made available to the context's Session Management Method. To send the access token with each
+request, use <a href="session-header.html">Header Based Session Management</a> with an
+<code>Authorization</code> header of <code>Bearer {%json:access_token%}</code>. The refresh token is available as
+<code>{%json:refresh_token%}</code>. These names are always used, even if the server uses different field names
+and you have set the Access Token Field and Refresh Token Field.
+
+<h3>Refresh Tokens</h3>
+If the token response includes a refresh token, ZAP stores it automatically and uses it the next time the user needs to be
+authenticated again. If the server rejects it, ZAP falls back to the configured grant type. Servers which issue a new refresh
+token each time are supported.
+<p>
+<b>Note:</b> ZAP does not track when the access token expires. It only authenticates again when it detects that the user is
+no longer logged in, so without Verification an expired token may continue to be sent.
+
+<h3>Verification</h3>
+Verification is how ZAP detects that the user is no longer logged in, which triggers a new authentication.
+If Session Management and/or Verification are set to <code>autodetect</code>, they are configured automatically
+when authentication succeeds:
+<ul>
+<li><b>Session Management</b> is set to Header Based, using <code>Authorization: Bearer {%json:access_token%}</code>.
+<li><b>Verification</b> treats a <code>200 OK</code> response as logged in and a <code>401 Unauthorized</code> response as
+logged out. This works for most APIs protected by bearer tokens, but it does not check anything specific to your application.
+</ul>
+To use a different check, configure the context's Verification yourself, for example with a poll URL.
+
+<H2>Automation Framework</H2>
+
+OAuth2 Authentication can be configured in the environment section of an Automation Framework plan using:
+<pre>
+      authentication:
+        method: "oauth2"
+        parameters:
+          grantType:                   # String, one of: client_credentials, password. Default: client_credentials
+          tokenEndpoint:               # String, the URL of the token endpoint, mandatory
+          clientId:                    # String, the OAuth2 Client ID
+          clientSecret:                # String, the OAuth2 Client Secret
+          clientAuthMethod:            # String, one of: client_secret_basic, client_secret_post, none. Default: client_secret_basic
+          scope:                       # String, the OAuth2 scope(s) to request
+          accessTokenField:            # String, the JSON field name of the access token in the token response. Default: access_token
+          refreshTokenField:           # String, the JSON field name of the refresh token in the token response. Default: refresh_token
+          extraTokenParams:            # Map, extra parameters to send in the token request, e.g. { audience: "https://api.example.com" }
+          diagnostics:                 # Boolean, record diagnostics for troubleshooting. Default: false
+      sessionManagement:
+        method: "headers"
+        parameters:
+          Authorization: "Bearer {%json:access_token%}"
+</pre>
+
+<p>
+Credentials for the <code>password</code> grant type are defined as usual under the user credentials, for example:
+<pre>
+      credentials:
+        username: …
+        password: …
+</pre>
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/OAuth2AuthenticationMethodType.java">OAuth2AuthenticationMethodType.java</a>
+
+</BODY>
+</HTML>
