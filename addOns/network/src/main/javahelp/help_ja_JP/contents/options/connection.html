@@ -46,7 +46,8 @@ SSLv2Helloオプションは、少なくとも1つのSSL/TLSバージョンと�
 デフォルト: サポートされているすべてのプロトコル
 
 	<H3>安全でないSSL/TLSの再ネゴシエーションを有効にする</H3>
-	古いサーバーとの互換性のために、安全でないSSL/TLSの再ネゴシエーション (<a href="https://nvd.nist.gov/vuln/detail/CVE-2009-3555">CVE-2009-3555</a>) を許可します。<br/>
+	Allows unsafe SSL/TLS renegotiations (<a href="https://nvd.nist.gov/vuln/detail/cve-2009-3555">CVE-2009-3555</a>) for
+	compatibility with older servers.<br/>
 	<strong>注:</strong> このオプションは、HTTPS接続を確立する前に設定する必要があります。ZAPの再起動が必要になる場合があります。
 	<br>
 デフォルト: <code>未選択</code>

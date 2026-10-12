@@ -38,7 +38,9 @@ Webサーバーが悪意のあるサードパーティサービスなどから�
 HTMLベースのメッセージでAnti-CSRFトークンの存在をスキャンします。 <br>
 Anti-CSRFトークンを含んでいないと思われるリクエストに対してアラートを発行します。<br>
 HIGH アラートしきい値では、スコープ内のメッセージのみをスキャンします。<br>
-バージョン2.5.0以降では、オプションの「ルール設定」パネルから <code>rules.csrf.ignorelist</code> パラメーターでカンマ区切りの識別子リストを指定できます。これらの識別子のいずれかに一致する name または ID を持つFORMは、Anti-CSRFトークンの欠落をスキャンする際に無視されます。この機能は、検索フォームなど、安全であることが確認されているFORMを無視する場合にのみ使用してください。
+バージョン2.5.0以降では、オプションの「ルール設定」パネルから <code>rules.csrf.ignorelist</code> パラメーターでカンマ区切りの識別子リストを指定できます。
+これらの識別子のいずれかに一致する name または ID を持つFORMは、Anti-CSRFトークンの欠落をスキャンする際に無視されます。
+この機能は、検索フォームなど、安全であることが確認されているFORMを無視する場合にのみ使用してください。
 <p>
 注: GETリクエストは LOW アラートしきい値でのみ評価されます。 
 <p>
@@ -53,7 +55,9 @@ Webアプリケーションが式言語 (EL) インジェクション攻撃の�
 
 <h2 id="id-10107">HttPoxy - Proxyヘッダーの誤用</h2>
 このアクティブスキャンルールは、サイトがリクエストで指定されたHTTP Proxyヘッダーを使用しているかどうかをチェックします。<br>
-ランダムに割り当てられた空きポートですべてのインターフェースをリッスンするHTTPプロキシを設定します。その後、利用可能な各IPアドレスとリッスンしているポートにHTTP Proxyヘッダーを設定した一連のリクエストをターゲットサーバーに送信します。新しいポートでリクエストが受信された場合、サーバーは脆弱である可能性が非常に高くなります。<br>
+ランダムに割り当てられた空きポートですべてのインターフェースをリッスンするHTTPプロキシを設定します。
+その後、利用可能な各IPアドレスとリッスンしているポートにHTTP Proxyヘッダーを設定した一連のリクエストをターゲットサーバーに送信します。
+新しいポートでリクエストが受信された場合、サーバーは脆弱である可能性が非常に高くなります。<br>
 <b>重要</b> - ZAPが実行されているコンピュータは任意のポートで着信リクエストを受け入れる必要があります。ファイアウォールが着信接続を妨げる場合、このルールは機能しません。 
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttPoxyScanRule.java">HttPoxyScanRule.java</a><br>
@@ -127,7 +131,8 @@ LOW アラートしきい値では、潜在的なコードを識別するため�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/42/">42</a>
 
 <h2 id="id-43">ソースコード漏洩 - ファイルインクルージョン</h2>
-ローカルファイルインクルージョン技術を使用して、Webサーバー上のソースコードを含むファイルをスキャンします。クライアントまたはサーバーエラーのレスポンスステータスコードが元々返されたメッセージはスキップされます。
+ローカルファイルインクルージョン技術を使用して、Webサーバー上のソースコードを含むファイルをスキャンします。
+クライアントまたはサーバーエラーのレスポンスステータスコードが元々返されたメッセージはスキップされます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureFileInclusionScanRule.java">SourceCodeDisclosureFileInclusionScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/43/">43</a>
@@ -147,7 +152,8 @@ Gitソースコードリポジトリのメタデータを使用して、Webサ�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40046/">40046</a>
 
 <h2 id="id-40047">Text4shell (CVE-2022-42889)</h2>
-このルールはText4shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2022-42889">CVE-2022-42889</a>) 脆弱性の発見を試みます。アラートオブバンドペイロードを生成し、DNS相互作用を検証するために、OASTアドオンに依存しています。
+This rule attempts to discover the Text4shell (<a href="https://nvd.nist.gov/vuln/detail/cve-2022-42889">CVE-2022-42889</a>) vulnerability.
+アラートオブバンドペイロードを生成し、DNS相互作用を検証するために、OASTアドオンに依存しています。
 <p>
 参照: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#alerts">OAST</a>.
 <p>
@@ -155,7 +161,8 @@ Gitソースコードリポジトリのメタデータを使用して、Webサ�
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40047/">40047</a>
 
 <h2 id="id-40023">ユーザー名列挙</h2>
-有効なユーザー名と無効なユーザー名が提供された場合のHTTPレスポンスの違いに基づいて、ユーザー名を列挙できる可能性があります。これにより、システムに対するパスワードブルートフォース攻撃の成功確率が大幅に向上します。 ZAPの「攻撃強度」オプションを上げることで、誤検出を最小限に抑えられる場合があります。実際に脆弱性であるかどうかを確認するには、「その他の情報」フィールドを手動で確認してください。このルールは、フォームベース認証を使用するコンテキストが定義されていない場合はスキップされ、コンテキストのログインURLとして識別されたURLに対してのみ実行されます。
+有効なユーザー名と無効なユーザー名が提供された場合のHTTPレスポンスの違いに基づいて、ユーザー名を列挙できる可能性があります。これにより、システムに対するパスワードブルートフォース攻撃の成功確率が大幅に向上します。 ZAPの「攻撃強度」オプションを上げることで、誤検出を最小限に抑えられる場合があります。実際に脆弱性であるかどうかを確認するには、「その他の情報」フィールドを手動で確認してください。
+ このルールは、フォームベース認証を使用するコンテキストが定義されていない場合はスキップされ、コンテキストのログインURLとして識別されたURLに対してのみ実行されます。
 <p>
 最新のコード: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/UsernameEnumerationScanRule.java">UsernameEnumerationScanRule.java</a><br>
 アラートID: <a href="https://www.zaproxy.org/docs/alerts/40023/">40023</a>.

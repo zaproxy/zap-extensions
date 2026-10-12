@@ -14,7 +14,8 @@
 <p>
 自動化フレームワークは、ZAPでサポートされているすべての<a href="authentication.html">認証</a>メカニズムをサポートしています。
 <p>
-<strong>注:</strong> デフォルトポート (httpの場合は80、httpsの場合は443) で動作するターゲットをテストする場合、URLのコロン付きポート部分は含めないでください。その部分を含めた場合 (例: http://example.com:80)、ターゲットのクロールやテストができなくなる可能性があります。「デフォルト」ポートが指定されている場合、ブラウザとZAPはそのポート番号を省略して扱います。その結果、コンテキスト内で期待されるURLと一致せず、コンテキストの一部として操作できなくなります。
+<strong>注:</strong> デフォルトポート (httpの場合は80、httpsの場合は443) で動作するターゲットをテストする場合、URLのコロン付きポート部分は含めないでください。
+その部分を含めた場合 (例: http://example.com:80)、ターゲットのクロールやテストができなくなる可能性があります。「デフォルト」ポートが指定されている場合、ブラウザとZAPはそのポート番号を省略して扱います。その結果、コンテキスト内で期待されるURLと一致せず、コンテキストの一部として操作できなくなります。
 
 <pre>
 env:                                   # 環境、必須
@@ -33,27 +34,28 @@ env:                                   # 環境、必須
           loginRequestUrl:             # 文字列、リクエストするログインURL、'form'または'json'認証の場合のみ
           loginRequestBody:            # 文字列、ログインリクエストボディ - 指定しない場合GETリクエストが使用されます、'form'または'json'認証の場合のみ
           script:                      # 文字列、スクリプトへのパス、'script'認証の場合のみ
-          scriptInline:                # 文字列、完全なスクリプト (複数行可) - 'script'とこちらのどちらか一方を指定してください。 'script'認証の場合のみ
-          scriptEngine:                # 文字列、使用するスクリプトエンジンの名前、'script'認証の場合のみ
+          scriptInline:                # 文字列、完全なスクリプト (複数行可) - 'script'とこちらのどちらか一方を指定してください。 Only for 'script' authentication
+          scriptEngine:                # String, the name of the script engine to use, only for 'script' authentication
         verification:
-          method:                      # 文字列、'response'、'request'、'both'、'poll'のいずれか
-          loggedInRegex:               # 文字列、ログイン状態を判定するための正規表現パターン
-          loggedOutRegex:              # 文字列、ログアウト状態を判定するための正規表現パターン
-          pollFrequency:               # 整数、ポーリング頻度、'poll'検証の場合のみ
-          pollUnits:                   # 文字列、ポーリング単位、'requests'、'seconds'のいずれか、'poll'検証の場合のみ
-          pollUrl:                     # 文字列、ポーリングするURL、'poll'検証の場合のみ
-          pollPostData:                # 文字列、ポーリングに含めるPOSTデータ、'poll'検証の場合のみ
-          pollAdditionalHeaders:       # ポーリングリクエストの追加ヘッダーのリスト、'poll'検証の場合のみ
-          - header:                    # ヘッダー名
-            value:                     # ヘッダー値
+          method:                      # String, one of 'response', 'request', 'both', 'poll'
+          loggedInRegex:               # String, regex pattern for determining if logged in
+          loggedOutRegex:              # String, regex pattern for determining if logged out
+          pollFrequency:               # Int, the poll frequency, only for 'poll' verification
+          pollUnits:                   # String, the poll units, one of 'requests', 'seconds', only for 'poll' verification
+          pollMethod:                  # String, the poll HTTP method (e.g. GET), only for 'poll' verification. Post 2.17.0.
+          pollUrl:                     # String, the URL to poll, only for 'poll' verification
+          pollPostData:                # String, post dat to include in the poll, only for 'poll' verification
+          pollAdditionalHeaders:       # List of additional headers for poll request, only for 'poll' verification
+          - header:                    # The header name
+            value:                     # The header value
       sessionManagement:
-        method:                        # 文字列、'cookie'、'http'、'script'のいずれか
-        parameters:                    # パラメーターのリスト - スクリプトに必要なものを含めることができます
-          script:                      # 文字列、スクリプトへのパス、'script'セッション管理の場合のみ
-          scriptEngine:                # 文字列、使用するスクリプトエンジンの名前、'script'セッション管理の場合のみ
+        method:                        # String, one of 'cookie', 'http', 'script'
+        parameters:                    # List of parameters - may include any required for scripts
+          script:                      # String, path to script, only for 'script' session management
+          scriptEngine:                # String, the name of the script engine to use, only for 'script' session management
       technology:
-        exclude:                       # 除外する技術のリスト、https://www.zaproxy.org/techtags/ を参照 (末尾の名前のみを使用)
-        include:                       # 含める技術のリスト、特定の技術をターゲットとする場合にのみ使用してください。コンテキスト設定時はexcludeが優先されます
+        exclude:                       # List of tech to exclude, as per https://www.zaproxy.org/techtags/ (just use last names)
+        include:                       # List of tech to include, should only be used when targeting specific techs, the exclude takes precedence when configuring the context.
       structure:
         structuralParameters:          # 構造パラメーターの名前のリスト
         dataDrivenNodes:               # データ駆動ノードのリスト
@@ -68,27 +70,29 @@ env:                                   # 環境、必須
             secret:                    # 文字列、シークレット
             period:                    # 整数、期間。デフォルト: 30
             digits:                    # 整数、桁数。デフォルト: 6
-            algorithm:                 # 文字列、アルゴリズム。デフォルト: SHA1
-  vars:                                # 設定ファイル全体で使用される0個以上のカスタム変数のリスト
-    myVarOne: CustomConfigVarOne       # 設定全体で${myVarOne}として使用可能
-    myVarTwo: ${myVarOne}.VarTwo       # 他の変数を参照可能
-  configs:                             # ZAPの "-config" コマンドラインオプションに基づく、汎用設定パラメーターの一覧
+            algorithm:                 # 文字列、アルゴリズム。 Default: SHA1
+  vars:                                # List of custom variables to be used throughout the config file
+    myVarOne: CustomConfigVarOne       # Can be used as ${myVarOne} anywhere throughout the config
+    myVarTwo: ${myVarOne}.VarTwo       # Can refer other vars
+  configs:                             # List of generic config parameters, as per the ZAP "-config" cmd line option
   parameters:
-    failOnError: true                  # 設定した場合、エラー時に終了
-    failOnWarning: false               # 設定した場合、警告時に終了
-    continueOnFailure: false           # 1つのジョブが失敗してもすべてのジョブを実行し続ける
-    progressToStdout: true             # 設定した場合、ジョブの進捗状況を標準出力に書き込む
-  proxy:                               # オプションのアップストリームプロキシ設定
-    hostname:                          # 文字列、プロキシホスト
-    port:                              # 整数、プロキシポート
-    realm:                             # 文字列、プロキシレルム
-    username:                          # 文字列、プロキシユーザー名
-    password:                          # 文字列、プロキシパスワード
+    failOnError: true                  # If set exit on an error
+    failOnWarning: false               # If set exit on a warning
+    continueOnFailure: false           # Continue running all jobs, even if one fails
+    progressToStdout: true             # If set will write job progress to stdout
+    maxDuration: 0                     # The max time, in seconds, the plan is allowed to run, default: 0 unlimited
+  proxy:                               # Optional upstream proxy settings
+    hostname:                          # String, the proxy host
+    port:                              # Int, the proxy port
+    realm:                             # String, the proxy realm
+    username:                          # String, the proxy username
+    password:                          # String, the proxy password
 </pre>
 
 <h3>変数</h3>
 
-変数は 'vars' セクションで定義できます変数はハードコード、他の変数の参照、または上記と同様にシステム環境変数の参照が可能です (例: '${envvar}')。同じ名前の変数が2つある場合、システム変数の値が優先されます。 
+変数は 'vars' セクションで定義できます
+変数はハードコード、他の変数の参照、または上記と同様にシステム環境変数の参照が可能です (例: '${envvar}')。同じ名前の変数が2つある場合、システム変数の値が優先されます。 
 
 <h3>Configs</h3>
 

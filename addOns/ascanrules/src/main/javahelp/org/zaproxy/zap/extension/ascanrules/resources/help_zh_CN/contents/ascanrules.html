@@ -14,7 +14,7 @@
 检查可能泄露敏感信息（如用户名、密码、API 或 APP 密钥等）的网络访问 .env 文件。
 
 环境文件有很多种，但大多数都是 KEY=VALUE 格式。 <br>
-该规则会检查服务器默认的传输方式；NGINX 会以二进制/八进制流内容类型返回；Apache 只返回文本，不带内容类型。 该规则还检查内容长度是否超过 500 个字符，以尝试排除较大的、可能是有意为之的文件。
+该规则会检查服务器默认的传输方式；NGINX 会以二进制/八进制流内容类型返回；Apache 只返回文本，不带内容类型。该规则还检查内容长度是否超过 500 个字符，以尝试排除较大的、可能是有意为之的文件。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/EnvFileScanRule.java">EnvFileScanRule.java</a>
 <br>
@@ -29,7 +29,7 @@
 
 <h2 id="id-30001">缓冲区溢出</h2>。
 
-查找已编译代码中的缓冲区溢出指标。  它的做法是输出大串输入文本，并查找代码崩溃和会话的异常关闭。
+查找已编译代码中的缓冲区溢出指标。它的做法是输出大串输入文本，并查找代码崩溃和会话的异常关闭。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/BufferOverflowScanRule.java">BufferOverflowScanRule.java</a>
 <br>
@@ -43,9 +43,9 @@
 
 <h2 id="id-90019">代码注入</h2>
 
-此规则在请求中提交 PHP 和 ASP 攻击字符串作为 URL 参数值，并检查响应以查看服务器是否已评估这些值。 首先，构建并发送请求，其中包含注入的 PHP 指令
-来打印令牌。 如果令牌与响应正文内容匹配，扫描器会发出警报并立即返回。
-如果没有匹配，扫描器就会用几个注入的 ASP 字符串构建请求，指示服务器在响应中写入随机生成的两个整数的乘积。 如果响应的正文与乘积相符，就会发出警报。
+此规则在请求中提交 PHP 和 ASP 攻击字符串作为 URL 参数值，并检查响应以查看服务器是否已评估这些值。首先，构建并发送请求，其中包含注入的 PHP 指令
+来打印令牌。如果令牌与响应正文内容匹配，扫描器会发出警报并立即返回。
+如果没有匹配，扫描器就会用几个注入的 ASP 字符串构建请求，指示服务器在响应中写入随机生成的两个整数的乘积。如果响应的正文与乘积相符，就会发出警报。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CodeInjectionScanRule.java">CodeInjectionScanRule.java</a>
 <br>
@@ -237,7 +237,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>.
 
 <h2 id="id-40043">Log4Shell (CVE-2021-44228 and CVE-2021-45046)</h2>
-This rule attempts to discover the Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">CVE-2021-44228</a> and <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-45046">CVE-2021-45046</a>) vulnerabilities.
+This rule attempts to discover the Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/cve-2021-44228">CVE-2021-44228</a> and <a href="https://nvd.nist.gov/vuln/detail/cve-2021-45046">CVE-2021-45046</a>) vulnerabilities.
 It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
 We recommend that this scan rule is used with header injection enabled for maximum coverage.
 <p>
@@ -248,8 +248,7 @@ See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#ale
 警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40043/">40043</a>.
 
 <h2 id="id-90024">填充 Oracle</h2>
-此规则试图操纵加密字符串的填充，以触发错误响应，表明可能存在填充 Oracle 漏洞。 
-这种漏洞会影响任何不当使用加密的应用程序或框架，如某些版本的 ASP.net、Java Server Faces 和 Mono。
+此规则试图操纵加密字符串的填充，以触发错误响应，表明可能存在填充 Oracle 漏洞。这种漏洞会影响任何不当使用加密的应用程序或框架，如某些版本的 ASP.net、Java Server Faces 和 Mono。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/PaddingOracleScanRule.java">PaddingOracleScanRule.java</a>
 <br>
@@ -257,7 +256,7 @@ See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#ale
 
 <h2 id="id-40008">篡改参数</h2>。
 
-存在已知会导致向用户显示错误的参数值，如果处理不当，则该规则会提交该参数值的请求。 对响应进行检查以确保它们返回服务器错误状态代码，然后与正常 HTTP 响应进行比较，以确保在错误参数对输出没有影响的情况下不会发出警报。 最后，将响应正文的内容与 Java servlet、Microsoft VBScript、OLE DB、JET、PHP 和 Tomcat 错误中可能出现的各种模式进行比较。 如果发现匹配，就会发出警报，扫描器会立即返回。
+存在已知会导致向用户显示错误的参数值，如果处理不当，则该规则会提交该参数值的请求。对响应进行检查以确保它们返回服务器错误状态代码，然后与正常 HTTP 响应进行比较，以确保在错误参数对输出没有影响的情况下不会发出警报。最后，将响应正文的内容与 Java servlet、Microsoft VBScript、OLE DB、JET、PHP 和 Tomcat 错误中可能出现的各种模式进行比较。如果发现匹配，就会发出警报，扫描器会立即返回。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ParameterTamperScanRule.java">ParameterTamperScanRule.java</a>
 <br>
@@ -265,7 +264,7 @@ See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#ale
 
 <h2 id="id-6">路径遍历</h2>
 
-此规则通过为 Windows 和 *NIX 系统以及 Java servlets 构建路径前缀和本地文件目标的各种组合，尝试访问网络文档根目录之外的文件和目录。 如果响应的内容与当前目标文件的模式匹配，则会发出警报，扫描仪会立即返回。 如果常用的本地文件目标都不成功，就会使用 URL 中的文件名尝试路径遍历。 只要提交任意文件名不返回 OK 状态代码，而提交真实文件名则返回 OK 状态代码，扫描仪就会发出警报并立即返回。
+此规则通过为 Windows 和 *NIX 系统以及 Java servlets 构建路径前缀和本地文件目标的各种组合，尝试访问网络文档根目录之外的文件和目录。如果响应的内容与当前目标文件的模式匹配，则会发出警报，扫描仪会立即返回。如果常用的本地文件目标都不成功，就会使用 URL 中的文件名尝试路径遍历。只要提交任意文件名不返回 OK 状态代码，而提交真实文件名则返回 OK 状态代码，扫描仪就会发出警报并立即返回。
 <p>
 注意：此扫描规则有一项检查在高警报阈值时被排除。
 <p>
@@ -276,7 +275,7 @@ See also: <a href="https://www.zaproxy.org/docs/desktop/addons/oast-support/#ale
 <h2 id="id-40048">Remote Code Execution (React2Shell)</h2>
 This rule identifies servers running vulnerable versions of React Server Components with Next.js, which will allow remote attackers to execute arbitrary code.
 <p>
-The rule is based on the PoC detailed on <a href="https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/">https://slcyber.io/research-center/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478/</a>.
+The rule is based on the PoC detailed on <a href="https://www.slcyber.io/research/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478">https://www.slcyber.io/research/high-fidelity-detection-mechanism-for-rsc-next-js-rce-cve-2025-55182-cve-2025-66478</a>.
 <p>
 It verifies that the server is running vulnerable React Server Components with Next.js, and that the remote code execution (RCE) vulnerability is present without causing any damage.
 It forces an error via a malformed multipart request and checks for the presence of a string which confirms RCE is possible.
@@ -294,7 +293,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40048/">40048</a>.
 
 <h2 id="id-7">远程文件包含</h2>。
 
-此规则提交一系列以外部 URL 作为参数值的请求，并查找响应正文与这些 URL 中托管的页面标题是否匹配。 如果预期字符串与响应正文匹配，且标头返回的状态代码为 200，则会发出警报，扫描程序会立即返回。
+此规则提交一系列以外部 URL 作为参数值的请求，并查找响应正文与这些 URL 中托管的页面标题是否匹配。如果预期字符串与响应正文匹配，且标头返回的状态代码为 200，则会发出警报，扫描程序会立即返回。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/RemoteFileIncludeScanRule.java">RemoteFileIncludeScanRule.java</a>
 <br>
@@ -302,7 +301,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40048/">40048</a>.
 
 <h2 id="id-40009">服务器端包含</h2>。
 
-该规则检查服务器运行的操作系统，然后发送带有相应 HTML SSI 指令作为参数值的请求。 如果响应体与表明 SSI 成功的模式匹配，则会发出警报并立即返回扫描器。
+该规则检查服务器运行的操作系统，然后发送带有相应 HTML SSI 指令作为参数值的请求。如果响应体与表明 SSI 成功的模式匹配，则会发出警报并立即返回扫描器。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ServerSideIncludeScanRule.java">ServerSideIncludeScanRule.java</a>
 <br>
@@ -362,7 +361,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10048/">10048</a>.
 警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40045/">40045</a>.
 
 <h2 id="id-40042">Spring Actuators</h2>。
-该规则试图识别Spring Actuators是否已启用。 测试应用程序中默认的 /actuator/health 路径。
+该规则试图识别Spring Actuators是否已启用。测试应用程序中默认的 /actuator/health 路径。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
 <br>
@@ -447,7 +446,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40022/">40022</a>.
 
 <h2 id="id-40029">Trace.axd 信息泄露</h2> 
-测试跟踪查看器（trace.axd）是否可用。 尽管该组件方便了开发人员和其他利益相关者，但它可能会泄露大量信息，而安全分析师或恶意用户可能会对这些信息感兴趣。<br><br>
+测试跟踪查看器（trace.axd）是否可用。尽管该组件方便了开发人员和其他利益相关者，但它可能会泄露大量信息，而安全分析师或恶意用户可能会对这些信息感兴趣。<br><br>
 trace.axd 扫描规则的目标是基于 Microsoft 的技术： IIS、Windows、ASP 和 MSSQL。
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/TraceAxdScanRule.java">TraceAxdScanRule.java</a>
@@ -455,7 +454,7 @@ trace.axd 扫描规则的目标是基于 Microsoft 的技术： IIS、Windows、
 警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40029/">40029</a>.
 
 <h2 id="id-10104">用户代理模糊器 (Fuzzer)</h2>
-此活动扫描规则根据模糊用户代理检查响应的差异（例如： 移动网站，作为搜索引擎爬虫访问）。 The rule compares the response statuscode and the hashcode of the response body with the original response.<br>
+此活动扫描规则根据模糊用户代理检查响应的差异（例如：移动网站，作为搜索引擎爬虫访问）。 The rule compares the response statuscode and the hashcode of the response body with the original response.<br>
 <strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own User Agent strings (payloads) in the Custom Payloads options panel.
 <br>
 The Custom Payloads category for this rule is: <code>User-Agent</code>.
@@ -483,7 +482,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90021/">90021</a>.
 
 <h2 id="id-90023">XXE</h2>
 该组件试图识别受到 XML eXternal Entity (XXE) 攻击的应用程序。
-解析 XML 输入的应用程序可能会受到 XXE 的影响，因为弱解析器或配置不佳的解析器会处理包含外部实体（如本地文件）引用的 XML 输入、对内部或三级系统的 HTTP 请求等。 单独测试的标记数量取决于规则的强度。
+解析 XML 输入的应用程序可能会受到 XXE 的影响，因为弱解析器或配置不佳的解析器会处理包含外部实体（如本地文件）引用的 XML 输入、对内部或三级系统的 HTTP 请求等。单独测试的标记数量取决于规则的强度。
 <br>
 该扫描规则只有在 OAST 附加组件已安装并可用时才会运行。
 还建议您测试 OAST 附加组件中的回调服务是否为针对您目标站点的正确配置。

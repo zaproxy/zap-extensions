@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Params Automation Framework Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Params Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+<br><br>
+<H2>Job: params</H2>
+The <code>params</code> job is a data job. It does not have any configurable parameters.
+It provides parameter data to other jobs via the <code>ParamsJobResultData</code> class.
+<p>
+It should be run after the jobs that explore your application, such as the spider jobs or those that import API definitions,
+so that parameters have been recorded for the sites in scope.
+
+<H2>YAML</H2>
+
+<pre>
+  - type: params
+</pre>
+
+<H2>Job Data</H2>
+The following class will be made available to add-ons that provide access to the Job Data such as the Reporting add-on.
+<ul>
+<li>Key: <code>paramsData</code>
+<li>Class: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/params/src/main/java/org/zaproxy/addon/params/automation/jobs/ParamsJobResultData.java">ParamsJobResultData</a>
+</ul>
+
+</BODY>
+</HTML>

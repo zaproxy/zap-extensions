@@ -4,7 +4,7 @@
 <vuln_items>wasc_1</vuln_items>
 <vuln_item_wasc_1>
 	<alert>身份验证不充分</alert>
-	<desc>当一个 Web 站点允许攻击者访问敏感内容或功能而无需正确验证时，判定为身份验证不足。 基于Web的管理工具是Web站点提供对敏感功能访问能力的很好的例子。 虽然Web应用种类多样，然而这些Web应用应需要用户来正确验证他们的身份后才可允许访问敏感内容。
+	<desc>当一个 Web 站点允许攻击者访问敏感内容或功能而无需正确验证时，判定为身份验证不足。基于Web的管理工具是Web站点提供对敏感功能访问能力的很好的例子。虽然Web应用种类多样，然而这些Web应用应需要用户来正确验证他们的身份后才可允许访问敏感内容。
 
 To get around setting up authentication, some resources are protected by "hiding" the specific location and not linking the location into the main web site or other public places. However, this approach is nothing more than "Security Through Obscurity". It's important to understand that even though a resource is unknown to an attacker, it still remains accessible directly through a specific URL. The specific URL could be discovered through a Brute Force probing for common file and directory locations (/admin for example), error messages, referrer logs, or documentation such as help files. These resources, whether they are content- or functionality-driven, should be adequately protected.</desc>
 	<solution>阶段：架构设计
@@ -17,13 +17,13 @@ To get around setting up authentication, some resources are protected by "hiding
 <vuln_items>wasc_2</vuln_items>
 <vuln_item_wasc_2>
 	<alert>授权方式不充分</alert>
-	<desc>授权方式不充分可能会导致应用程序不能实行足够的认证检查，来保证用户在安全策略内一致实行功能或访问数据。 授权过程应强制执行允许用户、服务或应用程序执行的操作。 当用户在某个 Web 站点上认证时，并不意味着他需要具有所有内容和功能的访问权限。
+	<desc>授权方式不充分可能会导致应用程序不能实行足够的认证检查，来保证用户在安全策略内一致实行功能或访问数据。授权过程应强制执行允许用户、服务或应用程序执行的操作。当用户在某个 Web 站点上认证时，并不意味着他需要具有所有内容和功能的访问权限。
 
 授权功能不充分
 
-很多应用程序对不同用户授权不同的应用功能使用权限。 新闻站点允许一般用户阅读新闻文章，而不是发表它们。 会计学系统给予应付账款业务员和应收账款业务员的权限也不会相同。 授权功能不充分会在应用程序不能阻挡用户违反安全策略访问程序功能的情况发现。
+很多应用程序对不同用户授权不同的应用功能使用权限。新闻站点允许一般用户阅读新闻文章，而不是发表它们。会计学系统给予应付账款业务员和应收账款业务员的权限也不会相同。授权功能不充分会在应用程序不能阻挡用户违反安全策略访问程序功能的情况发现。
 
-一个明确的事例是 2005 年对哈佛商学院的申请过程的破解。 一个认证过程的失误使得用户可以查看他们不该访问到那一部分网站的个人数据。
+一个明确的事例是 2005 年对哈佛商学院的申请过程的破解。一个认证过程的失误使得用户可以查看他们不该访问到那一部分网站的个人数据。
  
 授权数据不充分
 
@@ -33,12 +33,12 @@ https://example.com/RecordView?id=12345
 
 If the application does not check that the authenticated user ID has read rights, then it could display data to the user that the user should not see.
 
-授权数据不充分比授权方法不充足更加常见，因为程序员通常可以完全保证应用的功能性，但不太注意所访问应用数据是否有正确地映射。 程序员通常会在认证机制函数中收缩控制，而依赖诸如数据库等其它系统来保证数据认证。</desc>
+授权数据不充分比授权方法不充足更加常见，因为程序员通常可以完全保证应用的功能性，但不太注意所访问应用数据是否有正确地映射。程序员通常会在认证机制函数中收缩控制，而依赖诸如数据库等其它系统来保证数据认证。</desc>
 	<solution>阶段：架构设计；运行
-小心地管理权限的设置、管理与处理过程。 在软件中明确管理信任区域。
+小心地管理权限的设置、管理与处理过程。在软件中明确管理信任区域。
 
 阶段：架构设计
-确保在系统设计中内置适当的划分机制，并确保划分用于允许并进一步加强权限分离功能。 架构师和设计师应该依靠最小权限原则来决定何时使用和放弃系统权限。</solution>
+确保在系统设计中内置适当的划分机制，并确保划分用于允许并进一步加强权限分离功能。架构师和设计师应该依靠最小权限原则来决定何时使用和放弃系统权限。</solution>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/285.html</reference>
@@ -47,9 +47,9 @@ If the application does not check that the authenticated user ID has read rights
 <vuln_items>wasc_3</vuln_items>
 <vuln_item_wasc_3>
 	<alert>整数溢出</alert>
-	<desc>当算术运算（如乘法或加法运算）的计算结果超过整数类型所能存储的最大值时，会发生整数溢出现象。 当整数溢出问题发生时，解析出的值会在最大值附近发生"回卷"，从最小值重新开始，就像钟表使用指向1：00的位置表示13：00一样。
+	<desc>当算术运算（如乘法或加法运算）的计算结果超过整数类型所能存储的最大值时，会发生整数溢出现象。当整数溢出问题发生时，解析出的值会在最大值附近发生"回卷"，从最小值重新开始，就像钟表使用指向1：00的位置表示13：00一样。
 
-例如，在常见计算机架构中的8位的有符号整数的最大值为127，最小值为-128。 如果程序员在该类型变量中存储了值127，然后对此变量进行加一操作，那么结果本应该为128， 但是，这超出了这个整数类型的最大值，因此解析出的值将发生"回卷"从而变成-128。</desc>
+例如，在常见计算机架构中的8位的有符号整数的最大值为127，最小值为-128。如果程序员在该类型变量中存储了值127，然后对此变量进行加一操作，那么结果本应该为128，但是，这超出了这个整数类型的最大值，因此解析出的值将发生"回卷"从而变成-128。</desc>
 	<solution>阶段：需求
 保证所有协议严格定义，以保证所有越界行为能够简单标识出来，并要求遵守所有协议。
 
@@ -63,15 +63,15 @@ If the application does not check that the authenticated user ID has read rights
 例如安全整数处理库 SafeInt (C++) 或 IntegerLib (C 或 C++)。
 
 阶段：实现
-对任何数字输入实行输入验证，保证其在预期的范围内。 让输入强制满足预期范围的最大值和最小值需求。
-如果可能，使用无符号整数类型。 这使得整数溢出健全性检查更加容易。 如果必须使用有符号整数类型，请保证您的边界检查同时包含最小值和最大值。
+对任何数字输入实行输入验证，保证其在预期的范围内。让输入强制满足预期范围的最大值和最小值需求。
+如果可能，使用无符号整数类型。这使得整数溢出健全性检查更加容易。如果必须使用有符号整数类型，请保证您的边界检查同时包含最小值和最大值。
 
 阶段：实现
-理解您所用编程语言的底层表示，以及在数学运算时如何产生联系 (CWE-681)。 请密切注意字节大小的差异、精度、有符号/无符号的区别、截断、类型之间的转换和强制转换、"非数字"计算，以及对于其基础表示形式而言，您的语言如何处理太大或太小的数字。
+理解您所用编程语言的底层表示，以及在数学运算时如何产生联系 (CWE-681)。请密切注意字节大小的差异、精度、有符号/无符号的区别、截断、类型之间的转换和强制转换、"非数字"计算，以及对于其基础表示形式而言，您的语言如何处理太大或太小的数字。
 也需要小心32位程序、64位程序及其他可能影响数字表示的因素。
 
 阶段：实现
-仔细检查编译器警告，并排除可能的严重安全问题，如有符号/无符号类型不匹配。 即使此弱点几乎无人利用，一个简单的失误可能也会引起整个系统的破坏。</solution>
+仔细检查编译器警告，并排除可能的严重安全问题，如有符号/无符号类型不匹配。即使此弱点几乎无人利用，一个简单的失误可能也会引起整个系统的破坏。</solution>
 	<reference>https://cwe.mitre.org/data/definitions/190.html</reference>
 </vuln_item_wasc_3>
 
@@ -164,7 +164,7 @@ Many file inclusion problems occur because the programmer assumed that certain i
 <vuln_items>wasc_6</vuln_items>
 <vuln_item_wasc_6>
 	<alert>格式化字符串</alert>
-	<desc>格式字符串攻击通过字符串格式化库访问其他内存空间改变了应用程序的执行流程。 当用户提供的数据直接作为某些 C/C++ 函数（如 fprintf、printf、sprintf、setproctitle、syslog……）的字符串输入时，就会产生漏洞。
+	<desc>格式字符串攻击通过字符串格式化库访问其他内存空间改变了应用程序的执行流程。当用户提供的数据直接作为某些 C/C++ 函数（如 fprintf、printf、sprintf、setproctitle、syslog……）的字符串输入时，就会产生漏洞。
 
 如果某个攻击者在网络应用中提交了一个包含 printf 转义字符串（如 "%f"、"%p”、"%n" 等）标志作为参数，他们将可能会：
     * 执行服务器上的任意代码
