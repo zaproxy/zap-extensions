@@ -270,6 +270,89 @@ class SpringActuatorScanRuleUnitTest extends ActiveScannerTest<SpringActuatorSca
     }
 
     @Test
+    void shouldAlertIfActuatorContentTypeHasCustomStatus() throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/randomPath";
+        String alertPath = REQ_PATH;
+        this.nano.addHandler(createHandler(servePath, NanoHTTPD.MIME_HTML, IRRELEVANT_BODY));
+        this.nano.addHandler(
+                createHandler("/" + alertPath, ACTUATOR_CONTENT_TYPE, "{\"status\":\"FATAL\"}"));
+        HttpMessage msg = this.getHttpMessage(servePath);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldNotAlertIfJsonContentTypeHasCustomStatus() throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/randomPath";
+        String alertPath = REQ_PATH;
+        this.nano.addHandler(createHandler(servePath, NanoHTTPD.MIME_HTML, IRRELEVANT_BODY));
+        this.nano.addHandler(
+                createHandler("/" + alertPath, "application/json", "{\"status\":\"FATAL\"}"));
+        HttpMessage msg = this.getHttpMessage(servePath);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+        assertThat(httpMessagesSent, hasSize(2));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "[{\"id\":1,\"name\":\"admin\",\"level\":0},{\"id\":2,\"name\":\"robin\",\"level\":1}]",
+                "{\"id\":1,\"name\":\"admin\",\"level\":0}",
+                "{\"status\":\"ok\"}"
+            })
+    void shouldNotAlertIfTestedUrlRespondsOKWithJsonThatIsNotHealthContent(String body)
+            throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/randomPath";
+        String alertPath = REQ_PATH;
+        this.nano.addHandler(createHandler(servePath, NanoHTTPD.MIME_HTML, IRRELEVANT_BODY));
+        this.nano.addHandler(createHandler("/" + alertPath, "application/json", body));
+        HttpMessage msg = this.getHttpMessage(servePath);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+        assertThat(httpMessagesSent, hasSize(2));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "{\"status\":\"DOWN\"}",
+                "{\"status\":\"OUT_OF_SERVICE\"}",
+                "{\"status\":\"UNKNOWN\"}",
+                "{ \"status\" : \"UP\" }",
+                "{\n  \"status\" : \"UP\"\n}",
+                "{\"status\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}",
+                "{\"components\":{\"diskSpace\":{\"status\":\"UP\"}},\"status\":\"UP\"}"
+            })
+    void shouldAlertIfTestedUrlRespondsOKWithHealthContent(String body)
+            throws HttpMalformedHeaderException {
+        // Given
+        String servePath = "/randomPath";
+        String alertPath = REQ_PATH;
+        this.nano.addHandler(createHandler(servePath, NanoHTTPD.MIME_HTML, IRRELEVANT_BODY));
+        this.nano.addHandler(createHandler("/" + alertPath, ACTUATOR_CONTENT_TYPE, body));
+        HttpMessage msg = this.getHttpMessage(servePath);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(httpMessagesSent, hasSize(1));
+    }
+
+    @Test
     void shouldNotAlertIfTestedUrlRespondsOKWithIrrelevantHeader()
             throws HttpMalformedHeaderException {
         // Given
@@ -394,5 +477,14 @@ class SpringActuatorScanRuleUnitTest extends ActiveScannerTest<SpringActuatorSca
         assertThat(tags.size(), is(equalTo(8)));
         assertBaseTags(tags);
         assertThat(tags, hasKey("CWE-215"));
+    }
+
+    private static NanoServerHandler createHandler(String path, String contentType, String body) {
+        return new NanoServerHandler(path) {
+            @Override
+            protected Response serve(NanoHTTPD.IHTTPSession session) {
+                return newFixedLengthResponse(Response.Status.OK, contentType, body);
+            }
+        };
     }
 }
