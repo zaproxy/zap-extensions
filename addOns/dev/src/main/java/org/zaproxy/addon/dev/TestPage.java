@@ -21,33 +21,11 @@ package org.zaproxy.addon.dev;
 
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.network.server.HttpMessageHandler;
 
-public abstract class TestPage implements HttpMessageHandler {
-
-    private String name;
-    private TestDirectory parent;
-    private TestProxyServer server;
+public abstract class TestPage extends TestNode {
 
     public TestPage(TestProxyServer server, String name) {
-        this.name = name;
-        this.server = server;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public TestDirectory getParent() {
-        return parent;
-    }
-
-    public void setParent(TestDirectory parent) {
-        this.parent = parent;
-    }
-
-    public TestProxyServer getServer() {
-        return server;
+        super(server, name);
     }
 
     public String getFormParameter(HttpMessage msg, String name) {

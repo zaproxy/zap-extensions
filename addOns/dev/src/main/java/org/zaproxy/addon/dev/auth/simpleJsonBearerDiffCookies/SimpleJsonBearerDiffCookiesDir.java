@@ -32,7 +32,7 @@ import org.zaproxy.addon.dev.TestProxyServer;
  */
 public class SimpleJsonBearerDiffCookiesDir extends TestAuthDirectory {
 
-    private Map<String, String> cookies = new HashMap<>();
+    private Map<String, String> cookies = state(new HashMap<>());
 
     public SimpleJsonBearerDiffCookiesDir(TestProxyServer server, String name) {
         super(server, name);

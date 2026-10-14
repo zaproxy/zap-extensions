@@ -25,8 +25,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,8 +36,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.dev.DevHttpSenderListener;
 import org.zaproxy.addon.dev.DevUtils;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestDirectory;
@@ -82,6 +82,22 @@ import org.zaproxy.addon.dev.TestProxyServer;
  *       the client authenticated exactly that way.
  *   <li>{@code simulate_error} - {@code malformed} (a non-JSON {@code 200} body) or {@code
  *       server_error} (a {@code 500} response).
+ *   <li>{@code refresh_error} - only affects the {@code refresh_token} grant: {@code invalid_grant}
+ *       rejects the refresh token (which is consumed, as if revoked) or {@code server_error}
+ *       responds with a {@code 500} (the refresh token is still valid). Other grants are not
+ *       affected, so a client can fall back to them.
+ *   <li>{@code revoke_refreshed} - revokes the access tokens issued by {@code refresh_token} grants
+ *       straight away: the token endpoint reports success, but the token is then rejected (at
+ *       {@code api.oauth2.zap/userinfo} and {@code /introspect}). A number revokes the first that
+ *       many tokens issued to the client by {@code refresh_token} grants, for example {@code 1}
+ *       revokes just the first, so that the next one works. {@code true} revokes all of them.
+ *       Tokens from the other grants are not affected.
+ *   <li>{@code omit_expires_in} - {@code true} leaves {@code expires_in} out of the token response,
+ *       the access token still stops working when it should, as with {@code expires_in}. So a
+ *       client has no way of knowing when it will, and can not refresh it ahead of that.
+ *   <li>{@code fail_after} - the number of tokens to issue to a client, any further token request
+ *       for that client responds with a {@code 500}. For example {@code 1} allows the initial grant
+ *       but not refreshing nor authenticating again.
  * </ul>
  */
 public class OAuth2RootDir extends TestAuthDirectory {
@@ -104,76 +120,49 @@ public class OAuth2RootDir extends TestAuthDirectory {
     private static final long AUTH_CODE_TTL_MILLIS = TimeUnit.MINUTES.toMillis(5);
     private static final int DEFAULT_EXPIRES_IN_SECONDS = 3600;
 
-    private final Map<String, AuthCode> authorizationCodes = new ConcurrentHashMap<>();
-    private final Map<String, String> refreshTokenToUser = new ConcurrentHashMap<>();
-    private final Map<String, Long> accessTokenExpiryMillis = new ConcurrentHashMap<>();
+    private final Map<String, AuthCode> authorizationCodes = state(new ConcurrentHashMap<>());
+    private final Map<String, String> refreshTokenToUser = state(new ConcurrentHashMap<>());
+    private final Map<String, Long> accessTokenExpiryMillis = state(new ConcurrentHashMap<>());
+    private final Set<String> revokedAccessTokens = state(ConcurrentHashMap.newKeySet());
+    private final Map<String, AtomicInteger> tokensIssuedToClient =
+            state(new ConcurrentHashMap<>());
+    private final Map<String, AtomicInteger> refreshedTokensIssuedToClient =
+            state(new ConcurrentHashMap<>());
 
     public OAuth2RootDir(TestProxyServer server, String name) {
         super(server, name);
-        server.addDomainListener(
-                "https://authserver.oauth2.zap",
-                new DevHttpSenderListener(this.getServer()) {
-                    @Override
-                    public void onHttpResponseReceive(
-                            HttpMessage msg, int initiator, HttpSender sender) {
-                        try {
-                            String page = getPageName(msg);
-                            if ("authorize".equals(page)) {
-                                handleAuthorize(msg);
-                            } else if ("token".equals(page)
-                                    && HttpRequestHeader.POST.equals(
-                                            msg.getRequestHeader().getMethod())) {
-                                handleToken(msg);
-                            } else if ("introspect".equals(page)
-                                    && HttpRequestHeader.POST.equals(
-                                            msg.getRequestHeader().getMethod())) {
-                                JSONObject response = handleIntrospect(msg);
-                                sendJsonResponse(
-                                        msg,
-                                        response.has("error")
-                                                ? STATUS_BAD_REQUEST
-                                                : TestProxyServer.STATUS_OK,
-                                        response);
-                            }
-                        } catch (Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
-                    }
-                });
-        server.addDomainListener(
-                "https://api.oauth2.zap",
-                new DevHttpSenderListener(this.getServer()) {
-                    @Override
-                    public void onHttpResponseReceive(
-                            HttpMessage msg, int initiator, HttpSender sender) {
-                        try {
-                            handleUserInfo(msg);
-                        } catch (Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
-                    }
-                });
-        server.addDomainListener(
-                "https://app.oauth2.zap",
-                new DevHttpSenderListener(this.getServer()) {
-                    @Override
-                    public void onHttpResponseReceive(
-                            HttpMessage msg, int initiator, HttpSender sender) {
-                        try {
-                            if (!HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
-                                return;
-                            }
-                            String page = getPageName(msg);
-                            if (TestDirectory.INDEX_PAGE.equals(page)) {
-                                setHtmlResponse(msg, "app.html");
-                            } else if ("callback.html".equals(page)) {
-                                setHtmlResponse(msg, "callback.html");
-                            }
-                        } catch (Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
-                    }
-                });
+        server.addDomainHandler("https://authserver.oauth2.zap", this::handleAuthServerRequest);
+        server.addDomainHandler("https://api.oauth2.zap", this::handleUserInfo);
+        server.addDomainHandler("https://app.oauth2.zap", this::handleAppRequest);
+    }
+
+    void handleAuthServerRequest(HttpMessage msg) throws Exception {
+        String page = getPageName(msg);
+        if ("authorize".equals(page)) {
+            handleAuthorize(msg);
+        } else if ("token".equals(page)
+                && HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())) {
+            handleToken(msg);
+        } else if ("introspect".equals(page)
+                && HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())) {
+            JSONObject response = handleIntrospect(msg);
+            sendJsonResponse(
+                    msg,
+                    response.has("error") ? STATUS_BAD_REQUEST : TestProxyServer.STATUS_OK,
+                    response);
+        }
+    }
+
+    void handleAppRequest(HttpMessage msg) throws Exception {
+        if (!HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
+            return;
+        }
+        String page = getPageName(msg);
+        if (TestDirectory.INDEX_PAGE.equals(page)) {
+            setHtmlResponse(msg, "app.html");
+        } else if ("callback.html".equals(page)) {
+            setHtmlResponse(msg, "callback.html");
+        }
     }
 
     private void handleAuthorize(HttpMessage msg) throws Exception {
@@ -277,6 +266,11 @@ public class OAuth2RootDir extends TestAuthDirectory {
             return;
         }
 
+        if (handleSimulatedFailureAfter(msg, clientId)
+                || handleSimulatedRefreshServerError(msg, grantType)) {
+            return;
+        }
+
         JSONObject response;
         if ("authorization_code".equals(grantType)) {
             response = handleAuthorizationCodeGrant(msg, clientId, clientSecret);
@@ -291,6 +285,12 @@ public class OAuth2RootDir extends TestAuthDirectory {
         }
 
         boolean isError = response.has("error");
+        if (!isError) {
+            recordTokenIssued(clientId);
+        }
+        if (!isError && "true".equals(DevUtils.getFormParam(msg, "omit_expires_in"))) {
+            response.remove("expires_in");
+        }
         if (!isError && isCustomFieldStyle(msg)) {
             renameField(response, "access_token", "accessToken");
             renameField(response, "refresh_token", "refreshToken");
@@ -327,6 +327,60 @@ public class OAuth2RootDir extends TestAuthDirectory {
         return false;
     }
 
+    void recordTokenIssued(String clientId) {
+        tokensIssuedToClient
+                .computeIfAbsent(String.valueOf(clientId), id -> new AtomicInteger())
+                .incrementAndGet();
+    }
+
+    /**
+     * Honors an optional {@code fail_after} test param, the number of tokens to issue to the client
+     * before responding with a {@code 500} to any further token request.
+     *
+     * @return {@code true} if the failure response was sent (the caller should stop processing the
+     *     request).
+     */
+    boolean handleSimulatedFailureAfter(HttpMessage msg, String clientId) throws Exception {
+        String failAfter = DevUtils.getFormParam(msg, "fail_after");
+        if (StringUtils.isEmpty(failAfter)) {
+            return false;
+        }
+        int limit;
+        try {
+            limit = Integer.parseInt(failAfter.trim());
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        AtomicInteger issued = tokensIssuedToClient.get(String.valueOf(clientId));
+        if (limit < 0 || (issued != null ? issued.get() : 0) < limit) {
+            return false;
+        }
+        sendJsonResponse(
+                msg,
+                STATUS_INTERNAL_SERVER_ERROR,
+                errorJson("server_error", "Simulated failure after " + limit + " tokens issued"));
+        return true;
+    }
+
+    /**
+     * Honors an optional {@code refresh_error} test param with the value {@code server_error}, for
+     * the {@code refresh_token} grant only.
+     *
+     * @return {@code true} if the error response was sent (the caller should stop processing the
+     *     request).
+     */
+    boolean handleSimulatedRefreshServerError(HttpMessage msg, String grantType) throws Exception {
+        if (!"refresh_token".equals(grantType)
+                || !"server_error".equals(DevUtils.getFormParam(msg, "refresh_error"))) {
+            return false;
+        }
+        sendJsonResponse(
+                msg,
+                STATUS_INTERNAL_SERVER_ERROR,
+                errorJson("server_error", "Simulated internal server error refreshing token"));
+        return true;
+    }
+
     private void sendJsonResponse(HttpMessage msg, String status, JSONObject response)
             throws Exception {
         getServer().setJsonResponse(status, response, msg);
@@ -346,7 +400,7 @@ public class OAuth2RootDir extends TestAuthDirectory {
         }
 
         String token = DevUtils.getFormParam(msg, "token");
-        String username = token != null && !isExpired(token) ? getUser(token) : null;
+        String username = token != null && !isInactive(token) ? getUser(token) : null;
 
         JSONObject response = new JSONObject();
         if (username == null) {
@@ -417,8 +471,41 @@ public class OAuth2RootDir extends TestAuthDirectory {
         if (username == null) {
             return errorJson("invalid_grant", "Unknown refresh token");
         }
-        return issueTokens(
-                username, DevUtils.getFormParam(msg, "scope"), true, resolveExpiresIn(msg));
+        if ("invalid_grant".equals(DevUtils.getFormParam(msg, "refresh_error"))) {
+            return errorJson("invalid_grant", "Simulated rejected refresh token");
+        }
+        JSONObject response =
+                issueTokens(
+                        username, DevUtils.getFormParam(msg, "scope"), true, resolveExpiresIn(msg));
+        int refreshed =
+                refreshedTokensIssuedToClient
+                        .computeIfAbsent(String.valueOf(clientId), id -> new AtomicInteger())
+                        .incrementAndGet();
+        if (refreshed <= resolveRevokeRefreshed(msg)) {
+            revokedAccessTokens.add(response.getString("access_token"));
+        }
+        return response;
+    }
+
+    /**
+     * Honors an optional {@code revoke_refreshed} test param, the number of the tokens issued by
+     * {@code refresh_token} grants to revoke, from the first, {@code true} for all of them.
+     *
+     * @return the number to revoke, {@code 0} if none.
+     */
+    static int resolveRevokeRefreshed(HttpMessage msg) {
+        String revoke = DevUtils.getFormParam(msg, "revoke_refreshed");
+        if (StringUtils.isEmpty(revoke)) {
+            return 0;
+        }
+        if ("true".equals(revoke.trim())) {
+            return Integer.MAX_VALUE;
+        }
+        try {
+            return Math.max(0, Integer.parseInt(revoke.trim()));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     private void handleUserInfo(HttpMessage msg) throws Exception {
@@ -440,7 +527,7 @@ public class OAuth2RootDir extends TestAuthDirectory {
                 authHeader != null && authHeader.startsWith("Bearer ")
                         ? authHeader.substring("Bearer ".length())
                         : authHeader;
-        String username = token != null && !isExpired(token) ? getUser(token) : null;
+        String username = token != null && !isInactive(token) ? getUser(token) : null;
 
         JSONObject response = new JSONObject();
         if (username == null) {
@@ -531,7 +618,10 @@ public class OAuth2RootDir extends TestAuthDirectory {
         return "none";
     }
 
-    private boolean isExpired(String token) {
+    private boolean isInactive(String token) {
+        if (revokedAccessTokens.contains(token)) {
+            return true;
+        }
         Long expiry = accessTokenExpiryMillis.get(token);
         return expiry != null && System.currentTimeMillis() > expiry;
     }
