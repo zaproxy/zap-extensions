@@ -31,11 +31,16 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -76,7 +81,7 @@ class InsightsJobUnitTest extends TestUtils {
 
         job = new InsightsJob();
         job.setEnv(env);
-        job.getParameters().setExitAutoOnHigh(true);
+        job.getParameters().setExitAutoLevel("high");
     }
 
     private void wireEnvForStop() {
@@ -114,6 +119,7 @@ class InsightsJobUnitTest extends TestUtils {
                         75,
                         true);
         // When
+        job.runJob(env, progress);
         job.recordInsight(ins);
         // Then
         verify(extInsights).setStoppingInsight(ins);
@@ -138,6 +144,7 @@ class InsightsJobUnitTest extends TestUtils {
                         95,
                         true);
         // When
+        job.runJob(env, progress);
         job.recordInsight(ins);
         // Then
         ArgumentCaptor<String> msg = ArgumentCaptor.forClass(String.class);
@@ -146,43 +153,108 @@ class InsightsJobUnitTest extends TestUtils {
         assertThat(msg.getValue(), containsString("<global>"));
     }
 
-    @Test
-    void shouldNotStopPlanWhenExitAutoOnHighDisabled() {
+    private static Insight insight(Insight.Level level) {
+        return new Insight(level, Insight.Reason.EXCEEDED_LOW, "site", "key", "desc", 1, false);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "HIGH, high, true",
+        "HIGH, HIGH, true",
+        "HIGH, medium, true",
+        "HIGH, '', false",
+        "MEDIUM, high, false",
+        "MEDIUM, medium, true",
+        "MEDIUM, Medium, true",
+        "MEDIUM, '', false",
+        "LOW, high, false",
+        "LOW, medium, false",
+        "LOW, '', false",
+        "INFO, medium, false",
+        "INFO, high, false"
+    })
+    void shouldStopPlanOnlyIfInsightLevelReachesExitLevel(
+            Insight.Level insightLevel, String exitLevel, boolean planStopped) {
         // Given
-        job.getParameters().setExitAutoOnHigh(false);
-        Insight ins =
-                new Insight(
-                        Insight.Level.HIGH,
-                        Insight.Reason.EXCEEDED_HIGH,
-                        "site",
-                        "key",
-                        "desc",
-                        1,
-                        false);
+        lenient().when(env.getPlan()).thenReturn(plan);
+        lenient().when(plan.getProgress()).thenReturn(progress);
+        job.getParameters().setExitAutoLevel(exitLevel);
         // When
+        Insight ins = insight(insightLevel);
+        job.runJob(env, progress);
         job.recordInsight(ins);
         // Then
-        verify(extInsights, never()).setStoppingInsight(any());
+        verify(plan, times(planStopped ? 1 : 0)).stopPlan(false);
+        verify(extInsights, times(planStopped ? 1 : 0)).setStoppingInsight(ins);
+    }
+
+    @Test
+    void shouldIgnoreInvalidExitAutoLevelAndWarn() {
+        // Given
+        LinkedHashMap<String, Object> params = new LinkedHashMap<>();
+        params.put("exitAutoLevel", "low");
+        job.setJobData(new LinkedHashMap<>(Map.of("parameters", params)));
+        // When
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+        job.recordInsight(insight(Insight.Level.MEDIUM));
+        // Then
+        ArgumentCaptor<String> msg = ArgumentCaptor.forClass(String.class);
+        verify(progress).warn(msg.capture());
+        assertThat(msg.getValue(), containsString("low"));
+        assertThat(job.getParameters().getExitAutoLevel(), is(equalTo("high")));
         verify(plan, never()).stopPlan(false);
+    }
+
+    @Test
+    void shouldDefaultExitAutoLevelToHigh() {
+        assertThat(job.getParameters().getExitAutoLevel(), is(equalTo("high")));
+    }
+
+    @Test
+    void shouldMigrateExitAutoOnHighTrueToExitAutoLevelHigh() {
+        // Given
+        job.setJobData(parametersData("exitAutoOnHigh", true));
+        // When
+        job.verifyParameters(progress);
+        // Then
+        assertThat(job.getParameters().getExitAutoLevel(), is(equalTo("high")));
         verify(progress, never()).warn(any(String.class));
     }
 
     @Test
-    void shouldNotStopPlanOnNonHighInsight() {
+    void shouldMigrateExitAutoOnHighFalseToBlankExitAutoLevel() {
         // Given
-        Insight ins =
-                new Insight(
-                        Insight.Level.MEDIUM,
-                        Insight.Reason.EXCEEDED_LOW,
-                        "site",
-                        "key",
-                        "desc",
-                        1,
-                        false);
+        job.setJobData(parametersData("exitAutoOnHigh", false));
         // When
-        job.recordInsight(ins);
+        job.verifyParameters(progress);
         // Then
-        verify(extInsights, never()).setStoppingInsight(any());
-        verify(plan, never()).stopPlan(false);
+        assertThat(job.getParameters().getExitAutoLevel(), is(equalTo("")));
+    }
+
+    @Test
+    void shouldNotWriteExitAutoOnHigh() {
+        assertThat(job.getParameters().isDefaultValue("exitAutoOnHigh"), is(true));
+        assertThat(job.getParameters().isDefaultValue("exitAutoLevel"), is(false));
+    }
+
+    private static Map<String, Object> parametersData(String key, Object value) {
+        return new LinkedHashMap<>(Map.of("parameters", new LinkedHashMap<>(Map.of(key, value))));
+    }
+
+    @Test
+    void shouldWarnIfBothExitAutoLevelAndExitAutoOnHighSupplied() {
+        // Given
+        LinkedHashMap<String, Object> params = new LinkedHashMap<>();
+        params.put("exitAutoLevel", "medium");
+        params.put("exitAutoOnHigh", true);
+        job.setJobData(new LinkedHashMap<>(Map.of("parameters", params)));
+        // When
+        job.verifyParameters(progress);
+        // Then
+        ArgumentCaptor<String> msg = ArgumentCaptor.forClass(String.class);
+        verify(progress).warn(msg.capture());
+        assertThat(msg.getValue(), containsString("exitAutoOnHigh"));
+        assertThat(job.getParameters().getExitAutoLevel(), is(equalTo("medium")));
     }
 }

@@ -318,6 +318,33 @@ class ExtensionInsightsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldRecordMediumOnVeryHigh400StatusCode() {
+        // Given
+        Stats.incCounter(EXAMPLE_COM, "stats.code.100", 550);
+        Stats.incCounter(EXAMPLE_COM, "stats.code.400", 550);
+
+        // When
+        sm.processStats();
+
+        // Then
+        assertThat(ext.getInsights().size(), is(equalTo(2)));
+        assertInsight(
+                0,
+                Insight.Level.MEDIUM,
+                Insight.Reason.EXCEEDED_HIGH,
+                EXAMPLE_COM,
+                "insight.code.4xx",
+                "Percentage of responses with status code 4xx",
+                50L);
+        assertInsight(
+                1,
+                EXAMPLE_COM,
+                "insight.code.1xx",
+                "Percentage of responses with status code 1xx",
+                50L);
+    }
+
+    @Test
     void shouldRecordWarningOnHigh500StatusCode() {
         // Given
         Stats.incCounter(EXAMPLE_COM, "stats.code.100", 550);

@@ -19,10 +19,14 @@
  */
 package org.zaproxy.addon.insights.automation;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Vector;
+import java.util.stream.Stream;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -33,12 +37,15 @@ public class InsightsJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "insights.dialog.insights.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
-    private static final String EXIT_AUTO_ON_HIGH_PARAM = "insights.options.exitAutoOnHigh";
+    private static final String EXIT_AUTO_LEVEL_PARAM = "insights.automation.dialog.exitAutoLevel";
     private static final String MSG_LOW_PARAM = "insights.options.msgLowThreshold";
     private static final String MSG_HIGH_PARAM = "insights.options.msgHighThreshold";
     private static final String MEM_LOW_PARAM = "insights.options.memLowThreshold";
     private static final String MEM_HIGH_PARAM = "insights.options.memHighThreshold";
     private static final String SLOW_RESP_PARAM = "insights.options.slowResponse";
+
+    private static final List<Insight.Level> EXIT_LEVELS =
+            List.of(Insight.Level.MEDIUM, Insight.Level.HIGH);
 
     private InsightsJob job;
 
@@ -47,7 +54,15 @@ public class InsightsJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
-        this.addCheckBoxField(EXIT_AUTO_ON_HIGH_PARAM, this.job.getParameters().isExitAutoOnHigh());
+        this.addComboField(
+                EXIT_AUTO_LEVEL_PARAM,
+                Stream.concat(Stream.of(""), EXIT_LEVELS.stream().map(Insight.Level::toString))
+                        .toList(),
+                Optional.ofNullable(
+                                InsightsJob.parseExitLevel(
+                                        this.job.getParameters().getExitAutoLevel()))
+                        .map(Insight.Level::toString)
+                        .orElse(""));
         this.addNumberField(
                 MSG_LOW_PARAM, 0, 100, this.job.getParameters().getMessagesLowThreshold());
         this.addNumberField(
@@ -72,7 +87,15 @@ public class InsightsJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
-        this.job.getParameters().setExitAutoOnHigh(this.getBoolValue(EXIT_AUTO_ON_HIGH_PARAM));
+        String exitLevel = this.getStringValue(EXIT_AUTO_LEVEL_PARAM);
+        this.job
+                .getParameters()
+                .setExitAutoLevel(
+                        InsightsJob.toExitAutoLevel(
+                                EXIT_LEVELS.stream()
+                                        .filter(l -> l.toString().equals(exitLevel))
+                                        .findFirst()
+                                        .orElse(null)));
         this.job.getParameters().setMessagesLowThreshold(this.getIntValue(MSG_LOW_PARAM));
         this.job.getParameters().setMessagesHighThreshold(this.getIntValue(MSG_HIGH_PARAM));
         this.job.getParameters().setMemoryLowThreshold(this.getIntValue(MEM_LOW_PARAM));

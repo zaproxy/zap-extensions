@@ -189,7 +189,7 @@ public class StatsMonitor implements StatsListener, EventConsumer {
             }
             recordMessageInsightWithLimits(
                     Insight.Level.INFO,
-                    Insight.Level.LOW,
+                    Insight.Level.MEDIUM,
                     site,
                     INSIGHT_CODE_PREFIX + "4xx",
                     MIN_NUMBER_OF_REQS,

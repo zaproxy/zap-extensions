@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -48,7 +49,12 @@ public class InsightsJob extends AutomationJob implements InsightListener {
 
     private static final String OPTIONS_METHOD_NAME = "getParam";
 
+    private static final String EXIT_AUTO_LEVEL_PARAM = "exitAutoLevel";
+    private static final String EXIT_AUTO_ON_HIGH_PARAM = "exitAutoOnHigh";
+    private static final String DEFAULT_EXIT_AUTO_LEVEL = "high";
+
     private ExtensionInsights extInsights;
+    private Insight.Level exitLevel;
 
     private Data data;
 
@@ -79,6 +85,7 @@ public class InsightsJob extends AutomationJob implements InsightListener {
                     LinkedHashMap<?, ?> params = (LinkedHashMap<?, ?>) jobData.get(key);
                     JobUtils.applyParamsToObject(
                             params, this.data.parameters, this.getName(), null, progress);
+                    verifyExitParameters(params, progress);
                     break;
                 default:
                     progress.warn(
@@ -89,6 +96,52 @@ public class InsightsJob extends AutomationJob implements InsightListener {
         }
     }
 
+    private void verifyExitParameters(Map<?, ?> params, AutomationProgress progress) {
+        Parameters parameters = this.data.parameters;
+        boolean levelSupplied = params.get(EXIT_AUTO_LEVEL_PARAM) != null;
+        boolean onHighSupplied = params.get(EXIT_AUTO_ON_HIGH_PARAM) != null;
+
+        if (levelSupplied && !isValidExitLevel(parameters.getExitAutoLevel())) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "insights.automation.exitlevel.invalid",
+                            parameters.getExitAutoLevel()));
+            parameters.setExitAutoLevel(DEFAULT_EXIT_AUTO_LEVEL);
+            levelSupplied = false;
+        }
+        if (levelSupplied && onHighSupplied) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "insights.automation.exitlevel.both",
+                            EXIT_AUTO_LEVEL_PARAM,
+                            EXIT_AUTO_ON_HIGH_PARAM));
+        }
+        if (!levelSupplied && onHighSupplied) {
+            // Migrate the older option so that saved plans use the new one
+            parameters.setExitAutoLevel(
+                    toExitAutoLevel(parameters.isExitAutoOnHigh() ? Insight.Level.HIGH : null));
+        }
+    }
+
+    private static boolean isValidExitLevel(String level) {
+        return level != null && (level.isBlank() || parseExitLevel(level) != null);
+    }
+
+    static Insight.Level parseExitLevel(String level) {
+        if (level == null) {
+            return null;
+        }
+        return switch (level.trim().toLowerCase(Locale.ROOT)) {
+            case "medium" -> Insight.Level.MEDIUM;
+            case "high" -> Insight.Level.HIGH;
+            default -> null;
+        };
+    }
+
+    static String toExitAutoLevel(Insight.Level level) {
+        return level == null ? "" : level.name().toLowerCase(Locale.ROOT);
+    }
+
     @Override
     public void applyParameters(AutomationProgress progress) {}
 
@@ -97,6 +150,7 @@ public class InsightsJob extends AutomationJob implements InsightListener {
         this.getExtInsights().addInsightListener(this);
         this.getExtInsights().setDisableExit(true);
         this.getExtInsights().setStoppingInsight(null);
+        exitLevel = parseExitLevel(getParameters().getExitAutoLevel());
     }
 
     @Override
@@ -182,12 +236,19 @@ public class InsightsJob extends AutomationJob implements InsightListener {
         private int memoryLowThreshold = InsightsParam.DEFAULT_MEM_LOW_THRESHOLD;
         private int memoryHighThreshold = InsightsParam.DEFAULT_MEM_HIGH_THRESHOLD;
         private int slowResponse = InsightsParam.DEFAULT_SLOW_RESPONSE;
+        // Only used to read plans, it is replaced by exitAutoLevel and never written
         private boolean exitAutoOnHigh = InsightsParam.DEFAULT_EXIT_AUTO_ON_HIGH;
+        private String exitAutoLevel = DEFAULT_EXIT_AUTO_LEVEL;
+
+        @Override
+        public boolean isDefaultValue(String name) {
+            return EXIT_AUTO_ON_HIGH_PARAM.equals(name);
+        }
     }
 
     @Override
     public void recordInsight(Insight ins) {
-        if (ins.getLevel().equals(Insight.Level.HIGH) && this.getParameters().isExitAutoOnHigh()) {
+        if (exitLevel != null && ins.getLevel().compareTo(exitLevel) <= 0) {
             this.getExtInsights().setStoppingInsight(ins);
             String site = ins.getSite();
             if (site == null || site.isEmpty()) {
@@ -199,6 +260,7 @@ public class InsightsJob extends AutomationJob implements InsightListener {
                     .warn(
                             Constant.messages.getString(
                                     "insights.automation.stopplan",
+                                    ins.getLevel(),
                                     ins.getKey(),
                                     ins.getReason(),
                                     site,

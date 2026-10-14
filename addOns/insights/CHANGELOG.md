@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The `insights` job now supports an `exitAutoLevel` option (`medium` or `high`) which is preferred to `exitAutoOnHigh`, and is now the field shown in the job dialog. Plans saved by ZAP will use `exitAutoLevel` instead of `exitAutoOnHigh`.
 
+### Changed
+- Responses with 4xx status codes are now reported at Medium level when the high threshold is exceeded.
 
 ## [0.6.0] - 2026-10-08
 ### Fixed
