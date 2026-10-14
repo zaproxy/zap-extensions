@@ -5,4 +5,4 @@
     memoryLowThreshold:              # Integer: low threshold used for insights related to memory, default: 80
     memoryHighThreshold:             # Integer: high threshold used for insights related to memory, default: 95
     slowResponse:                    # Integer: the response time in msecs that is treated as "slow", default: 256
-    exitAutoOnHigh:                  # Boolean: if set will end the plan on a high level insight, default: true
+    exitAutoLevel:                   # String: the lowest level of insight that will end the plan: medium, high or blank for never, default: high
