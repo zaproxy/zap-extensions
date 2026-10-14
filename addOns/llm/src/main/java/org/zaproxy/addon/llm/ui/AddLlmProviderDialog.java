@@ -362,7 +362,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         }
     }
 
-    static String endpointValueOnSelect(LlmProvider provider) {
+    public static String endpointValueOnSelect(LlmProvider provider) {
         if (provider == null || !provider.supportsEndpoint()) {
             return "";
         }
@@ -370,7 +370,7 @@ public class AddLlmProviderDialog extends AbstractFormDialog {
         return suggested.size() == 1 ? suggested.get(0).url() : "";
     }
 
-    private static boolean isSuggestedEndpoint(String endpoint) {
+    public static boolean isSuggestedEndpoint(String endpoint) {
         return Stream.of(LlmProvider.values())
                 .flatMap(provider -> provider.getSuggestedEndpoints().stream())
                 .anyMatch(suggested -> suggested.url().equals(endpoint));

@@ -1,0 +1,6 @@
+  - type: llm-config                   # Configure the LLM providers
+    providers:
+      - name:                          # String: Unique provider name
+        type:                          # String: OLLAMA, OPENAI_COMPATIBLE, AZURE_OPENAI, GOOGLE_GEMINI or CLAUDE
+        models:                        # List: The model names, at least one is required
+          - 
