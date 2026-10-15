@@ -28,6 +28,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -122,6 +123,14 @@ public class HttpSenderApache
     private static final Logger LOGGER = LogManager.getLogger(HttpSenderApache.class);
 
     private static final int BUFFER_SIZE = 4096;
+
+    private static final List<String> PREFERRED_AUTH_SCHEMES =
+            List.of(
+                    StandardAuthScheme.SPNEGO,
+                    StandardAuthScheme.KERBEROS,
+                    StandardAuthScheme.NTLM,
+                    StandardAuthScheme.DIGEST,
+                    StandardAuthScheme.BASIC);
 
     private final Supplier<CookieStore> globalCookieStoreProvider;
     private final ConnectionOptions options;
@@ -418,7 +427,9 @@ public class HttpSenderApache
         message.setResponseFromTargetHost(false);
 
         RequestConfig.Builder requestConfigBuilder =
-                RequestConfig.copy(requestCtx.getRequestConfigOrDefault());
+                RequestConfig.copy(requestCtx.getRequestConfigOrDefault())
+                        .setTargetPreferredAuthSchemes(PREFERRED_AUTH_SCHEMES)
+                        .setProxyPreferredAuthSchemes(PREFERRED_AUTH_SCHEMES);
 
         boolean reauthenticate = false;
         requestCtx.setAttribute(ZapProtocolExec.AUTH_DISABLED_ATTR, Boolean.TRUE);

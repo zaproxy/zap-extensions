@@ -33,6 +33,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -2085,6 +2086,61 @@ class HttpSenderImplUnitTest {
                             .getRequestHeader()
                             .getHeader(HttpHeader.AUTHORIZATION),
                     is(equalTo("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")));
+            assertResponseBody(message, SERVER_RESPONSE);
+        }
+
+        @Test
+        void shouldAuthenticateWithNtlm() throws Exception {
+            // Given
+            HttpState httpState = new HttpState();
+            httpState.setCredentials(
+                    new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+                    new NTCredentials("username", "password", "workstation", "domain"));
+            given(user.getCorrespondingHttpState()).willReturn(httpState);
+            message.setRequestingUser(user);
+            String type2Challenge =
+                    "NTLM TlRMTVNTUAACAAAAHAAcADgAAAAFgooCSahi6Sp2OccAAAAAAAAAAJAAkABUAAAACgBdWAAAAA9XAEkATgBEAEUAVgAyADMAMQAxAEUAVgBBAEwAAgAcAFcASQBOAEQARQBWADIAMwAxADEARQBWAEEATAABABwAVwBJAE4ARABFAFYAMgAzADEAMQBFAFYAQQBMAAQAHABXAGkAbgBEAGUAdgAyADMAMQAxAEUAdgBhAGwAAwAcAFcAaQBuAEQAZQB2ADIAMwAxADEARQB2AGEAbAAHAAgAs59Pa0JY2gEAAAAA";
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        String authorization =
+                                msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
+                        if (authorization == null) {
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 401\r\nWWW-Authenticate: NTLM\r\nContent-Length: 0\r\n");
+                        } else if (authorization.length() < 100) {
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 401\r\nWWW-Authenticate: "
+                                            + type2Challenge
+                                            + "\r\nContent-Length: 0\r\n");
+                        } else {
+                            msg.setResponseHeader("HTTP/1.1 200\r\n");
+                            msg.setResponseBody(SERVER_RESPONSE);
+                            msg.getResponseHeader()
+                                    .setContentLength(msg.getResponseBody().length());
+                        }
+                    });
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(3));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    startsWith("NTLM "));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(2)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    startsWith("NTLM "));
             assertResponseBody(message, SERVER_RESPONSE);
         }
 
