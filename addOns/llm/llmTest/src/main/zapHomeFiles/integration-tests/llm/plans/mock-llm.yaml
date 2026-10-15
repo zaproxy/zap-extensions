@@ -1,0 +1,60 @@
+---
+# Checks the LLM add-on can be configured to use the mock LLM, and that the mock LLM serves
+# the default and named rule sets, and refuses unknown ones.
+env:
+  contexts:
+  - name: "mock-llm"
+    urls:
+    - "http://localhost:9091/llm/mock"
+    includePaths:
+    - "http://localhost:9091/llm/mock.*"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+- type: "llm-config"
+  name: "llm-config"
+  parameters:
+    deleteExisting: true
+    defaultProvider: "mock"
+    defaultModel: "mock-llm"
+  providers:
+  - name: "mock"
+    type: "OPENAI_COMPATIBLE"
+    endpoint: "http://localhost:9091/llm/mock/v1"
+    models:
+    - "mock-llm"
+    trusted: true
+- type: "requestor"
+  name: "default rules"
+  requests:
+  - url: "http://localhost:9091/llm/mock/v1/chat/completions"
+    method: "POST"
+    headers:
+    - "Content-Type: application/json"
+    data: '{"model":"mock-llm","messages":[{"role":"user","content":"ping"}]}'
+    responseCode: 200
+  - url: "http://localhost:9091/llm/mock/v1/models"
+    method: "GET"
+    responseCode: 200
+- type: "requestor"
+  name: "named rule set"
+  requests:
+  - url: "http://localhost:9091/llm/mock/example/v1/chat/completions"
+    method: "POST"
+    headers:
+    - "Content-Type: application/json"
+    data: '{"model":"mock-llm","messages":[{"role":"user","content":"ping"}]}'
+    responseCode: 200
+- type: "requestor"
+  name: "unknown rule set"
+  requests:
+  - url: "http://localhost:9091/llm/mock/unknown/v1/chat/completions"
+    method: "POST"
+    headers:
+    - "Content-Type: application/json"
+    data: '{"model":"mock-llm","messages":[{"role":"user","content":"ping"}]}'
+    responseCode: 404

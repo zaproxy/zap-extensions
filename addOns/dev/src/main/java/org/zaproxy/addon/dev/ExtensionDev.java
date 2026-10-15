@@ -38,6 +38,7 @@ import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -78,7 +79,7 @@ public class ExtensionDev extends ExtensionAdaptor {
 
     protected static final String PREFIX = "dev";
 
-    public static final String DIRECTORY_NAME = "dev-add-on";
+    public static final String DIRECTORY_NAME = "addOnData/dev/server";
 
     private final LoggedErrorsHandler loggedErrorsHandler;
 
@@ -133,6 +134,18 @@ public class ExtensionDev extends ExtensionAdaptor {
             menuGarbageCollect.addActionListener(e -> Runtime.getRuntime().gc());
             extensionHook.getHookMenu().addToolsMenuItem(menuGarbageCollect);
         }
+    }
+
+    /**
+     * Gets the test server, which add-ons can plug their own test apps into.
+     *
+     * <p>The server only exists when ZAP is run in dev mode, so callers should do nothing if it is
+     * not present.
+     *
+     * @return the test server, empty if not in dev mode.
+     */
+    public Optional<TestProxyServer> getTestServer() {
+        return Optional.ofNullable(tutorialServer);
     }
 
     public DevParam getDevParam() {

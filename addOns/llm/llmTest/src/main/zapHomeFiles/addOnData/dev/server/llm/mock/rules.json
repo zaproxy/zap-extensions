@@ -1,0 +1,5 @@
+[
+  {"match": "\\bping\\b", "reply": "pong"},
+  {"match": "capital of france", "reply": "The capital of France is Paris."},
+  {"match": "^\\s*(hello|hi|hey)\\b", "reply": "Hello from the ZAP mock LLM."}
+]

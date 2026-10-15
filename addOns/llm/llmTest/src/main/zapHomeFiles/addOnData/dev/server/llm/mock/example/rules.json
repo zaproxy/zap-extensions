@@ -1,0 +1,4 @@
+[
+  {"match": "\\bping\\b", "reply": "pong from the example rule set"},
+  {"match": "\\bjson\\b", "reply": {"state": "SUCCESS", "items": [1, 2, 3]}}
+]

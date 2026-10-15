@@ -1,8 +1,10 @@
 import me.champeau.gradle.japicmp.JapicmpTask
 import org.cyclonedx.gradle.CycloneDxTask
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.internal.provider.TransformBackedProvider
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
+import org.zaproxy.gradle.addon.AddOnStatus
 import org.zaproxy.gradle.addon.apigen.ApiClientGenExtension
 import org.zaproxy.gradle.addon.internal.GitHubReleaseExtension
 import org.zaproxy.gradle.addon.internal.model.AddOnRelease
@@ -87,7 +89,12 @@ subprojects {
         return@subprojects
     }
 
-    val useCrowdin = !crowdinExcludedProjects.contains(project)
+    // Test add-ons contain test apps for integration tests.
+    val testAddOn = project.isTestAddOn()
+    if (testAddOn) {
+        configureTestAddOn()
+    }
+    val useCrowdin = !testAddOn && !crowdinExcludedProjects.contains(project)
     val mavenPublishAddOn = project.hasProperty("zap.maven.publish", "true")
     val japicmpAddOn = project.hasProperty("zap.japicmp", "true")
 
@@ -244,6 +251,11 @@ subprojects {
                 from(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
         }
+    }
+
+    if (testAddOn) {
+        // Test add-ons have no gradle.properties, so no release state.
+        return@subprojects
     }
 
     allJarsForBom {
@@ -476,7 +488,7 @@ val crowdinUploadSourceFiles by tasks.registering {
                 require(project != null) { "Add-on with project name $name not found." }
 
                 project
-            }.filter { !crowdinExcludedProjects.contains(it) }
+            }.filter { !crowdinExcludedProjects.contains(it) && !it.isTestAddOn() }
 
         projects.forEach {
             dependsOn(it.tasks.named("crowdinUploadSourceFiles"))
@@ -624,6 +636,60 @@ fun Project.hasProperty(
     name: String,
     value: String,
 ) = hasProperty(name) && property(name) == value
+
+/**
+ * Tells if the project is a test add-on, which holds test apps and integration tests for another
+ * add-on.
+ *
+ * A test add-on is the project `<add-on>Test` in the directory of the add-on it tests, for example
+ * `addOns/llm/llmTest`. It is configured by [configureTestAddOn], so its build file only needs to
+ * contain what differs from the defaults.
+ */
+fun Project.isTestAddOn() = parent?.parent?.path == ":addOns" && name == "${parent!!.name}Test"
+
+/**
+ * Configures a test add-on from the add-on it tests and from the dev add-on, which it plugs into. It
+ * has the add-ons they depend on, and depends on them in the manifest.
+ *
+ * Values set in the build file of the test add-on, if there is one, take precedence.
+ */
+fun Project.configureTestAddOn() {
+    val testedProject = parent!!
+    val devProject = project(":addOns:dev")
+
+    version = "0.0.1"
+    description = "Test apps and integration tests for the ${testedProject.name} add-on."
+
+    afterEvaluate {
+        // The tested add-on and dev have been evaluated, the test add-on is evaluated after its parent.
+        val addOnDependencies =
+            listOf(testedProject, devProject).flatMap { addOn ->
+                listOf(addOn.path) +
+                    addOn.configurations.named("zapAddOn").get().dependencies.withType<ProjectDependency>().map { it.path }
+            }.distinct()
+        dependencies {
+            addOnDependencies.forEach { zapAddOn(it.removePrefix(":addOns:")) }
+            "testImplementation"(project(":testutils"))
+        }
+
+        zapAddOn {
+            addOnName.convention("${testedProject.zapAddOn.addOnName.get()} Test Add-on")
+            addOnStatus.convention(AddOnStatus.ALPHA)
+
+            manifest {
+                author.convention("ZAP Dev Team")
+
+                dependencies {
+                    addOns {
+                        listOf(devProject, testedProject).forEach { addOn ->
+                            maybeCreate(addOn.name).version.convention(">=${addOn.zapAddOn.addOnVersion.get()}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 fun Project.addOnJar(version: String): File {
     val oldGroup = group

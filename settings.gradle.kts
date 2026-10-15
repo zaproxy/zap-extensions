@@ -119,6 +119,11 @@ val addOns =
 
 addOns.forEach { include("$addOnsProjectName:$it") }
 
+// Test add-ons are found by the convention <add-on>/<add-on>Test
+addOns.filter { !it.contains(":") }
+    .filter { File(settingsDir, "$addOnsProjectName/$it/${it}Test").isDirectory }
+    .forEach { include("$addOnsProjectName:$it:${it}Test") }
+
 rootProject.children.forEach { project -> setUpProject(settingsDir, project) }
 
 fun setUpProject(

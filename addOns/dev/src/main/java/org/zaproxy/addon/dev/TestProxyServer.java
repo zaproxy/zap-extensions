@@ -27,6 +27,8 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -156,6 +158,66 @@ public class TestProxyServer {
         root.addDirectory(htmlDir);
         root.addDirectory(rndDir);
         root.addDirectory(seqDir);
+    }
+
+    /**
+     * Adds a directory to the server, so that add-ons can plug in their own test apps.
+     *
+     * <p>Any missing directories in {@code parentPath} are created. The directory is served from
+     * {@code <ZAP home>/addOnData/dev/server/<parentPath>/<name>}, which add-ons can populate using
+     * {@code zapHomeFiles}. Add-ons should call {@link #removeDirectory(String)} when they are
+     * unloaded.
+     *
+     * @param parentPath the slash separated path of the parent directory, for example {@code auth},
+     *     empty for the root.
+     * @param directory the directory to add.
+     * @throws IllegalArgumentException if a directory with the same name already exists in the
+     *     parent.
+     */
+    public synchronized void addDirectory(String parentPath, TestDirectory directory) {
+        TestDirectory parent = root;
+        for (String name : splitPath(parentPath)) {
+            TestDirectory child = parent.getSubDir(name);
+            if (child == null) {
+                child = new TestDirectory(this, name);
+                parent.addDirectory(child);
+            }
+            parent = child;
+        }
+        if (parent.getSubDir(directory.getName()) != null) {
+            throw new IllegalArgumentException(
+                    "A directory already exists: "
+                            + parent.getHierarchicName()
+                            + "/"
+                            + directory.getName());
+        }
+        parent.addDirectory(directory);
+    }
+
+    /**
+     * Removes a directory previously added, including everything below it. Directories created
+     * implicitly for its path are left in place.
+     *
+     * @param path the slash separated path of the directory, for example {@code llm/mock}.
+     * @return {@code true} if a directory was removed.
+     */
+    public synchronized boolean removeDirectory(String path) {
+        List<String> names = splitPath(path);
+        if (names.isEmpty()) {
+            return false;
+        }
+        TestDirectory parent = root;
+        for (String name : names.subList(0, names.size() - 1)) {
+            parent = parent.getSubDir(name);
+            if (parent == null) {
+                return false;
+            }
+        }
+        return parent.removeDirectory(names.get(names.size() - 1)) != null;
+    }
+
+    private static List<String> splitPath(String path) {
+        return Arrays.stream(path.split("/")).filter(n -> !n.isEmpty()).toList();
     }
 
     /**
