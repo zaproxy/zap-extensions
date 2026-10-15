@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [0.1.0] - 2026-10-15
 ### Added
 - Automation Framework support, the `llm-config` job configures the LLM providers.
