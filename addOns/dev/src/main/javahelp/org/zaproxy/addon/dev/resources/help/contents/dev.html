@@ -33,5 +33,37 @@ Dynamically generated sites for testing scalability.
 <H2>Sequence Pages</H2>
 A set of pages for testing the sequence add-on.
 
+<H2>Adding Your Own Test Apps</H2>
+Other add-ons can plug their own test apps into the server, so that they can live with the add-on they test.
+The add-on must depend on the dev add-on and, in its extension's <code>optionsLoaded()</code> (the server is created when the dev add-on is hooked), call:
+<pre>
+Control.getSingleton().getExtensionLoader().getExtension(ExtensionDev.class)
+        .getTestServer()
+        .ifPresent(server -&gt; server.addDirectory("auth", new MyAppDir(server, "my-app")));
+</pre>
+The test server only exists when ZAP is run in dev mode, so nothing should be done if it is not present.
+<p>
+Any missing parent directories are created, and the app is then available under <code>/auth/my-app/</code>.
+Its static files are read from <code>addOnData/dev/auth/my-app</code> in the ZAP home directory,
+which the add-on can populate by including them under <code>zapHomeFiles/addOnData/dev/auth/my-app</code>.
+The add-on should call <code>removeDirectory("auth/my-app")</code> when it is unloaded.
+<p>
+Directories plugged in have their state reset, like all the other test apps, when ZAP's session changes.
+
+<H2>Test Add-Ons</H2>
+Test apps should live in a <em>test add-on</em> next to the add-on they test, not in the dev add-on.
+To create one, add the directory <code>&lt;id&gt;Test</code> inside the directory of the add-on to test, for example <code>addOns/llm/llmTest</code>, and put the <code>src</code>, a <code>CHANGELOG.md</code> and a <code>an empty <code>&lt;id&gt;Test.gradle.kts</code>lt;idan empty <code>&lt;id&gt;Test.gradle.kts</code>gt;Test.gradle.kts</code> with just a comment in it.
+No other build configuration is needed, the build finds it and configures it from the add-on being tested and the dev add-on:
+<ul>
+<li>it has the version <code>0.0.1</code>, the alpha status and a name and description based on the add-on being tested;</li>
+<li>it depends on the dev add-on and the add-on being tested, in the manifest and for compiling, as well as the add-ons they depend on.</li>
+</ul>
+If it needs anything else, for example another test add-on, add it to the <code>&lt;id&gt;Test.gradle.kts</code> file, which can use the usual <code>zapAddOn</code> dependencies and manifest settings, and can override the defaults.
+<p>
+Test add-ons are not translated.
+The LLM test add-on (<code>addOns/llm/llmTest</code>) is the reference example.
+It provides a mock OpenAI compatible LLM at <code>/llm/mock/v1</code>, which other test add-ons can extend with their own rule sets, see its <code>README.md</code>.
+Build one with <code>./gradlew :addOns:llm:llmTest:jarZapAddOn</code> or install it with <code>cZAO</code>, and run ZAP with <code>-dev</code>.
+
 </BODY>
 </HTML>

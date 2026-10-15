@@ -31,7 +31,7 @@ import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
  * <p>Accessed at {@code https://127.0.0.1:9443/}. Configure ZAP with:
  *
  * <ul>
- *   <li>Client cert: {@code <ZAP home>/dev-add-on/auth/cert-auth/test-client.p12} (password:
+ *   <li>Client cert: {@code <ZAP home>/addOnData/dev/auth/cert-auth/test-client.p12} (password:
  *       {@value #CERT_PASSWORD})
  * </ul>
  */
