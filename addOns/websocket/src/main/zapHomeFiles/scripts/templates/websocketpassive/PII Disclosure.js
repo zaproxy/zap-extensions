@@ -16,6 +16,27 @@ SEQUENCE_NUM = 3;
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110005
+name: Credit Card Disclosure script
+description: >
+  The response contains Personally Identifiable Information, such as a credit card number.
+solution: Remove credit card numbers that are not required from WebSocket messages.
+category: info_gather
+risk: high
+confidence: high
+cweId: 359
+wascId: 13
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/PII%20Disclosure.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110005
+`);
+}
 
 creditCards = {
   "American Express": /\b(?:3[47][0-9]{13})\b/gm,
