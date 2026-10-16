@@ -19,7 +19,7 @@ zapAddOn {
                     version.set(">= 0.3.0")
                 }
                 register("oast") {
-                    version.set(">= 0.7.0")
+                    version.set(">= 0.27.0")
                 }
                 register("database") {
                     version.set(">= 0.1.0")

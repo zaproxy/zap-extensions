@@ -21,14 +21,20 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fi.iki.elonen.NanoHTTPD;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,12 +80,42 @@ class SsrfScanRuleUnitTest extends ActiveScannerTest<SsrfScanRule> {
     void shouldRaiseAlertIfCanaryInResponse() throws Exception {
         // Given
         when(extensionOast.getActiveScanOastService()).thenReturn(mock(OastService.class));
-        when(extensionOast.registerAlertAndGetOastPayload(any()))
+        when(extensionOast.registerAlertAndGetOastPayload(any(), anyBoolean()))
                 .thenReturn(new OastPayload(nanoHost + "/12345", "54321"));
         // When
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldRequestHttpsPayloadOnlyForHttpsProbe() throws Exception {
+        // Given
+        List<String> payloads = new ArrayList<>();
+        nano.addHandler(
+                new NanoServerHandler("/blind") {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        payloads.add(getFirstParamValue(session, "url"));
+                        return newFixedLengthResponse("No callback reflected");
+                    }
+                });
+        HttpMessage message = getHttpMessage("/blind?url=original");
+        rule.init(message, parent);
+        when(extensionOast.getActiveScanOastService()).thenReturn(mock(OastService.class));
+        when(extensionOast.registerAlertAndGetOastPayload(any(), eq(false)))
+                .thenReturn(new OastPayload("generic.example.test", "generic-canary"));
+        when(extensionOast.registerAlertAndGetOastPayload(any(), eq(true)))
+                .thenReturn(new OastPayload("secure.example.test", "secure-canary"));
+        // When
+        rule.scan();
+        // Then
+        verify(extensionOast).registerAlertAndGetOastPayload(any(), eq(false));
+        verify(extensionOast).registerAlertAndGetOastPayload(any(), eq(true));
+        assertThat(httpMessagesSent, hasSize(2));
+        assertThat(
+                payloads, contains("http://generic.example.test", "https://secure.example.test"));
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
