@@ -529,8 +529,11 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90017/">90017</a>.
 <H2 id="id-90023">XXE</H2>
 This component attempts to identify applications which are subject to XML eXternal Entity (XXE) attacks.
 Applications which parse XML input may be subject to XXE when weakly or poorly configured parsers 
-handle XML input containing reference to an external entity such as a local file, HTTP requests to 
+handle XML input containing reference to an external entity such as a local file, HTTP requests to
 internal or tertiary systems, etc. The number of tags which are tested individually depends on the strength of the rule.<br>
+<br>
+As well as requests with an XML body, the rule also tests XML files uploaded as part of a multipart/form-data
+request (the input vectors selected in the scan policy are respected).<br>
 <br>
 This scan rule will only run if the OAST add-on is installed and available.
 It is also recommended that you test that the Callbacks service in the OAST add-on is correctly configured for your target site.

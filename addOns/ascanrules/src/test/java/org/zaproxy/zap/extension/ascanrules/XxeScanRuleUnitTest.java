@@ -270,6 +270,86 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
+    @ParameterizedTest
+    @EnumSource(
+            value = NanoHTTPD.Response.Status.class,
+            names = {"OK", "BAD_REQUEST"})
+    void shouldAlertWhenLocalFileReflectedInMultipartXmlPart(NanoHTTPD.Response.Status status)
+            throws HttpMalformedHeaderException {
+        // Given
+        String test = "/test";
+        String responseBody = "<foo>root:*:0:0:System Administrator:/var/root:/bin/sh</foo>";
+        this.nano.addHandler(createNanoHandler(test, status, responseBody));
+        HttpMessage msg = getMultipartXmlPostMessage(test);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        String localFileInclusionAttackPayload =
+                MessageFormat.format(XxeScanRule.ATTACK_HEADER, "file:///etc/passwd")
+                        + "<comment><text>&zapxxe;</text></comment>";
+        List<Alert> alertList =
+                alertsRaised.stream()
+                        .filter(alert -> alert.getAttack().equals(localFileInclusionAttackPayload))
+                        .collect(Collectors.toList());
+        assertThat(alertList.size(), equalTo(1));
+        Alert alert = alertList.get(0);
+        assertThat(alert.getEvidence(), equalTo("root:*:0:0"));
+        assertThat(alert.getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = NanoHTTPD.Response.Status.class,
+            names = {"OK", "BAD_REQUEST"})
+    void shouldAlertWhenLocalFileIncludedInMultipartXmlPart(NanoHTTPD.Response.Status status)
+            throws HttpMalformedHeaderException {
+        // Given
+        String test = "/test";
+        String responseBody = "[drivers]\n" + "wave=mmdrv.dll";
+        this.nano.addHandler(createNanoHandler(test, status, responseBody));
+        HttpMessage msg = getMultipartXmlPostMessage(test);
+        rule.init(msg, parent);
+        // When
+        // Local File Inclusion Attacks is triggered only when AttackStrength is > Medium
+        rule.setAttackStrength(Plugin.AttackStrength.HIGH);
+        rule.scan();
+        // Then
+        String localFileInclusionAttackPayload =
+                MessageFormat.format(XxeScanRule.ATTACK_HEADER, "file:///c:/Windows/system.ini")
+                        + XxeScanRule.ATTACK_BODY;
+        List<Alert> alertList =
+                alertsRaised.stream()
+                        .filter(alert -> alert.getAttack().equals(localFileInclusionAttackPayload))
+                        .collect(Collectors.toList());
+        assertThat(alertList.size(), equalTo(1));
+        Alert alert = alertList.get(0);
+        assertThat(alert.getEvidence(), equalTo("[drivers]"));
+        assertThat(alert.getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldNotScanMultipartFilePartWhenContentTypeIsNotXml()
+            throws HttpMalformedHeaderException {
+        // Given
+        String test = "/test";
+        String responseBody = "<foo>root:*:0:0:System Administrator:/var/root:/bin/sh</foo>";
+        this.nano.addHandler(createNanoHandler(test, NanoHTTPD.Response.Status.OK, responseBody));
+        HttpMessage msg =
+                getMultipartPostMessage(
+                        test,
+                        "text/plain",
+                        "<?xml version=\"1.0\"?><comment><text>test</text></comment>");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(countMessagesSent, equalTo(0));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     @Test
     void shouldAlertOnlyIfCertainTagValuesArePresent()
             throws HttpMalformedHeaderException, IOException {
@@ -425,6 +505,41 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         msg.setRequestBody("<?xml version=\"1.0\"?><comment><text>test</text></comment>");
         msg.getRequestHeader().setMethod("POST");
         msg.getRequestHeader().setHeader("Content-Type", "application/xml");
+        return msg;
+    }
+
+    private HttpMessage getMultipartXmlPostMessage(String path)
+            throws HttpMalformedHeaderException {
+        return getMultipartPostMessage(
+                path,
+                "application/xml",
+                "<?xml version=\"1.0\"?><comment><text>test</text></comment>");
+    }
+
+    private HttpMessage getMultipartPostMessage(
+            String path, String fileContentType, String fileContent)
+            throws HttpMalformedHeaderException {
+        HttpMessage msg = this.getHttpMessage(path);
+        String bodyBoundary = "--------------------------d74496d66958873e";
+        String headerBoundary = "------------------------d74496d66958873e";
+        StringBuilder body = new StringBuilder();
+        body.append(bodyBoundary).append("\r\n");
+        body.append("Content-Disposition: form-data; name=\"person\"").append("\r\n");
+        body.append("\r\n");
+        body.append("anonymous").append("\r\n");
+        body.append(bodyBoundary).append("\r\n");
+        body.append("Content-Disposition: form-data; name=\"somefile\"; filename=\"test.xml\"")
+                .append("\r\n");
+        body.append("Content-Type: ").append(fileContentType).append("\r\n");
+        body.append("\r\n");
+        body.append(fileContent).append("\r\n");
+        body.append(bodyBoundary).append("--").append("\r\n");
+        msg.getRequestHeader().setMethod("POST");
+        msg.getRequestHeader()
+                .setHeader(
+                        HttpFieldsNames.CONTENT_TYPE,
+                        "multipart/form-data; boundary=" + headerBoundary);
+        msg.setRequestBody(body.toString());
         return msg;
     }
 
