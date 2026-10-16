@@ -245,6 +245,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             // point they fit into the topology
             // that we can otherwise document using OPTIONS/TRACE + Max-Forwards.
             Set<String> silentProxySet = new HashSet<>();
+            String detectedProxyHeaderName = null;
+            String proxyRequestHeaderEvidence = null;
             boolean endToEndTraceEnabled = false;
             boolean proxyTraceEnabled = false;
 
@@ -346,12 +348,13 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                             Matcher proxyHeaderMatcher =
                                     proxyHeaderPattern.matcher(traceResponseBody);
                             if (proxyHeaderMatcher.find()) {
-                                String proxyHeaderName = proxyHeaderMatcher.group(1);
+                                detectedProxyHeaderName = proxyHeaderMatcher.group(1);
+                                proxyRequestHeaderEvidence = proxyHeaderMatcher.group(0).trim();
                                 proxyActuallyFound = true;
                                 LOGGER.debug(
                                         "TRACE with \"Max-Forwards: {}\" indicates that there is *NO* proxy in place, but a known proxy request header ({}, which indicates proxy server '{}') in the response body contradicts this..",
                                         MAX_FORWARDS_MAXIMUM,
-                                        proxyHeaderName,
+                                        detectedProxyHeaderName,
                                         proxyServer);
                             }
                         }
@@ -671,7 +674,12 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                 // bingo with the list of nodes (proxies+origin web server) that we detected.
                 boolean traceEnabled = endToEndTraceEnabled || proxyTraceEnabled;
                 buildProxyDisclosureAlert(
-                                step2numberOfNodes, nodeServers, silentProxySet, traceEnabled)
+                                step2numberOfNodes,
+                                nodeServers,
+                                silentProxySet,
+                                traceEnabled,
+                                detectedProxyHeaderName,
+                                proxyRequestHeaderEvidence)
                         .setMessage(getBaseMsg())
                         .raise();
             }
@@ -687,7 +695,9 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             int step2numberOfNodes,
             String[] nodeServers,
             Set<String> silentProxySet,
-            boolean traceEnabled) {
+            boolean traceEnabled,
+            String detectedProxyHeaderName,
+            String evidence) {
         int proxyCountForDescription = step2numberOfNodes - 1 + silentProxySet.size();
         String unknown = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.unknown");
         StringBuilder otherInfo = new StringBuilder();
@@ -698,27 +708,24 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                                     MESSAGE_PREFIX + "extrainfo.proxyserver.header"))
                     .append('\n');
             for (int nodei = 0; nodei < step2numberOfNodes - 1; nodei++) {
-                otherInfo
-                        .append(
-                                Constant.messages.getString(
-                                        MESSAGE_PREFIX + "extrainfo.proxyserver",
-                                        nodeServers[nodei].equals("")
-                                                ? unknown
-                                                : nodeServers[nodei]))
-                        .append('\n');
+                appendNodeOtherInfo(
+                        otherInfo,
+                        nodeServers[nodei],
+                        unknown,
+                        detectedProxyHeaderName,
+                        MESSAGE_PREFIX + "extrainfo.proxyserver");
             }
             otherInfo
                     .append(
                             Constant.messages.getString(
                                     MESSAGE_PREFIX + "extrainfo.webserver.header"))
-                    .append('\n')
-                    .append(
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX + "extrainfo.webserver",
-                                    nodeServers[step2numberOfNodes - 1].equals("")
-                                            ? unknown
-                                            : nodeServers[step2numberOfNodes - 1]))
                     .append('\n');
+            appendNodeOtherInfo(
+                    otherInfo,
+                    nodeServers[step2numberOfNodes - 1],
+                    unknown,
+                    detectedProxyHeaderName,
+                    MESSAGE_PREFIX + "extrainfo.webserver");
         }
         if (silentProxySet.size() > 0) {
             otherInfo
@@ -746,18 +753,52 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                 .setDescription(
                         Constant.messages.getString(
                                 MESSAGE_PREFIX + "desc", proxyCountForDescription))
-                .setAttack(getAttack())
-                .setOtherInfo(otherInfo.toString());
+                .setOtherInfo(otherInfo.toString())
+                .setEvidence(evidence);
+    }
+
+    private static void appendNodeOtherInfo(
+            StringBuilder otherInfo,
+            String nodeServer,
+            String unknown,
+            String detectedProxyHeaderName,
+            String nodeMessageKey) {
+        boolean isUnknown = nodeServer.equals("");
+        otherInfo
+                .append(
+                        Constant.messages.getString(
+                                nodeMessageKey, isUnknown ? unknown : nodeServer))
+                .append('\n');
+        if (isUnknown && detectedProxyHeaderName != null) {
+            otherInfo
+                    .append(
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "extrainfo.identifiedviaheader",
+                                    detectedProxyHeaderName))
+                    .append('\n');
+        }
     }
 
     @Override
     public List<Alert> getExampleAlerts() {
-        String[] exampleNodeServers = new String[] {"nginx/1.22", "Apache/2.4.58"};
+        String[] exampleNodeServers = new String[] {"", "Apache/2.4.58"};
         int exampleStep2Nodes = exampleNodeServers.length;
         return List.of(
-                buildProxyDisclosureAlert(exampleStep2Nodes, exampleNodeServers, Set.of(), true)
+                buildProxyDisclosureAlert(
+                                exampleStep2Nodes,
+                                exampleNodeServers,
+                                Set.of(),
+                                true,
+                                "X-Forwarded-For",
+                                "X-Forwarded-For: 10.0.0.1")
                         .build(),
-                buildProxyDisclosureAlert(exampleStep2Nodes, exampleNodeServers, Set.of(), false)
+                buildProxyDisclosureAlert(
+                                exampleStep2Nodes,
+                                exampleNodeServers,
+                                Set.of(),
+                                false,
+                                "X-Forwarded-For",
+                                "X-Forwarded-For: 10.0.0.1")
                         .build());
     }
 
@@ -771,10 +812,6 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             return path;
         }
         return "/";
-    }
-
-    private String getAttack() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "attack");
     }
 
     @Override
