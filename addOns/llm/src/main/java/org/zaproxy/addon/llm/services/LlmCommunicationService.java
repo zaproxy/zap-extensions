@@ -39,21 +39,17 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.tool.ToolProvider;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Getter;
-import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.llm.LlmProvider;
 import org.zaproxy.addon.llm.LlmProviderConfig;
@@ -253,26 +249,22 @@ public class LlmCommunicationService {
     public Integer importOpenapiFromUrl(String urlString) {
         Integer endpointCount = 0;
         try {
-            URL url = URI.create(urlString).toURL();
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+            HttpMessage message = requestor.send(HttpRequestHeader.GET, urlString);
 
             // Check for successful response code or throw error
-            if (connection.getResponseCode() != 200) {
+            if (message.getResponseHeader().getStatusCode() != 200) {
                 throw new RuntimeException(
                         String.format(
-                                "Failed : HTTP error code : %s ", connection.getResponseCode()));
+                                "Failed : HTTP error code : %s ",
+                                message.getResponseHeader().getStatusCode()));
             }
 
             // Read the response
-            BufferedReader br =
-                    new BufferedReader(new InputStreamReader((connection.getInputStream())));
-            String openApiDefinition = br.lines().collect(Collectors.joining());
+            String openApiDefinition = message.getResponseBody().toString();
 
             // Use the existing importOpenapi method
             endpointCount = importHttpCalls(openApiDefinition);
 
-            connection.disconnect();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
