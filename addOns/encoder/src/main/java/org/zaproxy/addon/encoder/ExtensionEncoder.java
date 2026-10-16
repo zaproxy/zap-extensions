@@ -136,10 +136,9 @@ public class ExtensionEncoder extends ExtensionAdaptor {
 
     private PopupEncoderMenu getPopupMenuEncode() {
         if (popupEncodeMenu == null) {
-            popupEncodeMenu = new PopupEncoderMenu();
-            popupEncodeMenu.setText(Constant.messages.getString("encoder.popup.title"));
-            popupEncodeMenu.addActionListener(
-                    e -> showEncodeDecodeDialog(popupEncodeMenu.getLastInvoker()));
+            popupEncodeMenu =
+                    new PopupEncoderMenu(
+                            () -> showEncodeDecodeDialog(popupEncodeMenu.getLastInvoker()));
         }
         return popupEncodeMenu;
     }
