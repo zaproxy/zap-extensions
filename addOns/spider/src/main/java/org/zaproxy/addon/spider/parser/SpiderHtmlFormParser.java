@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.FormControl;
+import net.htmlparser.jericho.FormControlType;
 import net.htmlparser.jericho.FormField;
 import net.htmlparser.jericho.FormFields;
 import net.htmlparser.jericho.HTMLElementName;
@@ -43,6 +44,7 @@ import net.htmlparser.jericho.Segment;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 
 /** The Class SpiderHtmlFormParser is used for parsing HTML files for processing forms. */
@@ -52,6 +54,8 @@ public class SpiderHtmlFormParser extends SpiderParser {
     private static final String DEFAULT_EMPTY_VALUE = "";
     private static final String METHOD_GET = "GET";
     private static final String METHOD_POST = "POST";
+    private static final String MULTIPART_FORMDATA_BOUNDARY =
+            "----WebKitFormBoundaryz1ZAnCiCJ9pjXuLc";
     private URI uri;
     private String url;
 
@@ -130,15 +134,9 @@ public class SpiderHtmlFormParser extends SpiderParser {
                     }
                     getLogger().debug("Canonical URL constructed using '{}': {}", action, fullURL);
 
-                    /*
-                     * Ignore encoding, as we will not POST files anyway, so using
-                     * "application/x-www-form-urlencoded" is adequate
-                     */
-                    // String encoding = form.getAttributeValue("enctype");
-                    // if (encoding != null && encoding.equals("multipart/form-data"))
-
                     for (String submitData : formData) {
-                        notifyPostResourceFound(ctx, fullURL, submitData);
+                        notifyPostResourceFound(
+                                ctx, fullURL, submitData, form.getAttributeValue("enctype"));
                     }
 
                 } // Process anything else as a GET method
@@ -320,10 +318,12 @@ public class SpiderHtmlFormParser extends SpiderParser {
                         new FormDataField(
                                 field.getName(),
                                 value,
-                                field.getFormControl().getFormControlType().isSubmit()));
+                                field.getFormControl().getFormControlType().isSubmit(),
+                                field.getFormControl().getFormControlType()
+                                        == FormControlType.FILE));
             }
         }
-        return new FormData(formDataFields);
+        return new FormData(formDataFields, form.getAttributeValue("enctype"));
     }
 
     private static FormFields getFormFields(ParseContext ctx, Element form) {
@@ -470,7 +470,24 @@ public class SpiderHtmlFormParser extends SpiderParser {
      * @param requestBody the request body
      * @see #notifyListenersPostResourceFound(HttpMessage, int, String, String)
      */
-    private void notifyPostResourceFound(ParseContext ctx, String url, String requestBody) {
+    private void notifyPostResourceFound(
+            ParseContext ctx, String url, String requestBody, String encoding) {
+
+        List<HttpHeaderField> requestHeaders = new ArrayList<>();
+        if (encoding != null && encoding.equals("multipart/form-data")) {
+            ctx.getHttpMessage()
+                    .getRequestHeader()
+                    .setHeader(
+                            "content-type",
+                            String.format(
+                                    "multipart/form-data; boundary=%s",
+                                    MULTIPART_FORMDATA_BOUNDARY));
+        } else {
+            ctx.getHttpMessage()
+                    .getRequestHeader()
+                    .setHeader("content-type", "application/x-www-form-urlencoded");
+        }
+
         getLogger()
                 .debug(
                         "Submitting form with POST method and message body with form parameters (normal encoding): {}",
@@ -481,6 +498,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
                         .setDepth(ctx.getDepth() + 1)
                         .setUri(url)
                         .setMethod(METHOD_POST)
+                        // .setHeaders(requestHeaders)
                         .setBody(requestBody)
                         .build());
     }
@@ -503,10 +521,12 @@ public class SpiderHtmlFormParser extends SpiderParser {
 
         private final List<FormDataField> fields;
         private final List<FormDataField> submitFields;
+        private final String encoding;
 
-        private FormData(List<FormDataField> fields) {
+        private FormData(List<FormDataField> fields, String encoding) {
             this.fields = fields;
             this.submitFields = new ArrayList<>();
+            this.encoding = encoding;
             this.fields.forEach(
                     f -> {
                         if (f.isSubmit()) {
@@ -549,13 +569,43 @@ public class SpiderHtmlFormParser extends SpiderParser {
                         consumedSubmitFields.add(field);
                     }
 
-                    if (formData.length() > 0) {
-                        formData.append('&');
-                    }
+                    if (encoding != null && encoding.equals("multipart/form-data")) {
 
-                    formData.append(field.getName());
-                    formData.append('=');
-                    formData.append(field.getValue());
+                        if (formData.length() == 0) {
+                            formData.append(MULTIPART_FORMDATA_BOUNDARY);
+                        }
+
+                        if (field.isFile()) {
+                            formData.append(
+                                    String.format(
+                                            "\nContent-Disposition: form-data; name=\"%s\"; filename=\"%s\"",
+                                            field.getName(), field.getValue()));
+                            formData.append("\nContent-Type: text/plain");
+                            formData.append("\n\n" + field.getValue());
+                            formData.append("\n" + MULTIPART_FORMDATA_BOUNDARY);
+                        } else {
+                            formData.append(
+                                    String.format(
+                                            "\nContent-Disposition: form-data; name=\"%s\"",
+                                            field.getName()));
+                            formData.append("\n\n" + field.getValue());
+                            formData.append("\n" + MULTIPART_FORMDATA_BOUNDARY);
+                        }
+
+                    } else {
+
+                        if (formData.length() > 0) {
+                            formData.append('&');
+                        }
+
+                        formData.append(field.getName());
+                        formData.append('=');
+                        formData.append(field.getValue());
+                    }
+                }
+
+                if (encoding != null && encoding.equals("multipart/form-data")) {
+                    formData.append("--");
                 }
 
                 return formData.toString();
@@ -569,12 +619,14 @@ public class SpiderHtmlFormParser extends SpiderParser {
         private String name;
         private String value;
         private boolean submit;
+        private boolean isFile;
 
-        public FormDataField(String name, String value, boolean submit) {
+        public FormDataField(String name, String value, boolean submit, boolean isFile) {
             try {
                 this.name = URLEncoder.encode(name, ENCODING_TYPE);
                 this.value = URLEncoder.encode(value, ENCODING_TYPE);
                 this.submit = submit;
+                this.isFile = isFile;
             } catch (UnsupportedEncodingException ignore) {
                 // UTF-8 is one of the standard charsets of the JVM.
             }
@@ -590,6 +642,10 @@ public class SpiderHtmlFormParser extends SpiderParser {
 
         public boolean isSubmit() {
             return submit;
+        }
+
+        public boolean isFile() {
+            return isFile;
         }
     }
 }
