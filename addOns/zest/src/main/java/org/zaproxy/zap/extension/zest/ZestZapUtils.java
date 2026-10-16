@@ -1009,6 +1009,31 @@ public class ZestZapUtils {
                 "zest.fail.assert." + varLocation + "regex.inc", messageArgs);
     }
 
+    /**
+     * Creates a URI from a Zest request URL, preserving existing percent escapes.
+     *
+     * <p>URLs from {@link ZestRequest#getUrl()} or {@link ZestRequest#getUrlToken()} are normally
+     * already escaped. Parsing them as escaped avoids double encoding and preserves encoded
+     * delimiters such as {@code %2F} and {@code %23}.
+     *
+     * <p>If raw scanner payload characters prevent escaped parsing, encode the URL and undo only
+     * the encoding of percent signs that introduced valid escapes in the original URL. This
+     * preserves encoded delimiters without decoding them into URL syntax.
+     *
+     * @param url the Zest request URL.
+     * @return the URI with raw characters encoded and existing escapes preserved.
+     * @throws URIException if the URL could not be parsed at all.
+     */
+    private static URI createUri(String url) throws URIException {
+        try {
+            return new URI(url, true);
+        } catch (URIException e) {
+            LOGGER.debug("URL not in escaped form, encoding leniently: {}", url);
+        }
+        return new URI(
+                new URI(url, false).toString().replaceAll("%25([0-9a-fA-F]{2})", "%$1"), true);
+    }
+
     public static HttpMessage toHttpMessage(ZestRequest request, ZestResponse response)
             throws URIException, HttpMalformedHeaderException {
         if (request == null) {
@@ -1018,7 +1043,7 @@ public class ZestZapUtils {
         if (url == null) {
             return null;
         }
-        HttpMessage msg = new HttpMessage(new URI(url, false));
+        HttpMessage msg = new HttpMessage(createUri(url));
         msg.setTimeSentMillis(request.getTimestamp());
         if (request.getHeaders() != null) {
             try {

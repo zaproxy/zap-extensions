@@ -30,6 +30,7 @@ import java.net.URI;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -229,6 +230,95 @@ class ZestZapUtilsUnitTest {
         assertThat(msg.getResponseHeader().getHeaders().size(), is(1));
         assertThat(msg.getResponseBody(), is(not(nullValue())));
         assertThat(msg.getResponseBody().toString(), is("The body"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com/a%20b/c, https://www.example.com/a%20b/c",
+        "https://www.example.com/100%25, https://www.example.com/100%25",
+        "https://www.example.com/caf%C3%A9, https://www.example.com/caf%C3%A9",
+        "https://www.example.com/a?b=c%20d, https://www.example.com/a?b=c%20d",
+    })
+    void shouldNotDoubleEncodePercentEncodedUrl(String urlStr, String expectedUrl)
+            throws Exception {
+        // Given
+        ZestRequest req = new ZestRequest();
+        req.setUrl(new URI(urlStr).toURL());
+        req.setMethod("GET");
+
+        // When
+        HttpMessage msg = ZestZapUtils.toHttpMessage(req, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getURI().toString(), is(equalTo(expectedUrl)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com/a%2Fb/c, https://www.example.com/a%2Fb/c",
+        "https://www.example.com/a%23b, https://www.example.com/a%23b",
+        "https://www.example.com/a?b=c%26d, https://www.example.com/a?b=c%26d",
+        "https://www.example.com/a?b=c%3Dd, https://www.example.com/a?b=c%3Dd",
+    })
+    void shouldNotDecodeEncodedDelimitersOfUrl(String urlStr, String expectedUrl) throws Exception {
+        // Given
+        ZestRequest req = new ZestRequest();
+        req.setUrl(new URI(urlStr).toURL());
+        req.setMethod("GET");
+
+        // When
+        HttpMessage msg = ZestZapUtils.toHttpMessage(req, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getURI().toString(), is(equalTo(expectedUrl)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com/a?b=], https://www.example.com/a?b=%5D",
+        "https://www.example.com/a%20b?c=], https://www.example.com/a%20b?c=%5D",
+        "'https://www.example.com/a b/c', https://www.example.com/a%20b/c",
+        "https://www.example.com/a%2Fb?c=], https://www.example.com/a%2Fb?c=%5D",
+        "https://www.example.com/a%23b?c=], https://www.example.com/a%23b?c=%5D",
+        "https://www.example.com/a?b=c%26d& e=], https://www.example.com/a?b=c%26d&%20e=%5D",
+        "https://www.example.com/a?b=c%3Dd&e=], https://www.example.com/a?b=c%3Dd&e=%5D",
+        "https://www.example.com/a%252Fb?c=], https://www.example.com/a%252Fb?c=%5D",
+        "https://www.example.com/a%2fb?c=], https://www.example.com/a%2fb?c=%5D",
+        "https://www.example.com/caf%C3%A9?c=], https://www.example.com/caf%C3%A9?c=%5D",
+        "https://www.example.com/a%2Fb%GG?c=], https://www.example.com/a%2Fb%25GG?c=%5D",
+    })
+    void shouldEncodeUrlWithRawReservedCharacters(String urlToken, String expectedUrl)
+            throws Exception {
+        // Given
+        ZestRequest req = new ZestRequest();
+        req.setUrlToken(urlToken);
+        req.setMethod("GET");
+
+        // When
+        HttpMessage msg = ZestZapUtils.toHttpMessage(req, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getURI().toString(), is(equalTo(expectedUrl)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com/{{path}}/a%20b, https://www.example.com/%7B%7Bpath%7D%7D/a%20b",
+        "https://www.example.com/a%2Fb?value={{value}}, https://www.example.com/a%2Fb?value=%7B%7Bvalue%7D%7D",
+        "https://www.example.com/{{path}}?value=], https://www.example.com/%7B%7Bpath%7D%7D?value=%5D",
+        "https://www.example.com/a%2Fb?value={{value}}], https://www.example.com/a%2Fb?value=%7B%7Bvalue%7D%7D%5D",
+    })
+    void shouldEncodeUrlWithVariables(String urlToken, String expectedUrl) throws Exception {
+        // Given
+        ZestRequest req = new ZestRequest();
+        req.setUrlToken(urlToken);
+        req.setMethod("GET");
+
+        // When
+        HttpMessage msg = ZestZapUtils.toHttpMessage(req, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getURI().toString(), is(equalTo(expectedUrl)));
     }
 
     private static ZestParam createZestParam() {
