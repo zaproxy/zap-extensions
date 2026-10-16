@@ -56,6 +56,7 @@ public class ReportJob extends AutomationJob {
     private static final String PARAM_REPORT_TITLE = "reportTitle";
     private static final String PARAM_REPORT_DESC = "reportDescription";
     private static final String PARAM_DISPLAY_REPORT = "displayReport";
+    private static final String PARAM_ZIP_REPORT = "zipReport";
 
     private ExtensionReports extReport;
 
@@ -259,6 +260,14 @@ public class ReportJob extends AutomationJob {
         }
 
         reportData.setAlertTreeRootNode(getExtReport().getFilteredAlertTree(reportData));
+        boolean zipReport = JobUtils.unBox(this.getParameters().getZipReport());
+        boolean displayReport = JobUtils.unBox(this.getParameters().getDisplayReport());
+        if (zipReport && displayReport) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "reports.automation.warn.zipanddisplay", this.getName()));
+        }
+        reportData.setZipReport(zipReport);
 
         try {
             file =
@@ -267,7 +276,7 @@ public class ReportJob extends AutomationJob {
                                     reportData,
                                     template,
                                     file.getAbsolutePath(),
-                                    JobUtils.unBox(this.getParameters().getDisplayReport()));
+                                    zipReport ? false : displayReport);
             progress.info(
                     Constant.messages.getString(
                             "reports.automation.info.reportgen",
@@ -398,6 +407,9 @@ public class ReportJob extends AutomationJob {
         map.put(
                 PARAM_DISPLAY_REPORT,
                 Boolean.toString(JobUtils.unBox(this.getParameters().getDisplayReport())));
+        map.put(
+                PARAM_ZIP_REPORT,
+                Boolean.toString(JobUtils.unBox(this.getParameters().getZipReport())));
         return map;
     }
 
@@ -477,5 +489,6 @@ public class ReportJob extends AutomationJob {
         private String reportTitle = "";
         private String reportDescription = "";
         private Boolean displayReport = false;
+        private Boolean zipReport = false;
     }
 }
