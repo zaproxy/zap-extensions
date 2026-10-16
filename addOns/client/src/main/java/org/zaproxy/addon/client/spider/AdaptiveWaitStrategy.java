@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
+import org.zaproxy.zap.utils.Stats;
 
 public class AdaptiveWaitStrategy implements ActionWaitStrategy {
 
@@ -106,6 +107,7 @@ public class AdaptiveWaitStrategy implements ActionWaitStrategy {
             long now = System.currentTimeMillis();
             if (now - start >= timeoutMs) {
                 LOGGER.debug("Adaptive wait timeout reached after {}ms", timeoutMs);
+                Stats.incCounter("stats.client.spider.adaptivewait.timeout");
                 break;
             }
 

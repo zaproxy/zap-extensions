@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -37,6 +38,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
+import org.zaproxy.zap.utils.Stats;
 
 /** Unit test for {@link AdaptiveWaitStrategy}. */
 class AdaptiveWaitStrategyUnitTest {
@@ -51,9 +54,13 @@ class AdaptiveWaitStrategyUnitTest {
     private ClientSpiderOptions options;
     private AdaptiveWaitStrategy strategy;
     private ScheduledExecutorService scheduler;
+    private InMemoryStats stats;
 
     @BeforeEach
     void setUp() {
+        stats = new InMemoryStats();
+        Stats.addListener(stats);
+
         options = mock();
         given(options.getInitialLoadTimeInSecs())
                 .willReturn((int) TimeUnit.MILLISECONDS.toSeconds(INITIAL_PAGE_LOAD_TIME_MS));
@@ -76,6 +83,7 @@ class AdaptiveWaitStrategyUnitTest {
 
     @AfterEach
     void tearDown() {
+        Stats.removeListener(stats);
         scheduler.shutdownNow();
     }
 
@@ -143,6 +151,53 @@ class AdaptiveWaitStrategyUnitTest {
         long elapsed = elapsed(start);
         assertThat(result, is(true));
         assertThat(elapsed, lessThan(TIMEOUT_MS));
+    }
+
+    @Test
+    void shouldCountOutOfScopeRequestsThatAreAllowedResources() {
+        // Given
+        String allowedResourceUrl = "http://other.example.org/script.js";
+        AdaptiveWaitStrategy allowingStrategy =
+                new AdaptiveWaitStrategy(
+                        options,
+                        url -> url.startsWith("http://example.com") || url.endsWith(".js"),
+                        ConcurrentHashMap.newKeySet());
+        allowingStrategy.onRequestStarted(allowedResourceUrl);
+        scheduler.schedule(
+                () -> allowingStrategy.onRequestCompleted(allowedResourceUrl),
+                300,
+                TimeUnit.MILLISECONDS);
+
+        // When
+        long start = System.currentTimeMillis();
+        boolean result = allowingStrategy.waitAfterAction();
+
+        // Then
+        long elapsed = elapsed(start);
+        assertThat(result, is(true));
+        assertThat(elapsed, greaterThanOrEqualTo(300L));
+        assertThat(elapsed, lessThan(TIMEOUT_MS));
+    }
+
+    @Test
+    void shouldIncrementTimeoutStatWhenTimeoutReached() {
+        // Given
+        strategy.onRequestStarted(IN_SCOPE_URL);
+
+        // When
+        strategy.waitAfterAction();
+
+        // Then
+        assertThat(stats.getStat("stats.client.spider.adaptivewait.timeout"), is(1L));
+    }
+
+    @Test
+    void shouldNotIncrementTimeoutStatWhenTrafficQuiesces() {
+        // Given / When
+        strategy.waitAfterAction();
+
+        // Then
+        assertThat(stats.getStat("stats.client.spider.adaptivewait.timeout"), is(nullValue()));
     }
 
     @Test
