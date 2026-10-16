@@ -474,18 +474,55 @@ public class WSDLCustomParser {
         }
         List<Attribute> attrs = ct.getAllAttributes();
         if (attrs != null) {
+            java.util.Set<String> prohibitedNames = new java.util.HashSet<>();
             for (Attribute attr : attrs) {
-                String attrName = attr.getName();
-                if (attrName == null) {
+                if ("prohibited".equals(attr.getUse())) {
+                    Attribute resolved = resolveAttribute(attr);
+                    if (resolved != null && resolved.getName() != null) {
+                        prohibitedNames.add(resolved.getName());
+                    }
+                }
+            }
+            for (Attribute attr : attrs) {
+                if ("prohibited".equals(attr.getUse())) {
                     continue;
                 }
-                String attrType = attr.getType() != null ? attr.getType().getLocalPart() : "string";
-                String attrValue = resolveAttributeValue(attr);
+                Attribute resolved = resolveAttribute(attr);
+                if (resolved == null) {
+                    continue;
+                }
+                String attrName = resolved.getName();
+                if (prohibitedNames.contains(attrName)) {
+                    continue;
+                }
+                String attrType =
+                        resolved.getType() != null ? resolved.getType().getLocalPart() : "string";
+                String attrValue = resolveAttributeValue(attr, resolved);
                 formParams.putAll(
                         addParameter(xpath + "/@" + attrName, attrType, attrName, attrValue));
             }
         }
         return formParams;
+    }
+
+    private static Attribute resolveAttribute(Attribute attr) {
+        if (attr.getName() != null) {
+            return attr;
+        }
+        if (attr.getRef() == null) {
+            return null;
+        }
+        try {
+            Attribute resolved = attr.getSchema().getAttribute(attr.getRef());
+            if (resolved == null || resolved.getName() == null) {
+                LOGGER.warn("Could not resolve ref attribute {} from WSDL file.", attr.getRef());
+                return null;
+            }
+            return resolved;
+        } catch (ModelAccessException e) {
+            LOGGER.warn("Could not resolve ref attribute {} from WSDL file.", attr.getRef(), e);
+            return null;
+        }
     }
 
     private Map<String, String> fillFromSequence(Sequence seq, String xpath) {
@@ -536,11 +573,14 @@ public class WSDLCustomParser {
         return addParameter(xpath, "string", element.getName(), null);
     }
 
-    private static String resolveAttributeValue(Attribute attr) {
-        if (attr.getFixedValue() != null) {
-            return attr.getFixedValue();
+    private static String resolveAttributeValue(Attribute original, Attribute resolved) {
+        if (original.getFixedValue() != null) {
+            return original.getFixedValue();
         }
-        SimpleType st = attr.getSimpleType();
+        if (resolved.getFixedValue() != null) {
+            return resolved.getFixedValue();
+        }
+        SimpleType st = resolved.getSimpleType();
         if (st != null) {
             BaseRestriction br = st.getRestriction();
             if (br != null) {
