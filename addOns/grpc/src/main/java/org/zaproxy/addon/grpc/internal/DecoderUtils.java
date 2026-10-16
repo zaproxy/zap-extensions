@@ -20,6 +20,7 @@
 package org.zaproxy.addon.grpc.internal;
 
 import com.google.protobuf.CodedInputStream;
+import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +28,7 @@ import java.util.Arrays;
 
 public class DecoderUtils {
 
-    public static final int PAYLOAD_HEADER_SIZE = 5;
+    public static final int PAYLOAD_HEADER_SIZE = GrpcFrameCodec.HEADER_LENGTH;
 
     public static final int DOUBLE_EXPONENT_LEN = 11;
 
@@ -46,6 +47,8 @@ public class DecoderUtils {
 
     public enum DecodingMethod {
         BASE64_ENCODED,
+        GRPC_BINARY,
+        AUTO,
         DIRECT
     }
 
@@ -91,6 +94,10 @@ public class DecoderUtils {
         return Arrays.copyOfRange(input, PAYLOAD_HEADER_SIZE, input.length);
     }
 
+    public static byte[] extractUnaryGrpcPayload(byte[] input) {
+        return GrpcFrameCodec.decodeUnaryMessage(input);
+    }
+
     public static String decodeField(int tag, CodedInputStream inputStream) throws IOException {
         StringBuilder decodedValueBuilder = new StringBuilder();
         decodedValueBuilder.append(tag >> 3).append(":");
@@ -123,32 +130,42 @@ public class DecoderUtils {
 
             case LENGTH_DELIMITED_WIRE_TYPE:
                 decodedValueBuilder.append(wireType);
-                String decoded = inputStream.readStringRequireUtf8();
-                byte[] stringBytes = decoded.getBytes();
+                byte[] stringBytes = inputStream.readByteArray();
                 // assume wire type 2 as Nested Message
                 // child nested message , recursively check each nestedMessage field
                 // if not able to successfully decode as NestedMessage field, then consider it
-                // as string
+                // as string or binary data
                 // still need to check for packed repeated fields
                 String validMessage = checkNestedMessage(stringBytes);
                 if (validMessage.isEmpty()) {
-                    // not a nested message check for printable characters
-                    int unprintable = 0;
-                    int runes = stringBytes.length;
-                    for (byte stringByte : stringBytes) {
-                        if (!DecoderUtils.isGraphic(stringByte)) {
-                            unprintable++;
-                        }
-                    }
-
-                    // assume not a human readable string
-                    // decode it as hex values
-                    if ((double) unprintable / runes > 0.3) {
+                    if (!ByteString.copyFrom(stringBytes).isValidUtf8()) {
                         decodedValueBuilder
                                 .append("B::")
                                 .append(DecoderUtils.toHexString(stringBytes));
                     } else {
-                        decodedValueBuilder.append("::").append('"').append(decoded).append('"');
+                        String decoded = new String(stringBytes, StandardCharsets.UTF_8);
+                        long unprintable =
+                                decoded.codePoints()
+                                        .filter(
+                                                codePoint ->
+                                                        Character.isISOControl(codePoint)
+                                                                && !Character.isWhitespace(
+                                                                        codePoint))
+                                        .count();
+                        int codePointCount = decoded.codePointCount(0, decoded.length());
+
+                        if (codePointCount > 0
+                                && (double) unprintable / codePointCount > 0.3) {
+                            decodedValueBuilder
+                                    .append("B::")
+                                    .append(DecoderUtils.toHexString(stringBytes));
+                        } else {
+                            decodedValueBuilder
+                                    .append("::")
+                                    .append('"')
+                                    .append(EncoderUtils.escapeString(decoded))
+                                    .append('"');
+                        }
                     }
                 } else {
                     decodedValueBuilder.append("N::").append(validMessage);
