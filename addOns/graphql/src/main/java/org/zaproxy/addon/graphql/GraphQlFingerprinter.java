@@ -114,6 +114,9 @@ public class GraphQlFingerprinter {
             } catch (Exception e) {
                 LOGGER.warn("Failed to fingerprint GraphQL engine: {}", fingerprinter.getKey(), e);
             }
+            if (requestor.hasRequestFailed()) {
+                break;
+            }
         }
         queryCache.clear();
     }
