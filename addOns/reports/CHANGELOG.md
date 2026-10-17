@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The Modern HTML Report with themes and options now includes the number of Sites tree nodes actively scanned (Issue 7022).
 
 ## [0.46.0] - 2026-07-06
 ### Added
