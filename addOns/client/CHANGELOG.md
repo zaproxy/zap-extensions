@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Increase the default Client Spider adaptive wait timeout to 30 seconds.
 
+### Fixed
+- Count allowed resources even if out of scope in the Client Spider adaptive wait (Issue 9440).
 
 ## [0.33.0] - 2026-10-08
 ### Changed
