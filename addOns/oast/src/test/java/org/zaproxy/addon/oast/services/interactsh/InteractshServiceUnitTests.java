@@ -22,6 +22,8 @@ package org.zaproxy.addon.oast.services.interactsh;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.not;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.io.ByteArrayOutputStream;
@@ -44,6 +46,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.zaproxy.addon.oast.OastPayload;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -82,6 +85,41 @@ class InteractshServiceUnitTests extends TestUtils {
         assertThat(request.containsKey("public-key"), is(true));
         assertThat(request.containsKey("secret-key"), is(true));
         assertThat(request.containsKey("correlation-id"), is(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void shouldGeneratePayloadsAcceptedByInteractsh(boolean withCanary) throws Exception {
+        // Given
+        StaticInteractshServerHandler handler = new StaticInteractshServerHandler("/register", "");
+        nano.addHandler(handler);
+        service.register(false);
+        String correlationId =
+                JSONObject.fromObject(handler.getRequestBody()).getString("correlation-id");
+        String previousPayload = "";
+        // When / Then
+        for (int i = 0; i < 32; i++) {
+            OastPayload oastPayload = withCanary ? service.getNewOastPayload() : null;
+            String payload = withCanary ? oastPayload.getPayload() : service.getNewPayload();
+            String[] labels = payload.split("\\.");
+            assertThat(labels.length, is(3));
+            assertThat(labels[0], matchesPattern("[a-z0-9]"));
+            assertThat(labels[1].substring(0, 20), is(correlationId));
+            assertThat(correlationId, matchesPattern("[0-9a-v]{20}"));
+            assertThat(
+                    labels[1].substring(20),
+                    matchesPattern("[ybndrfg8ejkmcpqxot1uwisza345h769]{13}"));
+            assertThat(labels[2], is("localhost"));
+            assertThat(payload, is(not(previousPayload)));
+            // A prepended scan-rule value must leave the full identifier in its own label.
+            assertThat(("abc" + payload).split("\\.")[1], is(labels[1]));
+            if (withCanary) {
+                assertThat(
+                        oastPayload.getCanary(),
+                        is(new StringBuilder(labels[1]).reverse().toString()));
+            }
+            previousPayload = payload;
+        }
     }
 
     @Test
