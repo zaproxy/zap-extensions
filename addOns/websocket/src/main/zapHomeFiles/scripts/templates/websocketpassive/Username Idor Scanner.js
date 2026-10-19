@@ -31,7 +31,7 @@ solution: >-
   to ensure the user is authorized for the requested object.
 references:
   - https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html
-  - https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References
+  - https://wstg.owasp.org/www-project-web-security-testing-guide/v4.2/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References
 category: info_gather
 risk: info
 confidence: high
