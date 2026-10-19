@@ -16,13 +16,29 @@ insightsジョブはインサイトオプションを設定します。
 <pre>
   - type: insights
     parameters:
-      messagesLowThreshold:            # Integer: メッセージ関連のインサイトに使用される低しきい値、デフォルト: 5
-      messagesHighThreshold:           # Integer: メッセージ関連のインサイトに使用される高しきい値、デフォルト: 50
-      memoryLowThreshold:              # Integer: メモリ関連のインサイトに使用される低しきい値、デフォルト: 80
-      memoryHighThreshold:             # Integer: メモリ関連のインサイトに使用される高しきい値、デフォルト: 95
-      slowResponse:                    # Integer: 「遅い」と判断されるレスポンス時間 (ミリ秒)、デフォルト: 256
-      exitAutoOnHigh:                  # Boolean: true の場合、高レベルのインサイトで自動化プランを終了する、デフォルト: true
+      messagesLowThreshold:            # Integer: low threshold used for insights related to messages, default: 5
+      messagesHighThreshold:           # Integer: high threshold used for insights related to messages, default: 50
+      memoryLowThreshold:              # Integer: low threshold used for insights related to memory, default: 80
+      memoryHighThreshold:             # Integer: high threshold used for insights related to memory, default: 95
+      slowResponse:                    # Integer: the response time in msecs that is treated as "slow", default: 256
+      exitAutoLevel:                   # String: the lowest level of insight that will end the plan: medium, high or blank for never, default: high. Preferred to exitAutoOnHigh, which it overrides
 </pre>
+<p>
+<code>exitAutoLevel</code> is the preferred way to control when an insight will end the plan:
+<ul>
+<li><code>high</code>: the plan will end when a High level Insight is reported. This has the same effect as <code>exitAutoOnHigh: true</code>
+<li><code>medium</code>: the plan will end when a Medium or High level Insight is reported
+</ul>
+The values are case insensitive. A blank value means that insights will never end the plan.
+Any other value will be ignored and a warning reported.
+<p>
+If both <code>exitAutoLevel</code> and <code>exitAutoOnHigh</code> are supplied then a warning will be reported and <code>exitAutoLevel</code> will be used.
+<p>
+<code>exitAutoOnHigh</code> is not yet deprecated, but we recommend that you use <code>exitAutoLevel</code> instead.
+If only <code>exitAutoOnHigh</code> is supplied then it will be converted to the equivalent <code>exitAutoLevel</code>
+(<code>high</code> if true, blank if false), so plans saved by ZAP will always use <code>exitAutoLevel</code>.
+<p>
+Any jobs that are flagged as "always run" will still run after the plan has been ended.
 
 </BODY>
 </HTML>

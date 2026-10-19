@@ -20,7 +20,8 @@ The following Levels are supported:
 <li>High: A very significant Insight which is highly likely to impact the scan effectiveness
 </ul>
 
-We recommend terminating a scan early and investigating if any Medium or High level Insights are reported.
+We recommend terminating a scan early and investigating if any High level Insights are reported,
+and double checking any Medium Insights ASAP.
 
 <H3>Reason</H3>
 The reason why the Insight was reported.
@@ -46,7 +47,10 @@ The value related to the Insight. This will be an integer or a percentage.
 Indicates if the Insight is specific to a site (which will be specified). Otherwise Insights are not site specific.
 
 <H3>Thresholds</H3>
-Each Insight has a Low and High threshold, which is shown in the <a href="insights-list.html">insight list</a>.
+Insights which use thresholds are compared against the Low and High thresholds set in the <a href="insights-options.html">options</a>.
+The Level at which an Insight is reported when it exceeds each threshold is shown in the <a href="insights-list.html">insight list</a>.
+Note that the threshold names (Low and High) are not the same as the Levels (Info, Low, Medium and High) - 
+see <a href="insights-list.html">Thresholds and Levels</a> for a full explanation.
 
 </BODY>
 </HTML>
