@@ -70,7 +70,7 @@ alertRefOverrides:
   ${SCAN_RULE_ID}-9:
     name: Suspicious Input Transformation - Unicode Case Conversion
     references:
-      - https://www.unicode.org/charts/case/index.html
+      - https://www.unicode.org/reports/tr44/
   ${SCAN_RULE_ID}-10:
     name: Suspicious Input Transformation - Unicode Combining Diacritic
     references:
