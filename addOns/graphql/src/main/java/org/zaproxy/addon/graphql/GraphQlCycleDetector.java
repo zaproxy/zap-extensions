@@ -59,7 +59,7 @@ public class GraphQlCycleDetector {
             CommonAlertTag.mergeTags(
                     Map.of(
                             "OWASP_2023_API4",
-                            "https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/"),
+                            "https://api-security.owasp.org/editions/2023/en/0xa4-unrestricted-resource-consumption/"),
                     CommonAlertTag.API_2023_API4_UNRESTRICTED_RESOURCE_CONSUMPTION,
                     CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN,
                     CommonAlertTag.OWASP_2025_A10_EXCEPTIONAL_CONDITIONS,

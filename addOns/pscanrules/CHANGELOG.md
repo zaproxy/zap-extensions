@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update dependency.
+- Updated alert reference links aligning with recent OWASP website changes.
 
 ## [76] - 2026-09-25
 ### Changed
