@@ -1263,6 +1263,22 @@ class HttpSenderImplUnitTest {
         @ParameterizedTest
         @MethodSource(
                 "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeNotifiedOfFailureButNotResponseWhenSendFails(SenderMethod method)
+                throws Exception {
+            // Given
+            message.getRequestHeader().setURI(new URI("https://unknown_host:" + serverPort, true));
+            TestHttpSenderListener listener = new TestHttpSenderListener();
+            httpSender.addListener(listener);
+            // When
+            assertThrows(IOException.class, () -> method.sendWith(httpSender, message));
+            // Then
+            assertThat(listener.getFailures(), hasSize(1));
+            assertThat(listener.getMessages(), empty());
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
         void shouldContinueToBeNotifiedAfterListenerExceptions(SenderMethod method)
                 throws Exception {
             // Given
@@ -2393,6 +2409,7 @@ class HttpSenderImplUnitTest {
     private static class TestHttpSenderListener implements HttpSenderListener {
 
         private final List<HttpMessage> messages;
+        private final List<IOException> failures = Collections.synchronizedList(new ArrayList<>());
         private final HttpMessageProcessor messageProcessor;
 
         TestHttpSenderListener() {
@@ -2406,6 +2423,10 @@ class HttpSenderImplUnitTest {
 
         List<HttpMessage> getMessages() {
             return messages;
+        }
+
+        List<IOException> getFailures() {
+            return failures;
         }
 
         @Override
@@ -2423,6 +2444,11 @@ class HttpSenderImplUnitTest {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        public void onHttpSendFailed(
+                HttpMessage msg, int initiator, HttpSender sender, IOException cause) {
+            failures.add(cause);
         }
     }
 

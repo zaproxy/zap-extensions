@@ -19,6 +19,12 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -26,15 +32,19 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.stream.Stream;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
+import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +52,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -49,12 +61,15 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.authhelper.AuthDiagnosticsPolicy.Mode;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
+import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.users.User;
@@ -186,5 +201,100 @@ class AuthenticationDiagnosticsUnitTest extends TestUtils {
         verify(wd, elementsAndStorage ? atLeastOnce() : never()).findElements(any(By.class));
         verify((JavascriptExecutor) wd, elementsAndStorage ? atLeastOnce() : never())
                 .executeScript(anyString());
+    }
+
+    @Test
+    void shouldRecordRequestWhenSendFails() throws Exception {
+        // Given
+        AuthenticationDiagnostics diags =
+                new AuthenticationDiagnostics(true, "method", CONTEXT_NAME, "user", true);
+        HttpMessage msg = new HttpMessage();
+        msg.getRequestHeader().setMethod("GET");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
+        // When
+        try (MockedConstruction<HistoryReference> history =
+                mockConstruction(HistoryReference.class)) {
+            diags.recordSendFailure(msg, 1, new IOException("failed"));
+            diags.recordStep(webDriver(), "step");
+            diags.close();
+            // Then
+            assertThat(history.constructed(), hasSize(1));
+        }
+        assertThat(msg.getResponseHeader().getStatusCode(), is(equalTo(999)));
+        assertThat(msg.getResponseBody().toString(), containsString("failed"));
+        // The response header must survive a re-serialise/re-parse round-trip (e.g. persisting to
+        // and reading back from the history DB), which a status code needing zero-padding (a
+        // plain int toString() of 0-99) would not.
+        HttpResponseHeader roundTripped =
+                new HttpResponseHeader(msg.getResponseHeader().toString());
+        assertThat(roundTripped.getStatusCode(), is(equalTo(999)));
+        ArgumentCaptor<Diagnostic> captor = ArgumentCaptor.forClass(Diagnostic.class);
+        verify(pm).makePersistent(captor.capture());
+        assertThat(captor.getValue().getSteps().get(0).getMessages(), hasSize(1));
+    }
+
+    @Test
+    void shouldRecordGatewayTimeoutResponseWhenSendTimesOut() throws Exception {
+        // Given
+        AuthenticationDiagnostics diags =
+                new AuthenticationDiagnostics(true, "method", CONTEXT_NAME, "user", true);
+        HttpMessage msg = new HttpMessage();
+        msg.getRequestHeader().setMethod("GET");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
+        ZapSocketTimeoutException cause =
+                new ZapSocketTimeoutException(new SocketTimeoutException("timed out"), 20);
+        // When
+        try (MockedConstruction<HistoryReference> history =
+                mockConstruction(HistoryReference.class)) {
+            diags.recordSendFailure(msg, 1, cause);
+            diags.recordStep(webDriver(), "step");
+            diags.close();
+            assertThat(history.constructed(), hasSize(1));
+        }
+        // Then
+        assertThat(msg.getResponseHeader().getStatusCode(), is(equalTo(999)));
+        assertThat(msg.getResponseBody().toString(), containsString("20"));
+    }
+
+    @Test
+    void shouldNotRecordFailedRequestForRealAuthenticationDiagnostics() throws Exception {
+        // Given
+        AuthenticationDiagnostics diags =
+                new AuthenticationDiagnostics(true, "method", CONTEXT_NAME, "user");
+        HttpMessage msg = new HttpMessage();
+        msg.getRequestHeader().setMethod("GET");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
+        // When
+        try (MockedConstruction<HistoryReference> history =
+                mockConstruction(HistoryReference.class)) {
+            diags.recordSendFailure(msg, 1, new IOException("failed"));
+            diags.recordStep(webDriver(), "step");
+            diags.close();
+            // Then
+            assertThat(history.constructed(), empty());
+        }
+        assertThat(msg.getResponseHeader().isEmpty(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldRecordFailedRequestEvenIfNotRelevantToAuthDiags() throws Exception {
+        // Given
+        AuthenticationDiagnostics diags =
+                new AuthenticationDiagnostics(true, "method", CONTEXT_NAME, "user", true);
+        HttpMessage msg = new HttpMessage();
+        msg.getRequestHeader().setMethod("GET");
+        // An image request would be excluded by AuthUtils.isRelevantToAuthDiags(msg), which must
+        // not apply here: there is no authentication flow to be relevant to for this traffic.
+        msg.getRequestHeader().setURI(new URI("https://www.example.com/photo.png", true));
+        // When
+        try (MockedConstruction<HistoryReference> history =
+                mockConstruction(HistoryReference.class)) {
+            diags.recordSendFailure(msg, 1, new IOException("failed"));
+            diags.recordStep(webDriver(), "step");
+            diags.close();
+            // Then
+            assertThat(history.constructed(), hasSize(1));
+        }
+        assertThat(msg.getResponseHeader().getStatusCode(), is(equalTo(999)));
     }
 }

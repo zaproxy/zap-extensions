@@ -21,6 +21,7 @@ package org.zaproxy.addon.network.internal.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -209,6 +210,39 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
         }
     }
 
+    // TODO Replace the reflection with a direct call to HttpSenderListener#onHttpSendFailed once
+    // targeting core 2.18.0, which declares it as a default method.
+    private void notifyFailureListeners(T1 ctx, HttpMessage msg, IOException cause) {
+        if (IN_LISTENER.get() != null) {
+            return;
+        }
+
+        try {
+            IN_LISTENER.set(true);
+            for (HttpSenderListener listener : listeners) {
+                try {
+                    Method onHttpSendFailed =
+                            listener.getClass()
+                                    .getMethod(
+                                            "onHttpSendFailed",
+                                            HttpMessage.class,
+                                            int.class,
+                                            HttpSender.class,
+                                            IOException.class);
+                    onHttpSendFailed.setAccessible(true);
+                    onHttpSendFailed.invoke(
+                            listener, msg, ctx.getInitiator(), ctx.getParent(), cause);
+                } catch (NoSuchMethodException e) {
+                    // The listener does not handle failed sends.
+                } catch (Exception e) {
+                    logErrorListener(listener, e);
+                }
+            }
+        } finally {
+            IN_LISTENER.remove();
+        }
+    }
+
     private final ResponseBodyConsumer<T3> defaultBodyConsumer =
             (msg, entity) -> {
                 if (msg.isEventStream()) {
@@ -350,6 +384,11 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
 
             sendAuthenticated(ctx, requestCtx, requestConfig, message, responseBodyConsumer);
 
+        } catch (IOException e) {
+            if (requestConfig.isNotifyListeners()) {
+                notifyFailureListeners(ctx, message, e);
+            }
+            throw e;
         } finally {
             LOGGER.debug(
                     "Received response after {}ms for {} {}",
