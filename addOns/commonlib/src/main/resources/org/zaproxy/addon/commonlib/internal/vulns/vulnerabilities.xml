@@ -157,7 +157,7 @@ This significantly reduces the chance of an attacker being able to bypass any pr
 Phases: Architecture and Design; Implementation
 Understand all the potential areas where untrusted inputs can enter your software: parameters or arguments, cookies, anything read from the network, environment variables, reverse DNS lookups, query results, request headers, URL components, e-mail, files, databases, and any external systems that provide data to the application. Remember that such inputs may be obtained indirectly through API calls.
 Many file inclusion problems occur because the programmer assumed that certain inputs could not be modified, especially for cookies and URL components.</solution>
-	<reference>https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.2-Testing_for_Remote_File_Inclusion</reference>
+	<reference>https://wstg.owasp.org/v4.2/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.2-Testing_for_Remote_File_Inclusion/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/98.html</reference>
 </vuln_item_wasc_5>
 
@@ -179,7 +179,7 @@ Phase: Implementation
 Ensure that all format string functions are passed a static string which cannot be controlled by the user and that the proper number of arguments are always sent to that function as well. If at all possible, use functions that do not support the %n operator in format strings.
 Build: Heed the warnings of compilers and linkers, since they may alert you to improper usage.
 </solution>
-	<reference>https://owasp.org/www-community/attacks/Format_string_attack</reference>
+	<reference>https://community.owasp.org/attacks/Format_string_attack</reference>
 	<reference>https://cwe.mitre.org/data/definitions/134.html</reference>
 </vuln_item_wasc_6>
 
@@ -228,7 +228,7 @@ Phase: Implementation
 
 Replace unbounded copy functions with analogous functions that support length arguments, such as strcpy with strncpy. Create these if they are not available.
 </solution>
-	<reference>https://owasp.org/www-community/vulnerabilities/Buffer_Overflow</reference>
+	<reference>https://community.owasp.org/vulnerabilities/Buffer_Overflow</reference>
 	<reference>https://cwe.mitre.org/data/definitions/119.html</reference>
 </vuln_item_wasc_7>
 
@@ -266,7 +266,7 @@ When performing input validation, consider all potentially relevant properties, 
 
 Ensure that you perform input validation at well-defined interfaces within the application. This will help protect the application even if a component is reused or moved elsewhere.
 	</solution>
-	<reference>https://owasp.org/www-community/attacks/xss/</reference>
+	<reference>https://community.owasp.org/attacks/xss/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/79.html</reference>
 </vuln_item_wasc_8>
 
@@ -351,7 +351,7 @@ The most common type of a brute force attack in web applications is an attack ag
 It is important that the techniques used to limit user access to the system be implemented properly in order to prevent abuses and negative side effects such as denial of service.
 
 Additionally consider migrating to password-less authentication mechanisms like passkeys.</solution>
-	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
+	<reference>https://community.owasp.org/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11a>
 
 <vuln_items>wasc_11b</vuln_items>
@@ -362,7 +362,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 Since HTTP is a stateless protocol, in order to maintain state web applications need to ensure that a session identifier is sent by the browser with each request. The session identifier is most commonly stored in an HTTP cookie or URL. Using a brute force attack, an attacker can guess the session identifier of another user. This can lead to the attacker impersonating the user, retrieving personal information and performing actions on behalf of the user.
 	</desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
-	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
+	<reference>https://community.owasp.org/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11b>
 
 <vuln_items>wasc_11c</vuln_items>
@@ -375,7 +375,7 @@ When files reside in directories that are served by the web server but are not l
 A brute force attack tries to locate the unlinked file by trying to access a large number of files. The list of attempted file names might be taken from a list of known potential files or based on variants of the visible files on the web site. More information on brute forcing directories and files can be found in the associated vulnerability, predictable resource location.
 	</desc>
 	<solution>Never rely on "security by obscurity" mechanisms to restrict access to sensitive files and directories on a web server. Implement appropriate access control measures if hosting sensitive information is required.</solution>
-	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
+	<reference>https://community.owasp.org/attacks/Forced_browsing</reference>
 </vuln_item_wasc_11c>
 
 <vuln_items>wasc_11d</vuln_items>
@@ -406,7 +406,7 @@ Phase: Operation
 Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
 
 </solution>
-	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
+	<reference>https://community.owasp.org/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11d>
 
 <vuln_items>wasc_12</vuln_items>
@@ -425,7 +425,7 @@ Specially crafted links can be sent to a user via e-mail, instant messages, left
 This attack exploits the trust relationship established between the user and the web site. The technique has been used to create fake web pages including login forms, defacements, false press releases, etc.
 	</desc>
 	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
-	<reference>https://owasp.org/www-community/attacks/Content_Spoofing</reference>
+	<reference>https://community.owasp.org/attacks/Content_Spoofing</reference>
 </vuln_item_wasc_12>
 
 <vuln_items>wasc_13</vuln_items>
@@ -449,7 +449,7 @@ Pages that provide different responses based on the validity of the data can als
     * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
 </solution>
 <reference>https://portswigger.net/web-security/information-disclosure</reference>
-<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://owasp.github.io/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
 <reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
@@ -467,7 +467,7 @@ Verbose and informative error messages may result in data leakage, and the infor
     * Ensure that administrative functions are not accessible to unauthorized users. Implement strong authentication and authorization mechanisms.
     * Follow the best practices and security guidelines for your specific server.
    </solution>
-	<reference>https://owasp.org/www-project-mobile-top-10/2023-risks/m8-security-misconfiguration</reference>
+	<reference>https://owasp.github.io/www-project-mobile-top-10/2023-risks/m8-security-misconfiguration</reference>
 </vuln_item_wasc_14>
 
 <vuln_items>wasc_15</vuln_items>
@@ -489,7 +489,7 @@ Likewise, default installations may include well-known usernames and passwords, 
 	<alert>Directory Indexing</alert>
 	<desc>Automatic directory listing/indexing is a web server function that lists all of the files within a requested directory if the normal base file (index.html/home.html/default.htm/default.asp/default.aspx/index.php) is not present. When a user requests the main page of a web site, they normally type in a URL such as: https://www.example.com/directory1/ - using the domain name and excluding a specific file. The web server processes this request and searches the document root directory for the default file name and sends this page to the client. If this page is not present, the web server will dynamically issue a directory listing and send the output to the client. Essentially, this is equivalent to issuing an "ls" (Unix) or "dir" (Windows) command within this directory and showing the results in HTML form. From an attack and countermeasure perspective, it is important to realize that unintended directory listings may be possible due to software vulnerabilities (discussed in the example section below) combined with a specific web request.</desc>
 	<solution>Recommendations include restricting access to important directories or files by adopting a need to know requirement for both the document and server root, and turning off features such as Automatic Directory Listings that could expose private files and provide information that could be utilized by an attacker when formulating or conducting an attack.</solution>
-	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
+	<reference>https://community.owasp.org/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/548.html</reference>
 </vuln_item_wasc_16>
 
@@ -498,7 +498,7 @@ Likewise, default installations may include well-known usernames and passwords, 
 	<alert>Improper Filesystem Permissions</alert>
 	<desc>Improper filesystem permissions are a threat to the confidentiality, integrity and availability of a web application. The problem arises when incorrect filesystem permissions are set on files, folders, and symbolic links. When improper permissions are set, an attacker may be able to access restricted files or directories and modify or delete their contents. For example, if an anonymous user account has write permission to a file, then an attacker may be able to modify the contents of the file influencing the web application in undesirable ways. An attacker may also exploit improper symlinks to escalate their privileges and/or access unauthorized files; for example, a symlink that points to a directory outside of the web root.</desc>
 	<solution>Very carefully manage the setting, management and handling of permissions. Explicitly manage trust zones in the software.</solution>
-	<reference>https://owasp.org/www-community/Broken_Access_Control</reference>
+	<reference>https://community.owasp.org/Broken_Access_Control</reference>
 	<reference>https://cwe.mitre.org/data/definitions/280.html</reference>
 </vuln_item_wasc_17>
 
@@ -510,7 +510,7 @@ Likewise, default installations may include well-known usernames and passwords, 
 Many web sites are designed to authenticate and track a user when communication is first established. To do this, users must prove their identity to the web site, typically by supplying a username/password (credentials) combination. Rather than passing these confidential credentials back and forth with each transaction, web sites will generate a unique "session ID" to identify the user session as authenticated. Subsequent communication between the user and the web site is tagged with the session ID as "proof" of the authenticated session. If an attacker is able predict or guess the session ID of another user, fraudulent activity is possible.</desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
-	<reference>https://owasp.org/www-community/attacks/Session_Prediction</reference>
+	<reference>https://community.owasp.org/attacks/Session_Prediction</reference>
 </vuln_item_wasc_18>
 
 <vuln_items>wasc_19</vuln_items>
@@ -545,7 +545,7 @@ When constructing SQL query strings, use stringent allow lists that limit the ch
 Note that proper output encoding, escaping, and quoting is the most effective solution for preventing SQL injection, although input validation may provide some defense-in-depth. This is because it effectively limits what will appear in output. Input validation will not always prevent SQL injection, especially if you are required to support free-form text fields that could contain arbitrary characters. For example, the name "O'Reilly" would likely pass the validation step, since it is a common last name in the English language. However, it cannot be directly inserted into the database because it contains the "'" apostrophe character, which would need to be escaped or otherwise handled. In this case, stripping the apostrophe might reduce the risk of SQL injection, but it would produce incorrect behavior because the wrong name would be recorded.
 
 When feasible, it may be safest to disallow meta-characters entirely, instead of escaping them. This will provide some defense in depth. After the data is entered into the database, later processes may neglect to escape meta-characters before use, and you may not have control over those processes.</solution>
-	<reference>https://owasp.org/www-community/attacks/SQL_Injection</reference>
+	<reference>https://community.owasp.org/attacks/SQL_Injection</reference>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_19>
 
@@ -588,7 +588,7 @@ Inputs should be decoded and canonicalized to the application's current internal
 Consider performing repeated canonicalization until your input does not change any more. This will avoid double-decoding and similar scenarios, but it might inadvertently modify inputs that are allowed to contain properly-encoded dangerous content.
 
 When exchanging data between components, ensure that both components are using the same character encoding. Ensure that the proper encoding is applied at each interface. Explicitly set the encoding you are using whenever the protocol allows you to do so.</solution>
-	<reference>https://owasp.org/www-community/vulnerabilities/Improper_Data_Validation</reference>
+	<reference>https://community.owasp.org/vulnerabilities/Improper_Data_Validation</reference>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/89.html</reference>
 </vuln_item_wasc_20>
@@ -620,7 +620,7 @@ Web application functionality that is often a target for automation attacks may 
 - Monitoring and Logging: Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
 
 A combination of these measures is often more effective in preventing automated attacks.</solution>
-	<reference>https://owasp.org/www-project-automated-threats-to-web-applications/</reference>
+	<reference>https://owasp.org/projects/automated-threats-to-web-applications</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/799.html</reference>
 </vuln_item_wasc_21>
@@ -656,7 +656,7 @@ In some cases, input validation may be an important strategy when output encodin
 Use input validation as a defense-in-depth measure to reduce the likelihood of output encoding errors (see CWE-20).
 
 When exchanging data between components, ensure that both components are using the same character encoding. Ensure that the proper encoding is applied at each interface. Explicitly set the encoding you are using whenever the protocol allows you to do so.</solution>
-	<reference>https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data</reference>
+	<reference>https://top10proactive.owasp.org/archive/2018/c4-encode-escape-data/</reference>
 </vuln_item_wasc_22>
 
 <vuln_items>wasc_23</vuln_items>
@@ -664,7 +664,7 @@ When exchanging data between components, ensure that both components are using t
 	<alert>XML Injection</alert>
 	<desc>XML Injection is an attack technique used to manipulate or compromise the logic of an XML application or service. The injection of unintended XML content and/or structures into an XML message can alter the intend logic of the application. Further, XML injection can cause the insertion of malicious content into the resulting message/document.</desc>
 	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
-	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://community.owasp.org/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_Security_Cheat_Sheet.html</reference>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_23>
@@ -676,7 +676,7 @@ When exchanging data between components, ensure that both components are using t
 	<solution>Avoid using CRLF as a special sequence.
 
 Appropriately filter or quote CRLF sequences in user-controlled input.</solution>
-	<reference>https://owasp.org/www-community/vulnerabilities/CRLF_Injection</reference>
+	<reference>https://community.owasp.org/vulnerabilities/CRLF_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/93.html</reference>
 	<reference>https://portswigger.net/web-security/request-smuggling</reference>
 </vuln_item_wasc_24>
@@ -693,7 +693,7 @@ The essence of HTTP Response Splitting is the attacker's ability to send a singl
 
 HTTP Response Splitting attacks take place where the server script embeds user data in HTTP response headers. This typically happens when the script embeds user data in the redirection URL of a redirection response (HTTP status code 3xx), or when the script embeds user data in a cookie value or name when the response sets a cookie.</desc>
 	<solution>Construct HTTP headers very carefully, avoiding the use of non-validated input data.</solution>
-	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
+	<reference>https://community.owasp.org/attacks/HTTP_Response_Splitting</reference>
 	<reference>https://cwe.mitre.org/data/definitions/113.html</reference>
 </vuln_item_wasc_25>
 
@@ -736,7 +736,7 @@ HTTP response smuggling makes use of HTTP request smuggling -like techniques to 
 			* Headers with CRLF characters before the value “chunked”
 			* Values with invalid characters
 	</solution>
-	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
+	<reference>https://community.owasp.org/attacks/HTTP_Response_Splitting</reference>
 	<reference>https://capec.mitre.org/data/definitions/273.html</reference>
 </vuln_item_wasc_27>
 
@@ -757,7 +757,7 @@ Use and specify a strong output encoding (such as ISO 8859-1 or UTF 8).
 Do not rely exclusively on deny list validation to detect malicious input or to encode output. There are too many variants to encode a character; you're likely to miss some variants.
 
 Inputs should be decoded and canonicalized to the application's current internal representation before being validated. Make sure that your application does not decode the same input twice. Such errors could be used to bypass allow list schemes by introducing dangerous inputs after they have been checked.</solution>
-	<reference>https://owasp.org/www-community/attacks/Embedding_Null_Code</reference>
+	<reference>https://community.owasp.org/attacks/Embedding_Null_Code</reference>
 	<reference>https://cwe.mitre.org/data/definitions/158.html</reference>
 </vuln_item_wasc_28>
 
@@ -770,7 +770,7 @@ Lightweight Directory Access Protocol (LDAP) is an open-standard protocol for bo
 
 When a web application fails to properly sanitize user-supplied input, it is possible for an attacker to alter the construction of an LDAP statement. When an attacker is able to modify an LDAP statement, the process will run with the same permissions as the component that executed the command. (e.g. Database server, Web application server, Web server, etc.). This can cause serious security problems where the permissions grant the rights to query, modify or remove anything inside the LDAP tree. The same advanced exploitation techniques available in SQL Injection can also be similarly applied in LDAP Injection.</desc>
 	<solution>Assume all input is malicious. Use an appropriate combination of black lists and white lists to neutralize LDAP syntax from user-controlled input.</solution>
-	<reference>https://owasp.org/www-community/attacks/LDAP_Injection</reference>
+	<reference>https://community.owasp.org/attacks/LDAP_Injection</reference>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/90.html</reference>
 </vuln_item_wasc_29>
@@ -833,7 +833,7 @@ When constructing OS command strings, use stringent allow lists that limit the c
 Note that proper output encoding, escaping, and quoting is the most effective solution for preventing OS command injection, although input validation may provide some defense-in-depth. This is because it effectively limits what will appear in output. Input validation will not always prevent OS command injection, especially if you are required to support free-form text fields that could contain arbitrary characters. For example, when invoking a mail program, you might need to allow the subject field to contain otherwise-dangerous inputs like ";" and ">" characters, which would need to be escaped or otherwise handled. In this case, stripping the character might reduce the risk of OS command injection, but it would produce incorrect behavior because the subject field would not be recorded as the user intended. This might seem to be a minor inconvenience, but it could be more important when the program relies on well-structured subject lines in order to pass messages to other components.
 
 Even if you make a mistake in your validation (such as forgetting one out of 100 input fields), appropriate encoding is still likely to protect you from injection-based attacks. As long as it is not done in isolation, input validation is still a useful technique, since it may significantly reduce your attack surface, allow you to detect some attacks, and provide other security benefits that proper encoding does not address.</solution>
-	<reference>https://owasp.org/www-community/attacks/Command_Injection</reference>
+	<reference>https://community.owasp.org/attacks/Command_Injection</reference>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/78.html</reference>
 </vuln_item_wasc_31>
@@ -887,7 +887,7 @@ OS-level examples include the Unix chroot jail, AppArmor, and SELinux. In genera
 
 This may not be a feasible solution, and it only limits the impact to the operating system; the rest of your application may still be subject to compromise.
 </solution>
-	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
+	<reference>https://community.owasp.org/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/22.html</reference>
 </vuln_item_wasc_33>
 
@@ -900,7 +900,7 @@ This will not only assist with identifying site surface which may lead to additi
 	<solution>Apply appropriate access control authorizations for each access to all restricted URLs, scripts or files.
 
 Consider using MVC based frameworks such as Struts.</solution>
-	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
+	<reference>https://community.owasp.org/attacks/Forced_browsing</reference>
 	<reference>https://cwe.mitre.org/data/definitions/425.html</reference>
 </vuln_item_wasc_34>
 
@@ -927,7 +927,7 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 - Only enable the SSI directives that are needed for this page and disable all others.
 - HTML entity encode user supplied data before passing it to a page with SSI execution permissions.
 - Use SUExec to have the page execute as the owner of the file instead of the web server user.</solution>
-	<reference>https://owasp.org/www-community/attacks/Server-Side_Includes_(SSI)_Injection</reference>
+	<reference>https://community.owasp.org/attacks/Server-Side_Includes_(SSI)_Injection</reference>
 </vuln_item_wasc_36>
 
 <vuln_items>wasc_37</vuln_items>
@@ -943,8 +943,8 @@ In contrast to stealing a users' session IDs after they have logged into a web s
 	<solution>Invalidate any existing session identifiers prior to authorizing a new user session
 
 For platforms such as ASP that do not generate new values for sessionid cookies, utilize a secondary cookie. In this approach, set a secondary cookie on the user's browser to a random value and set a session variable to the same value. If the session variable and the cookie value ever don't match, invalidate the session, and force the user to log on again.</solution>
-	<reference>https://owasp.org/www-community/attacks/Session_fixation</reference>
-	<reference>https://owasp.org/www-community/controls/Session_Fixation_Protection</reference>
+	<reference>https://community.owasp.org/attacks/Session_fixation</reference>
+	<reference>https://community.owasp.org/controls/Session_Fixation_Protection</reference>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/384.html</reference>
 </vuln_item_wasc_37>
@@ -981,8 +981,8 @@ If an application uses run-time XPath query construction, embedding unsafe user 
 	<solution>Use parameterized XPath queries (e.g. using XQuery). This will help ensure separation between data plane and control plane.
 
 Properly validate user input. Reject data where appropriate, filter where appropriate and escape where appropriate. Make sure input that will be used in XPath queries is safe in that context.</solution>
-	<reference>https://owasp.org/www-community/attacks/XPATH_Injection</reference>
-	<reference>https://owasp.org/www-community/attacks/Blind_XPath_Injection</reference>
+	<reference>https://community.owasp.org/attacks/XPATH_Injection</reference>
+	<reference>https://community.owasp.org/attacks/Blind_XPath_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/643.html</reference>
 </vuln_item_wasc_39>
 
@@ -1007,7 +1007,7 @@ Do not rely on implicit assumptions about how users or different application par
 Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
 
 Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
-	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
+	<reference>https://community.owasp.org/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>
 
@@ -1047,7 +1047,7 @@ Ensure that all failures in resource allocation place the system into a safe pos
 	<desc>This technique takes advantage of a feature of XML to build documents dynamically at the time of processing. An XML message can either provide data explicitly or by pointing to an URI where the data exists. In the attack technique, external entities may replace the entity value with malicious data, alternate referrals or may compromise the security of the data the server/XML application has access to.
 	Attackers may also use External Entities to have the web services server download malicious code or content to the server for use in secondary or follow on attacks.</desc>
 	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
-	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://community.owasp.org/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/611.html</reference>
 </vuln_item_wasc_43>
@@ -1093,8 +1093,8 @@ There is no one-size-fits-all solution, and a combination of these measures may 
 	<solution>Use parameterized queries. This will help ensure separation between data plane and control plane.
 
 Properly validate user input. Reject data where appropriate, filter where appropriate and escape where appropriate. Make sure input that will be used in XQL queries is safe in that context.</solution>
-	<reference>https://owasp.org/www-community/Injection_Theory</reference>
-	<reference>https://owasp.org/www-community/Injection_Flaws</reference>
+	<reference>https://community.owasp.org/Injection_Theory</reference>
+	<reference>https://community.owasp.org/Injection_Flaws</reference>
 	<reference>https://cwe.mitre.org/data/definitions/652.html</reference>
 </vuln_item_wasc_46>
 
@@ -1110,7 +1110,7 @@ Session expiration is comprised of two timeout types: inactivity and absolute. A
 A Web application should invalidate a session after a predefined idle time has passed (a timeout) and provide the user the means to invalidate their own session, i.e. logout; this helps to keep the lifespan of a session ID as short as possible and is necessary in a shared computing environment where more than one person has unrestricted physical access to a computer. The logout function should be prominently visible to the user, explicitly invalidate a user’s session and disallow reuse of the session token.</desc>
 	<solution>Set sessions/credentials expiration date.</solution>
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
-	<reference>https://owasp.org/www-community/Session_Timeout</reference>
+	<reference>https://community.owasp.org/Session_Timeout</reference>
 	<reference>https://cwe.mitre.org/data/definitions/613.html</reference>
 </vuln_item_wasc_47>
 
