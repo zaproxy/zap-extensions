@@ -18,6 +18,7 @@ It provides the following command line options:
 <li>-autogenmax &lt;filename&gt;	Generate template automation file with all parameters.
 <li>-autogenconf &lt;filename&gt;	Generate template automation file using the current configuration.
 <li>-autocheck &lt;source&gt;	Check the specified automation plan in the file or from the URL.
+<li>-autorundir &lt;dir&gt;	Run all of the automation plans (the <code>.yaml</code> files) in the directory.
 </ul>
 
 <H3><a name="exit-codes">Exit Codes</a></H3>
@@ -29,6 +30,11 @@ If the <code>-autorun</code> option is used with the ZAP <code>-cmd</code> optio
 </ul>
 These values can be overridden by the <a href="job-exitstatus.html">exitStatus</a> job.<br>
 Whether the plan completed after encountering errors or warnings will depend on the settings used in the <a href="environment.html">environment</a>.
+<p>
+The <code>-autorundir</code> option runs all of the plans in the directory, in alphabetical order, even if some of them fail, and then writes a summary of the plans to the standard output.
+The exit value is set to 1 if any of the plans failed, that is it could not be loaded or it reported one or more errors, 2 if none failed but any reported warnings, and 0 otherwise.
+It is also 1 if the directory does not exist or has no plans.
+The <a href="job-exitstatus.html">exitStatus</a> job does not change the exit value when this option is used.
 
 <H3><a name="usage">Usage</a></H3>
 To use the automation framework:

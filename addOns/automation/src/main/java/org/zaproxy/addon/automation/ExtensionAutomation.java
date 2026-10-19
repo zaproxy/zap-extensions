@@ -126,12 +126,13 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     private final Map<AutomationJob, CompletableFuture<String>> pendingScanIds =
             new ConcurrentHashMap<>();
 
-    private CommandLineArgument[] arguments = new CommandLineArgument[5];
+    private CommandLineArgument[] arguments = new CommandLineArgument[6];
     private static final int ARG_AUTO_RUN_IDX = 0;
     private static final int ARG_AUTO_GEN_MIN_IDX = 1;
     private static final int ARG_AUTO_GEN_MAX_IDX = 2;
     private static final int ARG_AUTO_GEN_CONF_IDX = 3;
     private static final int ARG_AUTO_CHECK_IDX = 4;
+    private static final int ARG_AUTO_RUN_DIR_IDX = 5;
 
     private AutomationPanel automationPanel;
     private AutomationOutputSource outputSource;
@@ -896,6 +897,15 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                         "",
                         "-autocheck <source>      "
                                 + Constant.messages.getString("automation.cmdline.autocheck.help"));
+        arguments[ARG_AUTO_RUN_DIR_IDX] =
+                new CommandLineArgument(
+                        "-autorundir",
+                        1,
+                        null,
+                        "",
+                        "-autorundir <dir>        "
+                                + Constant.messages.getString(
+                                        "automation.cmdline.autorundir.help"));
         return arguments;
     }
 
@@ -918,6 +928,67 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         if (arguments[ARG_AUTO_CHECK_IDX].isEnabled()) {
             checkPlanCommandLine(arguments[ARG_AUTO_CHECK_IDX].getArguments().firstElement());
         }
+        if (arguments[ARG_AUTO_RUN_DIR_IDX].isEnabled()) {
+            runAutomationDirectory(arguments[ARG_AUTO_RUN_DIR_IDX].getArguments().firstElement());
+        }
+    }
+
+    /**
+     * Runs all of the plans (the {@code .yaml} files) in the given directory, intended only to be
+     * used from the command line.
+     *
+     * <p>All of the plans are run, even if some fail, and a summary is written to the standard
+     * output. The exit status is set to the error value if any of the plans fails, or to the
+     * warning value if none fail but any has warnings.
+     *
+     * @param dirName the name of the directory.
+     * @return the batch, or {@code null} if there is no such directory or it has no plans.
+     */
+    protected PlanBatch runAutomationDirectory(String dirName) {
+        File dir = new File(dirName);
+        if (!dir.isDirectory()) {
+            CommandLine.error(
+                    Constant.messages.getString("automation.error.nodir", dir.getAbsolutePath()));
+            setExitStatus(ERROR_EXIT_VALUE, "no such directory", false);
+            return null;
+        }
+        List<File> files = PlanBatch.listPlans(dir);
+        if (files.isEmpty()) {
+            CommandLine.error(
+                    Constant.messages.getString("automation.batch.noplans", dir.getAbsolutePath()));
+            setExitStatus(ERROR_EXIT_VALUE, "no plans in directory", false);
+            return null;
+        }
+
+        List<AutomationProgress> progresses = new ArrayList<>();
+        PlanBatch batch =
+                new PlanBatch(
+                        files,
+                        this::loadPlan,
+                        plan -> {
+                            AutomationProgress progress = runAutomationPlan(plan);
+                            progresses.add(progress);
+                            return progress;
+                        });
+        boolean passed = batch.run(false);
+
+        CommandLine.info(
+                Constant.messages.getString("automation.out.batch.title", dir.getAbsolutePath()));
+        CommandLine.info(batch.getSummary());
+        long failed =
+                batch.getEntries().stream()
+                        .filter(e -> e.getStatus() != PlanBatch.Status.PASS)
+                        .count();
+        CommandLine.info(
+                Constant.messages.getString(
+                        "automation.out.batch.totals", batch.getEntries().size() - failed, failed));
+
+        if (!passed) {
+            setExitStatus(ERROR_EXIT_VALUE, "plan errors", false);
+        } else if (progresses.stream().anyMatch(AutomationProgress::hasWarnings)) {
+            setExitStatus(WARN_EXIT_VALUE, "plan warnings", false);
+        }
+        return batch;
     }
 
     private AutomationPlan loadPlanCommandLine(String source, boolean quiet) {

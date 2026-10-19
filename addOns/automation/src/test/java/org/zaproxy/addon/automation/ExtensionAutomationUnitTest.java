@@ -50,6 +50,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.quality.Strictness;
@@ -708,7 +709,7 @@ class ExtensionAutomationUnitTest extends TestUtils {
         CommandLineArgument[] args = extAuto.getCommandLineArguments();
 
         // Then
-        assertThat(args.length, is(equalTo(5)));
+        assertThat(args.length, is(equalTo(6)));
         assertThat(args[0].getName(), is(equalTo("-autorun")));
         assertThat(args[0].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[1].getName(), is(equalTo("-autogenmin")));
@@ -719,6 +720,8 @@ class ExtensionAutomationUnitTest extends TestUtils {
         assertThat(args[3].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[4].getName(), is(equalTo("-autocheck")));
         assertThat(args[4].getNumOfArguments(), is(equalTo(1)));
+        assertThat(args[5].getName(), is(equalTo("-autorundir")));
+        assertThat(args[5].getNumOfArguments(), is(equalTo(1)));
     }
 
     @Test
@@ -1469,6 +1472,157 @@ class ExtensionAutomationUnitTest extends TestUtils {
             assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
             assertThat(progress, notNullValue());
             assertThat(progress.getErrors(), contains("!automation.error.context.nourl!"));
+        }
+    }
+
+    @Nested
+    class CmdLineRunDirTests {
+
+        private static final String PLAN =
+                """
+                env:
+                  contexts:
+                    - name: example
+                      urls:
+                      - https://www.example.com/
+                jobs:
+                  - type: %s
+                """;
+
+        private static final String PLAN_NO_URL =
+                """
+                env:
+                  contexts:
+                    - name: example
+                      urls:
+                jobs:
+                  - type: job1
+                """;
+
+        @TempDir Path dir;
+
+        private ExtensionAutomation extAuto;
+
+        @BeforeAll
+        static void init() throws Exception {
+            Field zapProcessType = ZAP.class.getDeclaredField("processType");
+            zapProcessType.setAccessible(true);
+            zapProcessType.set(null, ZAP.ProcessType.cmdline);
+        }
+
+        @BeforeEach
+        void setUp() {
+            extAuto = new ExtensionAutomation();
+            extAuto.registerAutomationJob(
+                    new AutomationJobImpl("job1") {
+                        @Override
+                        public AutomationJob newJob() {
+                            return this;
+                        }
+                    });
+            extAuto.registerAutomationJob(
+                    new AutomationJobImpl("warnjob") {
+                        @Override
+                        public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+                            progress.warn("a warning");
+                        }
+
+                        @Override
+                        public AutomationJob newJob() {
+                            return this;
+                        }
+                    });
+        }
+
+        private void write(String name, String content) throws Exception {
+            Files.writeString(dir.resolve(name), content);
+        }
+
+        private List<PlanBatch.Status> statuses(PlanBatch batch) {
+            return batch.getEntries().stream().map(PlanBatch.Entry::getStatus).toList();
+        }
+
+        @Test
+        void shouldSetErrorWhenMissingDirectory() {
+            // When
+            PlanBatch batch = extAuto.runAutomationDirectory(dir.resolve("missing").toString());
+
+            // Then
+            assertThat(batch, is(nullValue()));
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+        }
+
+        @Test
+        void shouldSetErrorWhenNoPlans() throws Exception {
+            // Given
+            write("plan.yaml.disabled", PLAN.formatted("job1"));
+
+            // When
+            PlanBatch batch = extAuto.runAutomationDirectory(dir.toString());
+
+            // Then
+            assertThat(batch, is(nullValue()));
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+        }
+
+        @Test
+        void shouldNotSetErrorWhenAllPlansPass() throws Exception {
+            // Given
+            write("a.yaml", PLAN.formatted("job1"));
+            write("b.yaml", PLAN.formatted("job1"));
+
+            // When
+            PlanBatch batch = extAuto.runAutomationDirectory(dir.toString());
+
+            // Then
+            assertThat(statuses(batch), contains(PlanBatch.Status.PASS, PlanBatch.Status.PASS));
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(0)));
+        }
+
+        @Test
+        void shouldRunAllPlansAndSetErrorIfAnyFails() throws Exception {
+            // Given
+            write("a.yaml", PLAN.formatted("job1"));
+            write("b.yaml", PLAN_NO_URL);
+            write("c.yaml", PLAN.formatted("job1"));
+
+            // When
+            PlanBatch batch = extAuto.runAutomationDirectory(dir.toString());
+
+            // Then
+            assertThat(
+                    statuses(batch),
+                    contains(PlanBatch.Status.PASS, PlanBatch.Status.FAIL, PlanBatch.Status.PASS));
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+        }
+
+        @Test
+        void shouldSetErrorIfAPlanCannotBeLoaded() throws Exception {
+            // Given
+            write("a.yaml", "this: [is not: a plan");
+            write("b.yaml", PLAN.formatted("job1"));
+
+            // When
+            PlanBatch batch = extAuto.runAutomationDirectory(dir.toString());
+
+            // Then
+            assertThat(
+                    statuses(batch), contains(PlanBatch.Status.LOAD_ERROR, PlanBatch.Status.PASS));
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(1)));
+        }
+
+        @Test
+        void shouldSetWarningStatusIfOnlyWarnings() throws Exception {
+            // Given
+            write("a.yaml", PLAN.formatted("job1"));
+            write("b.yaml", PLAN.formatted("warnjob"));
+
+            // When
+            PlanBatch batch = extAuto.runAutomationDirectory(dir.toString());
+
+            // Then
+            assertThat(statuses(batch), contains(PlanBatch.Status.PASS, PlanBatch.Status.PASS));
+            assertThat(Control.getSingleton().getExitStatus(), is(equalTo(2)));
         }
     }
 
