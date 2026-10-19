@@ -23,10 +23,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyString;
 
+import java.time.Instant;
 import java.util.Locale;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -125,6 +128,61 @@ class InteractshEventUnitTests extends TestUtils {
             assertThat(capturedMessage.getRequestBody().toString(), is(reqBody));
             assertThat(capturedMessage.getResponseHeader().toString(), is(resHeader));
             assertThat(capturedMessage.getResponseBody().toString(), is(resBody));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"http", "https"})
+    void shouldParseHttpInteractionWithOriginFormRequest(String interactionProtocol)
+            throws Exception {
+        try (MockedStatic<OastRequest> oastRequest = Mockito.mockStatic(OastRequest.class)) {
+            // Given
+            String host = uniqueId + ".interact.sh";
+            String reqHeader =
+                    "POST /callback?test=1 HTTP/1.1\r\nHost: "
+                            + host
+                            + "\r\nContent-Type: text/plain\r\nContent-Length: 7\r\n\r\n";
+            String reqBody = "request";
+            String resHeader =
+                    "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 8\r\n\r\n";
+            String resBody = "response";
+            InteractshEvent event =
+                    new InteractshEvent(
+                            interactionProtocol,
+                            uniqueId,
+                            fullId,
+                            reqHeader + reqBody,
+                            resHeader + resBody,
+                            remoteAddress,
+                            timestamp,
+                            "",
+                            "");
+
+            // When
+            event.toOastRequest();
+
+            // Then
+            ArgumentCaptor<HttpMessage> httpMessageCaptor =
+                    ArgumentCaptor.forClass(HttpMessage.class);
+            oastRequest.verify(
+                    () ->
+                            OastRequest.create(
+                                    httpMessageCaptor.capture(), anyString(), anyString()));
+            HttpMessage capturedMessage = httpMessageCaptor.getValue();
+            assertThat(
+                    capturedMessage.getRequestHeader().getURI().toString(),
+                    is(interactionProtocol + "://" + host + "/callback?test=1"));
+            assertThat(
+                    capturedMessage.getRequestHeader().isSecure(),
+                    is("https".equals(interactionProtocol)));
+            assertThat(capturedMessage.getRequestHeader().getMethod(), is("POST"));
+            assertThat(capturedMessage.getRequestHeader().getHeader("Host"), is(host));
+            assertThat(capturedMessage.getRequestBody().toString(), is(reqBody));
+            assertThat(capturedMessage.getResponseHeader().toString(), is(resHeader));
+            assertThat(capturedMessage.getResponseBody().toString(), is(resBody));
+            assertThat(
+                    capturedMessage.getTimeSentMillis(),
+                    is(Instant.parse(timestamp).toEpochMilli()));
         }
     }
 

@@ -186,7 +186,9 @@ public class SsrfScanRule extends AbstractAppParamPlugin implements CommonActive
                             .build();
             String[] schemes = {HttpHeader.SCHEME_HTTP, HttpHeader.SCHEME_HTTPS};
             for (String scheme : schemes) {
-                OastPayload oastPayload = extOast.registerAlertAndGetOastPayload(alert);
+                OastPayload oastPayload =
+                        extOast.registerAlertAndGetOastPayload(
+                                alert, HttpHeader.SCHEME_HTTPS.equals(scheme));
                 String payload = scheme + oastPayload.getPayload();
                 alert.setParam(param);
                 alert.setAttack(payload);
