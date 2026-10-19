@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
+
 - Add more auth examples:
  - Login form with existing (invalid) values for the credentials.
  - A div that may obscure the login fields with all requiring scrolling.
@@ -21,9 +22,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The state of the test apps (e.g. the tokens issued) is reset when the ZAP session changes.
 - A "full" app section with a simple form-based authenticated app containing injection vulnerabilities.
 - Random pages (/rnd/simple) for testing spider scalability — configurable number of pages and links per page, generated on the fly.
+- Allow other add-ons to plug their own test apps into the dev server (`ExtensionDev.getTestServer()`, `TestProxyServer.addDirectory` / `removeDirectory`).
 
 ### Changed
 - Update minimum ZAP version to 2.17.0.
+- The static files of the test apps are now in `<ZAP home>/addOnData/dev/server` instead of `<ZAP home>/dev-add-on`.
 
 ## [0.10.0] - 2025-05-15
 ### Added

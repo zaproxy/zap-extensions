@@ -20,10 +20,10 @@
 package org.zaproxy.addon.dev;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,8 +38,8 @@ public class TestDirectory extends TestNode {
 
     public static final String INDEX_PAGE = "index.html";
 
-    private Map<String, TestDirectory> subDirs = new HashMap<>();
-    private Map<String, TestPage> pages = new HashMap<>();
+    private Map<String, TestDirectory> subDirs = new ConcurrentHashMap<>();
+    private Map<String, TestPage> pages = new ConcurrentHashMap<>();
 
     public TestDirectory(TestProxyServer server, String name) {
         super(server, name);
@@ -184,6 +184,20 @@ public class TestDirectory extends TestNode {
     public void addDirectory(TestDirectory td) {
         this.subDirs.put(td.getName(), td);
         td.setParent(this);
+    }
+
+    /**
+     * Removes a sub directory.
+     *
+     * @param name the name of the sub directory.
+     * @return the directory removed, or {@code null} if there was no such sub directory.
+     */
+    public TestDirectory removeDirectory(String name) {
+        TestDirectory td = this.subDirs.remove(name);
+        if (td != null) {
+            td.setParent(null);
+        }
+        return td;
     }
 
     public TestDirectory getSubDir(String name) {
