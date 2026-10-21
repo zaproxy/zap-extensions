@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation.gui;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -39,8 +40,11 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -144,6 +148,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
 
     private ExtensionAutomation ext;
     private JToolBar toolbar;
+    private JLabel planFileLabel;
     private JScrollPane planScrollpane;
     private JButton loadPlanButton;
     private JButton loadFromClipboardButton;
@@ -162,6 +167,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JXTreeTable tree;
     private PlanTreeTableModel treeModel;
     private AutomationPlan currentPlan;
+    private BatchPanel batchPanel;
 
     public AutomationPanel(ExtensionAutomation ext) {
         this.ext = ext;
@@ -170,10 +176,17 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 new ImageIcon(
                         ExtensionAutomation.class.getResource(
                                 ExtensionAutomation.RESOURCES_DIR + "robot.png")));
-        this.setLayout(new GridBagLayout());
+        this.setLayout(new BorderLayout());
 
-        this.add(this.getToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0));
-        this.add(this.getPlanScrollpane(), LayoutHelper.getGBC(0, 1, 1, 1.0, 1.0));
+        JPanel planPanel = new JPanel(new GridBagLayout());
+        planPanel.add(this.getToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0));
+        planPanel.add(this.getPlanScrollpane(), LayoutHelper.getGBC(0, 1, 1, 1.0, 1.0));
+
+        JTabbedPane tabs = new JTabbedPane();
+        tabs.addTab(Constant.messages.getString("automation.panel.tab.plan"), planPanel);
+        batchPanel = new BatchPanel(ext, this::refuseUnsavedChanges, this::updateRunStopButtons);
+        tabs.addTab(Constant.messages.getString("automation.panel.tab.batch"), batchPanel);
+        this.add(tabs, BorderLayout.CENTER);
 
         ZAP.getEventBus()
                 .registerConsumer(this, AutomationEventPublisher.getPublisher().getPublisherName());
@@ -197,11 +210,27 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar.add(getJobDownButton());
             toolbar.add(getAddTestButton());
             toolbar.add(getRemoveTestButton());
+            toolbar.addSeparator();
+            toolbar.add(getPlanFileLabel());
 
             toolbar.add(Box.createHorizontalGlue());
             toolbar.add(getOptionsButton());
         }
         return toolbar;
+    }
+
+    private JLabel getPlanFileLabel() {
+        if (planFileLabel == null) {
+            planFileLabel = new JLabel();
+        }
+        return planFileLabel;
+    }
+
+    /** Shows the name of the file of the current plan, if it has one. */
+    private void updatePlanFileLabel() {
+        File file = currentPlan != null ? currentPlan.getFile() : null;
+        getPlanFileLabel().setText(file != null ? file.getName() : "");
+        getPlanFileLabel().setToolTipText(file != null ? file.getAbsolutePath() : null);
     }
 
     private JButton getRunPlanButton() {
@@ -274,6 +303,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             }
             currentPlan.save();
             ext.getParam().setLastPlanPath(currentPlan.getFile().getAbsolutePath());
+            updatePlanFileLabel();
         } catch (JsonProcessingException | FileNotFoundException e1) {
             LOGGER.error(e1.getMessage(), e1);
             View.getSingleton()
@@ -317,7 +347,11 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             stopPlanButton.setEnabled(false);
             stopPlanButton.addActionListener(
                     e -> {
-                        if (currentPlan != null) {
+                        if (isBatchRunning()) {
+                            // Stops the plan being run as well.
+                            stopPlanButton.setEnabled(false);
+                            batchPanel.stop();
+                        } else if (currentPlan != null) {
                             stopPlanButton.setEnabled(false);
                             ext.stopPlan(currentPlan);
                         }
@@ -665,17 +699,31 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
 
     public void setCurrentPlan(AutomationPlan plan) {
         currentPlan = plan;
+        updatePlanFileLabel();
         getTreeModel().setPlan(currentPlan);
         packPlanTableColumns();
-        getRunPlanButton()
-                .setEnabled(
-                        currentPlan != null
-                                && (currentPlan.getStarted() == null
-                                        || currentPlan.getFinished() != null));
+        updateRunStopButtons();
         getAddJobButton().setEnabled(currentPlan != null);
         getSavePlanButton().setEnabled(false);
         getSaveAsPlanButton().setEnabled(currentPlan != null);
-        getStopPlanButton().setEnabled(currentPlan != null && !getRunPlanButton().isEnabled());
+    }
+
+    private boolean isBatchRunning() {
+        return batchPanel != null && batchPanel.isRunning();
+    }
+
+    /**
+     * Enables the stop button, and not the run button, while the current plan or a batch is
+     * running, which includes the time between the plans of a batch.
+     */
+    private void updateRunStopButtons() {
+        boolean running =
+                isBatchRunning()
+                        || (currentPlan != null
+                                && currentPlan.getStarted() != null
+                                && currentPlan.getFinished() == null);
+        getRunPlanButton().setEnabled(currentPlan != null && !running);
+        getStopPlanButton().setEnabled(running);
     }
 
     public List<String> getUnsavedPlans() {
@@ -845,10 +893,16 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 updateSaveButton(event, true);
                 break;
             case AutomationEventPublisher.PLAN_STARTED:
+                plan = this.getPlan(event);
+                if (plan != null && plan.equals(this.currentPlan)) {
+                    updateRunStopButtons();
+                }
                 break;
             case AutomationEventPublisher.PLAN_FINISHED:
-                this.getRunPlanButton().setEnabled(true);
-                this.getStopPlanButton().setEnabled(false);
+                if (!isBatchRunning()) {
+                    this.getRunPlanButton().setEnabled(true);
+                    this.getStopPlanButton().setEnabled(false);
+                }
                 break;
             case AutomationEventPublisher.PLAN_ERROR_MESSAGE:
                 outputMessage(

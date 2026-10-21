@@ -31,6 +31,8 @@ A toolbar provides the following buttons:
 <li>Remove Test... - this removes the selected test from the current job
 </ul>
 
+The name of the file of the current plan, if it has one, is shown after the buttons, hover over it to see the full path.
+<p>
 Below the toolbar, you can find a graphical representation of the plan
 which also shows the state of the plan when it is run.<br>
 You can edit any of the elements of the plan by double clicking on them.
@@ -41,6 +43,36 @@ You can also change the following general job options via the plan table:
 <li>Enabled - only jobs that are enabled will run.
 <li>Always Run - enabled jobs with this option will run even if the plan exits early.
 </ul>
+
+<H2>Batch Tab</H2>
+
+The Automation tab has two sub-tabs, Plan, described above, and Batch.
+The Batch tab runs all, or just one, of the plans in a directory, for example the integration tests of an add-on.
+<p>
+Enter or browse for a directory and its <code>.yaml</code> files are listed, in alphabetical order.
+The files are not checked until they are run, files with any other extension (for example <code>.yaml.disabled</code>) are not listed.
+The directory is remembered.
+<p>
+The toolbar provides the following buttons:
+
+<ul>
+<li>Run All - this runs all of the plans listed, one after the other
+<li>Run Selected - this runs just the plans selected
+<li>Stop - this stops the plan being run and the rest of the batch
+</ul>
+
+Each plan is loaded into the Plan tab when it is run, so you can see its progress there, replacing the plan that was shown.
+You are asked first if that plan has unsaved changes.
+While the batch is running the Run button of the Plan tab is disabled, and its Stop button stops the plan being run and the rest of the batch, the same as the Stop button of the Batch tab.
+The Batch tab only shows the status of each plan and a summary.
+<p>
+The batch stops at the first plan that fails.
+A plan fails if it cannot be loaded or if it finishes with errors, which is the same as when run with the <code>-autorun</code> command line option, so warnings do not make a plan fail.
+Tests that should fail the plan need <code>onFail: 'error'</code>.
+The failed plan is selected, hover over its status to see the errors, which are also in the Output tab.
+<p>
+The plans are run in the same session, one after the other.
+Any contexts with the same name are replaced, but any options set by one plan, using the <code>configs</code> environment parameter, remain set for the next.
 
 <H2>Output</H2>
 
