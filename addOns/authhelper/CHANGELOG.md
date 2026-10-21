@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - The Authentication Tester dialog now remembers the last authentication method used and selects it by default next time it's opened.
 
+### Fixed
+- Handle cookies without a value in Header Based Session Management.
+
 ## [0.43.0] - 2026-10-08
 ### Added
 - OAuth2 Authentication method, supporting the `client_credentials` and `password` grant types.
