@@ -1,0 +1,55 @@
+---
+# Checks LLM assisted authentication against the multi-step login test app, using the mock LLM rule
+# set provided by this add-on, so no real LLM is needed.
+# Needs a browser, and ZAP to be run in dev mode.
+env:
+  contexts:
+    - name: "ai-auth-multi-step"
+      urls:
+        - "http://localhost:9091/auth/multi-step-auth"
+      includePaths:
+        - "http://localhost:9091/auth/multi-step-auth.*"
+      authentication:
+        method: "ai"
+        parameters:
+          loginPageUrl: "http://localhost:9091/auth/multi-step-auth/"
+          hint: "The domain pulldown needs to be set to Project1"
+          browserId: "firefox-headless"
+        verification:
+          method: "response"
+          loggedInRegex: "\\QWelcome\\E"
+      sessionManagement:
+        method: "cookie"
+      users:
+        - name: "test-user"
+          credentials:
+            username: "test@test.com"
+            password: "password123"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "llm-config"
+    name: "llm-config"
+    parameters:
+      deleteExisting: true
+      defaultProvider: "mock"
+      defaultModel: "mock-llm"
+    providers:
+      - name: "mock"
+        type: "OPENAI_COMPATIBLE"
+        endpoint: "http://localhost:9091/llm/mock/authhelper/v1"
+        models:
+          - "mock-llm"
+        trusted: true
+  - type: "requestor"
+    name: "authenticated home page"
+    parameters:
+      user: "test-user"
+    requests:
+      - url: "http://localhost:9091/auth/multi-step-auth/home"
+        method: "GET"
+        responseCode: 200

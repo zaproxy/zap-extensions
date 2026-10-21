@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Multi-Step Authentication</h1>
+	<h2>Sign In &mdash; Step 2 of 3</h2>
+	<p>Signing in to <strong><!-- DOMAIN --></strong> as <strong><!-- USER --></strong></p>
+
+	<form id="loginform" action="password" method="post">
+	<input type="hidden" name="user" value="<!-- USER -->">
+	<input type="hidden" name="domain" value="<!-- DOMAIN -->">
+	<table style="border: none;">
+	<tr>
+		<td>Department:</td>
+		<td>
+			<select id="department" name="department">
+				<option value="Engineering">Engineering</option>
+				<option value="Finance">Finance</option>
+				<option value="Marketing">Marketing</option>
+				<option value="Research">Research</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><button id="next" type="button" onclick="submitform();">Continue</button></td>
+	</tr>
+	</table>
+	</form>
+</div>
+<script>
+function submitform() {
+	document.getElementById("loginform").submit();
+}
+
+document.getElementById('department').onkeydown = function(e) {
+	if (e.keyCode == 13) {
+		submitform();
+	}
+};
+
+document.getElementById("department").focus();
+</script>
+</body>
+</html>
