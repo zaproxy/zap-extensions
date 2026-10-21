@@ -219,9 +219,9 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                 List<HttpCookie> cookies = message.getRequestHeader().getHttpCookies();
                 for (Pair<String, String> header : hbSession.getHeaders()) {
                     if (HttpHeader.COOKIE.equalsIgnoreCase(header.first)) {
-                        String[] kv = header.second.split("=");
+                        String[] kv = header.second.split("=", 2);
                         if (!trackedCookies.contains(kv[0])) {
-                            cookies.add(new HttpCookie(kv[0], kv[1]));
+                            cookies.add(new HttpCookie(kv[0], kv.length > 1 ? kv[1] : ""));
                         } else {
                             LOGGER.debug(
                                     "processMessageToMatchSession {} ignoring tracked cookie {} ",

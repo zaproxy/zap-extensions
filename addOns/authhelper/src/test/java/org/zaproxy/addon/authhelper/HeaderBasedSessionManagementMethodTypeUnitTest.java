@@ -49,6 +49,7 @@ import org.mockito.quality.Strictness;
 import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -273,6 +274,48 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         // Then
         assertThat(reqHeader.getHeaders(), hasSize(1));
         assertThat(reqHeader.getHeader("Host"), is(equalTo("example.com")));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "name,name=",
+        "name=,name=",
+        "name=value,name=value",
+        "name=a=b=c,name=a=b=c",
+        "name=a==,name=a=="
+    })
+    void shouldProcessMessageToMatchSessionWithCookieHeaderConfig(
+            String cookie, String expectedCookie) throws Exception {
+        // Given
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getSession()).willReturn(session);
+
+        Context context = mock(Context.class);
+        given(session.getContext(0)).willReturn(context);
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                """
+                                GET / HTTP/1.1
+                                Host: example.com
+                                """),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK"),
+                        new HttpResponseBody("Response Body"));
+        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod(0);
+        HttpHeaderBasedSession ws =
+                new HttpHeaderBasedSession(List.of(new Pair<>(HttpHeader.COOKIE, cookie)));
+
+        // When
+        method.processMessageToMatchSession(msg, ws);
+
+        // Then
+        assertThat(
+                msg.getRequestHeader().getHeader(HttpHeader.COOKIE), is(equalTo(expectedCookie)));
     }
 
     @ParameterizedTest
