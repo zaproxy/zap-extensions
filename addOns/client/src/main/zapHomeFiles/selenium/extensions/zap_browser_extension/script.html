@@ -1,0 +1,78 @@
+<!doctype html><html><head><meta charset="utf-8"/><title>ZAP Recorded Script</title><link href="basic.css" rel="stylesheet"><style>:root {
+        max-width: none;
+        --muted: #666;
+        --border: #ddd;
+        --header-bg: #eaf0fb;
+        --stripe: #f8f8f8;
+        --hover: #eef4ff;
+        --running-bg: #fff7d6;
+        --running-fg: #333;
+        --ok: #1a7f37;
+        --failed-bg: #ffe5e5;
+        --failed-fg: #a00;
+        --disabled: #999;
+        --primary: #1a7f37;
+        --accent: #2979ff;
+        --danger: #c62828;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --muted: #aaa;
+          --border: #444;
+          --header-bg: #2a3140;
+          --stripe: #262626;
+          --hover: #2d3748;
+          --running-bg: #4a4120;
+          --running-fg: #f1f1f1;
+          --ok: #4cc170;
+          --failed-bg: #4a2020;
+          --failed-fg: #ff9a9a;
+          --disabled: #777;
+          --primary: #2ea043;
+          --accent: #3d7fff;
+          --danger: #d9423a;
+        }
+      }
+      body { margin: 2rem; }
+      #script-message { margin: 0.5rem 0 1rem; color: var(--muted); }
+
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+      button.primary, button.accent, button.danger { color: #fff; border-color: transparent; }
+      button.primary { background: var(--primary); }
+      button.accent { background: var(--accent); }
+      button.danger { background: var(--danger); }
+      .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin: 1rem 0; }
+      .toolbar button { padding: 0.4rem 1.2rem; }
+      #step-label { display: inline-flex; align-items: center; gap: 0.3rem; }
+      .toolbar select { padding: 0.4rem 0.6rem; }
+
+      table { border-collapse: collapse; width: 100%; border: 1px solid var(--border); }
+      th { padding: 0.5rem 0.8rem; text-align: left; background: var(--header-bg); border-bottom: 2px solid var(--border); }
+      td { padding: 0.4rem 0.8rem; border-bottom: 1px solid var(--border); font-family: monospace; word-break: break-all; }
+      tbody tr:nth-child(even) { background: var(--stripe); }
+      tbody tr:hover { background: var(--hover); }
+      th.index, td.index { width: 4rem; white-space: nowrap; text-align: right; }
+      td.index { color: var(--muted); }
+      th.status, td.status { width: 40%; }
+      td.status { font-family: inherit; }
+      tr.running td { background: var(--running-bg); color: var(--running-fg); }
+      tr.ok td.status { color: var(--ok); }
+      tr.failed td { background: var(--failed-bg); color: var(--failed-fg); }
+      tr.skipped td { color: var(--disabled); }
+      tr.selected td { outline: 1px solid var(--accent); outline-offset: -1px; }
+      tr.disabled td { color: var(--disabled); text-decoration: line-through; }
+      td.actions { width: 11rem; white-space: nowrap; text-align: right; font-family: inherit; }
+      td.actions button { padding: 0 0.5rem; margin-left: 0.2rem; opacity: 0; pointer-events: none; }
+      tr:hover td.actions button, tr:focus-within td.actions button { opacity: 1; pointer-events: auto; }
+      tr:hover td.actions button:disabled, tr:focus-within td.actions button:disabled { opacity: 0.3; pointer-events: none; }
+      #script-table.locked td.actions button, #script-table.busy td.actions button { pointer-events: none; }
+      #script-table.locked tr:hover td.actions button, #script-table.locked tr:focus-within td.actions button { opacity: 0.4; }
+
+      dialog { margin: auto; padding: 1.5rem 2rem; width: min(36rem, 90vw); border: 1px solid #888; border-radius: 6px; }
+      dialog textarea { font: inherit; resize: vertical; }
+      dialog h2 { margin: 0 0 0.5rem; }
+      dialog label { display: block; margin: 1rem 0 0.3rem; }
+      dialog input[type=text], dialog input[type=number], dialog select, dialog textarea { width: 100%; box-sizing: border-box; }
+      #confirm-text { margin: 1rem 0 0; font-family: monospace; word-break: break-all; }
+      dialog .errors { color: var(--failed-fg); margin-top: 0.6rem; }
+      dialog menu { display: flex; justify-content: flex-end; gap: 0.5rem; margin: 1.5rem 0 0; padding: 0; }</style></head><body><h1 id="script-title"></h1><div id="script-message"></div><div class="toolbar"><button id="new-btn" type="button" data-i18n="script.new">New</button> <button id="load-btn" type="button" data-i18n="script.load">Load...</button> <button id="save-btn" type="button" data-i18n="script.save">Save</button> <button id="refresh-btn" type="button" data-i18n="script.refresh">Refresh</button> <button id="run-btn" type="button" class="primary" data-i18n="script.run">Run</button> <select id="run-mode" title="Where to run the script" data-i18n-title="script.runModeTitle"><option value="window" data-i18n="script.runInWindow">in New Window</option><option value="tab" data-i18n="script.runInTab">in New Tab</option></select> <label id="step-label"><input id="step-mode" type="checkbox"> <span data-i18n="script.stepThrough">Step through</span></label> <button id="next-btn" type="button" class="accent" hidden data-i18n="script.next">Next</button> <button id="stop-btn" type="button" class="danger" hidden data-i18n="script.stop">Stop</button> <input id="load-file" type="file" accept=".zst,.json,application/json" hidden></div><div class="toolbar"><select id="add-type"></select> <button id="add-btn" type="button" class="accent" data-i18n="script.add">Add</button></div><div class="toolbar"><button id="undo-btn" type="button" disabled="disabled" data-i18n="script.undo">Undo</button> <button id="redo-btn" type="button" disabled="disabled" data-i18n="script.redo">Redo</button></div><table id="script-table" hidden><thead><tr><th class="index">#</th><th data-i18n="script.columnStatement">Statement</th><th></th><th class="status" data-i18n="script.columnResult">Result</th></tr></thead><tbody id="script-body"></tbody></table><dialog id="edit-dialog"><form method="dialog" id="edit-form"><h2 id="edit-title"></h2><div id="edit-fields"></div><div id="edit-errors" class="errors"></div><menu><button type="button" id="edit-cancel" data-i18n="script.cancel">Cancel</button> <button type="submit" id="edit-save" class="accent" data-i18n="script.save">Save</button></menu></form></dialog><dialog id="confirm-dialog"><h2 id="confirm-title"></h2><p id="confirm-message"></p><p id="confirm-text"></p><menu><button type="button" id="confirm-cancel" data-i18n="script.cancel">Cancel</button> <button type="button" id="confirm-ok" class="danger"></button></menu></dialog><script defer="defer" src="js/script.bundle.js?781a8a3c68dc89aec140"></script></body></html>
