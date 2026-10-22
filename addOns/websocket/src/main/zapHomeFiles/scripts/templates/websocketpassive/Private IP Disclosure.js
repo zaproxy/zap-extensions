@@ -20,6 +20,29 @@ REGULAR_PORTS =
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110006
+name: Private IP Disclosure script
+description: >
+  A private IP (such as 10.x.x.x, 172.x.x.x, 192.168.x.x) or an Amazon EC2 private hostname (for
+  example, ip-10-0-56-78) has been found in the incoming WebSocket message. This information
+  might be helpful for further attacks targeting internal systems.
+solution: Remove the private IP address from the WebSocket messages.
+references:
+  - https://datatracker.ietf.org/doc/html/rfc1918
+category: info_gather
+risk: low
+confidence: medium
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Private%20IP%20Disclosure.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110006
+`);
+}
 
 var patternPre = [];
 
