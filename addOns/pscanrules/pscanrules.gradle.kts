@@ -99,7 +99,7 @@ val generatePhpKnownVulnerabilitiesHelp by tasks.registering(JavaExec::class) {
     classpath = mainSourceSet.output + mainSourceSet.compileClasspath
     mainClass.set(knownVulnerabilitiesUpdater)
     inputs.file(phpKnownVulnerabilitiesJson)
-    inputs.file(file("src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/known-vulnerabilities-help-entry.html"))
+    inputs.file(file("src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/known-vulnerabilities-help-entry-template.html"))
     inputs.files(fileTree(javaHelpDir) { include("**/$phpKnownVulnerabilitiesPage") })
     outputs.dir(generatedHelpDir)
     doFirst { delete(generatedHelpDir) }

@@ -72,7 +72,7 @@ final class KnownVulnerabilitiesUpdater {
      * rendered once per vulnerability.
      */
     static final String HELP_ENTRY_TEMPLATE_RESOURCE =
-            "/org/zaproxy/zap/extension/pscanrules/resources/known-vulnerabilities-help-entry.html";
+            "/org/zaproxy/zap/extension/pscanrules/resources/known-vulnerabilities-help-entry-template.html";
 
     /**
      * The tags in the source help pages which are replaced with the generated content, e.g. {@code
