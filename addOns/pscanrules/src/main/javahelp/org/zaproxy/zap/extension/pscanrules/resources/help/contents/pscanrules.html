@@ -455,6 +455,29 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10037/">10037</a>.
 
+<H2 id="id-20020">Server Side Technology Version with Known Vulnerabilities</H2>
+This checks response headers (typically "X-Powered-By" and "Server") for disclosed versions of server side technologies
+and compares them against lists of known vulnerabilities (CVEs) in those technologies, not in their extensions or plugins.<br>
+Each technology has its own alert type, which is only raised when that technology is enabled in the context the message
+belongs to (all are by default). One alert is raised per site, technology and disclosed version, with a risk based on the most severe
+vulnerability which applies, the vulnerabilities which apply listed by severity in the other info, and references linking
+to the details of each in the help.
+The confidence is lowered when the disclosed version is incomplete (e.g. "PHP/8.1" rather than "PHP/8.1.2"), or is older
+than any version listed in the advisories and is only assumed to be affected.<br>
+The lists of known vulnerabilities are bundled with the add-on and updated with each release.
+<p>
+Alert types:
+<ul>
+<li><b>20020-1: PHP Version with Known Vulnerabilities</b> - detects versions such as "PHP/8.1.2". The known vulnerabilities
+are generated from the
+<a href="https://github.com/php/php-src/security/advisories">php-src security advisories</a>, and are detailed in the
+<a href="php-known-vulnerabilities.html">PHP Known Vulnerabilities</a> help page.</li>
+</ul>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ServerSideVersionScanRule.java">ServerSideVersionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/20020/">20020</a>.
+
 <H2 id="id-3">Session ID in URL Rewrite</H2>
 This scan rule checks for the existence of session token type parameters being rewritten to the URL. 
 To help reduce false positives the rule checks the length of the token value,  if the value of the parameter 

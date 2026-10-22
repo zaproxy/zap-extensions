@@ -63,6 +63,7 @@ public class ExtensionPscanRules extends ExtensionAdaptor {
         @Override
         public void sessionChanged(Session session) {
             ZapVersionScanRule.clear();
+            ServerSideVersionScanRule.clear();
         }
 
         @Override

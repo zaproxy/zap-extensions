@@ -1,0 +1,2167 @@
+{
+  "_comment": [
+    "Known vulnerabilities in PHP itself (not PHP extensions or plugins), used by the Server Side Technology Version with Known Vulnerabilities passive scan rule.",
+    "The 'vulnerabilities' array is GENERATED from the published php/php-src security advisories by the Gradle task",
+    "':addOns:pscanrules:updatePhpKnownVulnerabilities'; do not hand edit generated entries, they will be overwritten.",
+    "Entries with \"source\": \"manual\" are preserved by the generator and are for problems the advisories do not cover (pre 2023).",
+    "Fields:",
+    "  cve         - the CVE identifier, e.g. CVE-2024-4577. Advisories without a CVE are not included.",
+    "  ghsa        - the GitHub Security Advisory identifier (generated entries only).",
+    "  name        - a short title for the problem.",
+    "  description - a brief, plain-text description of the problem and its impact.",
+    "  severity    - one of: critical, high, medium, low. Maps to the ZAP alert risk.",
+    "  cvss        - the CVSS base score (v3 preferred, else v4), optional.",
+    "  component   - the affected PHP component, e.g. ext-soap or PHP-FPM, when the advisory names one. Absent for PHP itself.",
+    "  affected    - one range per affected PHP release branch. A version V is affected when introduced <= V < fixed.",
+    "                Ranges must not overlap each other. Versions are plain dotted numerics as reported in headers (e.g. 8.1.29).",
+    "                Advisories only list the branches which received a fix, so the generator extends the lowest listed range down",
+    "                to version 0 and marks it \"assumed\": true, on the basis that older end-of-life branches are affected too.",
+    "                For end-of-life branches with no fix, use a bounded range ending at the first version of the oldest fixed branch.",
+    "                'fixed' may be null only when no fix exists at all, meaning every version from 'introduced' onward is affected.",
+    "  links       - URLs to the advisory, NVD/CVE entry, PHP changelog, write-ups, etc. The first link is treated as the primary reference.",
+    "  published   - the advisory publication date (generated entries only).",
+    "  source      - 'github-advisories' for generated entries, 'manual' for hand maintained ones."
+  ],
+  "schemaVersion": 1,
+  "lastUpdated": "2026-10-22",
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2026-109618",
+      "ghsa": "GHSA-w8hw-w9fx-j79w",
+      "name": "RCE via OOM corruption",
+      "description": "PHP uses longjmp() for out-of-memory (OOM) errors to exit the current context and abort handling of the request. In some contexts, request memory is temporarily reachable before it is fully initialized. If any allocation fails at that point, PHP does not properly account for the early exit and leaves the request memory in an invalid state. The failed allocation does not need to be related to the invalid memory. The request shutdown procedure may then read or branch on it. Multiple OOM strategies...",
+      "severity": "critical",
+      "cvss": 9.2,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.35",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.36"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.27"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.12"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-109618",
+        "https://www.php.net/ChangeLog-8.php#8.2.35",
+        "https://www.php.net/ChangeLog-8.php#8.3.36",
+        "https://www.php.net/ChangeLog-8.php#8.4.27",
+        "https://www.php.net/ChangeLog-8.php#8.5.12"
+      ],
+      "published": "2026-10-21",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-109619",
+      "ghsa": "GHSA-6wmf-4rv5-p3rp",
+      "name": "RCE via stale global state",
+      "description": "PHP contains various global state, such as error, session, object and extension state that is retained by a worker but points to memory owned by one request. That state must be reset before the request memory is released. Some input, configuration, session and error handling operations run before normal initialization of the next request. They inadvertently access stale state not reset by the previous request before initialization has a chance to replace it, causing a use after free. A...",
+      "severity": "critical",
+      "cvss": 9.2,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.35",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.36"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.27"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.12"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-109619",
+        "https://www.php.net/ChangeLog-8.php#8.2.35",
+        "https://www.php.net/ChangeLog-8.php#8.3.36",
+        "https://www.php.net/ChangeLog-8.php#8.4.27",
+        "https://www.php.net/ChangeLog-8.php#8.5.12"
+      ],
+      "published": "2026-10-21",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-1218",
+      "ghsa": "GHSA-r6x9-5r99-36j7",
+      "name": "Various packet overreads in mysqlnd_writeprotocol.c",
+      "description": "The mysqlnd wire protocol parser reads fields out of server packets before checking that the packet still holds enough bytes for them. A malicious or compromised MySQL server can send a truncated packet and make the client read past the end of the packet buffer, which is undefined behaviour and can crash the process.",
+      "severity": "low",
+      "cvss": 3.1,
+      "component": "ext-mysqlnd",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-r6x9-5r99-36j7",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-1218",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-14181",
+      "ghsa": "GHSA-cj93-vc83-wgqv",
+      "name": "Integer overflow to buffer overflow in soap HTTP parsing",
+      "description": "The SOAP HTTP client guards its response buffer growth with a check that relies on signed integer overflow, which is undefined behaviour and is not guaranteed to trigger. When the check is optimised away, a malicious SOAP server can make the client allocate a buffer far smaller than the data it then writes into it, producing a heap buffer overflow.",
+      "severity": "medium",
+      "cvss": 6.5,
+      "component": "ext-soap",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-cj93-vc83-wgqv",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-14181",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-17545",
+      "ghsa": "GHSA-9f67-6fw4-hpfp",
+      "name": "PHP on Windows: Reserved Device Names Are Not Rejected Before File/Stream I/O which can cause DoS",
+      "description": "On Windows, PHP's filesystem and stream APIs do not reject reserved device names such as CON, PRN, AUX, NUL, COM1 to COM9, LPT1 to LPT9, CONIN$ and CONOUT$ when they appear as a component of a path. An attacker-controlled filename therefore reaches CreateFileW() and opens a device instead of the regular file the application expected, which can block or hang the request and exhaust worker processes.",
+      "severity": "medium",
+      "cvss": 6.9,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-9f67-6fw4-hpfp",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-17545",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-6103",
+      "ghsa": "GHSA-j3wh-g957-2m85",
+      "name": "Phar TAR phar_tar_number() Integer Overflow - Archive Entry Injection",
+      "description": "phar_tar_number() parses the octal size field of a TAR header into a uint32_t with no overflow check. The field is 11 octal digits wide and holds values up to 0x1FFFFFFFF, so a size above 0xFFFFFFFF silently wraps. The parser then skips the wrong number of data blocks and interprets attacker-controlled file content as the next TAR header, which lets a crafted archive inject entries that PharData reports and extracts as if they were genuine.",
+      "severity": "medium",
+      "cvss": 4.0,
+      "component": "ext-phar",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-j3wh-g957-2m85",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-6103",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-91765",
+      "ghsa": "GHSA-rgrp-mwpx-f6rm",
+      "name": "SOAP: Unbounded Recursion in Server-Side cleanup_xml_node",
+      "description": "cleanup_xml_node() in the SOAP XML parser recurses once per XML nesting level with no depth limit. An unauthenticated attacker can post a SOAP request containing tens of thousands of nested elements to any SoapServer endpoint, exhaust the stack and crash the process. The same unbounded recursion exists in the SOAP value decoder and in the WSDL node search helper.",
+      "severity": "high",
+      "cvss": 7.5,
+      "component": "ext-soap",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-rgrp-mwpx-f6rm",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-91765",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-91766",
+      "ghsa": "GHSA-fpwc-w8rq-cr92",
+      "name": "Cross-origin credential leak in HTTP stream wrapper redirects",
+      "description": "When the http:// stream wrapper follows a redirect it forwards the user-supplied Authorization, Cookie and Proxy-Authorization headers unchanged, even when the redirect target is a different host, a different port, or a downgrade from HTTPS to HTTP. A server that can steer a redirect therefore receives credentials that were only meant for the original origin. This is the same class of issue that libcurl fixed in 7.58.0 (CVE-2018-1000007).",
+      "severity": "medium",
+      "cvss": 5.9,
+      "component": "ext-standard",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-fpwc-w8rq-cr92",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-91766",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-91767",
+      "ghsa": "GHSA-xr7j-rvgx-xq5p",
+      "name": "Heap-buffer-overflow in php_openssl_matches_wildcard_name on crafted server cert wildcard CN",
+      "description": "php_openssl_matches_wildcard_name() in ext/openssl/xp_ssl.c underflows the length argument passed to memchr() when a TLS server certificate presents a wildcard name whose literal characters are together longer than the hostname being verified. A malicious server presenting such a certificate makes the PHP client read up to SIZE_MAX bytes past the end of a heap allocation. The path is reachable from any default client stream, because verify_peer_name is enabled by default.",
+      "severity": "medium",
+      "cvss": 6.5,
+      "component": "ext-openssl",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-xr7j-rvgx-xq5p",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-91767",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-91768",
+      "ghsa": "GHSA-62xp-839h-2637",
+      "name": "IPv6 ACL bypass in FastCGI listen.allowed_clients due to partial address comparison (memcmp 12 bytes)",
+      "description": "The IPv6 branch of the FastCGI client access check compares only the first 12 bytes of a 16-byte IPv6 address, so listen.allowed_clients matches on a /96 prefix instead of the exact address. An attacker who can source an address sharing the first 96 bits with an allowed one passes the check and reaches the FastCGI endpoint.",
+      "severity": "medium",
+      "cvss": 6.5,
+      "component": "PHP-FPM",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-62xp-839h-2637",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-91768",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-91769",
+      "ghsa": "GHSA-vvx9-73fr-5jjx",
+      "name": "TLS Hostname Verification Falls Back to CN After SAN Mismatch",
+      "description": "PHP's OpenSSL stream peer verification checks the certificate's subjectAltName entries first and, whenever no entry matches, falls back to the Common Name. RFC 6125 requires the CN to be ignored once the certificate presents any service identity, so a certificate carrying a non-matching DNS SAN was still accepted when its CN matched the requested peer_name. A certificate trusted by the client for one name can therefore be used to impersonate another.",
+      "severity": "medium",
+      "cvss": 4.3,
+      "component": "ext-openssl",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-vvx9-73fr-5jjx",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-91769",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-92842",
+      "ghsa": "GHSA-88hq-2827-7pg6",
+      "name": "OOB read / info leak in convert.* stream filters when line-break-chars contains NUL",
+      "description": "The convert.base64-encode, convert.quoted-printable-encode and convert.quoted-printable-decode stream filters accept a line-break-chars option whose length is tracked separately from the string itself. The filter constructors duplicate the value with pestrdup(), which stops at the first NUL byte, while keeping the original length. When the filter later emits a line break it copies the recorded length out of the truncated allocation, reading past its end and placing adjacent heap bytes into the...",
+      "severity": "medium",
+      "cvss": 5.9,
+      "component": "ext-standard",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-88hq-2827-7pg6",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-92842",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-93682",
+      "ghsa": "GHSA-7875-c8px-7q5f",
+      "name": "Out-of-bounds read in the HTTP stream wrapper when following a redirect with an empty Location header",
+      "description": "When the HTTP stream wrapper follows a redirect and the response carries a Location header with an empty value, the redirect code reads one byte past the end of the heap buffer holding the location. The value of that out-of-bounds byte decides which redirect target is built, so a malicious server controls whether the client is sent to the host root or to the current directory.",
+      "severity": "medium",
+      "cvss": 5.3,
+      "component": "ext-standard",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.35"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.26"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.11"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-7875-c8px-7q5f",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-93682",
+        "https://www.php.net/ChangeLog-8.php#8.2.34",
+        "https://www.php.net/ChangeLog-8.php#8.3.35",
+        "https://www.php.net/ChangeLog-8.php#8.4.26",
+        "https://www.php.net/ChangeLog-8.php#8.5.11"
+      ],
+      "published": "2026-09-24",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-17543",
+      "ghsa": "GHSA-7qpv-r5mr-78m4",
+      "name": "SQL injection in ext-pgsql via E'...' backslash breakout",
+      "description": "php_pgsql_convert() is used to convert and escape user-provided parameters in pg_insert(), pg_update(), pg_select(), and pg_delete(). It does so using PQescapeStringConn() and then wraps the result in an escape string constant, E'...' (via php_pgsql_add_quotes()).",
+      "severity": "high",
+      "component": "ext-pgsql",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.33",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.33"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.24"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.9"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-7qpv-r5mr-78m4",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-17543",
+        "https://www.php.net/ChangeLog-8.php#8.2.33",
+        "https://www.php.net/ChangeLog-8.php#8.3.33",
+        "https://www.php.net/ChangeLog-8.php#8.4.24",
+        "https://www.php.net/ChangeLog-8.php#8.5.9"
+      ],
+      "published": "2026-07-30",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-17544",
+      "ghsa": "GHSA-x692-q9x7-8c3f",
+      "name": "Out-of-bounds write in bccomp() via crafted operand and scale",
+      "description": "A call to bccomp() with attacker-supplied inputs can lead to an out-of-bounds write to either stack or heap memory. The bug occurs in bc_str2num() when the scale truncates a number whose trailing zeros are subsequently trimmed.",
+      "severity": "high",
+      "component": "ext-bcmath",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.4.24",
+          "assumed": true
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.9"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-x692-q9x7-8c3f",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-17544",
+        "https://www.php.net/ChangeLog-8.php#8.4.24",
+        "https://www.php.net/ChangeLog-8.php#8.5.9"
+      ],
+      "published": "2026-07-30",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-7260",
+      "ghsa": "GHSA-vc5h-9ppw-p5f3",
+      "name": "Stack overflow in phar with circular symlinks",
+      "description": "phar_get_link_source() in ext/phar/util.c recursively follows symbolic links in phar archives without any depth limit or cycle detection. A crafted tar-based phar archive containing circular symlinks causes unbounded recursion, exhausting the C stack and crashing the PHP process.",
+      "severity": "medium",
+      "cvss": 5.5,
+      "component": "ext-phar",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.33",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.33"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.24"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.9"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-vc5h-9ppw-p5f3",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-7260",
+        "https://www.php.net/ChangeLog-8.php#8.2.33",
+        "https://www.php.net/ChangeLog-8.php#8.3.33",
+        "https://www.php.net/ChangeLog-8.php#8.4.24",
+        "https://www.php.net/ChangeLog-8.php#8.5.9"
+      ],
+      "published": "2026-07-30",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-12184",
+      "ghsa": "GHSA-mhmq-mmqj-2v39",
+      "name": "Failure to setup TLS with a remote server can result in a remote DoS",
+      "description": "In php_stream_url_wrap_http_ex, when TLS crypto setup fails (via php_stream_xport_crypto_setup or php_stream_xport_crypto_enable), the stream is closed and reset to NULL. However, the subsequent peer name cleanup block unconditionally tries to reset the peer name. This is triggerable via a failure to validate the peer name or an expired certificate.",
+      "severity": "high",
+      "cvss": 8.2,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.3.32",
+          "assumed": true
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.21"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-mhmq-mmqj-2v39",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-12184",
+        "https://www.php.net/ChangeLog-8.php#8.3.32",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-07-02",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-14355",
+      "ghsa": "GHSA-7jrw-539f-x6vr",
+      "name": "ext/openssl: Memory corruption (zend_mm_heap corrupted) in openssl_encrypt with AES-WRAP-PAD",
+      "description": "Usate of AES-WRAP-PAD can result in memory corruption and abort of application.",
+      "severity": "medium",
+      "cvss": 4.8,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.32",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.32"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.23"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.8"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-7jrw-539f-x6vr",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-14355",
+        "https://www.php.net/ChangeLog-8.php#8.2.32",
+        "https://www.php.net/ChangeLog-8.php#8.3.32",
+        "https://www.php.net/ChangeLog-8.php#8.4.23",
+        "https://www.php.net/ChangeLog-8.php#8.5.8"
+      ],
+      "published": "2026-07-02",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-14179",
+      "ghsa": "GHSA-w476-322c-wpvm",
+      "name": "SQL injection in pdo_firebird via NUL bytes in quoted strings",
+      "description": "Improper handling of NUL bytes during the preparation of Firebird SQL queries leads to sections of the of the query being dropped. NUL bytes can find their way into queries even under regular circumstances via PDO::quote().",
+      "severity": "high",
+      "cvss": 9.2,
+      "component": "ext-pdo_firebird",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.31"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.21"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-w476-322c-wpvm",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-14179",
+        "https://www.php.net/ChangeLog-8.php#8.2.31",
+        "https://www.php.net/ChangeLog-8.php#8.3.31",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-6104",
+      "ghsa": "GHSA-74r9-qxhc-fx53",
+      "name": "Global buffer over-read in mb_convert_encoding() with attacker-supplied encoding",
+      "description": "A global buffer over-read exists in mbfl_name2encoding_ex() (ext/mbstring/libmbfl/mbfl/mbfl_encoding.c, line 352), called from mb_convert_encoding(...) and other mbstring functions, when parsing encoding names with embedded NUL bytes.",
+      "severity": "medium",
+      "cvss": 6.3,
+      "component": "ext-mbstring",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.4.21",
+          "assumed": true
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-74r9-qxhc-fx53",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-6104",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-6722",
+      "ghsa": "GHSA-85c2-q967-79q5",
+      "name": "Use-After-Free in SOAP using Apache map with Remote Code Execution",
+      "description": "ext-soap supports deduplicating objects in the XML graph through id and href. When traversing the XML graph, ext-soap will remember all plain PHP objects using the hash map SOAP_GLOBAL(ref_map), where the pointer to the libxml2 node acts as a key, and the PHP object as a value. This happens in soap_add_xml_ref().",
+      "severity": "high",
+      "cvss": 9.4,
+      "component": "ext-soap",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.31"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.21"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-85c2-q967-79q5",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-6722",
+        "https://www.php.net/ChangeLog-8.php#8.2.31",
+        "https://www.php.net/ChangeLog-8.php#8.3.31",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-6735",
+      "ghsa": "GHSA-7qg2-v9fj-4mwv",
+      "name": "XSS within PHP-FPM status endpoint",
+      "description": "Improper sanitization of the request URI within the PHP-FPM status page allows an attacker to execute arbitrary JavaScript code (XSS) on the victims machine, possibly stealing cookies on insufficiently hardened systems, or stealing other sensitive data such as the information from the status page itself. An attacker does not require authentication or access to the /status endpoint in order to trigger XSS, but may simply visit a URI embedding the malicious code.",
+      "severity": "medium",
+      "cvss": 7.6,
+      "component": "PHP-FPM",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.31"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.21"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-7qg2-v9fj-4mwv",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-6735",
+        "https://www.php.net/ChangeLog-8.php#8.2.31",
+        "https://www.php.net/ChangeLog-8.php#8.3.31",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-7258",
+      "ghsa": "GHSA-m8rr-4c36-8gq4",
+      "name": "Out-of-bounds read in urldecode()",
+      "description": "Consider the following snippet within php_url_decode_ex() at ext/standard/url.c, called from PHPs urldecode() function:",
+      "severity": "medium",
+      "cvss": 6.3,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.31"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.21"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-m8rr-4c36-8gq4",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-7258",
+        "https://www.php.net/ChangeLog-8.php#8.2.31",
+        "https://www.php.net/ChangeLog-8.php#8.3.31",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-7259",
+      "ghsa": "GHSA-wm6j-2649-pv75",
+      "name": "Null pointer dereference in php_mb_check_encoding() via mb_ereg_search_init()",
+      "description": "The following PHP code triggers a segmentation fault due to a NULL pointer dereference:",
+      "severity": "low",
+      "component": "ext-mbstring",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.31"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.21"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-wm6j-2649-pv75",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-7259",
+        "https://www.php.net/ChangeLog-8.php#8.2.31",
+        "https://www.php.net/ChangeLog-8.php#8.3.31",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-7261",
+      "ghsa": "GHSA-m33r-qmcv-p97q",
+      "name": "SoapServer session-persisted object use-after-free via SOAP header fault",
+      "description": "SOAP_PERSISTENCE_SESSION allows to persist the SOAP handler object between requests using the session storage. Normally the object is immediately released after SoapServer::handle(), unless this setting is specified. This differentiation happens with the service->soap_class.persistence != SOAP_PERSISTENCE_SESSION check. soap.c fails to account for this flag in two places:",
+      "severity": "medium",
+      "cvss": 6.3,
+      "component": "ext-soap",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.31"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.21"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-m33r-qmcv-p97q",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-7261",
+        "https://www.php.net/ChangeLog-8.php#8.2.31",
+        "https://www.php.net/ChangeLog-8.php#8.3.31",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-7262",
+      "ghsa": "GHSA-hmxp-6pc4-f3vv",
+      "name": "NULL pointer dereference in SOAP apache:Map decoder with missing <value>",
+      "description": "to_zval_map() in ext/soap/php_encoding.c decodes apache:Map nodes. The <key> branch correctly guards against missing keys, but the <value> branch rechecks xmlKey instead of xmlValue:",
+      "severity": "medium",
+      "cvss": 6.3,
+      "component": "ext-soap",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.31"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.21"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-hmxp-6pc4-f3vv",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-7262",
+        "https://www.php.net/ChangeLog-8.php#8.2.31",
+        "https://www.php.net/ChangeLog-8.php#8.3.31",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-7263",
+      "ghsa": "GHSA-4jhr-8w89-j733",
+      "name": "DoS attack via DOMNode::C14N()",
+      "description": "Researcher: Nikita Sveshnikov (Positive Technologies)",
+      "severity": "high",
+      "cvss": 8.2,
+      "component": "ext-dom",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.4.21",
+          "assumed": true
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-4jhr-8w89-j733",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-7263",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2026-7568",
+      "ghsa": "GHSA-96wq-48vp-hh57",
+      "name": "Signed integer overflow in metaphone()",
+      "description": "Researcher: Aleksey Solovev (Positive Technologies)",
+      "severity": "low",
+      "component": "ext-standard",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.31"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.21"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-96wq-48vp-hh57",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-7568",
+        "https://www.php.net/ChangeLog-8.php#8.2.31",
+        "https://www.php.net/ChangeLog-8.php#8.3.31",
+        "https://www.php.net/ChangeLog-8.php#8.4.21",
+        "https://www.php.net/ChangeLog-8.php#8.5.6"
+      ],
+      "published": "2026-05-07",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-14177",
+      "ghsa": "GHSA-3237-qqm7-mfv7",
+      "name": "Information Leak of Memory in getimagesize",
+      "description": "Product: PHP EXT/STANDARD Version: 8.6.0 CWE-ID: • CWE-524: Use of Cache Containing Sensitive Information • CAPEC-204: Lifting Sensitive Data Embedded in Cache CVSS vector v.4.0: 6.3 (AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N) Description: The application insufficiently controls access to information processed by the application data caching tool. As a result, an attacker can gain access to cached data. Mitigation: Restrict access to information processed by the application data...",
+      "severity": "medium",
+      "cvss": 6.3,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.30"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.29"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.16"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.1"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-3237-qqm7-mfv7",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-14177",
+        "https://www.php.net/ChangeLog-8.php#8.1.34",
+        "https://www.php.net/ChangeLog-8.php#8.2.30",
+        "https://www.php.net/ChangeLog-8.php#8.3.29",
+        "https://www.php.net/ChangeLog-8.php#8.4.16",
+        "https://www.php.net/ChangeLog-8.php#8.5.1"
+      ],
+      "published": "2025-12-18",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-14178",
+      "ghsa": "GHSA-h96m-rvf9-jgm2",
+      "name": "Heap buffer overflow in array_merge()",
+      "description": "If we were using a memory safe language we would \"just\" be limited to the DoS, but now we have heap corruption and all the joys of it. This bug has been in PHP since PHP 7.1.",
+      "severity": "medium",
+      "cvss": 6.5,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.30"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.29"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.16"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.1"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-h96m-rvf9-jgm2",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-14178",
+        "https://www.php.net/ChangeLog-8.php#8.1.34",
+        "https://www.php.net/ChangeLog-8.php#8.2.30",
+        "https://www.php.net/ChangeLog-8.php#8.3.29",
+        "https://www.php.net/ChangeLog-8.php#8.4.16",
+        "https://www.php.net/ChangeLog-8.php#8.5.1"
+      ],
+      "published": "2025-12-18",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-14180",
+      "ghsa": "GHSA-8xr5-qppj-gvwj",
+      "name": "NULL Pointer Dereference in PDO quoting",
+      "description": "Product: PHP Version: 8.5.0-DEV (CLI) CWE-ID: CWE-476: NULL Pointer Dereference CVSS vector v.4.0: 8.2 (AV:N/AC:H/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N) Description: A NULL pointer dereference occurs when the application dereferences a pointer that it expects to be valid, but is NULL, typically causing a crash or exit. Exploitation conditions: An unauthorized user Mitigation: Explicitly check whether a NULL pointer exists before dereferencing it. Researcher: Aleksey Solovev (Positive...",
+      "severity": "medium",
+      "cvss": 6.3,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.34",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.30"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.29"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.16"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.1"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-8xr5-qppj-gvwj",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-14180",
+        "https://www.php.net/ChangeLog-8.php#8.1.34",
+        "https://www.php.net/ChangeLog-8.php#8.2.30",
+        "https://www.php.net/ChangeLog-8.php#8.3.29",
+        "https://www.php.net/ChangeLog-8.php#8.4.16",
+        "https://www.php.net/ChangeLog-8.php#8.5.1"
+      ],
+      "published": "2025-12-18",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-1220",
+      "ghsa": "GHSA-3cr5-j632-f35r",
+      "name": "Null byte termination in hostnames",
+      "description": "fsockopen() doesn't regard hostname as well, hostname is terminated at the null byte. This can cause Server Side Request Forgery in general case.",
+      "severity": "low",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.33",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.29"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.23"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.10"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-3cr5-j632-f35r",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-1220",
+        "https://www.php.net/ChangeLog-8.php#8.1.33",
+        "https://www.php.net/ChangeLog-8.php#8.2.29",
+        "https://www.php.net/ChangeLog-8.php#8.3.23",
+        "https://www.php.net/ChangeLog-8.php#8.4.10"
+      ],
+      "published": "2025-07-03",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-1735",
+      "ghsa": "GHSA-hrwm-9436-5mv3",
+      "name": "pgsql extension does not check for errors during escaping",
+      "description": "Missing error checking could result in SQL injection and missing error handling could lead to crashes due to null pointer dereferences.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.33",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.29"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.23"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.10"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-hrwm-9436-5mv3",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-1735",
+        "https://www.php.net/ChangeLog-8.php#8.1.33",
+        "https://www.php.net/ChangeLog-8.php#8.2.29",
+        "https://www.php.net/ChangeLog-8.php#8.3.23",
+        "https://www.php.net/ChangeLog-8.php#8.4.10"
+      ],
+      "published": "2025-07-03",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-6491",
+      "ghsa": "GHSA-453j-q27h-5p8x",
+      "name": "NULL Pointer Dereference in PHP SOAP Extension via Large XML Namespace Prefix",
+      "description": "If a SoapVar instance is created with a fully qualified name larger than 2G, this will cause a NULL pointer dereference resulting in a segmentation fault, leading to a denial of service.",
+      "severity": "medium",
+      "cvss": 5.9,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.33",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.29"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.23"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.10"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-453j-q27h-5p8x",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-6491",
+        "https://www.php.net/ChangeLog-8.php#8.1.33",
+        "https://www.php.net/ChangeLog-8.php#8.2.29",
+        "https://www.php.net/ChangeLog-8.php#8.3.23",
+        "https://www.php.net/ChangeLog-8.php#8.4.10"
+      ],
+      "published": "2025-07-03",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-11235",
+      "ghsa": "GHSA-rwp7-7vc6-8477",
+      "name": "Reference counting in php_request_shutdown causes Use-After-Free",
+      "description": "Exception handler frees variables via cleanup_live_vars for termination. However, the subsequent php_request_shutdown performs reference counting on these variables using zend_gc_refcount(read) and zend_gc_delref(write), resulting in use-after-free. Since zend_mm_free_small stores metadata in freed memory chunks, this use-after-free vulnerability may allows manipulation of the Zend allocator through reference count behaviors.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.3.19",
+          "assumed": true
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.5"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-rwp7-7vc6-8477",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-11235",
+        "https://www.php.net/ChangeLog-8.php#8.3.19",
+        "https://www.php.net/ChangeLog-8.php#8.4.5"
+      ],
+      "published": "2025-03-13",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-1217",
+      "ghsa": "GHSA-v8xr-gpvj-cx9g",
+      "name": "Header parser of `http` stream wrapper does not handle folded headers",
+      "description": "The header parser of the http stream wrapper does not handle folded headers and passes incorrect MIME types to an attached stream notifier.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.32",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.28"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.19"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.5"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-v8xr-gpvj-cx9g",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-1217",
+        "https://www.php.net/ChangeLog-8.php#8.1.32",
+        "https://www.php.net/ChangeLog-8.php#8.2.28",
+        "https://www.php.net/ChangeLog-8.php#8.3.19",
+        "https://www.php.net/ChangeLog-8.php#8.4.5"
+      ],
+      "published": "2025-03-13",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-1219",
+      "ghsa": "GHSA-p3x9-6h7p-cgfc",
+      "name": "libxml streams use wrong `content-type` header when requesting a redirected resource",
+      "description": "When requesting a HTTP resource using the DOM or SimpleXML extensions, the wrong content-type header is used to determine the charset when the requested resource performs a redirect.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.32",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.28"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.19"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.5"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-p3x9-6h7p-cgfc",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-1219",
+        "https://www.php.net/ChangeLog-8.php#8.1.32",
+        "https://www.php.net/ChangeLog-8.php#8.2.28",
+        "https://www.php.net/ChangeLog-8.php#8.3.19",
+        "https://www.php.net/ChangeLog-8.php#8.4.5"
+      ],
+      "published": "2025-03-13",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-1734",
+      "ghsa": "GHSA-pcmh-g36c-qc44",
+      "name": "Streams HTTP wrapper does not fail for headers with invalid name and no colon",
+      "description": "This can allow issues in the application when parsing the array - e.g. application could consider it as a valid header or as a continuation of the previous one (currently folding header are misbehaving so there could be some logic for that in the application that could result in a security issue). So some sort of request smuggling could be possible in this case",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.32",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.28"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.19"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.5"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-pcmh-g36c-qc44",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-1734",
+        "https://www.php.net/ChangeLog-8.php#8.1.32",
+        "https://www.php.net/ChangeLog-8.php#8.2.28",
+        "https://www.php.net/ChangeLog-8.php#8.3.19",
+        "https://www.php.net/ChangeLog-8.php#8.4.5"
+      ],
+      "published": "2025-03-13",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-1736",
+      "ghsa": "GHSA-hgf5-96fm-v528",
+      "name": "Stream HTTP wrapper header check might omit basic auth header",
+      "description": "Preventing authorization header to be sent.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.32",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.28"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.19"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.5"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-hgf5-96fm-v528",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-1736",
+        "https://www.php.net/ChangeLog-8.php#8.1.32",
+        "https://www.php.net/ChangeLog-8.php#8.2.28",
+        "https://www.php.net/ChangeLog-8.php#8.3.19",
+        "https://www.php.net/ChangeLog-8.php#8.4.5"
+      ],
+      "published": "2025-03-13",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2025-1861",
+      "ghsa": "GHSA-52jp-hrpf-2jff",
+      "name": "Stream HTTP wrapper truncate redirect location to 1024 bytes",
+      "description": "The URI truncation might result in omitting some critical information (e.g. from the query) or even redirection to other resources. It could even result in DOS of the remote site if the trucated URL results in error.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.32",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.28"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.19"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.5"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-52jp-hrpf-2jff",
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-1861",
+        "https://www.php.net/ChangeLog-8.php#8.1.32",
+        "https://www.php.net/ChangeLog-8.php#8.2.28",
+        "https://www.php.net/ChangeLog-8.php#8.3.19",
+        "https://www.php.net/ChangeLog-8.php#8.4.5"
+      ],
+      "published": "2025-03-13",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-11233",
+      "ghsa": "GHSA-r977-prxv-hc43",
+      "name": "Single byte overread with convert.quoted-printable-decode filter",
+      "description": "A memory-related vulnerability in PHP’s filter handling system, particularly when processing input with convert.quoted-printable-decode filters, leads to a segmentation fault. This vulnerability is triggered through specific sequences of input data, causing PHP to crash. When exploited, it allows an attacker to extract a single byte of data from the heap or cause a DoS.",
+      "severity": "medium",
+      "cvss": 4.8,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.26"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.14"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-r977-prxv-hc43",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-11233",
+        "https://www.php.net/ChangeLog-8.php#8.1.31",
+        "https://www.php.net/ChangeLog-8.php#8.2.26",
+        "https://www.php.net/ChangeLog-8.php#8.3.14"
+      ],
+      "published": "2024-11-21",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-11234",
+      "ghsa": "GHSA-c5f2-jwm7-mmq2",
+      "name": "Configuring a proxy in a stream context might allow for CRLF injection in URIs",
+      "description": "Configuring a proxy in a stream context might allow for CRLF injection in URIs, resulting in HTTP request smuggling attacks.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.26"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.14"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-c5f2-jwm7-mmq2",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-11234",
+        "https://www.php.net/ChangeLog-8.php#8.1.31",
+        "https://www.php.net/ChangeLog-8.php#8.2.26",
+        "https://www.php.net/ChangeLog-8.php#8.3.14"
+      ],
+      "published": "2024-11-21",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-11236",
+      "ghsa": "GHSA-5hqh-c84r-qjcv",
+      "name": "Integer overflow in the firebird and dblib quoters causing OOB writes",
+      "description": "The following code: https://github.com/php/php-src/blob/5070fbf1613015e351bc4629ac7997b26359320b/ext/pdo_firebird/firebird_driver.c#L805-L808",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.26"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.14"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-5hqh-c84r-qjcv",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-11236",
+        "https://www.php.net/ChangeLog-8.php#8.1.31",
+        "https://www.php.net/ChangeLog-8.php#8.2.26",
+        "https://www.php.net/ChangeLog-8.php#8.3.14"
+      ],
+      "published": "2024-11-21",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-8929",
+      "ghsa": "GHSA-h35g-vwh6-m678",
+      "name": "[Mysqlnd] Leak partial content of the heap through heap buffer over-read",
+      "description": "By connecting to a fake MySQL server or tampering with network packets and initiating a SQL Query, it is possible to abuse the function static enum_func_status php_mysqlnd_rset_field_read when parsing MySQL fields packets in order to include the rest of the heap content starting from the address of the cursor of the currently read buffer. Using PHP-FPM which stays alive between request, and between two different SQL query requests, as the previous buffer used to store received data from MySQL is...",
+      "severity": "high",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.26"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.14"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-h35g-vwh6-m678",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-8929",
+        "https://www.php.net/ChangeLog-8.php#8.1.31",
+        "https://www.php.net/ChangeLog-8.php#8.2.26",
+        "https://www.php.net/ChangeLog-8.php#8.3.14"
+      ],
+      "published": "2024-11-21",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-8932",
+      "ghsa": "GHSA-g665-fm4p-vhff",
+      "name": "OOB access in ldap_escape",
+      "description": "Uncontrolled long string inputs to ldap_escape on 32-bit systems can cause an integer overflow, resulting in an out-of-bounds write.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.31",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.26"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.14"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-g665-fm4p-vhff",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-8932",
+        "https://www.php.net/ChangeLog-8.php#8.1.31",
+        "https://www.php.net/ChangeLog-8.php#8.2.26",
+        "https://www.php.net/ChangeLog-8.php#8.3.14"
+      ],
+      "published": "2024-11-21",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-4577",
+      "ghsa": "GHSA-3qgc-jrrr-25jv",
+      "name": "PHP RCE: A Bypass of CVE-2012-1823, Argument Injection in PHP-CGI",
+      "description": "An attacker can execute arbitrary PHP code on the remote server. This vulnerability affects the PHP built with Windows.",
+      "severity": "high",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.29",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.20"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.8"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-3qgc-jrrr-25jv",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-4577",
+        "https://www.php.net/ChangeLog-8.php#8.1.29",
+        "https://www.php.net/ChangeLog-8.php#8.2.20",
+        "https://www.php.net/ChangeLog-8.php#8.3.8"
+      ],
+      "published": "2024-09-28",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-8925",
+      "ghsa": "GHSA-9pqp-7h25-4f32",
+      "name": "Erroneous parsing of multipart form data",
+      "description": "Erroneous parsing of multipart form data contained in an HTTP POST request could lead to legitimate data not being processed thus, violating data integrity.",
+      "severity": "low",
+      "cvss": 3.1,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.30",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.24"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.12"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-9pqp-7h25-4f32",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-8925",
+        "https://www.php.net/ChangeLog-8.php#8.1.30",
+        "https://www.php.net/ChangeLog-8.php#8.2.24",
+        "https://www.php.net/ChangeLog-8.php#8.3.12"
+      ],
+      "published": "2024-09-27",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-8926",
+      "ghsa": "GHSA-p99j-rfp4-xqvq",
+      "name": "PHP CGI Parameter Injection Vulnerability (CVE-2024-4577 bypass)",
+      "description": "This vulnerability is a bypass of CVE-2024-4577 when using a non-standard configuration of Windows codepages, only obtainable through the registry by pointing the ACP codepage to an OEM codepage. The required configuration is unlikely to occur in a real environment.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.30",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.24"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.12"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-p99j-rfp4-xqvq",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-8926",
+        "https://www.php.net/ChangeLog-8.php#8.1.30",
+        "https://www.php.net/ChangeLog-8.php#8.2.24",
+        "https://www.php.net/ChangeLog-8.php#8.3.12"
+      ],
+      "published": "2024-09-27",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-8927",
+      "ghsa": "GHSA-94p6-54jq-9mwp",
+      "name": "cgi.force_redirect configuration is bypassable due to the environment variable collision",
+      "description": "According to <https://www.php.net/manual/en/security.cgi-bin.force-redirect.php>, the configuration directive cgi.force_redirect prevents anyone from calling PHP directly with a URL like http://host.example/cgi-bin/php/secretdir/script.php. The default value of cgi.force_redirect is 1.",
+      "severity": "medium",
+      "cvss": 5.3,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.30",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.24"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.12"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-94p6-54jq-9mwp",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-8927",
+        "https://www.php.net/ChangeLog-8.php#8.1.30",
+        "https://www.php.net/ChangeLog-8.php#8.2.24",
+        "https://www.php.net/ChangeLog-8.php#8.3.12"
+      ],
+      "published": "2024-09-27",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-9026",
+      "ghsa": "GHSA-865w-9rf3-2wh5",
+      "name": "[PHP-FPM] Logs from childrens may be altered",
+      "description": "In PHP-FPM, when configured to catch workers output through catch_workers_output = yes configuration, it may be possible to pollute the final log with up to 4 characters from the FPM_STDIO_CMD_FLUSH macro, or remove up to 4 characters from the logs. Additionally, If PHP-FPM is configured to use a syslog, it seems that much more characters can be excluded from the logs, even though it has not been tested.",
+      "severity": "low",
+      "cvss": 3.3,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.30",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.24"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.12"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-865w-9rf3-2wh5",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-9026",
+        "https://www.php.net/ChangeLog-8.php#8.1.30",
+        "https://www.php.net/ChangeLog-8.php#8.2.24",
+        "https://www.php.net/ChangeLog-8.php#8.3.12"
+      ],
+      "published": "2024-09-27",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-5458",
+      "ghsa": "GHSA-w8qr-v226-r27w",
+      "name": "Filter bypass in filter_var (FILTER_VALIDATE_URL)",
+      "description": "An early-return in filter_var (FILTER_VALIDATE_URL) will result in invalid user information (username + password part of URLs) being treated as valid user information.",
+      "severity": "medium",
+      "cvss": 5.3,
+      "affected": [
+        {
+          "introduced": "7.3.27",
+          "fixed": "7.3.34"
+        },
+        {
+          "introduced": "7.4.15",
+          "fixed": "7.4.34"
+        },
+        {
+          "introduced": "8.0.2",
+          "fixed": "8.0.31"
+        },
+        {
+          "introduced": "8.1.0",
+          "fixed": "8.1.29"
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.20"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.8"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-w8qr-v226-r27w",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-5458",
+        "https://www.php.net/ChangeLog-8.php#8.1.29",
+        "https://www.php.net/ChangeLog-8.php#8.2.20",
+        "https://www.php.net/ChangeLog-8.php#8.3.8"
+      ],
+      "published": "2024-06-09",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-5585",
+      "ghsa": "GHSA-9fcc-425m-g385",
+      "name": "bypass CVE-2024-1874",
+      "description": "same as CVE-2024-1874 > due to the improper handling of command line arguments on Windows, maliciously crafted arguments can inject arbitrary commands even if the bypass_shell option is enabled.",
+      "severity": "high",
+      "cvss": 7.7,
+      "affected": [
+        {
+          "introduced": "8.3.6",
+          "fixed": "8.3.8"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-9fcc-425m-g385",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-5585",
+        "https://www.php.net/ChangeLog-8.php#8.3.8"
+      ],
+      "published": "2024-06-09",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-2408",
+      "ghsa": "GHSA-hh26-4ppw-5864",
+      "name": "PHP is vulnerable to the Marvin Attack",
+      "description": "The implementation of RSA decryption with PKCS#1 v1.5 padding is vulnerable to a timing variant of the Bleichenabcher attack called the Marvin Attack.",
+      "severity": "medium",
+      "cvss": 5.9,
+      "affected": [
+        {
+          "introduced": "8.2.12",
+          "fixed": "8.2.13"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-hh26-4ppw-5864",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-2408"
+      ],
+      "published": "2024-06-06",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-1874",
+      "ghsa": "GHSA-pc52-254m-w9w7",
+      "name": "Command injection via array-ish $command parameter of proc_open even if bypass_shell option enabled on Windows",
+      "description": "NOTE: There are undergoing reports regarding the command injection when executing the batch file, and several programming languages are coordinating the disclosure date. If you decide to not consider this as a vulnerability, please do not disclose this behavior until the end of February. If the coordinated disclosure is needed, please let me know.",
+      "severity": "critical",
+      "cvss": 9.4,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.28",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.18"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-pc52-254m-w9w7",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-1874",
+        "https://www.php.net/ChangeLog-8.php#8.1.28",
+        "https://www.php.net/ChangeLog-8.php#8.2.18",
+        "https://www.php.net/ChangeLog-8.php#8.3.6"
+      ],
+      "published": "2024-04-11",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-2756",
+      "ghsa": "GHSA-wpj3-hf5j-x4v4",
+      "name": "__Host-/__Secure- cookie bypass due to partial CVE-2022-31629 fix",
+      "description": "Due to an incomplete fix to CVE-2022-31629, network and same-site attackers can set a standard insecure cookie in the victim's browser which is treated as a __Host- or __Secure- cookie by PHP applications.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "8.1.12",
+          "fixed": "8.1.28"
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.18"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-wpj3-hf5j-x4v4",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-2756",
+        "https://www.php.net/ChangeLog-8.php#8.1.28",
+        "https://www.php.net/ChangeLog-8.php#8.2.18",
+        "https://www.php.net/ChangeLog-8.php#8.3.6"
+      ],
+      "published": "2024-04-11",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-2757",
+      "ghsa": "GHSA-fjp9-9hwx-59fq",
+      "name": "mb_encode_mimeheader runs endlessly for some inputs",
+      "description": "Certain inputs provided to mb_encode_mimeheader trigger an endless loop.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.3.6",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-fjp9-9hwx-59fq",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-2757",
+        "https://www.php.net/ChangeLog-8.php#8.3.6"
+      ],
+      "published": "2024-04-11",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2024-3096",
+      "ghsa": "GHSA-h746-cjrr-wfmr",
+      "name": "password_verify can erroneously return true, opening ATO risk",
+      "description": "If a password stored with password_hash starts with a null byte (\\x00), testing a blank string as the password via password_verify will incorrectly return true.",
+      "severity": "low",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.1.28",
+          "assumed": true
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.18"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.6"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-h746-cjrr-wfmr",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-3096",
+        "https://www.php.net/ChangeLog-8.php#8.1.28",
+        "https://www.php.net/ChangeLog-8.php#8.2.18",
+        "https://www.php.net/ChangeLog-8.php#8.3.6"
+      ],
+      "published": "2024-04-11",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2023-3823",
+      "ghsa": "GHSA-3qrf-m4j2-pcrr",
+      "name": "Security issue with external entity loading in XML without enabling it",
+      "description": "After working on the issue some days, we more and more come to the assumption, that the actual issue is lower in the stack than the Nextcloud Server's PHP code. We were able to isolate it to a few lines of plain PHP code (but seemling only after performing a \"Nextcloud login\")",
+      "severity": "high",
+      "cvss": 8.6,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.0.30",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-3qrf-m4j2-pcrr",
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-3823",
+        "https://www.php.net/ChangeLog-8.php#8.0.30"
+      ],
+      "published": "2023-08-05",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2023-3824",
+      "ghsa": "GHSA-jqcx-ccgc-xwhv",
+      "name": "Buffer overflow and overread in phar_dir_read()",
+      "description": "Buffer mismanagement in phar_dir_read() causes a buffer overflow and a buffer overread later.",
+      "severity": "critical",
+      "cvss": 9.4,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.0.30",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-jqcx-ccgc-xwhv",
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-3824",
+        "https://www.php.net/ChangeLog-8.php#8.0.30"
+      ],
+      "published": "2023-08-05",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2023-3247",
+      "ghsa": "GHSA-76gg-c692-v2mw",
+      "name": "Missing error check and insufficient random bytes in HTTP Digest authentication for SOAP",
+      "description": "The random byte generation function used in the SOAP HTTP Digest authentication code is not checked for failure. This can result in a stack information leak. Furthermore, there's an insufficient number of random bytes used.",
+      "severity": "low",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.0.29",
+          "assumed": true
+        },
+        {
+          "introduced": "8.1.0",
+          "fixed": "8.1.20"
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.7"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-76gg-c692-v2mw",
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-3247",
+        "https://www.php.net/ChangeLog-8.php#8.0.29",
+        "https://www.php.net/ChangeLog-8.php#8.1.20",
+        "https://www.php.net/ChangeLog-8.php#8.2.7"
+      ],
+      "published": "2023-06-12",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2023-0567",
+      "ghsa": "GHSA-7fj2-8x79-rjf4",
+      "name": "BCrypt hashes erroneously validate if the salt is cut short by `$`",
+      "description": "Malformatted BCrypt hashes that include a $ within their salt part will trigger a buffer overread and may erroneously validate any password as valid.",
+      "severity": "low",
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.0.28",
+          "assumed": true
+        },
+        {
+          "introduced": "8.1.0",
+          "fixed": "8.1.16"
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.3"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-7fj2-8x79-rjf4",
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-0567",
+        "https://www.php.net/ChangeLog-8.php#8.0.28",
+        "https://www.php.net/ChangeLog-8.php#8.1.16",
+        "https://www.php.net/ChangeLog-8.php#8.2.3"
+      ],
+      "published": "2023-02-15",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2023-0662",
+      "ghsa": "GHSA-54hq-v5wp-fqgv",
+      "name": "DoS vulnerability when parsing multipart request body",
+      "description": "The request body parsing in PHP allows any unauthenticated attacker to consume a large amount of CPU time and trigger excessive logging.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0",
+          "fixed": "8.0.28",
+          "assumed": true
+        },
+        {
+          "introduced": "8.1.0",
+          "fixed": "8.1.16"
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.3"
+        }
+      ],
+      "links": [
+        "https://github.com/php/php-src/security/advisories/GHSA-54hq-v5wp-fqgv",
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-0662",
+        "https://www.php.net/ChangeLog-8.php#8.0.28",
+        "https://www.php.net/ChangeLog-8.php#8.1.16",
+        "https://www.php.net/ChangeLog-8.php#8.2.3"
+      ],
+      "published": "2023-02-15",
+      "source": "github-advisories"
+    },
+    {
+      "cve": "CVE-2019-11043",
+      "name": "PHP-FPM remote code execution",
+      "description": "An underflow in the PHP-FPM env_path_info handling allows an attacker to write beyond a buffer when PHP-FPM is behind a misconfigured nginx (regexp with PATH_INFO), leading to remote code execution.",
+      "severity": "critical",
+      "cvss": 9.8,
+      "affected": [
+        {
+          "introduced": "7.3.0",
+          "fixed": "7.3.11"
+        },
+        {
+          "introduced": "7.2.0",
+          "fixed": "7.2.24"
+        },
+        {
+          "introduced": "7.1.0",
+          "fixed": "7.1.33"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2019-11043",
+        "https://bugs.php.net/bug.php?id=78599",
+        "https://github.com/neex/phuip-fpizdam"
+      ],
+      "source": "manual"
+    }
+  ]
+}

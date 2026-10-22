@@ -76,6 +76,66 @@ spotless {
     )
 }
 
+val knownVulnerabilitiesUpdater = "org.zaproxy.zap.extension.pscanrules.KnownVulnerabilitiesUpdater"
+val phpKnownVulnerabilitiesJson = file("src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/php-known-vulnerabilities.json")
+val phpKnownVulnerabilitiesPage = "php-known-vulnerabilities.html"
+val mainSourceSet = project.the<SourceSetContainer>()["main"]
+val javaHelpDir = file("src/main/javahelp")
+val generatedHelpDir = layout.buildDirectory.dir("generated/javahelp")
+
+tasks.register<JavaExec>("updatePhpKnownVulnerabilities") {
+    group = "ZAP Misc"
+    description = "Regenerates the PHP known vulnerabilities file from the php-src security advisories."
+    classpath = mainSourceSet.output + mainSourceSet.compileClasspath
+    mainClass.set(knownVulnerabilitiesUpdater)
+    args("update", phpKnownVulnerabilitiesJson.path)
+}
+
+// The help pages, including the translated ones, contain just the surrounding text and tags which are
+// replaced with the vulnerability details when the add-on is built.
+val generatePhpKnownVulnerabilitiesHelp by tasks.registering(JavaExec::class) {
+    group = "build"
+    description = "Fills in the PHP known vulnerabilities help pages from the vulnerabilities file."
+    classpath = mainSourceSet.output + mainSourceSet.compileClasspath
+    mainClass.set(knownVulnerabilitiesUpdater)
+    inputs.file(phpKnownVulnerabilitiesJson)
+    inputs.file(file("src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/known-vulnerabilities-help-entry.html"))
+    inputs.files(fileTree(javaHelpDir) { include("**/$phpKnownVulnerabilitiesPage") })
+    outputs.dir(generatedHelpDir)
+    doFirst { delete(generatedHelpDir) }
+    args(
+        "help",
+        phpKnownVulnerabilitiesJson.path,
+        phpKnownVulnerabilitiesPage,
+        javaHelpDir.path,
+        generatedHelpDir.get().asFile.path,
+    )
+}
+
+// The JavaHelp indexer strips a single directory prefix, that of the helpset, from the indexed paths, so the
+// generated pages are indexed from a merged copy of the help directory rather than from a second source root.
+val mergedHelpDir = layout.buildDirectory.dir("merged/javahelp")
+val mergePhpKnownVulnerabilitiesHelp by tasks.registering(Sync::class) {
+    description = "Merges the help directory and the generated help pages, for indexing."
+    from(javaHelpDir) { exclude("**/$phpKnownVulnerabilitiesPage") }
+    from(generatedHelpDir)
+    into(mergedHelpDir)
+    dependsOn(generatePhpKnownVulnerabilitiesHelp)
+}
+
+tasks.withType<org.zaproxy.gradle.addon.jh.tasks.JavaHelpIndexer>().configureEach {
+    val helpsetPath = javaHelpDir.toPath().relativize(helpset.get().asFile.toPath())
+    helpset.set(mergedHelpDir.map { it.file(helpsetPath.toString()) })
+    setSource(mergedHelpDir.map { it.dir(helpsetPath.parent.toString()) })
+    dependsOn(mergePhpKnownVulnerabilitiesHelp)
+}
+
+tasks.named<Jar>("jarZapAddOn") {
+    exclude { it.name == phpKnownVulnerabilitiesPage && it.file.toPath().startsWith(javaHelpDir.toPath()) }
+    from(generatedHelpDir)
+    dependsOn(generatePhpKnownVulnerabilitiesHelp)
+}
+
 val jsLexerPkg = "org.zaproxy.zap.extension.pscanrules.antlr"
 val jsLexerDir = jsLexerPkg.replace('.', '/')
 val generateGrammarSource by tasks.existing(AntlrTask::class) {
