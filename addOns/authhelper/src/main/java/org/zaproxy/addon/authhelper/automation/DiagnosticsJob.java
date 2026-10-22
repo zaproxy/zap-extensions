@@ -172,7 +172,8 @@ public class DiagnosticsJob extends AutomationJob {
                         true,
                         Constant.messages.getString("authhelper.automation.diagnostics.authmethod"),
                         contextName,
-                        ""));
+                        "",
+                        true));
     }
 
     private static boolean stopRecording(AutomationPlan plan) {

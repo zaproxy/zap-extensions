@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -43,8 +45,10 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticBrowserStorageItem;
@@ -54,6 +58,7 @@ import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement.SelectorType;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
+import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpSenderListener;
@@ -197,6 +202,7 @@ return getSelector(arguments[0], document)
 
     private final boolean enabled;
     private final boolean failureOnly;
+    private final boolean recordSendFailures;
 
     private Diagnostic diagnostic;
     private HttpSenderListener listener;
@@ -215,6 +221,30 @@ return getSelector(arguments[0], document)
             String context,
             String user,
             String script) {
+        this(enabled, authenticationMethod, context, user, script, false);
+    }
+
+    /**
+     * Constructs an instance that also records the request of any message that failed to send (e.g.
+     * DNS failure), for the diagnostics job's own (non authentication-specific) traffic recording.
+     */
+    public AuthenticationDiagnostics(
+            boolean enabled,
+            String authenticationMethod,
+            String context,
+            String user,
+            boolean recordSendFailures) {
+        this(enabled, authenticationMethod, context, user, null, recordSendFailures);
+    }
+
+    private AuthenticationDiagnostics(
+            boolean enabled,
+            String authenticationMethod,
+            String context,
+            String user,
+            String script,
+            boolean recordSendFailures) {
+        this.recordSendFailures = recordSendFailures;
         Retention currentRetention = retention;
         boolean retained = currentRetention != null && currentRetention.isActive(context);
         this.enabled = enabled || retained;
@@ -280,12 +310,61 @@ return getSelector(arguments[0], document)
                         addMessageToStep(msg, initiator);
                     }
 
+                    // TODO Add @Override once targeting core 2.18.0
+                    public void onHttpSendFailed(
+                            HttpMessage msg, int initiator, HttpSender sender, IOException cause) {
+                        recordSendFailure(msg, initiator, cause);
+                    }
+
                     @Override
                     public int getListenerOrder() {
                         return Integer.MAX_VALUE;
                     }
                 };
         HttpSender.addListener(listener);
+    }
+
+    /**
+     * Records the request of a message that failed to send, if this instance was constructed to
+     * record send failures.
+     *
+     * <p>Increased visibility for Unit Test pusposes only.
+     */
+    void recordSendFailure(HttpMessage msg, int initiator, IOException cause) {
+        if (recordSendFailures) {
+            setFailureResponse(msg, cause);
+            addMessageToStep(msg, initiator);
+        }
+    }
+
+    /**
+     * Sets a synthetic response on the given message describing the given failure, so the reason
+     * the request has no real response is recorded along with it.
+     */
+    private static void setFailureResponse(HttpMessage msg, IOException cause) {
+        // 999 marks 'no response received', there being no real HTTP status code for a failed
+        // send.
+        String statusCode = "999";
+        String reasonPhrase = "No Response";
+        StringBuilder message = new StringBuilder();
+        if (cause instanceof ZapSocketTimeoutException timeoutException) {
+            message.append("Read timeout (").append(timeoutException.getTimeout()).append("s): ");
+        }
+        message.append(cause);
+
+        try {
+            HttpResponseHeader responseHeader =
+                    new HttpResponseHeader(
+                            HttpHeader.HTTP11 + " " + statusCode + " " + reasonPhrase);
+            responseHeader.setHeader(HttpHeader.CONTENT_TYPE, "text/plain; charset=UTF-8");
+            responseHeader.setHeader(
+                    HttpHeader.CONTENT_LENGTH,
+                    Integer.toString(message.toString().getBytes(StandardCharsets.UTF_8).length));
+            msg.setResponseHeader(responseHeader);
+            msg.setResponseBody(message.toString());
+        } catch (HttpMalformedHeaderException e) {
+            LOGGER.warn("Failed to create failure response header:", e);
+        }
     }
 
     private void addMessageToStep(HttpMessage msg) {
