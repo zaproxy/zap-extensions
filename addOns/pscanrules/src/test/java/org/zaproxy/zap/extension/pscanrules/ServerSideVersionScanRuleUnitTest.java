@@ -114,7 +114,7 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
     }
 
     @Test
-    void shouldIncludeAllBundledCvesInAlertTags() {
+    void shouldIncludeAllBundledCvesInAlertTags() throws Exception {
         // Given
         ServerSideVersionScanRule.setKnownVulnerabilitiesFile(
                 Technology.PHP,
@@ -123,7 +123,7 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
                                 .getResource(
                                         ServerSideVersionScanRule
                                                 .PHP_KNOWN_VULNERABILITIES_RESOURCE)
-                                .getPath()));
+                                .toURI()));
         // When
         Map<String, String> tags = rule.getAlertTags();
         // Then

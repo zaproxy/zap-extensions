@@ -32,11 +32,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
@@ -45,6 +45,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.Severity;
 import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.VersionRange;
 import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.Vulnerability;
+import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -216,7 +217,7 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
         if (versions.isEmpty()) {
             return;
         }
-        String site = getSite(msg.getRequestHeader());
+        String site = getSite(msg);
         for (DetectedVersion version : versions) {
             if (!isEnabled(version.technology())) {
                 continue;
@@ -243,12 +244,13 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
         return techSet == null || techSet.includes(technology.getTech());
     }
 
-    private static String getSite(HttpRequestHeader header) {
-        return (header.isSecure() ? "https" : "http")
-                + "://"
-                + header.getHostName()
-                + ":"
-                + header.getHostPort();
+    /** The site of the message, as named in the Sites tree, e.g. {@code https://example.com}. */
+    private static String getSite(HttpMessage msg) {
+        try {
+            return SessionStructure.getHostName(msg);
+        } catch (URIException e) {
+            return msg.getRequestHeader().getURI().getEscapedAuthority();
+        }
     }
 
     private AlertBuilder buildAlert(DetectedVersion version, List<Vulnerability> vulnerabilities) {
