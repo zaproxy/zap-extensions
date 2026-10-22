@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [77] - 2026-10-22
 ### Added
 - Server Side Technology Version with Known Vulnerabilities scan rule, which checks technology versions disclosed in response headers against known vulnerabilities, initially PHP versions against the php-src security advisories.
