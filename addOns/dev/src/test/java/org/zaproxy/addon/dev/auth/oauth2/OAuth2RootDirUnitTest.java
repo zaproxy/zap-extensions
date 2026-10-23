@@ -186,6 +186,17 @@ class OAuth2RootDirUnitTest {
     }
 
     @Test
+    void shouldIssueTokensForNullSubject() {
+        // Given
+        OAuth2RootDir dir = new OAuth2RootDir(mock(TestProxyServer.class), "oauth2");
+        // When
+        JSONObject tokens = dir.issueTokens(null, null, true);
+        // Then
+        assertThat(tokens.has("access_token"), is(equalTo(true)));
+        assertThat(tokens.has("refresh_token"), is(equalTo(true)));
+    }
+
+    @Test
     void shouldRotateRefreshTokenOnUseAndRejectItAfterwards() throws Exception {
         // Given
         OAuth2RootDir dir = new OAuth2RootDir(mock(TestProxyServer.class), "oauth2");

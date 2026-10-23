@@ -45,11 +45,13 @@ public abstract class TestAuthDirectory extends TestDirectory {
 
     public String getToken(String username) {
         String token = RandomStringUtils.secure().nextAlphanumeric(32);
-        sessions.put(token, username);
+        if (username != null) {
+            sessions.put(token, username);
+        }
         return token;
     }
 
     public String getUser(String token) {
-        return sessions.get(token);
+        return token == null ? null : sessions.get(token);
     }
 }

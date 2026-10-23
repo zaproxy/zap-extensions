@@ -559,7 +559,9 @@ public class OAuth2RootDir extends TestAuthDirectory {
         }
         if (includeRefreshToken) {
             String refreshToken = RandomStringUtils.secure().nextAlphanumeric(32);
-            refreshTokenToUser.put(refreshToken, subject);
+            if (subject != null) {
+                refreshTokenToUser.put(refreshToken, subject);
+            }
             response.put("refresh_token", refreshToken);
         }
         return response;
