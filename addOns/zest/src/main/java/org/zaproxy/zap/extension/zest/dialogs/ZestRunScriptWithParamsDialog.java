@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -103,14 +102,19 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
 
     @Override
     public void save() {
-        SwingUtilities.invokeLater(
-                () -> {
-                    try {
-                        runner.run(script, getParams());
-                    } catch (Exception e) {
-                        LOGGER.error(e.getMessage(), e);
-                    }
-                });
+        Map<String, String> params = getParams();
+        Thread thread =
+                new Thread(
+                        () -> {
+                            try {
+                                runner.run(script, params);
+                            } catch (Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        },
+                        "ZAP-ZestRunScriptWithParams");
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @Override
