@@ -22,17 +22,15 @@ package org.zaproxy.zap.extension.pscanrules;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.zaproxy.zap.extension.pscanrules.AdvisoryUtils.ParsedRange;
 import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.Severity;
-import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.VersionRange;
 import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.Vulnerability;
 
 /**
@@ -47,12 +45,7 @@ final class PhpAdvisories {
     static final String SOURCE_GENERATED = "github-advisories";
     static final String API_URL =
             "https://api.github.com/repos/php/php-src/security-advisories?state=published&per_page=100";
-    private static final int MAX_DESCRIPTION_LENGTH = 500;
 
-    /** Paragraphs shorter than this are greetings or similar noise rather than a description. */
-    private static final int MIN_PARAGRAPH_LENGTH = 30;
-
-    private static final List<String> PREFERRED_SECTIONS = List.of("summary", "impact");
     private static final Set<String> PHP_ITSELF = Set.of("php", "php-src");
     private static final Pattern VERSION = Pattern.compile("\\d+(?:\\.\\d+)*");
     private static final Pattern LESS_THAN = Pattern.compile("^<(?!=)\\s*(\\S+)$");
@@ -60,39 +53,6 @@ final class PhpAdvisories {
     private static final Pattern BOUNDED =
             Pattern.compile("^(>=?)\\s*(\\S+)\\s*,\\s*(<=?)\\s*(\\S+)$");
     private static final Pattern HYPHENATED = Pattern.compile("^(\\S+)\\s*-\\s*(\\S+)$");
-    private static final Pattern MARKDOWN_LINK = Pattern.compile("\\[([^]]*)]\\([^)]*\\)");
-    private static final Pattern MARKDOWN_EMPHASIS = Pattern.compile("[`*]");
-    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
-
-    /**
-     * A range parsed from an advisory, {@code introduced <= version < fixed}.
-     *
-     * @param introduced the first affected version
-     * @param fixed the first fixed version
-     * @param assumed whether the lower bound was not stated by the advisory and has been assumed
-     * @param fixedKnown whether the fixed version was stated by the advisory rather than computed
-     * @param openLowerBound whether the advisory gave no lower bound ({@code < X} or {@code <= X})
-     */
-    record ParsedRange(
-            String introduced,
-            String fixed,
-            boolean assumed,
-            boolean fixedKnown,
-            boolean openLowerBound) {
-
-        ParsedRange(String introduced, String fixed, boolean openLowerBound) {
-            this(introduced, fixed, false, true, openLowerBound);
-        }
-
-        ParsedRange withFixedKnown(List<String> patchedVersions) {
-            return new ParsedRange(
-                    introduced, fixed, assumed, patchedVersions.contains(fixed), openLowerBound);
-        }
-
-        VersionRange toVersionRange() {
-            return new VersionRange(introduced, fixed, assumed);
-        }
-    }
 
     private PhpAdvisories() {}
 
@@ -166,7 +126,7 @@ final class PhpAdvisories {
                         cve,
                         ghsa,
                         Optional.ofNullable(text(advisory, "summary")).orElse("").trim(),
-                        firstParagraph(
+                        AdvisoryUtils.firstParagraph(
                                 Optional.ofNullable(text(advisory, "description")).orElse("")),
                         severity,
                         cvssScore(advisory),
@@ -221,7 +181,10 @@ final class PhpAdvisories {
         if (m.matches()) {
             String upper = version(m.group(1));
             return List.of(
-                    new ParsedRange(branchStart(upper), fixed(upper, patchedVersions, upper), true)
+                    new ParsedRange(
+                                    AdvisoryUtils.branchStart(upper),
+                                    fixed(upper, patchedVersions, upper),
+                                    true)
                             .withFixedKnown(patchedVersions));
         }
         m = LESS_THAN_OR_EQUAL.matcher(text);
@@ -229,8 +192,8 @@ final class PhpAdvisories {
             String last = version(m.group(1));
             return List.of(
                     new ParsedRange(
-                                    branchStart(last),
-                                    fixed(last, patchedVersions, bumpPatch(last)),
+                                    AdvisoryUtils.branchStart(last),
+                                    fixed(last, patchedVersions, AdvisoryUtils.bumpPatch(last)),
                                     true)
                             .withFixedKnown(patchedVersions));
         }
@@ -238,8 +201,8 @@ final class PhpAdvisories {
         if (m.matches()) {
             String lower = version(m.group(2));
             String upper = version(m.group(4));
-            String introduced = ">".equals(m.group(1)) ? bumpPatch(lower) : lower;
-            String fixed = "<".equals(m.group(3)) ? upper : bumpPatch(upper);
+            String introduced = ">".equals(m.group(1)) ? AdvisoryUtils.bumpPatch(lower) : lower;
+            String fixed = "<".equals(m.group(3)) ? upper : AdvisoryUtils.bumpPatch(upper);
             return List.of(
                     new ParsedRange(introduced, fixed(upper, patchedVersions, fixed), false)
                             .withFixedKnown(patchedVersions));
@@ -249,12 +212,18 @@ final class PhpAdvisories {
             String lower = version(m.group(1));
             String last = version(m.group(2));
             return List.of(
-                    new ParsedRange(lower, fixed(last, patchedVersions, bumpPatch(last)), false)
+                    new ParsedRange(
+                                    lower,
+                                    fixed(last, patchedVersions, AdvisoryUtils.bumpPatch(last)),
+                                    false)
                             .withFixedKnown(patchedVersions));
         }
         if (VERSION.matcher(text).matches()) {
             return List.of(
-                    new ParsedRange(text, fixed(text, patchedVersions, bumpPatch(text)), false)
+                    new ParsedRange(
+                                    text,
+                                    fixed(text, patchedVersions, AdvisoryUtils.bumpPatch(text)),
+                                    false)
                             .withFixedKnown(patchedVersions));
         }
         throw new IllegalArgumentException("Unrecognised version range: '" + range + "'");
@@ -266,7 +235,7 @@ final class PhpAdvisories {
      */
     private static String fixed(String upper, List<String> patchedVersions, String computed) {
         return patchedVersions.stream()
-                .filter(p -> branchStart(p).equals(branchStart(upper)))
+                .filter(p -> AdvisoryUtils.branchStart(p).equals(AdvisoryUtils.branchStart(upper)))
                 .findFirst()
                 .orElse(computed);
     }
@@ -296,53 +265,19 @@ final class PhpAdvisories {
         }
     }
 
-    /** The first version of the branch, e.g. {@code 8.1.0} for {@code 8.1.29}. */
-    static String branchStart(String version) {
-        String[] parts = version.split("\\.");
-        return parts[0] + "." + (parts.length > 1 ? parts[1] : "0") + ".0";
-    }
-
-    /** Whether the version is the first of its branch, e.g. {@code 8.1.0} or {@code 8.1}. */
-    static boolean isBranchStart(String version) {
-        String[] parts = version.split("\\.");
-        return parts.length == 2 || parts.length == 3 && "0".equals(parts[2]);
-    }
-
-    /** The version with the patch component incremented, e.g. {@code 8.1.30} for {@code 8.1.29}. */
-    static String bumpPatch(String version) {
-        String[] parts = version.split("\\.");
-        long major = Long.parseLong(parts[0]);
-        long minor = parts.length > 1 ? Long.parseLong(parts[1]) : 0;
-        long patch = parts.length > 2 ? Long.parseLong(parts[2]) : 0;
-        return major + "." + minor + "." + (patch + 1);
-    }
-
     /**
-     * Sorts the ranges, fails on overlaps, and extends the lowest range down to version 0 when the
-     * advisory gave it no lower bound or a lower bound which is just the start of a branch, since
-     * older end-of-life branches are almost always affected too but are never listed.
+     * Sorts the ranges, failing on overlaps, and extends the lowest range down to version 0 when
+     * the advisory gave it no lower bound or a lower bound which is just the start of a branch,
+     * since older end-of-life branches are almost always affected too but are never listed.
      *
      * @param ranges the ranges of one advisory
      * @param id the advisory ID, for error messages
      * @return the consolidated ranges, lowest first
      */
     static List<ParsedRange> consolidate(List<ParsedRange> ranges, String id) {
-        List<ParsedRange> sorted =
-                ranges.stream()
-                        .sorted(
-                                (a, b) ->
-                                        KnownVulnerabilities.compareVersions(
-                                                a.introduced(), b.introduced()))
-                        .toList();
-        for (int i = 1; i < sorted.size(); i++) {
-            ParsedRange a = sorted.get(i - 1);
-            ParsedRange b = sorted.get(i);
-            if (KnownVulnerabilities.compareVersions(a.fixed(), b.introduced()) > 0) {
-                throw new IllegalArgumentException(id + ": overlapping ranges " + a + " and " + b);
-            }
-        }
+        List<ParsedRange> sorted = AdvisoryUtils.sorted(ranges, id);
         ParsedRange lowest = sorted.get(0);
-        if (!lowest.openLowerBound() && !isBranchStart(lowest.introduced())) {
+        if (!lowest.openLowerBound() && !AdvisoryUtils.isBranchStart(lowest.introduced())) {
             return sorted;
         }
         List<ParsedRange> result = new ArrayList<>(sorted);
@@ -351,81 +286,5 @@ final class PhpAdvisories {
                 new ParsedRange(
                         "0", lowest.fixed(), true, lowest.fixedKnown(), lowest.openLowerBound()));
         return result;
-    }
-
-    /**
-     * A brief plain text description taken from the markdown. The first real paragraph of the
-     * "Summary" section is preferred, then of the "Impact" section, then of the whole text.
-     * Headings, code blocks and very short paragraphs such as greetings are skipped, and the result
-     * is truncated to a sensible length.
-     *
-     * @param markdown the advisory description
-     * @return the description, empty if none could be found
-     */
-    static String firstParagraph(String markdown) {
-        Map<String, List<String>> sections = sections(markdown);
-        List<String> all = sections.values().stream().flatMap(List::stream).toList();
-        String text =
-                PREFERRED_SECTIONS.stream()
-                        .map(sections::get)
-                        .filter(java.util.Objects::nonNull)
-                        .flatMap(List::stream)
-                        .filter(p -> p.length() >= MIN_PARAGRAPH_LENGTH)
-                        .findFirst()
-                        .or(
-                                () ->
-                                        all.stream()
-                                                .filter(p -> p.length() >= MIN_PARAGRAPH_LENGTH)
-                                                .findFirst())
-                        .or(() -> all.stream().findFirst())
-                        .orElse("");
-        if (text.length() <= MAX_DESCRIPTION_LENGTH) {
-            return text;
-        }
-        int cut = text.lastIndexOf(' ', MAX_DESCRIPTION_LENGTH);
-        return text.substring(0, cut > 0 ? cut : MAX_DESCRIPTION_LENGTH) + "...";
-    }
-
-    /**
-     * Splits the markdown into sections keyed by lower case heading (empty before any heading),
-     * each a list of plain text paragraphs.
-     */
-    private static Map<String, List<String>> sections(String markdown) {
-        Map<String, List<String>> sections = new LinkedHashMap<>();
-        String[] section = {""};
-        boolean[] inCode = {false};
-        StringBuilder paragraph = new StringBuilder();
-        Runnable endParagraph =
-                () -> {
-                    if (!paragraph.toString().isBlank()) {
-                        sections.computeIfAbsent(section[0], k -> new ArrayList<>())
-                                .add(plainText(paragraph.toString()));
-                    }
-                    paragraph.setLength(0);
-                };
-        for (String raw : markdown.split("\\r?\\n")) {
-            String line = raw.trim();
-            if (line.startsWith("```")) {
-                endParagraph.run();
-                inCode[0] = !inCode[0];
-            } else if (inCode[0]) {
-                // Skip code
-            } else if (line.startsWith("#")) {
-                endParagraph.run();
-                section[0] = line.replaceFirst("^#+", "").trim().toLowerCase(Locale.ROOT);
-            } else if (line.isEmpty()) {
-                endParagraph.run();
-            } else {
-                paragraph.append(line).append(' ');
-            }
-        }
-        endParagraph.run();
-        return sections;
-    }
-
-    private static String plainText(String markdown) {
-        String text = MARKDOWN_LINK.matcher(markdown).replaceAll("$1");
-        text = MARKDOWN_EMPHASIS.matcher(text).replaceAll("");
-        return WHITESPACE.matcher(text).replaceAll(" ").trim();
     }
 }

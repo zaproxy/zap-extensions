@@ -39,6 +39,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -53,15 +54,17 @@ import java.util.stream.Stream;
 import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.Severity;
 import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.VersionRange;
 import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.Vulnerability;
+import org.zaproxy.zap.extension.pscanrules.ServerSideVersionScanRule.Technology;
 
 /**
- * Regenerates a known vulnerabilities JSON file from published GitHub security advisories, and
- * fills in the help pages listing its entries. Run from the {@code updatePhpKnownVulnerabilities}
- * and {@code generatePhpKnownVulnerabilitiesHelp} Gradle tasks, not at scan time.
+ * Regenerates the known vulnerabilities JSON files from the published advisories of each
+ * technology, and fills in the help pages listing their entries. Run from the {@code
+ * update<Technology>KnownVulnerabilities} and {@code generateKnownVulnerabilitiesHelp} Gradle
+ * tasks, not at scan time.
  *
  * <p>Entries with {@code "source": "manual"} in the existing file are preserved, as is its comment,
  * and the last updated date only changes when the vulnerabilities do. Set {@code GITHUB_TOKEN} to
- * authenticate the API calls.
+ * authenticate the GitHub API calls.
  */
 final class KnownVulnerabilitiesUpdater {
 
@@ -93,38 +96,41 @@ final class KnownVulnerabilitiesUpdater {
     private KnownVulnerabilitiesUpdater() {}
 
     /**
-     * Runs one of two commands: {@code update <json file>} regenerates the PHP known
-     * vulnerabilities file from the advisories, and {@code help <json file> <page file name> <help
-     * source dir> <help output dir>} fills in the vulnerabilities in each help page with that file
-     * name under the source directory, writing the pages to the same relative paths under the
-     * output directory, as done when the add-on is built.
+     * Runs one of two commands: {@code update <technology> <json file>} regenerates the known
+     * vulnerabilities file of the technology ({@code php} or {@code apache}) from its advisories,
+     * and {@code help <help source dir> <help output dir> <json file> <page file name>...} fills in
+     * the vulnerabilities in each help page with one of the given file names under the source
+     * directory, writing the pages to the same relative paths under the output directory, as done
+     * when the add-on is built.
      *
      * @param args the command and its arguments
      * @throws Exception if the advisories cannot be fetched or the files cannot be read or written
      */
     public static void main(String[] args) throws Exception {
-        if (args.length == 2 && "update".equals(args[0])) {
-            update(Paths.get(args[1]));
-        } else if (args.length == 5 && "help".equals(args[0])) {
-            generateHelp(Paths.get(args[1]), args[2], Paths.get(args[3]), Paths.get(args[4]));
+        Optional<Technology> tech =
+                args.length == 3 && "update".equals(args[0])
+                        ? Stream.of(Technology.values())
+                                .filter(t -> t.name().equalsIgnoreCase(args[1]))
+                                .findFirst()
+                        : Optional.empty();
+        if (tech.isPresent()) {
+            update(tech.get(), Paths.get(args[2]));
+        } else if (args.length >= 5 && args.length % 2 == 1 && "help".equals(args[0])) {
+            generateHelp(
+                    Paths.get(args[1]),
+                    Paths.get(args[2]),
+                    Arrays.copyOfRange(args, 3, args.length));
         } else {
             System.err.println(
-                    "Usage: KnownVulnerabilitiesUpdater update <json file> | help <json file> <page file name> <help source dir> <help output dir>");
+                    "Usage: KnownVulnerabilitiesUpdater update <technology> <json file> | help <help source dir> <help output dir> <json file> <page file name>...");
             System.exit(1);
         }
     }
 
-    private static void update(Path jsonFile) throws IOException, InterruptedException {
-        List<JsonNode> advisories =
-                fetchGitHubAdvisories(PhpAdvisories.API_URL, System.getenv(GITHUB_TOKEN_ENV));
+    private static void update(Technology tech, Path jsonFile)
+            throws IOException, InterruptedException {
         List<Vulnerability> generated =
-                advisories.stream()
-                        .map(PhpAdvisories::toVulnerability)
-                        .flatMap(Optional::stream)
-                        .toList();
-        System.out.printf(
-                "Fetched %d advisories, %d with a CVE.%n", advisories.size(), generated.size());
-
+                fetch(tech, HttpClient.newBuilder().connectTimeout(TIMEOUT).build());
         KnownVulnerabilities existing =
                 Files.exists(jsonFile)
                         ? KnownVulnerabilities.load(jsonFile)
@@ -136,30 +142,70 @@ final class KnownVulnerabilitiesUpdater {
                 updated.vulnerabilities().size(), updated.lastUpdated());
     }
 
-    private static void generateHelp(Path jsonFile, String pageName, Path sourceDir, Path outputDir)
+    /** Fetches and converts the advisories of the technology. */
+    private static List<Vulnerability> fetch(Technology tech, HttpClient client)
+            throws IOException, InterruptedException {
+        switch (tech) {
+            case PHP -> {
+                List<JsonNode> advisories =
+                        fetchGitHubAdvisories(
+                                client, PhpAdvisories.API_URL, System.getenv(GITHUB_TOKEN_ENV));
+                List<Vulnerability> generated =
+                        advisories.stream()
+                                .map(PhpAdvisories::toVulnerability)
+                                .flatMap(Optional::stream)
+                                .toList();
+                System.out.printf(
+                        "Fetched %d advisories, %d with a CVE.%n",
+                        advisories.size(), generated.size());
+                return generated;
+            }
+            case APACHE -> {
+                List<String> urls =
+                        ApacheHttpdAdvisories.recordUrls(
+                                get(client, ApacheHttpdAdvisories.JSON_DIR_URL, Map.of()).body());
+                System.out.printf("Fetching %d CVE records.%n", urls.size());
+                List<Vulnerability> generated = new ArrayList<>();
+                for (String url : urls) {
+                    ApacheHttpdAdvisories.toVulnerability(
+                                    MAPPER.readTree(get(client, url, Map.of()).body()))
+                            .ifPresent(generated::add);
+                }
+                return generated;
+            }
+        }
+        throw new IllegalArgumentException("Unsupported technology: " + tech);
+    }
+
+    private static void generateHelp(Path sourceDir, Path outputDir, String[] jsonFilesAndPageNames)
             throws IOException {
-        KnownVulnerabilities vulnerabilities = KnownVulnerabilities.load(jsonFile);
         String entryTemplate = readResource(HELP_ENTRY_TEMPLATE_RESOURCE);
-        List<Path> pages;
-        try (Stream<Path> files = Files.walk(sourceDir)) {
-            pages =
-                    files.filter(Files::isRegularFile)
-                            .filter(file -> file.getFileName().toString().equals(pageName))
-                            .toList();
+        for (int i = 0; i < jsonFilesAndPageNames.length; i += 2) {
+            KnownVulnerabilities vulnerabilities =
+                    KnownVulnerabilities.load(Paths.get(jsonFilesAndPageNames[i]));
+            String pageName = jsonFilesAndPageNames[i + 1];
+            List<Path> pages;
+            try (Stream<Path> files = Files.walk(sourceDir)) {
+                pages =
+                        files.filter(Files::isRegularFile)
+                                .filter(file -> file.getFileName().toString().equals(pageName))
+                                .toList();
+            }
+            if (pages.isEmpty()) {
+                throw new IOException(
+                        "No help page named " + pageName + " found under " + sourceDir);
+            }
+            for (Path page : pages) {
+                Path output = outputDir.resolve(sourceDir.relativize(page));
+                Files.createDirectories(output.getParent());
+                Files.writeString(
+                        output, toHelpHtml(Files.readString(page), entryTemplate, vulnerabilities));
+                System.out.printf("Wrote %s%n", output);
+            }
+            System.out.printf(
+                    "Filled in %d vulnerabilities in %d help page(s).%n",
+                    vulnerabilities.vulnerabilities().size(), pages.size());
         }
-        if (pages.isEmpty()) {
-            throw new IOException("No help page named " + pageName + " found under " + sourceDir);
-        }
-        for (Path page : pages) {
-            Path output = outputDir.resolve(sourceDir.relativize(page));
-            Files.createDirectories(output.getParent());
-            Files.writeString(
-                    output, toHelpHtml(Files.readString(page), entryTemplate, vulnerabilities));
-            System.out.printf("Wrote %s%n", output);
-        }
-        System.out.printf(
-                "Filled in %d vulnerabilities in %d help page(s).%n",
-                vulnerabilities.vulnerabilities().size(), pages.size());
     }
 
     /**
@@ -225,35 +271,37 @@ final class KnownVulnerabilitiesUpdater {
      * @throws IOException if a request fails or does not return 200
      * @throws InterruptedException if interrupted while waiting for a response
      */
-    static List<JsonNode> fetchGitHubAdvisories(String url, String token)
+    static List<JsonNode> fetchGitHubAdvisories(HttpClient client, String url, String token)
             throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newBuilder().connectTimeout(TIMEOUT).build();
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Accept", "application/vnd.github+json");
+        headers.put("X-GitHub-Api-Version", "2022-11-28");
+        if (token != null && !token.isBlank()) {
+            headers.put("Authorization", "Bearer " + token);
+        }
         List<JsonNode> all = new ArrayList<>();
         String next = url;
         while (next != null) {
-            HttpRequest.Builder request =
-                    HttpRequest.newBuilder(URI.create(next))
-                            .timeout(TIMEOUT)
-                            .header("Accept", "application/vnd.github+json")
-                            .header("X-GitHub-Api-Version", "2022-11-28");
-            if (token != null && !token.isBlank()) {
-                request.header("Authorization", "Bearer " + token);
-            }
-            HttpResponse<String> response =
-                    client.send(request.build(), BodyHandlers.ofString(StandardCharsets.UTF_8));
-            if (response.statusCode() != 200) {
-                throw new IOException(
-                        "GitHub API returned "
-                                + response.statusCode()
-                                + " for "
-                                + next
-                                + ": "
-                                + response.body());
-            }
+            HttpResponse<String> response = get(client, next, headers);
             MAPPER.readTree(response.body()).forEach(all::add);
             next = nextLink(response.headers().firstValue("Link").orElse(null));
         }
         return all;
+    }
+
+    /** Sends a GET request, failing unless the response status is 200. */
+    private static HttpResponse<String> get(
+            HttpClient client, String url, Map<String, String> headers)
+            throws IOException, InterruptedException {
+        HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(url)).timeout(TIMEOUT);
+        headers.forEach(request::header);
+        HttpResponse<String> response =
+                client.send(request.build(), BodyHandlers.ofString(StandardCharsets.UTF_8));
+        if (response.statusCode() != 200) {
+            throw new IOException(
+                    "GET " + url + " returned " + response.statusCode() + ": " + response.body());
+        }
+        return response;
     }
 
     /** The URL of the {@code rel="next"} link of a Link header, {@code null} if none. */
@@ -410,9 +458,7 @@ final class KnownVulnerabilitiesUpdater {
         } else {
             text = range.introduced() + " and later, before " + range.fixed();
         }
-        return range.assumed()
-                ? text + " (assumed, older branches are not listed in the advisory)"
-                : text;
+        return range.assumed() ? text + " (assumed, not confirmed by the advisory)" : text;
     }
 
     private static String escape(String text) {
