@@ -45,8 +45,8 @@ public interface GspmRule {
     /**
      * Returns the key identifying the source tool for this rule.
      *
-     * <p>Conventional values: {@code "ascan"}, {@code "pscan"}, {@code "client"}, {@code
-     * "websockets"}, {@code "ptk"}.
+     * <p>Conventional values: {@code "ascan"}, {@code "pscan"}, {@code "wspscan"}, {@code
+     * "client"}, {@code "ptk"}.
      */
     String getTool();
 
