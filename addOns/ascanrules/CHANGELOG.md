@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- False positives in the Spring Actuator Information Leak scan rule for JSON responses that are not health responses (Issue 8663).
 
 ## [84] - 2026-10-08
 ### Changed
