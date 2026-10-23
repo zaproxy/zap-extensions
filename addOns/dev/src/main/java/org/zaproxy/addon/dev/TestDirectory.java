@@ -193,7 +193,7 @@ public class TestDirectory extends TestNode {
      * @return the directory removed, or {@code null} if there was no such sub directory.
      */
     public TestDirectory removeDirectory(String name) {
-        TestDirectory td = this.subDirs.remove(name);
+        TestDirectory td = name == null ? null : this.subDirs.remove(name);
         if (td != null) {
             td.setParent(null);
         }
@@ -201,7 +201,7 @@ public class TestDirectory extends TestNode {
     }
 
     public TestDirectory getSubDir(String name) {
-        return this.subDirs.get(name);
+        return name == null ? null : this.subDirs.get(name);
     }
 
     public Set<String> getSubDirectoryNames() {
@@ -214,6 +214,6 @@ public class TestDirectory extends TestNode {
     }
 
     public TestPage getPage(String name) {
-        return this.pages.get(name);
+        return name == null ? null : this.pages.get(name);
     }
 }
