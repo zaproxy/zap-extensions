@@ -372,4 +372,95 @@ class KnownVulnerabilitiesUnitTest {
                         "CVE-2024-0002",
                         "CVE-2024-0005"));
     }
+
+    @ParameterizedTest
+    @CsvSource({"8.1.2, true", "8.1.0, true", "8.1, false", "8, false", "8.1.2.3, true"})
+    void shouldTellCompleteVersions(String version, boolean expected) {
+        assertThat(KnownVulnerabilities.isCompleteVersion(version), is(expected));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"8.1, 8.2", "8, 9", "2.4, 2.5", "2.9, 2.10"})
+    void shouldGetNextVersionAfterIncompleteVersion(String version, String expected) {
+        assertThat(KnownVulnerabilities.nextVersionAfter(version), is(expected));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "8.1.0, 8.1.5, 8.1, true",
+        "8.1.3, 8.1.5, 8.1, true",
+        "8.0.0, 8.1.1, 8.1, true",
+        "8.0.0, 8.1.0, 8.1, false",
+        "8.2.0, 8.2.9, 8.1, false",
+        "8.2.0, 8.2.9, 8, true",
+        "8.2.0, , 8.1, false",
+        "8.0.0, , 8.1, true",
+        "0, 8.0.30, 8.1, false",
+        "0, 8.0.30, 8, true",
+    })
+    void shouldMatchIncompleteVersionAgainstAnyReleaseInRange(
+            String introduced, String fixed, String version, boolean expected) {
+        // Given
+        Vulnerability vulnerability =
+                new Vulnerability(
+                        "CVE-2024-0001",
+                        null,
+                        null,
+                        null,
+                        "low",
+                        null,
+                        null,
+                        List.of(new VersionRange(introduced, fixed, false)),
+                        null,
+                        null,
+                        null);
+        // When / Then
+        assertThat(vulnerability.affects(version), is(expected));
+    }
+
+    @Test
+    void shouldPreferConfirmedRangeForIncompleteVersion() {
+        // Given
+        Vulnerability vulnerability =
+                new Vulnerability(
+                        "CVE-2024-0002",
+                        null,
+                        null,
+                        null,
+                        "critical",
+                        null,
+                        null,
+                        List.of(
+                                new VersionRange("0", "8.1.3", true),
+                                new VersionRange("8.2.0", "8.2.9", false)),
+                        null,
+                        null,
+                        null);
+        // When / Then
+        assertThat(vulnerability.matchingRange("8").orElseThrow().assumed(), is(false));
+        assertThat(vulnerability.matchingRange("8.1").orElseThrow().assumed(), is(true));
+        assertThat(vulnerability.matchingRange("8.3").isPresent(), is(false));
+    }
+
+    @Test
+    void shouldDropVulnerabilityWithEmptyRangeOnLoad() throws Exception {
+        // Given
+        Path file =
+                Files.writeString(
+                        tempDir.resolve("empty-range.json"),
+                        """
+                        { "vulnerabilities": [
+                          { "cve": "CVE-2001-1342", "severity": "low",
+                            "affected": [ { "introduced": "1.3.20", "fixed": "1.3.20" } ] },
+                          { "cve": "CVE-2001-0001", "severity": "low",
+                            "affected": [ { "introduced": "1.3.19", "fixed": "1.3.20" } ] }
+                        ] }
+                        """);
+        // When
+        KnownVulnerabilities known = KnownVulnerabilities.load(file);
+        // Then
+        assertThat(
+                known.vulnerabilities().stream().map(Vulnerability::cve).toList(),
+                contains("CVE-2001-0001"));
+    }
 }

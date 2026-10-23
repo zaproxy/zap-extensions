@@ -77,63 +77,89 @@ spotless {
 }
 
 val knownVulnerabilitiesUpdater = "org.zaproxy.zap.extension.pscanrules.KnownVulnerabilitiesUpdater"
-val phpKnownVulnerabilitiesJson = file("src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/php-known-vulnerabilities.json")
-val phpKnownVulnerabilitiesPage = "php-known-vulnerabilities.html"
+val knownVulnerabilitiesResources = "src/main/resources/org/zaproxy/zap/extension/pscanrules/resources"
 val mainSourceSet = project.the<SourceSetContainer>()["main"]
 val javaHelpDir = file("src/main/javahelp")
 val generatedHelpDir = layout.buildDirectory.dir("generated/javahelp")
 
-tasks.register<JavaExec>("updatePhpKnownVulnerabilities") {
+// The technologies checked by the ServerSideVersionScanRule: the ID accepted by the updater, the name used in
+// the task names, the data file and the help page which lists its vulnerabilities.
+data class KnownVulnerabilitiesTechnology(val id: String, val name: String, val source: String, val json: File, val page: String)
+
+val knownVulnerabilitiesTechnologies =
+    listOf(
+        KnownVulnerabilitiesTechnology(
+            "php",
+            "Php",
+            "the php-src security advisories",
+            file("$knownVulnerabilitiesResources/php-known-vulnerabilities.json"),
+            "php-known-vulnerabilities.html",
+        ),
+        KnownVulnerabilitiesTechnology(
+            "apache",
+            "Apache",
+            "the Apache HTTP Server CVE records",
+            file("$knownVulnerabilitiesResources/apache-known-vulnerabilities.json"),
+            "apache-known-vulnerabilities.html",
+        ),
+    )
+
+val updateKnownVulnerabilities by tasks.registering {
     group = "ZAP Misc"
-    description = "Regenerates the PHP known vulnerabilities file from the php-src security advisories."
-    classpath = mainSourceSet.output + mainSourceSet.compileClasspath
-    mainClass.set(knownVulnerabilitiesUpdater)
-    args("update", phpKnownVulnerabilitiesJson.path)
+    description = "Regenerates the known vulnerabilities files of all the technologies from their sources."
+}
+
+knownVulnerabilitiesTechnologies.forEach { tech ->
+    val updateTask =
+        tasks.register<JavaExec>("update${tech.name}KnownVulnerabilities") {
+            group = "ZAP Misc"
+            description = "Regenerates the ${tech.name} known vulnerabilities file from ${tech.source}."
+            classpath = mainSourceSet.output + mainSourceSet.compileClasspath
+            mainClass.set(knownVulnerabilitiesUpdater)
+            args("update", tech.id, tech.json.path)
+        }
+    updateKnownVulnerabilities { dependsOn(updateTask) }
 }
 
 // The help pages, including the translated ones, contain just the surrounding text and tags which are
 // replaced with the vulnerability details when the add-on is built.
-val generatePhpKnownVulnerabilitiesHelp by tasks.registering(JavaExec::class) {
+val generateKnownVulnerabilitiesHelp by tasks.registering(JavaExec::class) {
     group = "build"
-    description = "Fills in the PHP known vulnerabilities help pages from the vulnerabilities file."
+    description = "Fills in the known vulnerabilities help pages from the vulnerabilities files."
     classpath = mainSourceSet.output + mainSourceSet.compileClasspath
     mainClass.set(knownVulnerabilitiesUpdater)
-    inputs.file(phpKnownVulnerabilitiesJson)
-    inputs.file(file("src/main/resources/org/zaproxy/zap/extension/pscanrules/resources/known-vulnerabilities-help-entry-template.html"))
-    inputs.files(fileTree(javaHelpDir) { include("**/$phpKnownVulnerabilitiesPage") })
+    inputs.files(knownVulnerabilitiesTechnologies.map { it.json })
+    inputs.file(file("$knownVulnerabilitiesResources/known-vulnerabilities-help-entry-template.html"))
+    inputs.files(fileTree(javaHelpDir) { include(knownVulnerabilitiesTechnologies.map { "**/${it.page}" }) })
     outputs.dir(generatedHelpDir)
     doFirst { delete(generatedHelpDir) }
-    args(
-        "help",
-        phpKnownVulnerabilitiesJson.path,
-        phpKnownVulnerabilitiesPage,
-        javaHelpDir.path,
-        generatedHelpDir.get().asFile.path,
-    )
+    args("help", javaHelpDir.path, generatedHelpDir.get().asFile.path)
+    knownVulnerabilitiesTechnologies.forEach { args(it.json.path, it.page) }
 }
 
 // The JavaHelp indexer strips a single directory prefix, that of the helpset, from the indexed paths, so the
 // generated pages are indexed from a merged copy of the help directory rather than from a second source root.
 val mergedHelpDir = layout.buildDirectory.dir("merged/javahelp")
-val mergePhpKnownVulnerabilitiesHelp by tasks.registering(Sync::class) {
+val mergeKnownVulnerabilitiesHelp by tasks.registering(Sync::class) {
     description = "Merges the help directory and the generated help pages, for indexing."
-    from(javaHelpDir) { exclude("**/$phpKnownVulnerabilitiesPage") }
+    from(javaHelpDir) { exclude(knownVulnerabilitiesTechnologies.map { "**/${it.page}" }) }
     from(generatedHelpDir)
     into(mergedHelpDir)
-    dependsOn(generatePhpKnownVulnerabilitiesHelp)
+    dependsOn(generateKnownVulnerabilitiesHelp)
 }
 
 tasks.withType<org.zaproxy.gradle.addon.jh.tasks.JavaHelpIndexer>().configureEach {
     val helpsetPath = javaHelpDir.toPath().relativize(helpset.get().asFile.toPath())
     helpset.set(mergedHelpDir.map { it.file(helpsetPath.toString()) })
     setSource(mergedHelpDir.map { it.dir(helpsetPath.parent.toString()) })
-    dependsOn(mergePhpKnownVulnerabilitiesHelp)
+    dependsOn(mergeKnownVulnerabilitiesHelp)
 }
 
 tasks.named<Jar>("jarZapAddOn") {
-    exclude { it.name == phpKnownVulnerabilitiesPage && it.file.toPath().startsWith(javaHelpDir.toPath()) }
+    val pages = knownVulnerabilitiesTechnologies.map { it.page }
+    exclude { it.name in pages && it.file.toPath().startsWith(javaHelpDir.toPath()) }
     from(generatedHelpDir)
-    dependsOn(generatePhpKnownVulnerabilitiesHelp)
+    dependsOn(generateKnownVulnerabilitiesHelp)
 }
 
 val jsLexerPkg = "org.zaproxy.zap.extension.pscanrules.antlr"

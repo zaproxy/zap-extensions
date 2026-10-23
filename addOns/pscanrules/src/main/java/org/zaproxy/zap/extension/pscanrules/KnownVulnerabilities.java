@@ -102,15 +102,29 @@ record KnownVulnerabilities(
             String published,
             String source) {
 
+        /**
+         * Whether the version is affected. An incomplete version, e.g. {@code 8.1}, is affected
+         * when any version starting with it is, e.g. any {@code 8.1.x}.
+         */
         boolean affects(String version) {
             return matchingRange(version).isPresent();
         }
 
-        /** Returns the range which includes the given version, if any. */
+        /**
+         * Returns the range which includes the given version, if any; for an incomplete version a
+         * range which includes any version starting with it, a confirmed one if possible.
+         */
         Optional<VersionRange> matchingRange(String version) {
-            return affected == null
-                    ? Optional.empty()
-                    : affected.stream().filter(r -> r.contains(version)).findFirst();
+            if (affected == null) {
+                return Optional.empty();
+            }
+            if (isCompleteVersion(version)) {
+                return affected.stream().filter(r -> r.contains(version)).findFirst();
+            }
+            String next = nextVersionAfter(version);
+            return affected.stream()
+                    .filter(r -> r.intersects(version, next))
+                    .min(Comparator.comparing(VersionRange::assumed));
         }
 
         /** The severity, {@link Severity#LOW} when missing or not recognised. */
@@ -175,20 +189,29 @@ record KnownVulnerabilities(
      *
      * @param introduced the first affected version
      * @param fixed the first fixed version, may be {@code null}
-     * @param assumed {@code true} when {@code introduced} was not stated by the advisory but
-     *     assumed, i.e. older end-of-life branches are presumed affected
+     * @param assumed {@code true} when the advisory did not confirm the range: for PHP the lower
+     *     bound was assumed, as older end-of-life branches are presumed affected; for Apache HTTP
+     *     Server the versions were listed as only possibly affected
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     record VersionRange(
             String introduced, String fixed, @JsonInclude(Include.NON_DEFAULT) boolean assumed) {
 
         private boolean isValid() {
-            return isVersion(introduced) && (fixed == null || isVersion(fixed));
+            return isVersion(introduced)
+                    && (fixed == null
+                            || isVersion(fixed) && compareVersions(introduced, fixed) < 0);
         }
 
         boolean contains(String version) {
             return compareVersions(version, introduced) >= 0
                     && (fixed == null || compareVersions(version, fixed) < 0);
+        }
+
+        /** Whether the range includes any version {@code from <= version < toExclusive}. */
+        boolean intersects(String from, String toExclusive) {
+            return compareVersions(introduced, toExclusive) < 0
+                    && (fixed == null || compareVersions(fixed, from) > 0);
         }
     }
 
@@ -262,7 +285,10 @@ record KnownVulnerabilities(
         }
     }
 
-    /** Returns the vulnerabilities which affect the given version, most severe first. */
+    /**
+     * Returns the vulnerabilities which affect the given version, most severe first. For an
+     * incomplete version, e.g. {@code 8.1}, those which affect any version starting with it.
+     */
     List<Vulnerability> getVulnerabilities(String version) {
         return vulnerabilities.stream()
                 .filter(p -> p.affects(version))
@@ -270,10 +296,6 @@ record KnownVulnerabilities(
                 .toList();
     }
 
-    /**
-     * Compares two dotted numeric versions (e.g. {@code 8.1.29}), treating missing trailing
-     * components as zero, so {@code 8.1} equals {@code 8.1.0}.
-     */
     /** Matches a dotted numeric version with components which fit in a {@code long}. */
     private static final Pattern VERSION_PATTERN = Pattern.compile("\\d{1,18}(?:\\.\\d{1,18})*");
 
@@ -281,6 +303,25 @@ record KnownVulnerabilities(
         return version != null && VERSION_PATTERN.matcher(version).matches();
     }
 
+    /** Whether the version has all three components, e.g. {@code 8.1.2} rather than {@code 8.1}. */
+    static boolean isCompleteVersion(String version) {
+        return version.split("\\.").length >= 3;
+    }
+
+    /**
+     * The first version after all those starting with the given incomplete version, e.g. {@code
+     * 8.2} for {@code 8.1} and {@code 9} for {@code 8}.
+     */
+    static String nextVersionAfter(String version) {
+        String[] parts = version.split("\\.");
+        parts[parts.length - 1] = String.valueOf(Long.parseLong(parts[parts.length - 1]) + 1);
+        return String.join(".", parts);
+    }
+
+    /**
+     * Compares two dotted numeric versions (e.g. {@code 8.1.29}), treating missing trailing
+     * components as zero, so {@code 8.1} equals {@code 8.1.0}.
+     */
     static int compareVersions(String a, String b) {
         String[] pa = a.split("\\.");
         String[] pb = b.split("\\.");
