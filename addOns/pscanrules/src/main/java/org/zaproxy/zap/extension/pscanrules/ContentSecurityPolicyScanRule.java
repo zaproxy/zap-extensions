@@ -46,6 +46,7 @@ import org.htmlunit.csp.Policy.PolicyErrorConsumer;
 import org.htmlunit.csp.Policy.PolicyListErrorConsumer;
 import org.htmlunit.csp.PolicyList;
 import org.htmlunit.csp.PolicyListInOrigin;
+import org.htmlunit.csp.directive.HostSourceDirective;
 import org.htmlunit.csp.directive.SourceExpressionDirective;
 import org.htmlunit.csp.url.URI;
 import org.htmlunit.csp.url.URLWithScheme;
@@ -92,13 +93,13 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
     private static final String FRAME_ANCESTORS = "frame-ancestors";
     // Per:
     // https://developers.google.com/web/fundamentals/security/csp#policy_applies_to_a_wide_variety_of_resources as of 20200618
-    // 20250131 "base-uri" is not included. Per MDN if it isn't specified then the <base> value is
-    // used, if no base value then location.href "plugin-types" is not included, the directive has
-    // been deprecated. "report-uri" is not included as it has no literal impact. "sandbox" does not
-    // fallback, but excluding it does not necessarily make anything 'more' vulnerable, it's use
-    // simply allows more detailed control of what embedded content can do.
+    // "plugin-types" is not included, the directive has been deprecated. "report-uri" is not
+    // included as it has no literal impact. "sandbox" does not fallback, but excluding it does not
+    // necessarily make anything 'more' vulnerable, it's use simply allows more detailed control of
+    // what embedded content can do.
+    private static final String BASE_URI = "base-uri";
     private static final List<String> DIRECTIVES_WITHOUT_FALLBACK =
-            List.of("form-action", FRAME_ANCESTORS);
+            List.of("form-action", FRAME_ANCESTORS, BASE_URI);
 
     private static final String RAND_FQDN = "7963124546083337415.owasp.org";
     private static final Optional<URLWithScheme> HTTP_URI =
@@ -503,6 +504,11 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         }
         if (checkPolicy(pol::allowsFormAction)) {
             allowedSources.add("form-action");
+        }
+        // base-uri has no query method; missing or wildcard in every policy allows any <base>
+        if (pol.getPolicies().stream()
+                .allMatch(p -> p.baseUri().map(HostSourceDirective::star).orElse(true))) {
+            allowedSources.add(BASE_URI);
         }
 
         return allowedSources;
