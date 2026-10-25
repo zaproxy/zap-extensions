@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update dependencies.
 - Maintenance changes.
+- Update solutions and references for 'HTTP Request Splitting' and 'HTTP Response Splitting' vulnerabilities (Issue 8056).
 
 ## [1.44.0] - 2026-08-26
 ### Added

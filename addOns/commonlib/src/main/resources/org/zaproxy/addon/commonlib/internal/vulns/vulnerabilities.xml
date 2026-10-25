@@ -673,11 +673,19 @@ When exchanging data between components, ensure that both components are using t
 <vuln_item_wasc_24>
 	<alert>HTTP Request Splitting</alert>
 	<desc>HTTP Request Splitting is an attack that enables forcing the browser to send arbitrary HTTP requests, inflicting XSS and poisoning the browser's cache. The essence of the attack is the ability of the attacker, once the victim (browser) is forced to load the attacker's malicious HTML page, to manipulate one of the browser's functions to send 2 HTTP requests instead of one HTTP request. Two such mechanisms have been exploited to date: the XmlHttpRequest object (XHR for short) and the HTTP digest authentication mechanism. For this attack to work, the browser must use a forward HTTP proxy (not all of them "support" this attack), or the attack must be carried out against a host located on the same IP (from the browser's perspective) with the attacker's machine.</desc>
-	<solution>Avoid using CRLF as a special sequence.
+	<solution>Phase: Architecture and Design
+- Utilize modern HTTP client libraries and frameworks that enforce strict RFC compliance and automatically disallow or strip CR (0x0D) and LF (0x0A) control characters in request headers and parameters.
+- Avoid passing raw, unvalidated user input into protocol-level HTTP headers or request lines.
 
-Appropriately filter or quote CRLF sequences in user-controlled input.</solution>
+Phase: Implementation
+- Strictly sanitize and validate all user-supplied data used in HTTP requests using an allowlist approach (e.g., alphanumeric and safe characters only).
+- Strip or reject any input containing carriage return (CR / \r / %0D) and line feed (LF / \n / %0A) characters before constructing HTTP requests.
+- Encode parameter values appropriately according to RFC standards (e.g., URL encoding) when user input must be included in request URLs or headers.
+- Where supported, use HTTP/2 or HTTP/3 for client-to-proxy and microservice communications, which use binary framing instead of plaintext delimiters, mitigating CRLF-based splitting.</solution>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html</reference>
 	<reference>https://owasp.org/www-community/vulnerabilities/CRLF_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/93.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/113.html</reference>
 	<reference>https://portswigger.net/web-security/request-smuggling</reference>
 </vuln_item_wasc_24>
 
@@ -692,9 +700,21 @@ Appropriately filter or quote CRLF sequences in user-controlled input.</solution
 The essence of HTTP Response Splitting is the attacker's ability to send a single HTTP request that forces the web server to form an output stream, which is then interpreted by the target as two HTTP responses instead of one response, in the normal case. The first response may be partially controlled by the attacker, but this is less important. What is material is that the attacker completely controls the form of the second response from the HTTP status line to the last byte of the HTTP response body. Once this is possible, the attacker realizes the attack by sending two requests through the target. The first one invokes two responses from the web server, and the second request would typically be to some "innocent" resource on the web server. However, the second request would be matched, by the target, to the second HTTP response, which is fully controlled by the attacker. The attacker, therefore, tricks the target into believing that a particular resource on the web server (designated by the second request) is the server's HTTP response (server content), while it is in fact some data, which is forged by the attacker through the web server - this is the second response.
 
 HTTP Response Splitting attacks take place where the server script embeds user data in HTTP response headers. This typically happens when the script embeds user data in the redirection URL of a redirection response (HTTP status code 3xx), or when the script embeds user data in a cookie value or name when the response sets a cookie.</desc>
-	<solution>Construct HTTP headers very carefully, avoiding the use of non-validated input data.</solution>
+	<solution>Phase: Architecture and Design
+- Use modern web application servers and frameworks that automatically validate response headers and reject or strip CRLF injection attempts.
+- Do not construct response headers directly from untrusted user input unless absolutely necessary.
+- Adopt HTTP/2 or HTTP/3 protocols, which use binary framing to encode headers and message boundaries, eliminating text-based CRLF response splitting.
+
+Phase: Implementation
+- Validate and sanitize all user input before including it in HTTP response headers (such as redirection targets, cookie names/values, or custom headers).
+- Explicitly reject or strip all carriage return (CR / \r / %0D) and line feed (LF / \n / %0A) control characters from any data written to HTTP response headers.
+- Use built-in framework redirect functions (e.g., response.sendRedirect) and cookie setting APIs rather than manually assembling raw HTTP header strings.
+- Implement strict allowlists for destination URLs used in redirection headers to prevent open redirects and response header manipulation.</solution>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html</reference>
 	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
+	<reference>https://cwe.mitre.org/data/definitions/93.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/113.html</reference>
+	<reference>https://capec.mitre.org/data/definitions/34.html</reference>
 </vuln_item_wasc_25>
 
 <vuln_items>wasc_26</vuln_items>
