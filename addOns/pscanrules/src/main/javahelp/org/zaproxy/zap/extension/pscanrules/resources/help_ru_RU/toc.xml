@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
 		<tocitem text="Дополнения" tocid="addons">
-			<tocitem text="Правила Пассивного Сканирования" image="pscanrules-icon" target="pscanrules"/>
+			<tocitem text="Правила Пассивного Сканирования" image="pscanrules-icon" target="pscanrules">
+				<tocitem text="PHP Known Vulnerabilities" target="pscanrules.phpknownvulnerabilities"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

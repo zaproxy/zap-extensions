@@ -6,4 +6,5 @@
 <map version="1.0">
 	<mapID target="pscanrules-icon" url="contents/images/pscan.png" />
     <mapID target="pscanrules" url="contents/pscanrules.html" />
+    <mapID target="pscanrules.phpknownvulnerabilities" url="contents/php-known-vulnerabilities.html" />
 </map>
