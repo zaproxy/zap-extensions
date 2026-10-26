@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Zap - Guia do Usuário" tocid="toplevelitem">
 		<tocitem text="Complementos" tocid="addons">
-			<tocitem text="Regras de varredura passiva" image="pscanrules-icon" target="pscanrules"/>
+			<tocitem text="Regras de varredura passiva" image="pscanrules-icon" target="pscanrules">
+				<tocitem text="PHP Known Vulnerabilities" target="pscanrules.phpknownvulnerabilities"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>
