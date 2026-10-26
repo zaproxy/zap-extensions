@@ -807,6 +807,50 @@ class HttpSenderImplUnitTest {
             assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
         }
 
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldReceiveResponseWithLargeHeaderValue(SenderMethod method) throws Exception {
+            // Given
+            String bigValue = "a".repeat(9000);
+            String responseHeader =
+                    "HTTP/1.1 200 OK\r\nX-Big: " + bigValue + "\r\ncontent-length: 0\r\n\r\n";
+            server.setHttpMessageHandler((ctx, msg) -> msg.setResponseHeader(responseHeader));
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            assertThat(message.getResponseHeader().getHeader("X-Big"), is(equalTo(bigValue)));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldReceiveResponseWithManyHeaders(SenderMethod method) throws Exception {
+            // Given
+            int headerCount = 150;
+            StringBuilder responseHeader = new StringBuilder("HTTP/1.1 200 OK\r\n");
+            for (int i = 0; i < headerCount; i++) {
+                responseHeader
+                        .append("X-Header-")
+                        .append(i)
+                        .append(": value")
+                        .append(i)
+                        .append("\r\n");
+            }
+            responseHeader.append("content-length: 0\r\n\r\n");
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> msg.setResponseHeader(responseHeader.toString()));
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            assertThat(message.getResponseHeader().getHeader("X-Header-0"), is(equalTo("value0")));
+            assertThat(
+                    message.getResponseHeader().getHeader("X-Header-" + (headerCount - 1)),
+                    is(equalTo("value" + (headerCount - 1))));
+        }
+
         @Test
         void shouldBeDownloadedToFile(@TempDir Path dir) throws Exception {
             // Given

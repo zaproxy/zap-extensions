@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update dependency.
 
+### Fixed
+- Restore unbounded HTTP/1 response header size/count, regressed since the HTTP client update in version 0.30.0 (Issue 9509).
+
 ## [0.31.0] - 2026-10-16
 ### Fixed
 - Reinstate NTLM authentication (Issue 9498).
