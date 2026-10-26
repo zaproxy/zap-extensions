@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.selenium.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -99,6 +101,40 @@ class FirefoxProfileManagerUnitTest {
 
         // Then
         assertThat(f, is(nullValue()));
+    }
+
+    @Test
+    void shouldReturnNullIfProfileDirectoryCannotBeListed() {
+        // Given
+        Path path = mock(Path.class);
+        File dir = mock(File.class);
+        given(path.toFile()).willReturn(dir);
+        given(dir.isDirectory()).willReturn(true);
+        given(dir.list()).willReturn(null);
+        fpm.setProfilesDirectory(path);
+
+        // When
+        Path f = fpm.getProfileDirectory("profile1");
+
+        // Then
+        assertThat(f, is(nullValue()));
+    }
+
+    @Test
+    void shouldReturnNoProfilesIfProfileDirectoryCannotBeListed() {
+        // Given
+        Path path = mock(Path.class);
+        File dir = mock(File.class);
+        given(path.toFile()).willReturn(dir);
+        given(dir.isDirectory()).willReturn(true);
+        given(dir.list()).willReturn(null);
+        fpm.setProfilesDirectory(path);
+
+        // When
+        List<String> profiles = fpm.getProfiles();
+
+        // Then
+        assertThat(profiles, is(empty()));
     }
 
     @Test
