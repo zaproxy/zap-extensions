@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add-ons can now be notified of requests that fail to send, such as those failing with a DNS error, connection refused or a timeout, so they can record them.
 
+### Changed
+- Update dependency.
 
 ## [0.31.0] - 2026-10-16
 ### Fixed
