@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.32.0] - 2026-10-26
 ### Added
 - Add-ons can now be notified of requests that fail to send, such as those failing with a DNS error, connection refused or a timeout, so they can record them.
 
@@ -315,6 +315,7 @@ would not be cleared when reusing the same message.
   - Options panel to manage the root CA certificate and issued certificates.
   - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
 
+[0.32.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.32.0
 [0.31.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.31.0
 [0.30.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.29.0
