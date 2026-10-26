@@ -124,6 +124,9 @@ public class HttpSenderApache
 
     private static final int BUFFER_SIZE = 4096;
 
+    private static final Http1Config HTTP1_CONFIG =
+            Http1Config.custom().setMaxLineLength(-1).setMaxHeaderCount(-1).build();
+
     private static final List<String> PREFERRED_AUTH_SCHEMES =
             List.of(
                     StandardAuthScheme.SPNEGO,
@@ -195,9 +198,10 @@ public class HttpSenderApache
 
         managedHttpClientConnectionFactory =
                 ManagedHttpClientConnectionFactory.builder()
+                        .http1Config(HTTP1_CONFIG)
                         .charCodingConfig(charCodingConfig)
                         .outgoingContentLengthStrategy(outgoingContentStrategy)
-                        .responseParserFactory(new LenientMessageParserFactory(Http1Config.DEFAULT))
+                        .responseParserFactory(new LenientMessageParserFactory(HTTP1_CONFIG))
                         .requestWriterFactory(
                                 () ->
                                         new DefaultHttpRequestWriter() {
