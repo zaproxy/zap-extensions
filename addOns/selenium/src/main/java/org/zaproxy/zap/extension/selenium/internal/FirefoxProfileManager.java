@@ -89,6 +89,11 @@ public class FirefoxProfileManager implements ProfileManager {
         this.profileDirectory = dir;
     }
 
+    private static String[] listNames(File dir) {
+        String[] names = dir.list();
+        return names != null ? names : new String[0];
+    }
+
     /**
      * Only for use in unit tests
      *
@@ -113,7 +118,7 @@ public class FirefoxProfileManager implements ProfileManager {
             // Firefox profiles are 8 random characters followed by a dot and then the profile name
             Pattern p = Pattern.compile(PROFILE_NAME_REGEX);
             profiles =
-                    Arrays.stream(profileDir.toFile().list())
+                    Arrays.stream(listNames(profileDir.toFile()))
                             .filter(n -> new File(getProfilesDirectory().toFile(), n).isDirectory())
                             .filter(p.asPredicate())
                             .map(s -> s.substring(9))
@@ -132,7 +137,7 @@ public class FirefoxProfileManager implements ProfileManager {
         }
         Pattern p = Pattern.compile(PROFILE_NAME_REGEX + profileName + "$");
         Optional<String> fullName =
-                Arrays.stream(profileDir.toFile().list()).filter(p.asPredicate()).findFirst();
+                Arrays.stream(listNames(profileDir.toFile())).filter(p.asPredicate()).findFirst();
         if (fullName.isPresent()) {
             Path dir = profileDir.resolve(fullName.get());
             LOGGER.debug("Profile directory found for {} under: {}", profileName, dir);

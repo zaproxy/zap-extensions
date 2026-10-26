@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Fixed
+- Prevent an error on start up when the Firefox profiles directory cannot be read (e.g. due to a permissions issue), which could prevent other add-ons from loading.
 
 ## [15.59.0] - 2026-10-15
 ### Changed
