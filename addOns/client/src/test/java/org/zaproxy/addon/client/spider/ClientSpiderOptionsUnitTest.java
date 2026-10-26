@@ -62,7 +62,7 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
                 options.getActionWaitTimeInSecs(),
                 is(ClientSpiderOptions.DEFAULT_ACTION_WAIT_TIME));
         assertThat(options.getScopeCheck(), is(ClientSpiderOptions.ScopeCheck.getDefault()));
-        assertThat(options.getAdaptiveTimeout(), is(15_000));
+        assertThat(options.getAdaptiveTimeout(), is(ClientSpiderOptions.DEFAULT_ADAPTIVE_TIMEOUT));
         assertThat(options.getAdaptiveQuiesceFirstAccess(), is(2_500));
     }
 
@@ -119,6 +119,44 @@ class ClientSpiderOptionsUnitTest extends TestUtils {
         assertThat(config.getProperty("client.threads"), is(nullValue()));
         // Pscan key left untouched
         assertThat(config.getProperty("client.pscanEnabled"), is(false));
+    }
+
+    @Test
+    void shouldUpdateOldDefaultAdaptiveTimeout() {
+        // Given
+        config.setProperty("client.spider[@version]", 1);
+        config.setProperty("client.spider.adaptive.timeout", 15_000);
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.getAdaptiveTimeout(), is(30_000));
+        assertThat(config.getProperty("client.spider.adaptive.timeout"), is(30_000));
+        assertThat(
+                config.getProperty("client.spider[@version]"),
+                is(ClientSpiderOptions.CURRENT_CONFIG_VERSION));
+    }
+
+    @Test
+    void shouldNotUpdateCustomAdaptiveTimeout() {
+        // Given
+        config.setProperty("client.spider[@version]", 1);
+        config.setProperty("client.spider.adaptive.timeout", 20_000);
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.getAdaptiveTimeout(), is(20_000));
+        assertThat(config.getProperty("client.spider.adaptive.timeout"), is(20_000));
+    }
+
+    @Test
+    void shouldNotUpdateAdaptiveTimeoutIfCurrentVersion() {
+        // Given
+        config.setProperty("client.spider[@version]", ClientSpiderOptions.CURRENT_CONFIG_VERSION);
+        config.setProperty("client.spider.adaptive.timeout", 15_000);
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.getAdaptiveTimeout(), is(15_000));
     }
 
     @Test
