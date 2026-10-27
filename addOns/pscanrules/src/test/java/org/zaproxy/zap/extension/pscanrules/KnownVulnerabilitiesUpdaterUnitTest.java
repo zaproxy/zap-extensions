@@ -191,7 +191,7 @@ class KnownVulnerabilitiesUpdaterUnitTest {
         assertThat(
                 html,
                 containsString(
-                        "all versions before 8.1.29 (assumed, older branches are not listed in the advisory)<br>8.2.0 and later, before 8.2.20"));
+                        "all versions before 8.1.29 (assumed, not confirmed by the advisory)<br>8.2.0 and later, before 8.2.20"));
         assertThat(html, containsString("<td>CVSS score:</td><td>5.3</td>"));
         assertThat(html, containsString("<td>Component:</td><td>ext-soap</td>"));
         assertThat(

@@ -462,8 +462,13 @@ Each technology has its own alert type, which is only raised when that technolog
 belongs to (all are by default). One alert is raised per site, technology and disclosed version, with a risk based on the most severe
 vulnerability which applies, the vulnerabilities which apply listed by severity in the other info, and references linking
 to the details of each in the help.
-The confidence is lowered when the disclosed version is incomplete (e.g. "PHP/8.1" rather than "PHP/8.1.2"), or is older
-than any version listed in the advisories and is only assumed to be affected.<br>
+When the disclosed version is incomplete (e.g. "PHP/8.1" rather than "PHP/8.1.2") the vulnerabilities of every release with
+that version are listed, but as the version does not say which of them have been fixed a separate alert type is raised, at
+low risk and low confidence.
+The confidence is also lowered when the version is only assumed to be affected (for PHP, when it is older than any version
+listed in the advisories; for Apache HTTP Server, when the project lists it as only possibly affected), or when it appears to
+be a distribution package (e.g. "Apache/2.4.58 (Ubuntu)" or "PHP/7.4.3-4ubuntu2.19"), as distributions usually backport
+security fixes without changing the version.<br>
 The lists of known vulnerabilities are bundled with the add-on and updated with each release.
 <p>
 Alert types:
@@ -472,6 +477,14 @@ Alert types:
 are generated from the
 <a href="https://github.com/php/php-src/security/advisories">php-src security advisories</a>, and are detailed in the
 <a href="php-known-vulnerabilities.html">PHP Known Vulnerabilities</a> help page.</li>
+<li><b>20020-2: PHP Version with Possible Known Vulnerabilities</b> - raised instead of 20020-1 when the version is incomplete,
+e.g. "PHP/8.1".</li>
+<li><b>20020-3: Apache HTTP Server Version with Known Vulnerabilities</b> - detects versions such as "Apache/2.4.58" in the
+"Server" header. The known vulnerabilities are generated from the
+<a href="https://httpd.apache.org/security/">Apache HTTP Server project's CVE records</a>, and are detailed in the
+<a href="apache-known-vulnerabilities.html">Apache HTTP Server Known Vulnerabilities</a> help page.</li>
+<li><b>20020-4: Apache HTTP Server Version with Possible Known Vulnerabilities</b> - raised instead of 20020-3 when the version is
+incomplete, e.g. "Apache/2.4".</li>
 </ul>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ServerSideVersionScanRule.java">ServerSideVersionScanRule.java</a>
