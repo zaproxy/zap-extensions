@@ -85,6 +85,7 @@ network-httpclient = { module = "org.apache.httpcomponents.client5:httpclient5",
 network-ice4j = "org.jitsi:ice4j:3.0-24-g34c2ce5"
 network-netty-codec = { module = "io.netty:netty-codec", version.ref = "netty" }
 network-netty-codec-http2 = { module = "io.netty:netty-codec-http2", version.ref = "netty" }
+network-netty-codec-socks = { module = "io.netty:netty-codec-socks", version.ref = "netty" }
 network-netty-handler = { module = "io.netty:netty-handler", version.ref = "netty" }
 openapi-swagger-compatSpecParser = "io.swagger:swagger-compat-spec-parser:1.0.76"
 openapi-swagger-parser = "io.swagger.parser.v3:swagger-parser:2.1.48"

@@ -29,6 +29,7 @@ package org.apache.hc.client5.http.impl.io;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.file.Path;
 import org.apache.hc.client5.http.ConnectExceptionSupport;
 import org.apache.hc.client5.http.DnsResolver;
 import org.apache.hc.client5.http.SchemePortResolver;
@@ -78,17 +79,19 @@ public class ZapHttpClientConnectionOperator extends DefaultHttpClientConnection
             final ManagedHttpClientConnection conn,
             final HttpHost host,
             final NamedEndpoint endpointHost,
+            final Path unixDomainSocket,
             final InetSocketAddress localAddress,
             final Timeout connectTimeout,
             final SocketConfig socketConfig,
             final Object attachment,
             final HttpContext context)
             throws IOException {
-        if (!isSet(context, NO_RESOLVE_HOSTNAME)) {
+        if (unixDomainSocket != null || !isSet(context, NO_RESOLVE_HOSTNAME)) {
             super.connect(
                     conn,
                     host,
                     endpointHost,
+                    unixDomainSocket,
                     localAddress,
                     connectTimeout,
                     socketConfig,

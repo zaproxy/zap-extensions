@@ -50,17 +50,40 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.socksx.v5.DefaultSocks5CommandResponse;
+import io.netty.handler.codec.socksx.v5.DefaultSocks5InitialResponse;
+import io.netty.handler.codec.socksx.v5.DefaultSocks5PasswordAuthResponse;
+import io.netty.handler.codec.socksx.v5.Socks5AddressType;
+import io.netty.handler.codec.socksx.v5.Socks5AuthMethod;
+import io.netty.handler.codec.socksx.v5.Socks5CommandRequest;
+import io.netty.handler.codec.socksx.v5.Socks5CommandRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5CommandStatus;
+import io.netty.handler.codec.socksx.v5.Socks5InitialRequest;
+import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthRequest;
+import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthStatus;
+import io.netty.handler.codec.socksx.v5.Socks5ServerEncoder;
 import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.IOException;
+import java.net.Authenticator;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -75,6 +98,7 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.HttpState;
@@ -2073,6 +2097,191 @@ class HttpSenderImplUnitTest {
                             new PasswordAuthentication("username", "password".toCharArray())));
             options.setHttpProxyEnabled(true);
             options.setHttpProxyAuthEnabled(true);
+        }
+    }
+
+    @Nested
+    class Socks {
+
+        private static final PasswordAuthentication NO_CREDENTIALS =
+                new PasswordAuthentication("", new char[0]);
+
+        private static final String TARGET_HOST = "example.invalid";
+        private static final int TARGET_PORT = 8080;
+
+        private Channel socksServer;
+        private int socksPort;
+        private final AtomicReference<String> target = new AtomicReference<>();
+        private final AtomicReference<String> credentials = new AtomicReference<>();
+
+        @AfterEach
+        void teardown() throws Exception {
+            if (socksServer != null) {
+                socksServer.close().sync();
+            }
+            Authenticator.setDefault(null);
+            ZapAuthenticator.setConnectionOptions(null);
+            System.clearProperty("socksProxyHost");
+            System.clearProperty("socksProxyPort");
+            System.clearProperty("socksProxyVersion");
+        }
+
+        @Test
+        void shouldProxyThroughSocksWithoutAuth() throws Exception {
+            // Given
+            startSocksServer(false);
+            configOptionsWithSocksProxy(NO_CREDENTIALS);
+            // When
+            httpSender.sendAndReceive(createMessage());
+            // Then
+            assertResponseBody(message, SERVER_RESPONSE);
+            assertThat(target.get(), is(equalTo(TARGET_HOST + ":" + TARGET_PORT)));
+            assertThat(credentials.get(), is(nullValue()));
+        }
+
+        @Test
+        void shouldProxyThroughSocksWithAuth() throws Exception {
+            // Given
+            startSocksServer(true);
+            configOptionsWithSocksProxy(
+                    new PasswordAuthentication("username", "password".toCharArray()));
+            // When
+            httpSender.sendAndReceive(createMessage());
+            // Then
+            assertResponseBody(message, SERVER_RESPONSE);
+            assertThat(target.get(), is(equalTo(TARGET_HOST + ":" + TARGET_PORT)));
+            assertThat(credentials.get(), is(equalTo("username:password")));
+        }
+
+        @Test
+        void shouldFailThroughSocksWithWrongCredentials() throws Exception {
+            // Given
+            startSocksServer(true);
+            configOptionsWithSocksProxy(
+                    new PasswordAuthentication("username", "wrong".toCharArray()));
+            // When / Then
+            assertThrows(IOException.class, () -> httpSender.sendAndReceive(createMessage()));
+            assertThat(target.get(), is(nullValue()));
+        }
+
+        @Test
+        void shouldFailToResolveNameLocallyIfSocksDnsDisabled() throws Exception {
+            // Given
+            startSocksServer(false);
+            configOptionsWithSocksProxy(NO_CREDENTIALS, false);
+            // When / Then
+            ZapUnknownHostException exception =
+                    assertThrows(
+                            ZapUnknownHostException.class,
+                            () -> httpSender.sendAndReceive(createMessage()));
+            assertThat(exception.getMessage(), containsString(TARGET_HOST));
+            assertThat(target.get(), is(nullValue()));
+        }
+
+        private HttpMessage createMessage() throws Exception {
+            message =
+                    new HttpMessage(
+                            new HttpRequestHeader(
+                                    "GET http://"
+                                            + TARGET_HOST
+                                            + ":"
+                                            + TARGET_PORT
+                                            + "/ HTTP/1.1"));
+            return message;
+        }
+
+        private void configOptionsWithSocksProxy(PasswordAuthentication authentication) {
+            configOptionsWithSocksProxy(authentication, true);
+        }
+
+        private void configOptionsWithSocksProxy(
+                PasswordAuthentication authentication, boolean useDns) {
+            options.setHttpProxyEnabled(false);
+            options.setSocksProxy(
+                    new SocksProxy(
+                            "localhost",
+                            socksPort,
+                            SocksProxy.Version.SOCKS5,
+                            useDns,
+                            authentication));
+            options.setSocksProxyEnabled(true);
+            ZapAuthenticator.setConnectionOptions(options);
+            Authenticator.setDefault(ZapAuthenticator.getSingleton());
+        }
+
+        private void startSocksServer(boolean auth) throws Exception {
+            socksServer =
+                    new ServerBootstrap()
+                            .group(group)
+                            .channel(NioServerSocketChannel.class)
+                            .childHandler(
+                                    new ChannelInitializer<SocketChannel>() {
+
+                                        @Override
+                                        protected void initChannel(SocketChannel ch) {
+                                            ch.pipeline()
+                                                    .addLast(
+                                                            Socks5ServerEncoder.DEFAULT,
+                                                            new Socks5InitialRequestDecoder(),
+                                                            new SocksServerHandler(auth));
+                                        }
+                                    })
+                            .bind("localhost", 0)
+                            .sync()
+                            .channel();
+            socksPort = ((InetSocketAddress) socksServer.localAddress()).getPort();
+        }
+
+        private class SocksServerHandler extends SimpleChannelInboundHandler<Object> {
+
+            private final boolean auth;
+
+            SocksServerHandler(boolean auth) {
+                this.auth = auth;
+            }
+
+            @Override
+            protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
+                if (msg instanceof Socks5InitialRequest) {
+                    if (auth) {
+                        ctx.pipeline().addFirst(new Socks5PasswordAuthRequestDecoder());
+                        ctx.writeAndFlush(
+                                new DefaultSocks5InitialResponse(Socks5AuthMethod.PASSWORD));
+                    } else {
+                        ctx.pipeline().addFirst(new Socks5CommandRequestDecoder());
+                        ctx.writeAndFlush(
+                                new DefaultSocks5InitialResponse(Socks5AuthMethod.NO_AUTH));
+                    }
+                } else if (msg instanceof Socks5PasswordAuthRequest request) {
+                    if ("username".equals(request.username())
+                            && "password".equals(request.password())) {
+                        credentials.set(request.username() + ":" + request.password());
+                        ctx.pipeline().addFirst(new Socks5CommandRequestDecoder());
+                        ctx.writeAndFlush(
+                                new DefaultSocks5PasswordAuthResponse(
+                                        Socks5PasswordAuthStatus.SUCCESS));
+                    } else {
+                        ctx.writeAndFlush(
+                                        new DefaultSocks5PasswordAuthResponse(
+                                                Socks5PasswordAuthStatus.FAILURE))
+                                .addListener(ChannelFutureListener.CLOSE);
+                    }
+                } else if (msg instanceof Socks5CommandRequest request) {
+                    target.set(request.dstAddr() + ":" + request.dstPort());
+                    ctx.writeAndFlush(
+                            new DefaultSocks5CommandResponse(
+                                    Socks5CommandStatus.SUCCESS, Socks5AddressType.IPv4));
+                } else if (msg instanceof ByteBuf) {
+                    ctx.writeAndFlush(
+                                    Unpooled.copiedBuffer(
+                                            "HTTP/1.1 200 OK\r\nContent-Length: "
+                                                    + SERVER_RESPONSE.length()
+                                                    + "\r\nConnection: close\r\n\r\n"
+                                                    + SERVER_RESPONSE,
+                                            StandardCharsets.US_ASCII))
+                            .addListener(ChannelFutureListener.CLOSE);
+                }
+            }
         }
     }
 
