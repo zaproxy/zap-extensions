@@ -85,8 +85,10 @@ import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInte
 import org.zaproxy.zap.extension.websocket.brk.WebSocketProxyListenerBreak;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
+import org.zaproxy.zap.extension.websocket.pscan.GspmWebSocketPassiveScanRegistrar;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScannerManager;
 import org.zaproxy.zap.extension.websocket.pscan.scripts.ScriptsWebSocketPassiveScanner;
+import org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketScriptSynchronizer;
 import org.zaproxy.zap.extension.websocket.treemap.WebSocketTreeMap;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
@@ -224,6 +226,19 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     private ScriptType websocketPassiveScanScriptType;
 
     private WebSocketPassiveScannerManager webSocketPassiveScannerManager = null;
+
+    /**
+     * Keeps WebSocket Passive Rule scripts in sync with {@link #webSocketPassiveScannerManager}.
+     */
+    private WebSocketScriptSynchronizer webSocketScriptSynchronizer;
+
+    /**
+     * Registered with {@link #extensionScript} in {@link #hook(ExtensionHook)}; removed in stop().
+     */
+    private WebSocketPassiveScriptEventListener webSocketPassiveScriptEventListener;
+
+    /** Registers WebSocket passive scan rules with the Global Scan Policy Manager. */
+    private GspmWebSocketPassiveScanRegistrar gspmWebSocketPassiveScanRegistrar;
 
     private ExtensionScript extensionScript = null;
 
@@ -417,11 +432,25 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                             hasView() ? getScriptPassiveScanIcon() : null,
                             true);
             this.extensionScript.registerScriptType(websocketPassiveScanScriptType);
-            webSocketScriptPassiveScanner = new ScriptsWebSocketPassiveScanner(extensionScript);
+
+            webSocketScriptSynchronizer =
+                    new WebSocketScriptSynchronizer(
+                            extensionScript, webSocketPassiveScannerManager);
+            webSocketPassiveScriptEventListener =
+                    new WebSocketPassiveScriptEventListener(webSocketScriptSynchronizer);
+            extensionScript.addListener(webSocketPassiveScriptEventListener);
+
+            webSocketScriptPassiveScanner =
+                    new ScriptsWebSocketPassiveScanner(
+                            extensionScript, webSocketScriptSynchronizer);
 
             webSocketPassiveScannerManager.add(webSocketScriptPassiveScanner);
             webSocketPassiveScannerManager.setAllEnable(true);
             webSocketPassiveScannerManager.startThread();
+
+            gspmWebSocketPassiveScanRegistrar =
+                    new GspmWebSocketPassiveScanRegistrar(webSocketPassiveScannerManager);
+            webSocketPassiveScannerManager.setGspmRegistrar(gspmWebSocketPassiveScanRegistrar);
         }
 
         //        webSocketTreeMap = new WebSocketTreeMap(new WebSocketSimpleNodeNamer());
@@ -440,6 +469,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             if (!webSocketPassiveScannerManager.hasTable()) {
                 webSocketPassiveScannerManager.setTable(table);
             }
+
+            gspmWebSocketPassiveScanRegistrar.register();
         }
     }
 
@@ -493,6 +524,16 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
         // shut down Passive Scanner & unregister the WebSocket Passive Scan script type
         if (webSocketPassiveScannerManager != null) {
+            if (webSocketScriptSynchronizer != null) {
+                webSocketScriptSynchronizer.unload();
+            }
+            if (webSocketPassiveScriptEventListener != null) {
+                extensionScript.removeListener(webSocketPassiveScriptEventListener);
+                webSocketPassiveScriptEventListener = null;
+            }
+            if (gspmWebSocketPassiveScanRegistrar != null) {
+                gspmWebSocketPassiveScanRegistrar.unregister();
+            }
             webSocketPassiveScannerManager.shutdownThread();
             extensionScript.removeScriptType(websocketPassiveScanScriptType);
             webSocketPassiveScannerManager = null;

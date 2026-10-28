@@ -8,14 +8,33 @@
 // Author: Manos Kirtas (manolis.kirt@gmail.com)
 
 OPCODE_TEXT = 0x1;
-RISK_HIGH = 3;
-CONFIDENCE_HIGH = 3;
 
 SEQUENCE_NUM = 3;
 
 var WebSocketPassiveScript = Java.type(
   "org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript",
 );
+var ScanRuleMetadata = Java.type(
+  "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
+);
+
+function getMetadata() {
+  return ScanRuleMetadata.fromYaml(`
+id: 110005
+name: Personally Identifiable Information via WebSocket
+description: >-
+  The response contains Personally Identifiable Information, such as a credit card number.
+solution: Remove credit card numbers that are not required from WebSocket messages.
+category: info_gather
+risk: high
+confidence: high
+cweId: 359
+wascId: 13
+status: beta
+codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/PII%20Disclosure.js
+helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110005
+`);
+}
 
 creditCards = {
   "American Express": /\b(?:3[47][0-9]{13})\b/gm,
@@ -56,23 +75,21 @@ function raiseAlert(helper, evidence, creditCardType) {
 function createAlertBuilder(helper, evidence, creditCardType) {
   return helper
     .newAlert()
-    .setPluginId(getId())
-    .setRiskConfidence(RISK_HIGH, CONFIDENCE_HIGH)
-    .setName("Personally Identifiable Information via WebSocket")
     .setDescription(
       "The response contains Personally Identifiable Information," +
         " such as CC number. Credit Card type detected: " +
         creditCardType +
         ".",
     )
-    .setEvidence(evidence)
-    .setCweId(359) // CWE-359: Exposure of Private Information ('Privacy Violation')
-    .setWascId(13); // WASC-13: Information Leakage
+    .setEvidence(evidence);
 }
 
 function getExampleAlerts() {
   return [
-    createAlertBuilder(WebSocketPassiveScript.getExampleHelper(), "")
+    createAlertBuilder(
+      WebSocketPassiveScript.getExampleHelper(getMetadata()),
+      "",
+    )
       .build()
       .getAlert(),
   ];
@@ -108,12 +125,4 @@ function validateLuhnCheckSum(match) {
     sum += digit;
   }
   return sum % 2 == 0;
-}
-
-function getName() {
-  return "Credit Card Disclosure script";
-}
-
-function getId() {
-  return 110005;
 }

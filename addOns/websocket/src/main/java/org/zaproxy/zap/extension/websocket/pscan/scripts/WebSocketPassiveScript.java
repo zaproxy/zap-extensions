@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.script.ScriptException;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
@@ -70,5 +71,15 @@ public interface WebSocketPassiveScript extends ExampleAlertProvider {
     /** Only use for generating example alerts, not for raising them. */
     static WebSocketScanHelper getExampleHelper() {
         return new WebSocketScanHelperImpl();
+    }
+
+    /**
+     * Only use for generating example alerts, not for raising them. The alerts are pre-populated
+     * from the given metadata, as they are when raised by a script that declares it.
+     */
+    static WebSocketScanHelper getExampleHelper(ScanRuleMetadata metadata) {
+        return () ->
+                WebSocketScriptMetadataUtils.applyMetadata(
+                        new WebSocketScanHelperImpl().newAlert(), metadata);
     }
 }
