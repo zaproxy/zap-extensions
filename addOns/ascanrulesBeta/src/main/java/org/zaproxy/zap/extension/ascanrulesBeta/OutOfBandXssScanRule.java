@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -128,6 +129,18 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam("name")
+                        .setAttack(
+                                MessageFormat.format(
+                                        SIMPLE_SCRIPT_XSS_ATTACK, "https://12345.oast.example.com"))
+                        .build());
     }
 
     @Override
