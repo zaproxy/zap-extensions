@@ -133,4 +133,8 @@ public class ZapAuthenticator extends Authenticator {
         }
         return connectionOptions;
     }
+
+    static void setConnectionOptions(ConnectionOptions options) {
+        connectionOptions = options;
+    }
 }
