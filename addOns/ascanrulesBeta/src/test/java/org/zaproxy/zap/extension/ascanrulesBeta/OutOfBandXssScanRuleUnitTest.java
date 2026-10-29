@@ -23,8 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.oast.ExtensionOast;
@@ -84,5 +86,20 @@ class OutOfBandXssScanRuleUnitTest extends ActiveScannerTest<OutOfBandXssScanRul
         assertThat(
                 tags.get(ExtensionOast.OAST_ALERT_TAG_KEY),
                 is(equalTo(ExtensionOast.OAST_ALERT_TAG_VALUE)));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getParam(), is(equalTo("name")));
+        assertThat(
+                alert.getAttack(),
+                is(equalTo("<script src=\"https://12345.oast.example.com\"></script>")));
     }
 }
