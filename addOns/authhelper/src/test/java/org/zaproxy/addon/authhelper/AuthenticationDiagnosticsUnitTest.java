@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -51,6 +52,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedConstruction;
@@ -60,6 +62,8 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -169,7 +173,7 @@ class AuthenticationDiagnosticsUnitTest extends TestUtils {
 
     static Stream<Arguments> stepRecording() {
         return Stream.of(
-                arguments(false, Mode.AUTH_ON_FAILURE, false, false, false),
+                arguments(false, Mode.AUTH_ON_FAILURE, false, true, false),
                 arguments(false, Mode.AUTH_ON_FAILURE, true, true, false),
                 arguments(false, Mode.AUTH_FAILURE_ROLLING, false, true, true),
                 arguments(true, Mode.AUTH_ON_FAILURE, false, true, true));
@@ -201,6 +205,118 @@ class AuthenticationDiagnosticsUnitTest extends TestUtils {
         verify(wd, elementsAndStorage ? atLeastOnce() : never()).findElements(any(By.class));
         verify((JavascriptExecutor) wd, elementsAndStorage ? atLeastOnce() : never())
                 .executeScript(anyString());
+    }
+
+    @Test
+    void shouldKeepOnlyLastStepOnAuthOnFailure() {
+        // Given
+        policy.configure(CONTEXT_NAME, Mode.AUTH_ON_FAILURE, 2);
+        User user = mockUser();
+        // When
+        try (AuthenticationDiagnostics diags =
+                new AuthenticationDiagnostics(false, "method", CONTEXT_NAME, "user")) {
+            diags.recordStep(webDriver(), "step 1");
+            diags.recordStep(webDriver(), "step 2");
+            diags.recordStep("step 3");
+        }
+        policy.onAuthenticationRequestFailure(user, mock(HttpMessage.class));
+        // Then
+        Diagnostic diagnostic = persistedDiagnostic();
+        assertThat(diagnostic.getSteps(), hasSize(1));
+        assertThat(diagnostic.getSteps().get(0).getDescription(), is(equalTo("step 3")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldKeepLastStepAndErrorStepOnAuthOnFailure(boolean withWebDriver) {
+        // Given
+        policy.configure(CONTEXT_NAME, Mode.AUTH_ON_FAILURE, 2);
+        User user = mockUser();
+        // When
+        try (AuthenticationDiagnostics diags =
+                new AuthenticationDiagnostics(false, "method", CONTEXT_NAME, "user")) {
+            if (withWebDriver) {
+                diags.recordStep(webDriver(), "step 1");
+                diags.recordStep(webDriver(), "step 2");
+                diags.recordErrorStep(webDriver());
+            } else {
+                diags.recordStep("step 1");
+                diags.recordStep("step 2");
+                diags.recordErrorStep(null);
+            }
+        }
+        policy.onAuthenticationRequestFailure(user, mock(HttpMessage.class));
+        // Then
+        Diagnostic diagnostic = persistedDiagnostic();
+        assertThat(diagnostic.getSteps(), hasSize(2));
+        assertThat(diagnostic.getSteps().get(0).getDescription(), is(equalTo("step 2")));
+        assertThat(
+                diagnostic.getSteps().get(1).getDescription(),
+                is(
+                        equalTo(
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.error"))));
+    }
+
+    @Test
+    void shouldKeepPreviousStepOnAuthOnFailureIfRecordingStepFails() {
+        // Given
+        policy.configure(CONTEXT_NAME, Mode.AUTH_ON_FAILURE, 2);
+        User user = mockUser();
+        WebDriver failingWebDriver = webDriver();
+        given(failingWebDriver.getCurrentUrl()).willThrow(new WebDriverException("gone"));
+        // When
+        try (AuthenticationDiagnostics diags =
+                new AuthenticationDiagnostics(false, "method", CONTEXT_NAME, "user")) {
+            diags.recordStep("step 1");
+            assertThrows(
+                    WebDriverException.class, () -> diags.recordStep(failingWebDriver, "step 2"));
+        }
+        policy.onAuthenticationRequestFailure(user, mock(HttpMessage.class));
+        // Then
+        Diagnostic diagnostic = persistedDiagnostic();
+        assertThat(diagnostic.getSteps(), hasSize(1));
+        assertThat(diagnostic.getSteps().get(0).getDescription(), is(equalTo("step 1")));
+    }
+
+    @Test
+    void shouldNotRecordMessagesOfStepsOnAuthOnFailure() throws Exception {
+        // Given
+        policy.configure(CONTEXT_NAME, Mode.AUTH_ON_FAILURE, 2);
+        User user = mockUser();
+        HttpMessage msg = new HttpMessage();
+        msg.getRequestHeader().setMethod("GET");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
+        // When
+        try (MockedConstruction<HistoryReference> history =
+                mockConstruction(HistoryReference.class)) {
+            try (AuthenticationDiagnostics diags =
+                    new AuthenticationDiagnostics(false, "method", CONTEXT_NAME, "user")) {
+                diags.recordStep(msg, "step");
+            }
+            // Then
+            assertThat(history.constructed(), is(empty()));
+        }
+        policy.onAuthenticationRequestFailure(user, mock(HttpMessage.class));
+        Diagnostic diagnostic = persistedDiagnostic();
+        assertThat(diagnostic.getSteps(), hasSize(1));
+        assertThat(diagnostic.getSteps().get(0).getUrl(), is(equalTo("https://www.example.com")));
+        assertThat(diagnostic.getSteps().get(0).getMessages(), is(empty()));
+    }
+
+    private static User mockUser() {
+        User user = mock(User.class);
+        Context userContext = mock(Context.class);
+        given(userContext.getName()).willReturn(CONTEXT_NAME);
+        given(user.getContext()).willReturn(userContext);
+        given(user.getName()).willReturn("user");
+        return user;
+    }
+
+    private Diagnostic persistedDiagnostic() {
+        ArgumentCaptor<Diagnostic> captor = ArgumentCaptor.forClass(Diagnostic.class);
+        verify(pm).makePersistent(captor.capture());
+        return captor.getValue();
     }
 
     @Test

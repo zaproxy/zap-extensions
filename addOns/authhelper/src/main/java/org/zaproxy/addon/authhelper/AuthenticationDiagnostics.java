@@ -438,15 +438,29 @@ return getSelector(arguments[0], document)
         currentStep = new DiagnosticStep();
     }
 
+    /**
+     * Discards all but the last step, when only failures are retained. Called once a step was
+     * recorded successfully, so the previous step is kept if recording the new one fails.
+     *
+     * <p>Must only be called after a step was added, there is always at least one then.
+     */
+    private void keepLastStepOnly() {
+        if (failureOnly) {
+            List<DiagnosticStep> steps = diagnostic.getSteps();
+            steps.subList(0, steps.size() - 1).clear();
+        }
+    }
+
     public void recordStep(WebDriver wd, String description) {
         recordStep(wd, description, null);
     }
 
     public void recordStep(WebDriver wd, String description, WebElement element) {
-        if (!enabled || failureOnly) {
+        if (!enabled) {
             return;
         }
         recordStepImpl(wd, description, element);
+        keepLastStepOnly();
     }
 
     private void recordStepImpl(WebDriver wd, String description, WebElement element) {
@@ -671,10 +685,11 @@ return getSelector(arguments[0], document)
     }
 
     public void recordStep(String description) {
-        if (!enabled || failureOnly) {
+        if (!enabled) {
             return;
         }
         recordStepImpl(description);
+        keepLastStepOnly();
     }
 
     private void recordStepImpl(String description) {
@@ -682,11 +697,15 @@ return getSelector(arguments[0], document)
     }
 
     public void recordStep(HttpMessage message, String description) {
-        if (!enabled || failureOnly) {
+        if (!enabled) {
             return;
         }
-        addMessageToStep(message);
+        // Not recorded when failure only, the message would be discarded with the step.
+        if (!failureOnly) {
+            addMessageToStep(message);
+        }
         finishCurrentStep(message.getRequestHeader().getURI().toString(), description);
+        keepLastStepOnly();
     }
 
     @Override
