@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.soap;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang3.Strings;
@@ -63,7 +64,7 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner implements Com
         if (isWsdl(msg)) {
             HttpResponseHeader header = msg.getResponseHeader();
             String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
-            raiseAlert(contentType);
+            createAlert(contentType).raise();
         }
     }
 
@@ -85,8 +86,8 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner implements Com
         return false;
     }
 
-    private void raiseAlert(String evidence) {
-        newAlert()
+    private AlertBuilder createAlert(String evidence) {
+        return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -94,8 +95,7 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner implements Com
                 .setSolution(getSolution())
                 .setEvidence(evidence)
                 .setCweId(651) // CWE-651: Exposure of WSDL File Containing Sensitive Information
-                .setWascId(13)
-                .raise();
+                .setWascId(13);
     }
 
     @Override
@@ -128,5 +128,10 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner implements Com
     @Override
     public int getId() {
         return getPluginId();
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("application/wsdl+xml").build());
     }
 }
