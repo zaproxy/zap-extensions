@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - A Batch tab, which runs all, or one, of the plans in a directory, stopping at the first failure, and optionally starting a new session for each plan.
 - The `-autorundir` command line option, which runs all of the plans in a directory and writes a summary, failing if any plan fails, with a new session for each plan.
 
+### Changed
+- Enablers for Global Scan Policy Manager.
+- Depends on an updated version of the Common Library add-on.
 
 ## [0.62.0] - 2026-11-03
 ### Added

@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.commonlib.gspm.internal;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -94,7 +93,7 @@ public class GspmDialog extends AbstractParamDialog {
     private final GspmRegistry registry;
     private final GspmPolicy policy;
     private final boolean newPolicy;
-    private final String savedRuleSetsSnapshot;
+    private final List<GspmRuleSet> savedRuleSets;
     private boolean confirmed = false;
 
     private final List<GspmRulesPanel> panels = new ArrayList<>();
@@ -134,7 +133,7 @@ public class GspmDialog extends AbstractParamDialog {
         this.registry = registry;
         this.policy = policy;
         this.newPolicy = policy != null && newPolicy;
-        this.savedRuleSetsSnapshot = snapshotRuleSets(policy);
+        this.savedRuleSets = copyRuleSets(policy);
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(
@@ -345,25 +344,18 @@ public class GspmDialog extends AbstractParamDialog {
     }
 
     private void onCancel() {
-        if (policy != null && savedRuleSetsSnapshot != null) {
-            try {
-                List<GspmRuleSet> original =
-                        GspmPolicy.YAML_MAPPER.readValue(
-                                savedRuleSetsSnapshot, new TypeReference<List<GspmRuleSet>>() {});
-                policy.setRuleSets(original);
-            } catch (Exception e) {
-                LOGGER.error("Failed to revert GSPM policy changes on cancel", e);
-            }
+        if (policy != null && savedRuleSets != null) {
+            policy.setRuleSets(savedRuleSets);
         }
     }
 
-    private static String snapshotRuleSets(GspmPolicy policy) {
+    private static List<GspmRuleSet> copyRuleSets(GspmPolicy policy) {
         if (policy == null) {
             return null;
         }
         try {
-            return GspmPolicy.YAML_MAPPER.writeValueAsString(policy.getRuleSets());
-        } catch (Exception e) {
+            return policy.copyRuleSets();
+        } catch (RuntimeException e) {
             LOGGER.error("Failed to snapshot GSPM policy ruleSets", e);
             return null;
         }

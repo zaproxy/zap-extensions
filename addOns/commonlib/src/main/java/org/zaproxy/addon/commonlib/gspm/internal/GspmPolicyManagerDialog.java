@@ -309,10 +309,10 @@ public class GspmPolicyManagerDialog extends StandardFieldsDialog {
                         Constant.messages.getString("commonlib.gspm.policymanager.delete.title"),
                         JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            GspmPolicy toDelete = registry.getPolicy(name);
-            registry.removePolicy(name);
-            if (toDelete != null && !toDelete.deleteFile()) {
-                LOGGER.error("Failed to delete GSPM policy file for '{}'", name);
+            try {
+                GspmPolicyOperations.removePolicy(registry, name);
+            } catch (RuntimeException e) {
+                LOGGER.error("Failed to delete GSPM policy '{}'", name, e);
                 JOptionPane.showMessageDialog(
                         this,
                         MessageFormat.format(

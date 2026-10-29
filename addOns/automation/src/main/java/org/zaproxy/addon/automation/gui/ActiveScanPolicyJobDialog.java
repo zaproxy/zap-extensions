@@ -29,6 +29,7 @@ import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
+import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.zap.utils.DisplayUtils;
 
 @SuppressWarnings("serial")
@@ -111,8 +112,12 @@ public class ActiveScanPolicyJobDialog extends ActiveScanPolicyDialog {
 
     @Override
     public String validateFields() {
-        if (this.getStringValue(POLICY_NAME_PARAM).trim().isEmpty()) {
+        String policyName = this.getStringValue(POLICY_NAME_PARAM);
+        if (policyName.isBlank()) {
             return Constant.messages.getString("automation.dialog.ascanpolicy.error.badname");
+        }
+        if (!GspmPolicy.isLegalPolicyName(policyName)) {
+            return Constant.messages.getString("automation.dialog.ascanpolicy.error.illegalname");
         }
         return null;
     }

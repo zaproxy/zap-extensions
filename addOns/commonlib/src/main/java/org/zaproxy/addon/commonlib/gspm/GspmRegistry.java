@@ -478,6 +478,9 @@ public class GspmRegistry {
         @Override
         public void setEnabled(boolean enabled) {
             if (!enabled) {
+                // Any other override is removed first, including the ones shared with other rules
+                // (as created by legacy policy migration), as those would take precedence.
+                policy.clearRuleThreshold(underlying.getId());
                 policy.setRuleThreshold(
                         underlying.getId(), underlying.getName(), AlertThreshold.OFF);
                 return;
@@ -489,7 +492,7 @@ public class GspmRegistry {
             // usually what's wanted; but if that default is itself OFF (e.g. a disabled category
             // or catch-all), clearing alone wouldn't actually enable the rule, so mask it with an
             // explicit non-OFF threshold instead.
-            policy.setRuleThreshold(underlying.getId(), underlying.getName(), null);
+            policy.clearRuleThreshold(underlying.getId());
             if (!isEnabled()) {
                 policy.setRuleThreshold(
                         underlying.getId(), underlying.getName(), AlertThreshold.MEDIUM);
@@ -545,6 +548,7 @@ public class GspmRegistry {
                                     legacyFile);
                             continue;
                         }
+                        migrated.setLegacyFile(legacyFile);
                         addPolicy(migrated);
                         migrated.save(policiesDir.toPath());
                         policy2BaseNames.add(base);
