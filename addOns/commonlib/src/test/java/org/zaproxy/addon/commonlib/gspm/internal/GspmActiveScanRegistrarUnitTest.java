@@ -24,8 +24,14 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -37,8 +43,11 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRule;
 import org.zaproxy.addon.commonlib.gspm.GspmScanRuleRegistrar;
@@ -71,6 +80,7 @@ class GspmActiveScanRegistrarUnitTest extends TestUtils {
     private GspmScanRuleRegistrar scanRuleRegistrar;
     private GspmRegistry registry;
     private List<Plugin> plugins;
+    private PolicyManager policyManager;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -81,15 +91,27 @@ class GspmActiveScanRegistrarUnitTest extends TestUtils {
         PolicyManager policyManager = mock(PolicyManager.class);
         ScanPolicy scanPolicy = mock(ScanPolicy.class);
         PluginFactory pluginFactory = mock(PluginFactory.class);
-        lenient().when(policyManager.getDefaultScanPolicy()).thenReturn(scanPolicy);
+        lenient().when(policyManager.getTemplatePolicy()).thenReturn(scanPolicy);
         lenient().when(scanPolicy.getPluginFactory()).thenReturn(pluginFactory);
         lenient().when(pluginFactory.getAllPlugin()).thenAnswer(inv -> new ArrayList<>(plugins));
 
+        this.policyManager = policyManager;
         setField(registrar, "policyManager", policyManager);
         scanRuleRegistrar = (GspmScanRuleRegistrar) getField(registrar, "scanRuleRegistrar");
         // Registers the tool and sets scanRuleRegistrar's registry; plugins is empty at this
         // point, so this registers zero rules.
         scanRuleRegistrar.registerRulesWithGspm(registry);
+    }
+
+    @Test
+    void shouldRegisterRulesFromTemplatePolicyNotFromDefaultPolicy() throws Exception {
+        // Given
+        plugins.add(pluginWithId(100, "Rule A"));
+        // When
+        scanRuleRegistrar.registerRulesWithGspm(registry);
+        // Then
+        verify(policyManager, atLeastOnce()).getTemplatePolicy();
+        verify(policyManager, never()).getDefaultScanPolicy();
     }
 
     @Test
@@ -200,6 +222,136 @@ class GspmActiveScanRegistrarUnitTest extends TestUtils {
         lenient().when(addOn.getName()).thenReturn(name);
         lenient().when(addOn.getLoadedAscanrules()).thenReturn(List.of());
         return addOn;
+    }
+
+    @Test
+    void shouldProvidePolicyNamesAndDefaultPolicy() {
+        // Given
+        registry.addPolicy(new GspmPolicy("Custom"));
+        // When
+        List<String> names = GspmActiveScanRegistrar.getPolicyNames(registry);
+        // Then
+        assertThat(names.contains("Custom"), is(true));
+        assertThat(GspmActiveScanRegistrar.getDefaultPolicyName(registry), is(nullValue()));
+        // When
+        registry.setCurrentPolicy("Custom");
+        // Then
+        assertThat(GspmActiveScanRegistrar.getDefaultPolicyName(registry), is("Custom"));
+    }
+
+    @Test
+    void shouldLeaveRulesWithPolicyDefaultsToInheritThem() {
+        // Given
+        Plugin inheriting = pluginWithId(100, "Inheriting");
+        Plugin overridden = pluginWithId(200, "Overridden");
+        Plugin disabled = pluginWithId(300, "Disabled");
+        for (Plugin plugin : List.of(inheriting, overridden, disabled)) {
+            when(plugin.getAttackStrength()).thenReturn(AttackStrength.MEDIUM);
+            plugins.add(plugin);
+        }
+        scanRuleRegistrar.registerRulesWithGspm(registry);
+        GspmPolicy policy = new GspmPolicy("Custom");
+        policy.findOrCreateCategoryRuleSet("all.ascan").setThresholdEnum(AlertThreshold.HIGH);
+        policy.findOrCreateCategoryRuleSet("all.ascan").setStrengthEnum(AttackStrength.LOW);
+        policy.setRuleThreshold(200, "Overridden", AlertThreshold.LOW);
+        policy.setRuleStrength(200, "Overridden", AttackStrength.INSANE);
+        policy.setRuleThreshold(300, "Disabled", AlertThreshold.OFF);
+        registry.addPolicy(policy);
+        PluginFactory factory = mock(PluginFactory.class);
+        plugins.forEach(p -> when(factory.getPlugin(p.getId())).thenReturn(p));
+        // When
+        GspmActiveScanRegistrar.applyPolicy(registry, "Custom", factory);
+        // Then
+        verify(inheriting, never()).setAlertThreshold(any());
+        verify(inheriting, never()).setAttackStrength(any());
+        verify(inheriting).setEnabled(true);
+        verify(overridden).setAlertThreshold(AlertThreshold.LOW);
+        verify(overridden).setAttackStrength(AttackStrength.INSANE);
+        verify(disabled).setAlertThreshold(AlertThreshold.OFF);
+        verify(disabled).setEnabled(false);
+        verify(disabled, never()).setAttackStrength(any());
+    }
+
+    @Test
+    void shouldReturnSafeValuesForUnhandledMethodsOfProxy() throws Throwable {
+        // Given
+        Object proxy =
+                java.lang.reflect.Proxy.newProxyInstance(
+                        getClass().getClassLoader(),
+                        new Class<?>[] {Unhandled.class},
+                        (p, method, args) -> GspmActiveScanRegistrar.handleOther(p, method, args));
+        Unhandled unhandled = (Unhandled) proxy;
+        // When / Then
+        assertThat(unhandled.flag(), is(false));
+        assertThat(unhandled.number(), is(0));
+        assertThat(unhandled.big(), is(0L));
+        assertThat(unhandled.ratio(), is(0D));
+        assertThat(unhandled.character(), is('\0'));
+        assertThat(unhandled.text() == null, is(true));
+        unhandled.nothing();
+        assertThat(unhandled.hashCode() == System.identityHashCode(proxy), is(true));
+        assertThat(unhandled.equals(proxy), is(true));
+        assertThat(unhandled.equals(new Object()), is(false));
+        assertThat(unhandled.defaultMethod(), is("default"));
+    }
+
+    /** Methods of an interface, like the ones that a core might add. */
+    public interface Unhandled {
+        boolean flag();
+
+        int number();
+
+        long big();
+
+        double ratio();
+
+        char character();
+
+        String text();
+
+        void nothing();
+
+        default String defaultMethod() {
+            return "default";
+        }
+    }
+
+    @Test
+    void shouldNotApplyUnknownPolicy() {
+        // Given
+        PluginFactory factory = mock(PluginFactory.class);
+        // When
+        boolean applied = GspmActiveScanRegistrar.applyPolicy(registry, "Unknown", factory);
+        // Then
+        assertThat(applied, is(false));
+    }
+
+    @Test
+    void shouldApplyPolicyToPlugins() {
+        // Given
+        Plugin enabledRule = pluginWithId(100, "Rule A");
+        when(enabledRule.getAttackStrength()).thenReturn(AttackStrength.MEDIUM);
+        Plugin offRule = pluginWithId(200, "Rule B");
+        plugins.add(enabledRule);
+        plugins.add(offRule);
+        scanRuleRegistrar.registerRulesWithGspm(registry);
+        GspmPolicy policy = new GspmPolicy("Custom");
+        policy.setRuleThreshold(100, "Rule A", AlertThreshold.HIGH);
+        policy.setRuleStrength(100, "Rule A", AttackStrength.LOW);
+        policy.setRuleThreshold(200, "Rule B", AlertThreshold.OFF);
+        registry.addPolicy(policy);
+        PluginFactory factory = mock(PluginFactory.class);
+        when(factory.getPlugin(100)).thenReturn(enabledRule);
+        when(factory.getPlugin(200)).thenReturn(offRule);
+        // When
+        boolean applied = GspmActiveScanRegistrar.applyPolicy(registry, "Custom", factory);
+        // Then
+        assertThat(applied, is(true));
+        verify(enabledRule).setAlertThreshold(AlertThreshold.HIGH);
+        verify(enabledRule).setEnabled(true);
+        verify(enabledRule).setAttackStrength(AttackStrength.LOW);
+        verify(offRule).setAlertThreshold(AlertThreshold.OFF);
+        verify(offRule).setEnabled(false);
     }
 
     private static Plugin pluginWithId(int id, String name) {
