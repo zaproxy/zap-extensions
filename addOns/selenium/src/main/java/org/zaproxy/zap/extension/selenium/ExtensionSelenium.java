@@ -103,6 +103,11 @@ import org.zaproxy.zap.utils.Stats;
  */
 public class ExtensionSelenium extends ExtensionAdaptor {
 
+    static {
+        // Let SeleniumManager accept ZAP's Root CA cert.
+        System.setProperty("SE_INSECURE", "true");
+    }
+
     public static final String NAME = "ExtensionSelenium";
     public static final String SCRIPT_TYPE_SELENIUM = "selenium";
 
@@ -170,8 +175,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public ExtensionSelenium() {
         super(NAME);
 
-        // Prevent verbose INFO logging of WebDriver BiDi exchanges.
+        // Prevent verbose INFO/WARN logging of WebDriver BiDi exchanges and SeleniumManager.
         setLogLevel(List.of("org.openqa.selenium.bidi.Connection"), Level.WARN);
+        setLogLevel(List.of("org.openqa.selenium.manager.SeleniumManager"), Level.ERROR);
     }
 
     private static void setLogLevel(List<String> classnames, Level level) {

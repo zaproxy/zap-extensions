@@ -49,6 +49,8 @@ spotless {
 dependencies {
     compileOnly(libs.log4j.core)
 
+    // annotations used by Selenium lib
+    compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
     selenium(libs.selenium.seleniumJava)
     selenium(libs.selenium.htmlunit3Driver) {
         // Do not expose the newer version to dependents, exclude and change to implementation.
