@@ -12,6 +12,11 @@ jobs:
   update-policies:
     runs-on: ubuntu-latest
     steps:
+    - name: Setup Java
+      uses: actions/setup-java@v6
+      with:
+        distribution: 'temurin'
+        java-version: 17
     - name: Checkout
       uses: actions/checkout@v7
       with:
