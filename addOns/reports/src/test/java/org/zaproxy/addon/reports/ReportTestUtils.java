@@ -26,6 +26,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import com.lowagie.text.DocumentException;
 import java.io.File;
@@ -45,6 +47,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.zaproxy.addon.automation.jobs.ActiveScanJobResultData;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.insights.internal.Insight;
 import org.zaproxy.addon.insights.report.ExtensionInsightsReport;
@@ -225,6 +228,17 @@ public class ReportTestUtils {
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportDataWithAlerts();
         reportData.setSections(template.getSections());
+        return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+    }
+
+    static File generateReportWithActiveScanData(Template template, File f, int numberScannedNodes)
+            throws IOException, DocumentException {
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = getTestReportData();
+        reportData.setSections(template.getSections());
+        ActiveScanJobResultData ascanData = mock(ActiveScanJobResultData.class);
+        given(ascanData.getNumberScannedNodes()).willReturn(numberScannedNodes);
+        reportData.addReportObjects(ActiveScanJobResultData.KEY, ascanData);
         return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
     }
 
