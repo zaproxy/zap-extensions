@@ -80,5 +80,20 @@ Examples of Full Path Disclosure Vulnerabilities are : /home/omg/htdocs/file/ or
  Alert ID: <a href="https://www.zaproxy.org/docs/alerts/110009/">110009</a>.
 </p>
 
+<H2 id="id-10005">Secrets Disclosure</H2>
+<p>Detects secrets (API keys, tokens, private keys, etc.) disclosed in responses (images, fonts, and binary content, which is content with more than 1% control characters such as NUL, are ignored), using the patterns of the default
+<a href="https://github.com/gitleaks/gitleaks">Gitleaks</a> configuration (<code>gitleaks.toml</code>).</p>
+<p>Each Gitleaks rule raises at most one alert per message, so several secrets of the same type in one response are reported once. The alert name includes the Gitleaks rule ID, so the rules can be told apart, for example to suppress them separately.</p>
+<p>The Gitleaks keywords, entropy, stopwords, and allowlists are honoured. The allowlist paths (for example vendored libraries) are matched against the request path, and are only applied at High threshold. The allowlists that check the whole line, or that need all of their criteria to match, are not used, so there can be more false positives from the generic rule.</p>
+<p>The generic API key rule (<code>generic-api-key</code>) is only used at Low threshold, as it is slow on large responses and prone to false positives.</p>
+<p>Some patterns which appear associated with keys that are public by design (for example, keys meant to be used in client side code) raise alerts with a lower Risk and Confidence.</p>
+<p>The patterns are from <a href="https://github.com/gitleaks/gitleaks">Gitleaks</a>, which is licensed under the
+<a href="https://github.com/gitleaks/gitleaks/blob/master/LICENSE">MIT License</a>, Copyright (c) 2019 Zachary Rice.</p>
+<p>Latest code:
+ <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SecretsDisclosureScanRule.java">SecretsDisclosureScanRule.java</a>
+ <br>
+ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10005/">10005</a>.
+</p>
+
 </BODY>
 </HTML>
