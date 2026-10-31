@@ -96,6 +96,7 @@ val addOns =
         "saml",
         "scanpolicies",
         "scripts",
+        "secrets",
         "selenium",
         "sequence",
         "soap",
