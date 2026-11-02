@@ -207,6 +207,7 @@ return getSelector(arguments[0], document)
     private Diagnostic diagnostic;
     private HttpSenderListener listener;
     private DiagnosticStep currentStep;
+    private DiagnosticStep errorStep;
     private ScriptKey elementSelectorScriptKey;
     private boolean interrupted;
 
@@ -438,15 +439,24 @@ return getSelector(arguments[0], document)
         currentStep = new DiagnosticStep();
     }
 
+    private void keepErrorAndLastStepOnly() {
+        if (failureOnly) {
+            List<DiagnosticStep> steps = diagnostic.getSteps();
+            DiagnosticStep last = steps.get(steps.size() - 1);
+            steps.removeIf(step -> step != last && step != errorStep);
+        }
+    }
+
     public void recordStep(WebDriver wd, String description) {
         recordStep(wd, description, null);
     }
 
     public void recordStep(WebDriver wd, String description, WebElement element) {
-        if (!enabled || failureOnly) {
+        if (!enabled) {
             return;
         }
         recordStepImpl(wd, description, element);
+        keepErrorAndLastStepOnly();
     }
 
     private void recordStepImpl(WebDriver wd, String description, WebElement element) {
@@ -657,6 +667,8 @@ return getSelector(arguments[0], document)
             } else {
                 recordStepImpl(webDriver, description, null);
             }
+            List<DiagnosticStep> steps = diagnostic.getSteps();
+            errorStep = steps.get(steps.size() - 1);
         } catch (Exception e) {
             LOGGER.warn("An error occurred while recording the error step:", e);
         }
@@ -671,10 +683,11 @@ return getSelector(arguments[0], document)
     }
 
     public void recordStep(String description) {
-        if (!enabled || failureOnly) {
+        if (!enabled) {
             return;
         }
         recordStepImpl(description);
+        keepErrorAndLastStepOnly();
     }
 
     private void recordStepImpl(String description) {
@@ -682,11 +695,14 @@ return getSelector(arguments[0], document)
     }
 
     public void recordStep(HttpMessage message, String description) {
-        if (!enabled || failureOnly) {
+        if (!enabled) {
             return;
         }
-        addMessageToStep(message);
+        if (!failureOnly) {
+            addMessageToStep(message);
+        }
         finishCurrentStep(message.getRequestHeader().getURI().toString(), description);
+        keepErrorAndLastStepOnly();
     }
 
     @Override
