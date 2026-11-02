@@ -48,6 +48,7 @@ import org.zaproxy.addon.authhelper.AuthenticationDiagnostics;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType;
 import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType;
+import org.zaproxy.addon.authhelper.OAuth2AuthenticationMethodType.OAuth2AuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.report.AuthReportData.FailureDetail;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -346,19 +347,34 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                                             .ClientScriptBasedAuthenticationMethod;
 
                     // Add all of the stats
-                    if (authMethod.getAuthCheckingStrategy() == AuthCheckingStrategy.POLL_URL
-                            && StringUtils.isNotEmpty(authMethod.getPollUrl())) {
-                        String pollHost =
-                                SessionStructure.getHostName(
-                                        new URI(authMethod.getPollUrl(), true));
-
-                        if (!hostname.equals(pollHost)) {
-                            addSiteStats(ard, inMemoryStats, pollHost);
-                        }
-                    }
+                    List<String> otherHosts = getOtherAuthHosts(authMethod, hostname);
+                    otherHosts.forEach(host -> addSiteStats(ard, inMemoryStats, host));
 
                     inMemoryStats.getStats("").forEach((k, v) -> ard.addStatsItem(k, "global", v));
                     addSiteStats(ard, inMemoryStats, hostname);
+
+                    /*
+                     * The AUTH_SUCCESS_STATS / AUTH_FAILURE_STATS stats can get raised on another domain.
+                     * Any successes are good, as long as there are not more failures.
+                     */
+                    List<String> authHosts = new ArrayList<>();
+                    authHosts.add(hostname);
+                    authHosts.addAll(otherHosts);
+                    Long successStat =
+                            sumStat(
+                                    inMemoryStats,
+                                    authHosts,
+                                    AuthenticationHelper.AUTH_SUCCESS_STATS);
+                    Long failureStat =
+                            sumStat(
+                                    inMemoryStats,
+                                    authHosts,
+                                    AuthenticationHelper.AUTH_FAILURE_STATS);
+
+                    boolean hasMoreFailures =
+                            failureStat != null
+                                    && (successStat == null
+                                            || failureStat.compareTo(successStat) > 0);
 
                     if (authBBA || authClient) {
 
@@ -369,22 +385,6 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                         Long passedCount =
                                 inMemoryStats.getStat(
                                         hostname, AuthUtils.AUTH_BROWSER_PASSED_STATS);
-
-                        /*
-                         * The AUTH_SUCCESS_STATS / AUTH_FAILURE_STATS stats can get raised on another domain.
-                         * Any successes are good, as long as there are not more failures.
-                         */
-                        Long successStat =
-                                inMemoryStats.getStat(
-                                        hostname, AuthenticationHelper.AUTH_SUCCESS_STATS);
-                        Long failureStat =
-                                inMemoryStats.getStat(
-                                        hostname, AuthenticationHelper.AUTH_FAILURE_STATS);
-
-                        boolean hasMoreFailures =
-                                failureStat != null
-                                        && (successStat == null
-                                                || failureStat.compareTo(successStat) > 0);
 
                         boolean hasAfErrors = afProg != null && afProg.hasErrors();
 
@@ -451,10 +451,8 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                                 "auth",
                                 sessionPassed
                                         && verificationUrlIdentified
-                                        && inMemoryStats.getStat(
-                                                        hostname,
-                                                        AuthenticationHelper.AUTH_SUCCESS_STATS)
-                                                != null);
+                                        && successStat != null
+                                        && !hasMoreFailures);
                     }
 
                 } catch (Exception e) {
@@ -488,6 +486,37 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                     .filter(e -> state == null || e.getValue() == state)
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toCollection(TreeSet::new));
+        }
+
+        /**
+         * Gets the hosts, other than the target one, that can have authentication related stats,
+         * e.g. the poll URL host or the OAuth2 token endpoint host.
+         */
+        static List<String> getOtherAuthHosts(AuthenticationMethod authMethod, String hostname)
+                throws URIException {
+            List<String> hosts = new ArrayList<>();
+            if (authMethod.getAuthCheckingStrategy() == AuthCheckingStrategy.POLL_URL
+                    && StringUtils.isNotEmpty(authMethod.getPollUrl())) {
+                hosts.add(getHost(authMethod.getPollUrl()));
+            }
+            if (authMethod instanceof OAuth2AuthenticationMethod oauth2
+                    && StringUtils.isNotEmpty(oauth2.getTokenEndpoint())) {
+                hosts.add(getHost(oauth2.getTokenEndpoint()));
+            }
+            return hosts.stream().filter(h -> !h.equals(hostname)).distinct().toList();
+        }
+
+        /** Sums the stat over the given hosts, or returns {@code null} if none have it. */
+        private static Long sumStat(InMemoryStats inMemoryStats, List<String> hosts, String stat) {
+            return hosts.stream()
+                    .map(host -> inMemoryStats.getStat(host, stat))
+                    .filter(Objects::nonNull)
+                    .reduce(Long::sum)
+                    .orElse(null);
+        }
+
+        private static String getHost(String url) throws URIException {
+            return SessionStructure.getHostName(new URI(url, true));
         }
 
         private static void addSiteStats(

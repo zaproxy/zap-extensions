@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - AI Assisted Authentication
 - Record requests whose sending failed (for example DNS failure) in the diagnostics, with a synthetic response describing the failure reason, when the network add-on supports it.
+- Support for the Authentication Report with OAuth2.
 
 ### Changed
 - The Authentication Tester dialog now remembers the last authentication method used and selects it by default next time it's opened.
