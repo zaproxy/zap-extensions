@@ -1,0 +1,101 @@
+---
+# Checks that the authentication report shows OAuth2 authentication as failed when the credentials are wrong.
+# Authentication fails, so the protected resource returns 401 and the auth summary item must fail.
+# Needs ZAP to be run in dev mode, which provides the mock OAuth2 server.
+# The report is written next to the plan, which the script finds from the running plan.
+# The statistics should be empty before running this plan.
+env:
+  contexts:
+    - name: "oauth2-report-fail"
+      urls:
+        - "https://api.oauth2.zap"
+      includePaths:
+        - 'https://api\.oauth2\.zap.*'
+      authentication:
+        method: "oauth2"
+        parameters:
+          grantType: "password"
+          tokenEndpoint: "https://authserver.oauth2.zap/token"
+          clientId: "test-client"
+          clientSecret: "test-secret"
+          diagnostics: true
+        verification:
+          method: "response"
+          loggedInRegex: "HTTP/\\d\\.\\d 200"
+          loggedOutRegex: "HTTP/\\d\\.\\d 401"
+      sessionManagement:
+        method: "headers"
+        parameters:
+          Authorization: "Bearer {%json:access_token%}"
+      users:
+        - name: "test-user"
+          credentials:
+            username: "test@test.com"
+            password: "not-the-right-password"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "requestor"
+    name: "protected resource"
+    parameters:
+      user: "test-user"
+    requests:
+      - url: "https://api.oauth2.zap/userinfo"
+        method: "GET"
+        responseCode: 401
+  - type: "report"
+    name: "auth report"
+    parameters:
+      template: "auth-report-json"
+      reportFile: "oauth2-report-fail"
+  - type: "script"
+    name: "add check"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "ECMAScript : Graal.js"
+      name: "oauth2-report-fail-check"
+      inline: |
+        var Files = Java.type("java.nio.file.Files");
+        var File = Java.type("java.io.File");
+
+        var extAutomation = control.getExtensionLoader().getExtension("ExtensionAutomation");
+        var plan = null;
+        extAutomation.getRunningPlans().forEach(function(p) {
+            if (p.getFile() !== null && p.getFile().getName() === "oauth2-report-fail.yaml") {
+                plan = p;
+            }
+        });
+        if (plan === null) {
+            throw new Error("Running plan not found: oauth2-report-fail.yaml");
+        }
+        var reportFile = new File(plan.getFile().getParentFile(), "oauth2-report-fail.json");
+        if (!reportFile.exists()) {
+            throw new Error("Auth report not found: " + reportFile);
+        }
+        var report = JSON.parse(Files.readString(reportFile.toPath()));
+
+        var expected = {"auth.summary.auth": false, "auth.summary.session": true, "auth.summary.verif": true};
+        var errors = [];
+        Object.keys(expected).forEach(function(key) {
+            var item = report.summaryItems.filter(function(i) { return i.key === key; })[0];
+            if (!item) {
+                errors.push("Missing summary item " + key);
+            } else if (item.passed !== expected[key]) {
+                errors.push("Summary item " + key + " passed=" + item.passed + ", expected " + expected[key]);
+            }
+        });
+        if (errors.length > 0) {
+            throw new Error(errors.join("; "));
+        }
+  - type: "script"
+    name: "check auth report summary"
+    parameters:
+      action: "run"
+      type: "standalone"
+      name: "oauth2-report-fail-check"
+      failureLevel: "error"

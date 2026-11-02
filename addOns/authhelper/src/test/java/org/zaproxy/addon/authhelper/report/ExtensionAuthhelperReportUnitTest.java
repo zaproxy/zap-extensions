@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper.report;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -43,6 +44,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
@@ -57,6 +59,8 @@ import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType;
 import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType;
+import org.zaproxy.addon.authhelper.OAuth2AuthenticationMethodType;
+import org.zaproxy.addon.authhelper.OAuth2AuthenticationMethodType.OAuth2AuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
@@ -878,6 +882,236 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         assertThat(
                 ard.getSummaryItems().get(1).description(),
                 is(equalTo("Communication or network failures")));
+    }
+
+    @Test
+    void shouldReportPassingOAuth2CaseWithStatsOnTokenEndpointHost() {
+        // Given
+        String site = "http://localhost:8000";
+        String tokenHost = "http://localhost:8180";
+        InMemoryStats stats = new InMemoryStats();
+        stats.counterInc(tokenHost, AuthenticationHelper.AUTH_SUCCESS_STATS);
+        stats.counterInc(site, AuthenticationMethod.AUTH_STATE_LOGGED_IN_STATS, 1);
+
+        // When
+        AuthReportData ard = handleOAuth2Report(site, tokenHost, stats);
+
+        // Then
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(true)));
+        assertThat(
+                ard.getStatisticsImpl().stream()
+                        .anyMatch(
+                                e ->
+                                        AuthenticationHelper.AUTH_SUCCESS_STATS.equals(e.key())
+                                                && tokenHost.equals(e.site())),
+                is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReportFailingOAuth2CaseWithoutSuccessStats() {
+        // Given
+        String site = "http://localhost:8000";
+        String tokenHost = "http://localhost:8180";
+        InMemoryStats stats = new InMemoryStats();
+        stats.counterInc(site, AuthenticationMethod.AUTH_STATE_LOGGED_IN_STATS, 1);
+
+        // When
+        AuthReportData ard = handleOAuth2Report(site, tokenHost, stats);
+
+        // Then
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldReportFailingOAuth2CaseWithMoreFailuresOnTokenEndpointHost() {
+        // Given
+        String site = "http://localhost:8000";
+        String tokenHost = "http://localhost:8180";
+        InMemoryStats stats = new InMemoryStats();
+        stats.counterInc(tokenHost, AuthenticationHelper.AUTH_SUCCESS_STATS);
+        stats.counterInc(tokenHost, AuthenticationHelper.AUTH_FAILURE_STATS, 2);
+        stats.counterInc(site, AuthenticationMethod.AUTH_STATE_LOGGED_IN_STATS, 1);
+
+        // When
+        AuthReportData ard = handleOAuth2Report(site, tokenHost, stats);
+
+        // Then
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldReportPassingOAuth2CaseWithFewerFailuresThanSuccesses() {
+        // Given
+        String site = "http://localhost:8000";
+        String tokenHost = "http://localhost:8180";
+        InMemoryStats stats = new InMemoryStats();
+        stats.counterInc(tokenHost, AuthenticationHelper.AUTH_SUCCESS_STATS, 2);
+        stats.counterInc(tokenHost, AuthenticationHelper.AUTH_FAILURE_STATS);
+        stats.counterInc(site, AuthenticationMethod.AUTH_STATE_LOGGED_IN_STATS, 1);
+
+        // When
+        AuthReportData ard = handleOAuth2Report(site, tokenHost, stats);
+
+        // Then
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldGetNoOtherAuthHostsWithoutPollUrlOrOAuth2() throws Exception {
+        // Given
+        AuthenticationMethod authMethod =
+                new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.EACH_RESP);
+        // When
+        List<String> hosts =
+                ExtensionAuthhelperReport.AuthReportDataHandler.getOtherAuthHosts(
+                        authMethod, "https://www.example.com");
+        // Then
+        assertThat(hosts, is(empty()));
+    }
+
+    @Test
+    void shouldGetPollUrlHostAsOtherAuthHost() throws Exception {
+        // Given
+        AuthenticationMethod authMethod =
+                new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+        authMethod.setPollUrl("https://api.example.com/poll");
+        // When
+        List<String> hosts =
+                ExtensionAuthhelperReport.AuthReportDataHandler.getOtherAuthHosts(
+                        authMethod, "https://www.example.com");
+        // Then
+        assertThat(hosts, contains("https://api.example.com"));
+    }
+
+    @Test
+    void shouldIgnorePollUrlWhenNotUsingPollUrlStrategy() throws Exception {
+        // Given
+        AuthenticationMethod authMethod =
+                new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.EACH_RESP);
+        authMethod.setPollUrl("https://api.example.com/poll");
+        // When
+        List<String> hosts =
+                ExtensionAuthhelperReport.AuthReportDataHandler.getOtherAuthHosts(
+                        authMethod, "https://www.example.com");
+        // Then
+        assertThat(hosts, is(empty()));
+    }
+
+    @Test
+    void shouldIgnoreEmptyPollUrl() throws Exception {
+        // Given
+        AuthenticationMethod authMethod =
+                new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+        authMethod.setPollUrl("");
+        // When
+        List<String> hosts =
+                ExtensionAuthhelperReport.AuthReportDataHandler.getOtherAuthHosts(
+                        authMethod, "https://www.example.com");
+        // Then
+        assertThat(hosts, is(empty()));
+    }
+
+    @Test
+    void shouldGetTokenEndpointHostAsOtherAuthHost() throws Exception {
+        // Given
+        OAuth2AuthenticationMethod authMethod =
+                new OAuth2AuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setTokenEndpoint("https://auth.example.com:8443/realms/test/token");
+        // When
+        List<String> hosts =
+                ExtensionAuthhelperReport.AuthReportDataHandler.getOtherAuthHosts(
+                        authMethod, "https://www.example.com");
+        // Then
+        assertThat(hosts, contains("https://auth.example.com:8443"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void shouldIgnoreEmptyTokenEndpoint(String tokenEndpoint) throws Exception {
+        // Given
+        OAuth2AuthenticationMethod authMethod =
+                new OAuth2AuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setTokenEndpoint(tokenEndpoint);
+        // When
+        List<String> hosts =
+                ExtensionAuthhelperReport.AuthReportDataHandler.getOtherAuthHosts(
+                        authMethod, "https://www.example.com");
+        // Then
+        assertThat(hosts, is(empty()));
+    }
+
+    @Test
+    void shouldExcludeTargetHostFromOtherAuthHosts() throws Exception {
+        // Given
+        OAuth2AuthenticationMethod authMethod =
+                new OAuth2AuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setTokenEndpoint("https://www.example.com/token");
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+        authMethod.setPollUrl("https://www.example.com/poll");
+        // When
+        List<String> hosts =
+                ExtensionAuthhelperReport.AuthReportDataHandler.getOtherAuthHosts(
+                        authMethod, "https://www.example.com");
+        // Then
+        assertThat(hosts, is(empty()));
+    }
+
+    @Test
+    void shouldGetBothPollUrlAndTokenEndpointHostsWithoutDuplicates() throws Exception {
+        // Given
+        OAuth2AuthenticationMethod authMethod =
+                new OAuth2AuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setTokenEndpoint("https://auth.example.com/token");
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+        authMethod.setPollUrl("https://api.example.com/poll");
+        // When
+        List<String> hosts =
+                ExtensionAuthhelperReport.AuthReportDataHandler.getOtherAuthHosts(
+                        authMethod, "https://www.example.com");
+        // Then
+        assertThat(hosts, contains("https://api.example.com", "https://auth.example.com"));
+
+        // And when both are the same host
+        authMethod.setPollUrl("https://auth.example.com/poll");
+        hosts =
+                ExtensionAuthhelperReport.AuthReportDataHandler.getOtherAuthHosts(
+                        authMethod, "https://www.example.com");
+        assertThat(hosts, contains("https://auth.example.com"));
+    }
+
+    private static AuthReportData handleOAuth2Report(
+            String site, String tokenHost, InMemoryStats stats) {
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        Context context = mock(Context.class);
+        OAuth2AuthenticationMethod authMethod =
+                new OAuth2AuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setTokenEndpoint(tokenHost + "/token");
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.EACH_RESP);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+        given(extStats.getInMemoryStats()).willReturn(stats);
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        dataHandler.handle(reportData);
+
+        return (AuthReportData) reportData.getReportObject("authdata");
     }
 
     @Test

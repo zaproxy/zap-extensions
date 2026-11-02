@@ -3,6 +3,10 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 2026-11-02
+### Added
+- Automation Framework plans which check the authentication report summary for OAuth2 authentication, both passing and failing.
+
 ## 2026-10-21
 ### Added
 - A multi-step login test app (`/auth/multi-step-auth`) for the LLM assisted authentication.

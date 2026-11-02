@@ -1,0 +1,101 @@
+---
+# Checks that the authentication report shows OAuth2 authentication as passed when the token endpoint is on a different host to the target.
+# Authentication succeeds, so the auth summary item must pass.
+# Needs ZAP to be run in dev mode, which provides the mock OAuth2 server.
+# The report is written next to the plan, which the script finds from the running plan.
+# The statistics should be empty before running this plan.
+env:
+  contexts:
+    - name: "oauth2-report-pass"
+      urls:
+        - "https://api.oauth2.zap"
+      includePaths:
+        - 'https://api\.oauth2\.zap.*'
+      authentication:
+        method: "oauth2"
+        parameters:
+          grantType: "password"
+          tokenEndpoint: "https://authserver.oauth2.zap/token"
+          clientId: "test-client"
+          clientSecret: "test-secret"
+          diagnostics: true
+        verification:
+          method: "response"
+          loggedInRegex: "HTTP/\\d\\.\\d 200"
+          loggedOutRegex: "HTTP/\\d\\.\\d 401"
+      sessionManagement:
+        method: "headers"
+        parameters:
+          Authorization: "Bearer {%json:access_token%}"
+      users:
+        - name: "test-user"
+          credentials:
+            username: "test@test.com"
+            password: "password123"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "requestor"
+    name: "protected resource"
+    parameters:
+      user: "test-user"
+    requests:
+      - url: "https://api.oauth2.zap/userinfo"
+        method: "GET"
+        responseCode: 200
+  - type: "report"
+    name: "auth report"
+    parameters:
+      template: "auth-report-json"
+      reportFile: "oauth2-report-pass"
+  - type: "script"
+    name: "add check"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "ECMAScript : Graal.js"
+      name: "oauth2-report-pass-check"
+      inline: |
+        var Files = Java.type("java.nio.file.Files");
+        var File = Java.type("java.io.File");
+
+        var extAutomation = control.getExtensionLoader().getExtension("ExtensionAutomation");
+        var plan = null;
+        extAutomation.getRunningPlans().forEach(function(p) {
+            if (p.getFile() !== null && p.getFile().getName() === "oauth2-report-pass.yaml") {
+                plan = p;
+            }
+        });
+        if (plan === null) {
+            throw new Error("Running plan not found: oauth2-report-pass.yaml");
+        }
+        var reportFile = new File(plan.getFile().getParentFile(), "oauth2-report-pass.json");
+        if (!reportFile.exists()) {
+            throw new Error("Auth report not found: " + reportFile);
+        }
+        var report = JSON.parse(Files.readString(reportFile.toPath()));
+
+        var expected = {"auth.summary.auth": true, "auth.summary.session": true, "auth.summary.verif": true};
+        var errors = [];
+        Object.keys(expected).forEach(function(key) {
+            var item = report.summaryItems.filter(function(i) { return i.key === key; })[0];
+            if (!item) {
+                errors.push("Missing summary item " + key);
+            } else if (item.passed !== expected[key]) {
+                errors.push("Summary item " + key + " passed=" + item.passed + ", expected " + expected[key]);
+            }
+        });
+        if (errors.length > 0) {
+            throw new Error(errors.join("; "));
+        }
+  - type: "script"
+    name: "check auth report summary"
+    parameters:
+      action: "run"
+      type: "standalone"
+      name: "oauth2-report-pass-check"
+      failureLevel: "error"
