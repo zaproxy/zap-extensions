@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -173,7 +172,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin
                 String payload =
                         extOast.registerAlertAndGetPayloadForCallbackService(
                                 alert, OutOfBandXssScanRule.class.getSimpleName());
-                String attackString = MessageFormat.format(attackStringPattern, payload);
+                String attackString = attackStringPattern.replace("{0}", payload);
                 alert.setAttack(attackString);
                 setParameter(msg, param, attackString);
                 sendAndReceive(msg);
@@ -196,7 +195,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin
                                 .setSource(Alert.Source.ACTIVE)
                                 .build();
                 String payload = "https://" + extOast.registerAlertAndGetPayload(alert);
-                String attackString = MessageFormat.format(attackStringPattern, payload);
+                String attackString = attackStringPattern.replace("{0}", payload);
                 alert.setAttack(attackString);
                 setParameter(msg, param, attackString);
                 sendAndReceive(msg);
