@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+
 ## [0.33.0] - 2026-11-03
 ### Fixed
 - Do not resolve host names locally when using a SOCKSv5 proxy with remote DNS resolution, regressed since the HTTP client update in version 0.30.0.
