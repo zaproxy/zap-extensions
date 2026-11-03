@@ -3,7 +3,7 @@ antlr = "4.13.2"
 bouncycastle = "1.86"
 brotli = "1.24.0"
 diffutils = "1.3.0"
-flyway = "13.11.1"
+flyway = "13.12.0"
 graaljs = "25.4.4.1.1"
 httpclient = "5.6.4"
 jbrofuzz = "2.5.1"
@@ -23,7 +23,7 @@ prettier = "3.8.3"
 
 [libraries]
 ascanrules-procyonCompilerTools = "org.bitbucket.mstrobel:procyon-compilertools:0.6.0"
-ascanrules-rhino = "org.mozilla:rhino:1.9.1"
+ascanrules-rhino = "org.mozilla:rhino:1.9.2"
 ascanrulesBeta-diffutils = { module = "com.googlecode.java-diff-utils:diffutils", version.ref = "diffutils" }
 ascanrulesBeta-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 authhelper-otpJava = "com.github.bastiaanjansen:otp-java:2.2.0"
@@ -45,7 +45,7 @@ commonlib-jackson-datatype-jsr310.module = "com.fasterxml.jackson.datatype:jacks
 database-datanucleusJdo = "org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.10"
 database-flywayCore = { module =  "org.flywaydb:flyway-core", version.ref = "flyway" }
 database-flywayDatabaseHsqldb =  { module = "org.flywaydb:flyway-database-hsqldb", version.ref = "flyway" }
-database-sqliteJdbc = "org.xerial:sqlite-jdbc:3.53.4.0"
+database-sqliteJdbc = "org.xerial:sqlite-jdbc:3.54.1.0"
 diff-diffutils = { module = "com.googlecode.java-diff-utils:diffutils", version.ref = "diffutils" }
 exim-harReader = "de.sstoehr:har-reader:3.1.6"
 exim-hektorFsm = "io.hektor:hektor-fsm:0.0.8"
@@ -94,7 +94,7 @@ pscanrules-antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = 
 pscanrules-htmlunit-csp = "org.htmlunit:htmlunit-csp:5.6.0"
 pscanrules-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
 pscanrulesAlpha-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
-reports-flyingSaucerPdf = "org.xhtmlrenderer:flying-saucer-pdf:9.13.3"
+reports-flyingSaucerPdf = "org.xhtmlrenderer:flying-saucer-pdf:9.13.4"
 reports-thymeleaf = "org.thymeleaf:thymeleaf:3.1.5.RELEASE"
 saml-jaxbRuntime = "org.glassfish.jaxb:jaxb-runtime:4.0.9"
 scripts-byteBuddy = "net.bytebuddy:byte-buddy:1.18.16"
@@ -131,9 +131,9 @@ zest-zest = "org.zaproxy:zest:0.36.0"
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:2.2.0"
-errorprone = "net.ltgt.errorprone:5.1.1"
+errorprone = "net.ltgt.errorprone:5.2.0"
 japicmp = "me.champeau.gradle.japicmp:0.4.6"
-lombok = "io.freefair.lombok:9.8.2"
+lombok = "io.freefair.lombok:9.8.3"
 node-gradle = "com.github.node-gradle.node:7.1.0"
 sonarqube = "org.sonarqube:7.5.0.8588"
 spotless.id = "com.diffplug.spotless"
