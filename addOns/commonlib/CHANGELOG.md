@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update dependencies.
 - Maintenance changes.
+- Update solutions and references for 'Abuse of Functionality', 'HTTP Request Splitting', 'HTTP Response Splitting', and 'Insufficient Session Expiration' vulnerabilities (Issue 8056).
 
 ## [1.44.0] - 2026-08-26
 ### Added
