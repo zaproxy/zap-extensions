@@ -20,6 +20,7 @@
 package org.zaproxy.addon.oast.services.callback;
 
 import java.util.List;
+import java.util.Objects;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.utils.NetworkUtils;
 
@@ -84,7 +85,7 @@ public class CallbackParam extends VersionedAbstractParam {
     }
 
     public void setLocalAddress(String localAddress) {
-        if (this.localAddress.equals(localAddress)) {
+        if (localAddress == null || Objects.equals(this.localAddress, localAddress)) {
             return;
         }
         this.localAddress = localAddress.trim();
@@ -96,7 +97,7 @@ public class CallbackParam extends VersionedAbstractParam {
     }
 
     public void setRemoteAddress(String remoteAddress) {
-        if (this.remoteAddress.equals(remoteAddress)) {
+        if (remoteAddress == null || Objects.equals(this.remoteAddress, remoteAddress)) {
             return;
         }
         this.remoteAddress = remoteAddress.trim();

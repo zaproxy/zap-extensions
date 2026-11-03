@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Fixed
+- Prevent an error when saving callback options with an unavailable address (Issue 8608).
 
 ## [0.26.0] - 2026-09-16
 ### Fixed
