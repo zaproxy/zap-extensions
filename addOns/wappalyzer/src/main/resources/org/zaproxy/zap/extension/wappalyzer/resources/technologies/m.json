@@ -2367,6 +2367,19 @@
     "icon": "MaxCDN.png",
     "website": "https://www.maxcdn.com"
   },
+  "maxcluster": {
+    "cats": [
+      88
+    ],
+    "description": "maxcluster is a German e-commerce hosting provider; hosted domains use maxcluster.net nameservers.",
+    "dns": {
+      "NS": [
+        "\\.maxcluster\\.net"
+      ]
+    },
+    "icon": "maxcluster.png",
+    "website": "https://maxcluster.de"
+  },
   "Maxemail": {
     "cats": [
       32

@@ -442,6 +442,17 @@
     ],
     "website": "https://odoo.com"
   },
+  "Offerista": {
+    "cats": [
+      36
+    ],
+    "description": "Offerista is a retail-marketing network; publisher pages embed its brochure widgets served from marktjagd.com and offerista.com.",
+    "icon": "Offerista.png",
+    "website": "https://www.offerista.com",
+    "xhr": [
+      "(?:offerista\\.com|marktjagd\\.(?:com|de))"
+    ]
+  },
   "Offline.js": {
     "cats": [
       59
