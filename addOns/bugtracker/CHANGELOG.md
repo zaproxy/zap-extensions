@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Prevent exception if no display (Issue 3798).
+- Typos in help content.
 
 ## [4] - 2022-09-23
 ### Changed

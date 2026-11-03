@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for AI assisted authentication.
 
+### Fixed
+- Typos in help content.
+
 ## [0.61.0] - 2026-10-08
 ### Added
 - Allow to define for how long a plan can run.

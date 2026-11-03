@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.33.0] - 2026-11-03
 ### Fixed
 - Do not resolve host names locally when using a SOCKSv5 proxy with remote DNS resolution, regressed since the HTTP client update in version 0.30.0.
+- Typos in help content.
 
 ## [0.32.0] - 2026-10-26
 ### Added
