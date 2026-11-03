@@ -360,9 +360,11 @@ class GspmRegistryUnitTest extends TestUtils {
         }
 
         @Test
-        void shouldDisambiguateFileNameCollisionWithADifferentlyNamedPolicy() {
-            // Given — renaming "A" to "B" deliberately keeps its file name as "A"
+        void shouldDisambiguateFileNameCollisionWithADifferentlyNamedPolicy(@TempDir Path dir)
+                throws Exception {
+            // Given — renaming saved policy "A" to "B" deliberately keeps its file name as "A"
             GspmPolicy a = new GspmPolicy("A");
+            a.save(dir);
             registry.addPolicy(a);
             registry.renamePolicy(a, "B");
 
@@ -430,13 +432,24 @@ class GspmRegistryUnitTest extends TestUtils {
         }
 
         @Test
-        void shouldLockInFileNameOnRename() {
+        void shouldLockInFileNameOnRenameOfSavedPolicy(@TempDir Path dir) throws Exception {
             GspmPolicy policy = new GspmPolicy("Old");
+            policy.save(dir);
             registry.addPolicy(policy);
 
             registry.renamePolicy(policy, "New");
 
             assertThat(policy.getFileName(), is("Old"));
+        }
+
+        @Test
+        void shouldFollowNameOnRenameOfUnsavedPolicy() {
+            GspmPolicy policy = new GspmPolicy("Placeholder");
+            registry.addPolicy(policy);
+
+            registry.renamePolicy(policy, "New");
+
+            assertThat(policy.getFileName(), is("New"));
         }
 
         @Test

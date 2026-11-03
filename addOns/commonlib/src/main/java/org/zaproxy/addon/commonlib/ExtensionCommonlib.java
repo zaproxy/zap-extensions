@@ -236,6 +236,10 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
         gspmAscanRegistrar.unregisterFromCore();
         if (hasView()) {
             getView().setOutputPanel(null);
+            if (gspmPolicyManagerDialog != null) {
+                gspmPolicyManagerDialog.dispose();
+                gspmPolicyManagerDialog = null;
+            }
         }
         LegacyVulnerabilities.unload();
     }
