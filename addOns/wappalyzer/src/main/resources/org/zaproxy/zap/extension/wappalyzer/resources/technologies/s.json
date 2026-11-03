@@ -3624,6 +3624,20 @@
     ],
     "website": "https://setrow.com"
   },
+  "Setupad": {
+    "cats": [
+      36
+    ],
+    "description": "Setupad is a header-bidding monetization platform; sites load its wrapper from stpd.cloud and bid via prebid.setupad.io.",
+    "icon": "Setupad.png",
+    "scriptSrc": [
+      "stpd\\.cloud/"
+    ],
+    "website": "https://setupad.com",
+    "xhr": [
+      "(?:\\.stpd\\.cloud|\\.setupad\\.(?:io|com|net))"
+    ]
+  },
   "SEUR": {
     "cats": [
       99
@@ -4778,7 +4792,7 @@
   },
   "Shopify Buy Button": {
     "cats": [
-      100
+      6
     ],
     "description": "Shopify Buy Button is an app from Shopify which allows merchant to embed buy functionality for any product or collection into another website or blog.",
     "icon": "Shopify.svg",
@@ -4789,7 +4803,7 @@
       "freemium"
     ],
     "scriptSrc": [
-      "sdk\\. shopifycdn\\.com/buy-button/latest/"
+      "sdks\\.shopifycdn\\.com/buy-button/"
     ],
     "website": "https://apps.shopify.com/buy-button"
   },
@@ -8286,6 +8300,9 @@
       }
     },
     "icon": "Slim-SEO.svg",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wpslimseo.com"
   },
   "Slimbox": {
@@ -8549,6 +8566,16 @@
       "\\.?smct\\.(?:io|co)/"
     ],
     "website": "https://smarterclick.com"
+  },
+  "SmartFrame": {
+    "cats": [
+      95
+    ],
+    "html": [
+      "<link rel=\"dns-prefetch\" href=\"//static\\.smartframe\\.io\""
+    ],
+    "icon": "SmartFrame.png",
+    "website": "https://smartframe.io"
   },
   "SmartFront": {
     "cats": [
@@ -9475,6 +9502,21 @@
     ],
     "website": "https://www.soci.ai"
   },
+  "SociableKIT": {
+    "cats": [
+      5
+    ],
+    "description": "Sociable kit",
+    "html": [
+      "<iframe[^>]*src=[^>]*widgets\\.sociablekit\\.com",
+      "<img[^>]*src=[^>]*images\\.sociablekit\\.com"
+    ],
+    "icon": "SociableKIT.png",
+    "scriptSrc": [
+      "widgets\\.sociablekit\\.com"
+    ],
+    "website": "https://www.sociablekit.com/"
+  },
   "Social Pinpoint": {
     "cats": [
       1
@@ -10069,6 +10111,16 @@
     },
     "saas": true,
     "website": "https://sendsonar.com"
+  },
+  "Sonares": {
+    "cats": [
+      5
+    ],
+    "html": [
+      "<iframe [^>]*src=[^>]*content\\.sonares\\.org/[^\"/]+"
+    ],
+    "icon": "Sonares.png",
+    "website": "https://sonares.org/"
   },
   "SonarQube": {
     "cats": [
@@ -10702,6 +10754,9 @@
     "meta": {
       "generator": "^speculation-rules ([\\d.]+)?\\;version:\\1"
     },
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/speculation-rules/"
   },
   "Speed Kit": {
@@ -11723,6 +11778,16 @@
       "\\.sprocket\\.bz/"
     ],
     "website": "https://www.sprocket.bz"
+  },
+  "SproutStudio": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "iframe[src*='.sproutstudio.com']"
+    ],
+    "icon": "SproutStudio.png",
+    "website": "https://getsproutstudio.com"
   },
   "Spruce": {
     "cats": [
@@ -14974,6 +15039,9 @@
     ],
     "description": "Upsell is a tool that boosts Shopify store profits by automating product upsells.",
     "icon": "SweetUpsell.svg",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "low",

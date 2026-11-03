@@ -215,6 +215,9 @@
       "low",
       "recurring"
     ],
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scripts": [
       "\\.rafflepress\\.com"
@@ -1414,7 +1417,8 @@
     "description": "Rebuy offers personlisation solutions for ecommerce sites.",
     "icon": "Rebuy.svg",
     "implies": [
-      "Cart Functionality"
+      "Cart Functionality",
+      "Shopify"
     ],
     "js": {
       "rebuyConfig": ""
@@ -3516,7 +3520,6 @@
   },
   "Retention.com": {
     "cats": [
-      100,
       36
     ],
     "description": "Retention.com's identity resolution software helps Shopify merchants recover lost shoppers.",

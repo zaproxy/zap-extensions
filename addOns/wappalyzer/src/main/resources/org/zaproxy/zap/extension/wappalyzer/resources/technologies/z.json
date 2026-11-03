@@ -597,6 +597,23 @@
     ],
     "website": "https://www.zendesk.com/platform/conversations"
   },
+  "Zendesk Widget": {
+    "cats": [
+      5
+    ],
+    "dom": [
+      "script#ze-snippet"
+    ],
+    "icon": "Zendesk Widget.png",
+    "js": {
+      "zEACLoaded": "",
+      "zEmbed": ""
+    },
+    "scriptSrc": [
+      "static\\.zdassets\\.com/ekr/snippet\\.js"
+    ],
+    "website": "https://developer.zendesk.com"
+  },
   "Zenfolio": {
     "cats": [
       7
@@ -1110,6 +1127,9 @@
     ],
     "description": "Zipify OCU allows you to add upsells and cross-sells to your checkout sequence.",
     "icon": "Zipify OCU.svg",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "mid",
       "recurring"
@@ -1564,6 +1584,19 @@
     "icon": "Zoom.png",
     "saas": true,
     "website": "https://www.zoom.com"
+  },
+  "Zoomd": {
+    "cats": [
+      36
+    ],
+    "icon": "Zoomd.png",
+    "js": {
+      "Zoomd": ""
+    },
+    "scripts": [
+      "sphereup\\.com/zoomd"
+    ],
+    "website": "https://zoomd.com"
   },
   "Zoominfo": {
     "cats": [

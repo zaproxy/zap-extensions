@@ -803,6 +803,9 @@
     "meta": {
       "generator": "^web-worker-offloading ([\\d.]+)?\\;version:\\1"
     },
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/web-worker-offloading/"
   },
   "web-vitals": {
@@ -2393,6 +2396,22 @@
       "\\.wetravel\\.com/"
     ],
     "website": "https://www.wetravel.com"
+  },
+  "wetter.com": {
+    "cats": [
+      5
+    ],
+    "icon": "wetter.com.png",
+    "js": {
+      "_wcomDefault": "",
+      "_wcomOps": "",
+      "_wcomRequest": "",
+      "_wcomWidget": ""
+    },
+    "scripts": [
+      "wettercomassets\\.com/"
+    ],
+    "website": "https://www.wetter.com"
   },
   "WeWeb": {
     "cats": [
@@ -4070,9 +4089,6 @@
       "wp-embed\\.min\\.js",
       "wp-static\\.assets\\.sh/"
     ],
-    "scripts": [
-      "/wp-content"
-    ],
     "website": "https://wordpress.org"
   },
   "WordPress Block Editor": {
@@ -4661,6 +4677,9 @@
     "pricing": [
       "low",
       "recurring"
+    ],
+    "requires": [
+      "WordPress"
     ],
     "saas": true,
     "scriptSrc": [

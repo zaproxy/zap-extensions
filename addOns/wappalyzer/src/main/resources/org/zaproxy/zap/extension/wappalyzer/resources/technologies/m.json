@@ -4851,7 +4851,7 @@
     "saas": true,
     "website": "https://miso.ai",
     "xhr": [
-      "\\.askmiso\\.com/"
+      "\\.askmiso\\.com"
     ]
   },
   "MissionSuite": {
@@ -5414,6 +5414,9 @@
     "meta": {
       "generator": "^webp-uploads ([\\d.]+)?\\;version:\\1"
     },
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/webp-uploads/"
   },
   "Modernizr": {
@@ -5510,6 +5513,9 @@
     },
     "pricing": [
       "onetime"
+    ],
+    "requires": [
+      "WordPress"
     ],
     "saas": true,
     "website": "https://wp-modula.com"
@@ -6547,9 +6553,9 @@
   },
   "Motion.page": {
     "cats": [
-      87
+      59
     ],
-    "description": "Motion.page is a WordPress animation plugin utilizing GSAP and ScrollTrigger.",
+    "description": "Motion.page is a visual animation builder available as a WordPress plugin and as a desktop app.",
     "icon": "Motion.Page.svg",
     "js": {
       "MOTIONPAGE_FRONT.version": "^([0-9\\.]+)$\\;version:\\1"
@@ -7347,7 +7353,7 @@
     ],
     "website": "https://www.myfonts.com",
     "xhr": [
-      "\\.myfonts\\.net/"
+      "\\.myfonts\\.net"
     ]
   },
   "Myhkw player": {

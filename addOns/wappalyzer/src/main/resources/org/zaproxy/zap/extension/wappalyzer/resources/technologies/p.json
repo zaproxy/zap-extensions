@@ -602,6 +602,9 @@
     },
     "description": "Pandectes is a cloud-based data privacy compliance platform for Shopify stores, designed to support adherence to GDPR, CCPA/CPRA, VCDPA, APPI, PIPEDA, and PDPA regulations.",
     "icon": "Pandectes.svg",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "Pandectes": "",
       "PandectesBlocker": "",
@@ -2520,6 +2523,9 @@
     "meta": {
       "generator": "^performant-translations ([\\d.]+)?\\;version:\\1"
     },
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/performant-translations/"
   },
   "PerimeterX": {
@@ -7027,6 +7033,9 @@
     ],
     "description": "Pretty Damn Quick is a Shopify app for eCommerce brands to deliver personalized checkout experiences.",
     "icon": "PrettyDamnQuick.png",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "initPDQscript": ""
     },
@@ -7093,6 +7102,9 @@
     "pricing": [
       "low",
       "recurring"
+    ],
+    "requires": [
+      "WooCommerce"
     ],
     "saas": true,
     "website": "https://woocommerce.com/products/price-by-country"
@@ -8668,6 +8680,9 @@
       "<div[^>]+class=[\"']wp-block-advgb-*"
     ],
     "icon": "publishpress-blocks.png",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://publishpress.com/blocks/"
   },
   "Publishrr": {

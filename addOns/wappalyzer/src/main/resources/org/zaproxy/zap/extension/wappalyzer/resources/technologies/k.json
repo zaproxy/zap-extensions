@@ -1177,6 +1177,9 @@
     ],
     "description": "Kilatech is a Shopify ecommerce application builder.",
     "icon": "Kilatech.svg",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "poa"
     ],
@@ -1881,6 +1884,9 @@
     ],
     "description": "Klip is a tool for creating product page coupons designed to enhance customer engagement, boost conversions, and improve retention.",
     "icon": "Klip.svg",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "KLIP_APP_DATA.ATCPath": ""
     },

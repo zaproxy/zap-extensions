@@ -2090,6 +2090,16 @@
     "icon": "DigiCert.svg",
     "website": "https://www.digicert.com/"
   },
+  "digidip": {
+    "cats": [
+      71
+    ],
+    "icon": "digidip.png",
+    "scripts": [
+      "digidip\\.net"
+    ],
+    "website": "https://digidip.net"
+  },
   "DigiFi": {
     "cats": [
       6
@@ -4585,7 +4595,7 @@
     "saas": true,
     "website": "https://dyte.io",
     "xhr": [
-      "cdn\\.dyte\\.in/"
+      "cdn\\.dyte\\.in"
     ]
   }
 }

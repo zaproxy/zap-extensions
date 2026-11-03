@@ -51,6 +51,33 @@
     "saas": true,
     "website": "https://fabric.inc"
   },
+  "Face Age": {
+    "cats": [
+      59,
+      112
+    ],
+    "description": "Face Age is an AI-powered JavaScript SDK for facial skin analysis.",
+    "dom": [
+      ".faceAge-main-module",
+      "iframe#FaceAge-module-iframe"
+    ],
+    "icon": "FaceAge.svg",
+    "js": {
+      "FaceAge.prototype.render": ""
+    },
+    "oss": true,
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.jsdelivr\\.net/npm/face-age@([\\d.]+)\\;version:\\1",
+      "cdn\\.jsdelivr\\.net/npm/face-age(?:/|$)",
+      "unpkg\\.com/face-age@([\\d.]+)\\;version:\\1",
+      "unpkg\\.com/face-age(?:/|$)"
+    ],
+    "website": "https://getfaceage.com",
+    "xhr": [
+      "core\\.getfaceage\\.com"
+    ]
+  },
   "Facebook Ads": {
     "cats": [
       36
@@ -137,12 +164,10 @@
     "implies": [
       "Facebook Pixel"
     ],
-    "website": "https://www.facebook.com/business/help/611774685654668?id=1205376682832142",
-    "xhr": [
-      "facebook\\.com/tr/",
-      "udff\\[em\\]=[a-fA-F0-9]{64}",
-      "udff\\[.+\\]=[a-fA-F0-9]+"
-    ]
+    "scripts": [
+      "fbq\\(\\s*['\"]init['\"]\\s*,\\s*['\"]?\\d+['\"]?\\s*,\\s*\\{"
+    ],
+    "website": "https://www.facebook.com/business/help/611774685654668?id=1205376682832142"
   },
   "Facil-iti": {
     "cats": [
@@ -992,6 +1017,19 @@
     },
     "icon": "Fedora.svg",
     "website": "https://fedoraproject.org"
+  },
+  "FeedAd": {
+    "cats": [
+      36
+    ],
+    "icon": "FeedAd.png",
+    "js": {
+      "feedad": ""
+    },
+    "scripts": [
+      "feedad\\.com"
+    ],
+    "website": "https://feedad.com"
   },
   "Feedback Fish": {
     "cats": [
@@ -1846,6 +1884,26 @@
     ],
     "saas": true,
     "website": "https://firework.com"
+  },
+  "First-id": {
+    "cats": [
+      36
+    ],
+    "cookies": {
+      "firstid": ""
+    },
+    "description": "First-id is a French first-party publisher ID solution; it sets the firstid cookie, loads its SDK from cdn.first-id.fr and calls the api-*.prod.first-id.fr endpoints.",
+    "icon": "First-id.png",
+    "js": {
+      "getFirstIdInfos": ""
+    },
+    "scriptSrc": [
+      "//cdn\\.first-id\\.fr/sdk/"
+    ],
+    "website": "https://www.first-id.fr",
+    "xhr": [
+      "\\.first-id\\.fr"
+    ]
   },
   "FirstHive": {
     "cats": [
@@ -4506,6 +4564,19 @@
     ],
     "website": "https://fraudblocker.com"
   },
+  "fraud0": {
+    "cats": [
+      16
+    ],
+    "icon": "fraud0.png",
+    "scriptSrc": [
+      "(?:api|bt)\\.fraud0\\.com/"
+    ],
+    "website": "https://www.fraud0.com/",
+    "xhr": [
+      "(?:api|bt)\\.fraud0\\.com"
+    ]
+  },
   "FraudLabs Pro": {
     "cats": [
       16
@@ -4632,6 +4703,16 @@
       "analytics\\.freespee\\.com/js/external/fs\\.(?:min\\.)?js"
     ],
     "website": "https://www.freespee.com"
+  },
+  "Freestar": {
+    "cats": [
+      36
+    ],
+    "icon": "Freestar.png",
+    "js": {
+      "freestar": ""
+    },
+    "website": "https://freestar.com"
   },
   "FreeTextBox": {
     "cats": [

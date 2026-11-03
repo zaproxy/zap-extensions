@@ -1730,6 +1730,9 @@
       "low",
       "recurring"
     ],
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": [
       "/plugins/lifterlms/assets/js/llms\\.min\\.js\\?ver=([\\d\\.]+)\\;version:\\1"
@@ -3760,7 +3763,7 @@
     "saas": true,
     "website": "https://www.loom.com",
     "xhr": [
-      "loom\\.com/api",
+      "(?:^|\\.)loom\\.com$",
       "luna\\.loom\\.com"
     ]
   },
