@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Use ZAP's networking instead of Java's when importing OpenAPI definitions from URLs (Issue 8987).
+- Add a random per-message nonce to the delimiters around untrusted data sent to the LLM, making it harder for the data to contain a copy of the closing delimiter.
 
 ## [0.1.0] - 2026-10-15
 ### Added
