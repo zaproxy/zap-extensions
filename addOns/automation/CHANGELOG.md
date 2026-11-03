@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.62.0] - 2026-11-03
 ### Added
 - Support for AI assisted authentication.
 
@@ -618,6 +618,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.62.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.62.0
 [0.61.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.61.0
 [0.60.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.60.0
 [0.59.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.59.0

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.44.0] - 2026-11-03
 ### Added
 - AI Assisted Authentication
 - Record requests whose sending failed (for example DNS failure) in the diagnostics, with a synthetic response describing the failure reason, when the network add-on supports it.
@@ -429,6 +429,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.44.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.44.0
 [0.43.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.43.0
 [0.42.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.42.0
 [0.41.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.41.0
