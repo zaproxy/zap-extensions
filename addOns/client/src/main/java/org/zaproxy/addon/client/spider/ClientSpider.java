@@ -740,6 +740,10 @@ public class ClientSpider implements GenericScanner2 {
         }
     }
 
+    private boolean isAllowedResource(String uri) {
+        return allowedResources.stream().anyMatch(e -> e.matcher(uri).matches());
+    }
+
     private boolean isUrlInScope(String url) {
         URI uri = createUri(url);
         if (uri == null) {
@@ -753,6 +757,10 @@ public class ClientSpider implements GenericScanner2 {
 
         return checkResourceState(uri, new String(uri.getRawHost()), false)
                 == ResourceState.ALLOWED;
+    }
+
+    private boolean isUrlInScopeOrAllowedResource(String uri) {
+        return isUrlInScope(uri) || isAllowedResource(uri);
     }
 
     protected ResourceState checkResourceState(HttpMessage msg, boolean allowAll) {
@@ -1157,7 +1165,7 @@ public class ClientSpider implements GenericScanner2 {
         private ActionWaitStrategy createWaitStrategy() {
             if (options.getPageLoadTimeInSecs() == 0 && options.getActionWaitTimeInSecs() == 0) {
                 return new AdaptiveWaitStrategy(
-                        options, ClientSpider.this::isUrlInScope, visitedUrls);
+                        options, ClientSpider.this::isUrlInScopeOrAllowedResource, visitedUrls);
             }
             return new FixedWaitStrategy(
                     Duration.ofSeconds(options.getInitialLoadTimeInSecs()),
@@ -1227,7 +1235,7 @@ public class ClientSpider implements GenericScanner2 {
 
             ResourceState state = checkResourceState(httpMessage, allowAll);
             if (state != ResourceState.EXCLUDED
-                    && isAllowedResource(httpMessage.getRequestHeader().getURI())) {
+                    && isAllowedResource(httpMessage.getRequestHeader().getURI().toString())) {
                 state = ResourceState.ALLOWED;
             }
 
@@ -1243,11 +1251,6 @@ public class ClientSpider implements GenericScanner2 {
             if (extClient.getAuthenticationHandlers().isEmpty()) {
                 httpMessage.setRequestingUser(scanOptions.getUser());
             }
-        }
-
-        private boolean isAllowedResource(URI uri) {
-            String uriString = uri.toString();
-            return allowedResources.stream().anyMatch(e -> e.matcher(uriString).matches());
         }
 
         private ResourceState getResourceState(HttpMessage httpMessage) {
