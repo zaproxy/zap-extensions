@@ -27,6 +27,7 @@ Operations to import a WSDL file from the local filesystem or from a URL are als
 (<code>importFile</code> / <code>importUrl</code>), including an optional <code>maxMessages</code> parameter.
 <br><br>
 <b>NOTE:</b> As of version 6 of this add-on, only encoded URLs are supported.
+<b>NOTE:</b> When importing a WSDL from a URL, referenced resources are only retrieved over HTTP or HTTPS and requests are subject to the current ZAP Mode. When importing from a local file, local file references remain supported.
 
 <h3>Form Handler Add-on Support</h3>
 The SOAP add-on supports overriding default parameter values based on field names via the Form Handler add-on.
