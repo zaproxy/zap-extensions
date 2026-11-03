@@ -262,5 +262,21 @@ Many text areas such as the Output tab, Scripts console, Request and Response pa
 right click menu item</td></tr>
 </table>
 
+<H2>In-Place Operations</H2>
+
+<p>
+The right-click context menu provides in-place encode, decode, hash, and utility operations that
+apply directly to the selected text in any <code>JTextComponent</code> (e.g. Request panel, Scripts console).
+The in-place operation submenus are not shown in the Response view.
+
+<p>
+When text is selected and you right-click, the <b>Encode/Decode/Hash...</b> menu contains a submenu
+per category of processor (Encode, Decode, Hash, Utility, Scripts), each listing the matching
+processors described above. A disabled Custom script is still listed, but greyed out.
+
+<p>
+Selecting an operation replaces the selected text with the result. The result remains selected so that
+multiple operations can be chained without re-selecting.
+
 </BODY>
 </HTML>
