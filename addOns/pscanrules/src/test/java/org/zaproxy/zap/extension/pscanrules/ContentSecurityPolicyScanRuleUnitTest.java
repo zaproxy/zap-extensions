@@ -49,12 +49,12 @@ class ContentSecurityPolicyScanRuleUnitTest
             "default-src 'self'; script-src 'self' "
                     + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
                     + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                    + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; form-action 'none'";
+                    + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; form-action 'none'; base-uri 'none'";
     private static final String REASONABLE_META_POLICY =
             "default-src 'self'; script-src 'self' "
                     + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
                     + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                    + "fonts.gstatic.com; worker-src 'self'; form-action 'none'";
+                    + "fonts.gstatic.com; worker-src 'self'; form-action 'none'; base-uri 'none'";
 
     @Override
     protected ContentSecurityPolicyScanRule createScanner() {
@@ -165,11 +165,48 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-3"));
     }
 
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "default-src 'self'; form-action 'none'; frame-ancestors 'none'",
+                "default-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri *"
+            })
+    void shouldAlertOnMissingOrWildcardBaseUri(String policy) {
+        // Given
+        HttpMessage msg = createHttpMessage(policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        "The directive(s): base-uri is/are among the directives that do not fallback to default-src."));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(policy));
+    }
+
+    @Test
+    void shouldNotAlertOnMissingBaseUriWhenSiblingPolicyRestrictsIt() {
+        // Given
+        HttpMessage msg =
+                createHttpMessage(
+                        "default-src 'self'; form-action 'none'; frame-ancestors 'none', "
+                                + "default-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
     @Test
     void shouldAlertOnNoFallbackFrameAncestorsDirective() {
         // Given
         HttpMessage msg =
-                createHttpMessage("frame-ancestors *; default-src 'self'; form-action 'none'");
+                createHttpMessage(
+                        "frame-ancestors *; default-src 'self'; form-action 'none'; base-uri 'none'");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -184,7 +221,8 @@ class ContentSecurityPolicyScanRuleUnitTest
                         "The directive(s): frame-ancestors is/are among the directives that do not fallback to default-src."));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("frame-ancestors *; default-src 'self'; form-action 'none'"));
+                equalTo(
+                        "frame-ancestors *; default-src 'self'; form-action 'none'; base-uri 'none'"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
         assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
@@ -195,7 +233,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given
         HttpMessage msg =
                 createHttpMessage(
-                        "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'");
+                        "connect-src *; default-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -210,7 +248,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo(
-                        "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'"));
+                        "connect-src *; default-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
         assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
@@ -327,7 +365,8 @@ class ContentSecurityPolicyScanRuleUnitTest
     @Test
     void shouldAlertWhenAllEnforcePoliciesAllowUnsafeInline() {
         // Given — intersection still weak when every policy allows unsafe-inline
-        String policy = "script-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none'";
+        String policy =
+                "script-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'";
         HttpMessage msg = createHttpMessage(policy);
         msg.getResponseHeader().addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, policy);
         // When
@@ -341,8 +380,10 @@ class ContentSecurityPolicyScanRuleUnitTest
     @Test
     void shouldIncludeMultiPolicyOtherInfoAndUseFirstPolicyAsEvidence() {
         // Given
-        String first = "script-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none'";
-        String second = "default-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none'";
+        String first =
+                "script-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'";
+        String second =
+                "default-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'";
         HttpMessage msg = createHttpMessage(first);
         msg.getResponseHeader().addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, second);
         // When
@@ -376,8 +417,8 @@ class ContentSecurityPolicyScanRuleUnitTest
     void shouldReportParsedPolicyCountForCommaSeparatedCspList() {
         // Given — one header text, two parsed policies, both allow unsafe-inline
         String cspList =
-                "script-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none', "
-                        + "default-src 'unsafe-inline'; form-action 'none'; frame-ancestors 'none'";
+                "script-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'none', "
+                        + "default-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'";
         HttpMessage msg = createHttpMessage(cspList);
         // When
         scanHttpResponseReceive(msg);
@@ -396,9 +437,9 @@ class ContentSecurityPolicyScanRuleUnitTest
     void shouldNotAlertOnWildcardWhenSiblingPolicyRestrictsConnectSrc() {
         // Given
         String permissivePolicy =
-                "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'";
+                "connect-src *; default-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'";
         String restrictivePolicy =
-                "connect-src 'self'; default-src 'self'; form-action 'none'; frame-ancestors 'self'";
+                "connect-src 'self'; default-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'";
         HttpMessage msg = createHttpMessage(permissivePolicy);
         msg.getResponseHeader()
                 .addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, restrictivePolicy);
@@ -412,7 +453,7 @@ class ContentSecurityPolicyScanRuleUnitTest
     void shouldAlertOnWildcardWhenAllPoliciesAllowWildcardConnectSrc() {
         // Given
         String policy =
-                "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'";
+                "connect-src *; default-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'";
         HttpMessage msg = createHttpMessage(policy);
         msg.getResponseHeader().addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, policy);
         // When
@@ -433,11 +474,11 @@ class ContentSecurityPolicyScanRuleUnitTest
                 createHttpMessage(
                         "default-src 'self'; script-src 'unsafe-hashes'"
                                 + " 'sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY=';"
-                                + " form-action 'none'; frame-ancestors 'none'");
+                                + " form-action 'none'; base-uri 'none'; frame-ancestors 'none'");
         msg.getResponseHeader()
                 .addHeader(
                         HttpFieldsNames.CONTENT_SECURITY_POLICY,
-                        "default-src 'self'; script-src 'self'; form-action 'none';"
+                        "default-src 'self'; script-src 'self'; form-action 'none'; base-uri 'none';"
                                 + " frame-ancestors 'none'");
         // When
         scanHttpResponseReceive(msg);
@@ -452,7 +493,8 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given
         HttpMessage msg =
                 createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
-        String noisy = "default-src none; form-action 'none'; frame-ancestors 'none'";
+        String noisy =
+                "default-src none; form-action 'none'; base-uri 'none'; frame-ancestors 'none'";
         msg.getResponseHeader().addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, noisy);
         // When
         scanHttpResponseReceive(msg);
@@ -479,8 +521,8 @@ class ContentSecurityPolicyScanRuleUnitTest
     @ParameterizedTest
     @CsvSource(
             value = {
-                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; trusted-types | Empty trusted-types directive allows all policy names",
-                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; require-trusted-types-for | The require-trusted-types-for directive requires a value"
+                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none'; trusted-types | Empty trusted-types directive allows all policy names",
+                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none'; require-trusted-types-for | The require-trusted-types-for directive requires a value"
             },
             delimiter = '|')
     void shouldAlertWhenTrustedTypesDirectivesMissingValues(String policy, String expectedError) {
@@ -502,8 +544,8 @@ class ContentSecurityPolicyScanRuleUnitTest
     @ParameterizedTest
     @CsvSource(
             value = {
-                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; trusted-types * | Wildcard policy names (*) permit any policy name",
-                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; trusted-types * 'allow-duplicates' | Wildcard policy names (*) permit any policy name"
+                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none'; trusted-types * | Wildcard policy names (*) permit any policy name",
+                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none'; trusted-types * 'allow-duplicates' | Wildcard policy names (*) permit any policy name"
             },
             delimiter = '|')
     void shouldAlertOnWildcardTrustedTypes(String policy, String expectedWarning) {
@@ -567,7 +609,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given — 'strict-dynamic' disables 'unsafe-inline' for scripts per CSP3
         HttpMessage msg =
                 createHttpMessage(
-                        "script-src 'strict-dynamic' 'unsafe-inline'; form-action 'none';"
+                        "script-src 'strict-dynamic' 'unsafe-inline'; form-action 'none'; base-uri 'none';"
                                 + " frame-ancestors 'none'");
         // When
         scanHttpResponseReceive(msg);
@@ -698,7 +740,7 @@ class ContentSecurityPolicyScanRuleUnitTest
                 "default-src 'self'; script-src 'self' "
                         + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
                         + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                        + "fonts.gstatic.com; worker-src 'self'; form-action 'none'"
+                        + "fonts.gstatic.com; worker-src 'self'; form-action 'none'; base-uri 'none'"
             })
     void shouldAlertWhenMissingRelevantDirectiveWithoutFallback(String policy) {
         // Given

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- The Content Security Policy scan rule now also reports a missing or wildcard `base-uri` directive.
 
 ## [77] - 2026-10-22
 ### Added
