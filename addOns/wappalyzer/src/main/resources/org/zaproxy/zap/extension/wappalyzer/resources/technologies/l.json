@@ -1453,6 +1453,19 @@
     ],
     "website": "https://service.aainc.co.jp/product/letro/"
   },
+  "LetsHost": {
+    "cats": [
+      88
+    ],
+    "description": "LetsHost is an Irish hosting provider; hosted domains use dnsireland.com/.ie nameservers.",
+    "dns": {
+      "NS": [
+        "dnsireland\\.(?:com|ie)"
+      ]
+    },
+    "icon": "LetsHost.png",
+    "website": "https://letshost.ie"
+  },
   "Levar": {
     "cats": [
       105

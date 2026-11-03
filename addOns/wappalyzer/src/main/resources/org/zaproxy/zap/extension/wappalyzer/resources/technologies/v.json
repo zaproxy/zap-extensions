@@ -3143,7 +3143,7 @@
       "div[class*='Vue-Toastification__container']"
     ],
     "html": [
-      "<(?!svg)[^>]+\\sdata-v(?:ue)?-"
+      "<(?:[^s<>]|s[^v<>]|sv[^g<>])[^<>]*\\sdata-v(?:ue)?-|<(?:s|sv)\\sdata-v(?:ue)?-"
     ],
     "icon": "vue.svg",
     "js": {

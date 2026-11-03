@@ -369,6 +369,20 @@
     "icon": "idCloudHost.svg",
     "website": "https://idcloudhost.com"
   },
+  "Ideal Media": {
+    "cats": [
+      36
+    ],
+    "description": "Ideal Media is a content-recommendation advertising network (MGID family); publishers embed a site loader script from jsc.idealmedia.io.",
+    "icon": "Ideal Media.png",
+    "scriptSrc": [
+      "jsc\\.idealmedia\\.io/"
+    ],
+    "website": "https://idealmedia.io",
+    "xhr": [
+      "\\.idealmedia\\.io"
+    ]
+  },
   "Ideasoft": {
     "cats": [
       6
