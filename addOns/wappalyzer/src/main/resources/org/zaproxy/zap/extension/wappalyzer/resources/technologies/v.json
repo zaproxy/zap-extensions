@@ -86,6 +86,18 @@
     ],
     "website": "https://www.vagaro.com/pro/schedulicity"
   },
+  "Valorsic Studio": {
+    "cats": [
+      59
+    ],
+    "dom": {
+      "[data-valorsic-studio]": {
+        "exists": ""
+      }
+    },
+    "icon": "Valorsic Studio.png",
+    "website": "https://valorsic.studio"
+  },
   "Valuad": {
     "cats": [
       36
@@ -120,6 +132,27 @@
       "\\.valuecommerce\\.com"
     ],
     "website": "https://www.valuecommerce.co.jp"
+  },
+  "VanChat AI Agent": {
+    "cats": [
+      52
+    ],
+    "description": "VanChat is an AI shopping chatbot for Shopify; stores embed its widget from vanchat.app and expose vanchat_* globals.",
+    "dom": [
+      "#vanchat-root"
+    ],
+    "icon": "VanChat AI Agent.png",
+    "js": {
+      "vanchat_app_config": "",
+      "vanchat_api_url": ""
+    },
+    "scriptSrc": [
+      "vanchat"
+    ],
+    "website": "https://vanchat.io",
+    "xhr": [
+      "\\.vanchat\\.app"
+    ]
   },
   "Vanco Payment Solutions": {
     "cats": [
@@ -1553,6 +1586,17 @@
       "Shopify"
     ],
     "website": "https://apps.shopify.com/videogreet-gift-messages"
+  },
+  "Videobot": {
+    "cats": [
+      52
+    ],
+    "icon": "Videobot.png",
+    "scripts": [
+      "video-bot-iframe\\.vercel\\.app/video-bot\\.js",
+      "videobot\\.com/embed/videobot\\.mjs"
+    ],
+    "website": "https://www.videobot.com"
   },
   "VideoJS": {
     "cats": [

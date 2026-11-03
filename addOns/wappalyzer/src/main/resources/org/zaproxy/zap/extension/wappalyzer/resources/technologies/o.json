@@ -2274,6 +2274,9 @@
     "meta": {
       "generator": "^optimization-detective ([\\d.]+)?\\;version:\\1"
     },
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/optimization-detective/"
   },
   "Optimizely": {
@@ -3262,6 +3265,9 @@
       "<div[^>]+class=[\"']wp-block-themeisle-blocks-*"
     ],
     "icon": "otter-blocks.png",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/otter-blocks/"
   },
   "OtterText": {

@@ -204,6 +204,20 @@
     "saas": true,
     "website": "https://abicart.com/"
   },
+  "Abla": {
+    "cats": [
+      10
+    ],
+    "description": "Abla is a French privacy-friendly, cookieless web analytics service.",
+    "icon": "Abla.png",
+    "scriptSrc": [
+      "s\\.abla\\.io/abla\\.js"
+    ],
+    "website": "https://abla.io",
+    "xhr": [
+      "\\.abla\\.io"
+    ]
+  },
   "Able CDP": {
     "cats": [
       97
@@ -1106,6 +1120,20 @@
     ],
     "website": "https://www.adlightning.com"
   },
+  "Ad-Shield": {
+    "cats": [
+      36
+    ],
+    "description": "Ad-Shield is an adblock-recovery layer; publisher pages load its loader from html-load.com and talk to content-loader.com.",
+    "icon": "Ad-Shield.png",
+    "scriptSrc": [
+      "[/.](?:html-load|content-loader)\\.com/"
+    ],
+    "website": "https://www.ad-shield.io",
+    "xhr": [
+      "(?:^|\\.)(?:html-load|content-loader|error-report)\\.com$"
+    ]
+  },
   "Ada": {
     "cats": [
       52
@@ -1601,6 +1629,25 @@
     ],
     "website": "https://www.adglare.com"
   },
+  "AdGrid": {
+    "cats": [
+      36
+    ],
+    "description": "AdGrid is a header-bidding and ad management platform that helps publishers monetize their inventory.",
+    "icon": "AdGrid.png",
+    "js": {
+      "adgridConfig": "",
+      "adgridFqdn": "",
+      "adgridDomainId": ""
+    },
+    "scriptSrc": [
+      "console\\.adgrid\\.io/"
+    ],
+    "website": "https://www.adgrid.io",
+    "xhr": [
+      "\\.adgrid\\.io"
+    ]
+  },
   "Adimo": {
     "cats": [
       6
@@ -2019,6 +2066,16 @@
     "icon": "Adobe Experience Platform.svg",
     "saas": true,
     "website": "https://business.adobe.com/uk/products/experience-manager/scene7-login.html"
+  },
+  "Adobe Edge Web Fonts": {
+    "cats": [
+      17
+    ],
+    "icon": "Adobe Edge Web Fonts.png",
+    "scriptSrc": [
+      "use\\.edgefonts\\.net"
+    ],
+    "website": "https://edgewebfonts.adobe.com"
   },
   "Adobe Experience Manager": {
     "cats": [
@@ -4068,6 +4125,9 @@
     ],
     "description": "Ali reviews is a shopify app to collect reviews from customers.",
     "icon": "Alireviews.svg",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "alireviews_tags": ""
     },
@@ -8825,6 +8885,16 @@
     ],
     "website": "https://www.webmandesign.eu/portfolio/auberge-wordpress-theme/"
   },
+  "audienzz": {
+    "cats": [
+      1
+    ],
+    "icon": "audienzz.png",
+    "js": {
+      "audienzz": ""
+    },
+    "website": "https://audienzz.ch"
+  },
   "AudioEye": {
     "cats": [
       68
@@ -8858,6 +8928,23 @@
     ],
     "icon": "Audiohook.svg",
     "website": "https://www.audiohook.com"
+  },
+  "Audion": {
+    "cats": [
+      36
+    ],
+    "description": "Audion is a digital audio advertising company; its Audion360 podcast player is embedded on publisher pages and loads from 360.audion.fm.",
+    "dom": [
+      "#audion360-podcast-player-init, .audion-reader"
+    ],
+    "icon": "Audion.png",
+    "scriptSrc": [
+      "\\.360\\.audion\\.fm/"
+    ],
+    "website": "https://www.audion.fm",
+    "xhr": [
+      "\\.audion\\.fm"
+    ]
   },
   "Auglio": {
     "cats": [
@@ -9591,6 +9678,19 @@
     ],
     "saas": true,
     "website": "https://www.avanser.com"
+  },
+  "AvantisVideo": {
+    "cats": [
+      36
+    ],
+    "icon": "AvantisVideo.png",
+    "js": {
+      "avantisJS": ""
+    },
+    "scripts": [
+      "//cdn\\.avantisvideo\\.com"
+    ],
+    "website": "https://www.avantisvideo.com"
   },
   "Avasam": {
     "cats": [

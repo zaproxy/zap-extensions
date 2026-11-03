@@ -437,6 +437,17 @@
     ],
     "website": "https://taggbox.com/"
   },
+  "Taggrs.io": {
+    "cats": [
+      42
+    ],
+    "html": [
+      "<!-- Server Side Tracking by Taggrs\\.io",
+      "<!-- Server Side Tagging by Taggrs\\.io"
+    ],
+    "icon": "Taggrs.io.png",
+    "website": "https://taggrs.io"
+  },
   "Tagnology": {
     "cats": [
       32
@@ -1179,6 +1190,16 @@
     ],
     "website": "https://www.taurosmedia.com"
   },
+  "Tave": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "iframe[src*='tave.com']"
+    ],
+    "icon": "Tave.png",
+    "website": "https://tave.com"
+  },
   "Tawk.to": {
     "cats": [
       52
@@ -1814,6 +1835,11 @@
       1
     ],
     "description": "Terminalfour is a digital engagement and web content management platform for higher education.",
+    "html": [
+      "<[^>]+terminalfour\\.net/",
+      "<[^>]+t4Edit-page",
+      "<[^>]+/terminalfour/page/(?:section|content|directEdit)"
+    ],
     "icon": "Terminalfour.svg",
     "meta": {
       "generator": "TERMINALFOUR"
@@ -2981,6 +3007,9 @@
       "<div[^>]+class=[\"']themify_builder_*"
     ],
     "icon": "themify-builder.png",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://themify.me/builder"
   },
   "Themonic Iconic One": {
@@ -3091,6 +3120,9 @@
     ],
     "description": "Thimatic is a Shopify app for product reviews.",
     "icon": "Thimatic.svg",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -3415,6 +3447,16 @@
       "three(?:\\.min)?\\.js"
     ],
     "website": "https://threejs.org"
+  },
+  "Threedium": {
+    "cats": [
+      105
+    ],
+    "icon": "Threedium.png",
+    "scripts": [
+      "unlimited3d\\.com"
+    ],
+    "website": "https://threedium.co.uk"
   },
   "Threekit": {
     "cats": [
@@ -4092,6 +4134,9 @@
       "div[class*='timesact_powered_by']"
     ],
     "icon": "Timesact.svg",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "timesactScriptNew": ""
     },
@@ -5316,6 +5361,16 @@
     "saas": true,
     "website": "https://www.traek.io"
   },
+  "Traffective": {
+    "cats": [
+      36
+    ],
+    "icon": "Traffective.png",
+    "js": {
+      "traffectiveLib": ""
+    },
+    "website": "https://www.traffective.com"
+  },
   "TrafficGuard": {
     "cats": [
       36
@@ -5353,6 +5408,17 @@
       "\\.tsyndicate\\.com/"
     ],
     "website": "https://trafficstars.com"
+  },
+  "Trafft": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "iframe[src*='.trafft.com']",
+      "a[href*='.trafft.com']"
+    ],
+    "icon": "Trafft.png",
+    "website": "https://trafft.com"
   },
   "Trak": {
     "cats": [
@@ -6172,6 +6238,30 @@
     ],
     "website": "https://www.trustedshops.co.uk"
   },
+  "TrustedSite": {
+    "cats": [
+      16
+    ],
+    "cookies": {
+      "trustedsite_visit": "",
+      "trustedsite_tm_float_seen": ""
+    },
+    "description": "TrustedSite (formerly McAfee SECURE) is a website security certification and trustmark service that displays trust seals on certified sites.",
+    "icon": "TrustedSite.png",
+    "js": {
+      "TrustedSite": "",
+      "TrustedSiteInline": ""
+    },
+    "scriptSrc": [
+      "cdn\\.ywxi\\.net/",
+      "cdn\\.trustedsite\\.com/"
+    ],
+    "website": "https://www.trustedsite.com",
+    "xhr": [
+      "\\.ywxi\\.net",
+      "[/.]trustedsite\\.com"
+    ]
+  },
   "Trustify": {
     "cats": [
       90
@@ -6371,6 +6461,19 @@
       "ci-mpsnare\\.iovation\\.com"
     ],
     "website": "https://www.transunion.com/solution/truvalidate"
+  },
+  "truvid": {
+    "cats": [
+      36
+    ],
+    "icon": "truvid.png",
+    "js": {
+      "trvpbjsChunk": ""
+    },
+    "scripts": [
+      "trvdp\\.com"
+    ],
+    "website": "https://www.truvid.com"
   },
   "TryNow": {
     "cats": [
@@ -6637,6 +6740,17 @@
     "saas": true,
     "website": "https://tutorlms.com"
   },
+  "Tutorbird": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "iframe[src*='.tutorbird.com']",
+      "a[href*='.tutorbird.com']"
+    ],
+    "icon": "Tutorbird.png",
+    "website": "https://tutorbird.com"
+  },
   "TutorCruncher": {
     "cats": [
       21
@@ -6887,6 +7001,9 @@
       }
     },
     "icon": "WordPress.svg",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": [
       "/wp-content/themes/twentytwentyfive/"
     ],
@@ -6903,6 +7020,9 @@
       }
     },
     "icon": "WordPress.svg",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": [
       "/wp-content/themes/twentytwentyfour/"
     ],

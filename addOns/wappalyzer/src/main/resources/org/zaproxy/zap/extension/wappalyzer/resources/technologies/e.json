@@ -292,7 +292,7 @@
     "saas": true,
     "website": "https://www.easy-orders.net",
     "xhr": [
-      "api\\.easy-orders\\.net/"
+      "api\\.easy-orders\\.net"
     ]
   },
   "Easy Pie Chart": {
@@ -1533,6 +1533,9 @@
       "freemium",
       "mid"
     ],
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "website": "https://www.elasticpress.io/"
   },
@@ -2315,6 +2318,9 @@
     "meta": {
       "generator": "^embed-optimizer ([\\d.]+)?\\;version:\\1"
     },
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/embed-optimizer/"
   },
   "Embed PDF Viewer": {
@@ -2818,6 +2824,9 @@
     "meta": {
       "generator": "^auto-sizes ([\\d.]+)?\\;version:\\1"
     },
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/auto-sizes/"
   },
   "Enigma": {
@@ -3553,6 +3562,16 @@
     ],
     "website": "https://eshopcrm.com"
   },
+  "Eskimi": {
+    "cats": [
+      36
+    ],
+    "icon": "Eskimi.png",
+    "scripts": [
+      "eskimi\\.com"
+    ],
+    "website": "https://business.eskimi.com"
+  },
   "EspoCRM": {
     "cats": [
       53
@@ -3674,6 +3693,9 @@
       "<div[^>]+class=[\"']wp-block-essential-blocks-*"
     ],
     "icon": "essential-blocks.png",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://essential-blocks.com"
   },
   "Essential JS 2": {
@@ -4023,6 +4045,9 @@
       "link#eventon_dynamic_styles-css, link[href*='/css/eventon_styles\\.css']"
     ],
     "icon": "eventon.svg",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://www.myeventon.com"
   },
   "Everflow": {

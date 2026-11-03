@@ -47,6 +47,38 @@
     "saas": true,
     "website": "https://www.hackerone.com"
   },
+  "Hackle": {
+    "cats": [
+      74,
+      85,
+      10,
+      32,
+      53
+    ],
+    "description": "Hackle is an experimentation and growth platform providing A/B testing, feature flags, product analytics, and behavioral messaging.",
+    "html": [
+      "HACKLE_SDK_KEY"
+    ],
+    "icon": "Hackle.png",
+    "js": {
+      "HACKLE_PRELOAD_CLIENT": "",
+      "Hackle": "",
+      "HacklePlugin": "",
+      "_hackle": "",
+      "_hackleCafe24App": "",
+      "hackleClient": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "@hackler/javascript-sdk@([\\d.]+)/\\;version:\\1",
+      "@hackler/javascript-sdk",
+      "\\.hackle\\.io/"
+    ],
+    "website": "https://hackle.io",
+    "xhr": [
+      "(?:sdk-api|client-sdk|event-api|event|monitoring|static|cdn\\d*)\\.hackle\\.io"
+    ]
+  },
   "Haddock": {
     "cats": [
       4
@@ -608,6 +640,21 @@
       "cdn\\.blog\\.st-hatena\\.com/"
     ],
     "website": "https://hatenablog.com"
+  },
+  "Have I Been Pwned": {
+    "cats": [
+      16
+    ],
+    "description": "Have I Been Pwned is a data breach notification service that lets organisations monitor breached email addresses on domains they have verified.",
+    "dns": {
+      "TXT": [
+        "have-i-been-pwned-verification=",
+        "hibp-verify="
+      ]
+    },
+    "icon": "Have I Been Pwned.png",
+    "saas": true,
+    "website": "https://haveibeenpwned.com"
   },
   "HawkSearch": {
     "cats": [

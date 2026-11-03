@@ -1182,6 +1182,23 @@
     "saas": true,
     "website": "https://behzi.com"
   },
+  "belboon": {
+    "cats": [
+      71
+    ],
+    "description": "belboon is a German affiliate marketing network that tracks conversions and traffic through its belboon container tags.",
+    "icon": "belboon.png",
+    "js": {
+      "belboonTag": ""
+    },
+    "scriptSrc": [
+      "containertags\\.belboon\\.(?:com|de)/"
+    ],
+    "website": "https://www.belboon.com",
+    "xhr": [
+      "containertags\\.belboon\\."
+    ]
+  },
   "Belliza": {
     "cats": [
       81
@@ -1361,6 +1378,16 @@
     ],
     "website": "https://www.bestie.ai"
   },
+  "bet365": {
+    "cats": [
+      19
+    ],
+    "html": [
+      "<a [^>]*href=['\"]http[s]?://www\\.bet365"
+    ],
+    "icon": "bet365.png",
+    "website": "https://www.bet365affiliates.com"
+  },
   "BeTheme": {
     "cats": [
       80
@@ -1503,6 +1530,32 @@
       "(?:dashboard\\.betterbot\\.ai|\\.betterbot\\.com)"
     ],
     "website": "https://betterbot.com"
+  },
+  "BetterCMS": {
+    "cats": [
+      1
+    ],
+    "description": "BetterCMS is a headless and hybrid CMS with a visual editor, structured content and site hosting, for websites built with any framework.",
+    "dom": [
+      "[data-bcms-field], [data-bcms-sections], [data-bcms-entry], img[src*='cdn.bettercms.ai'], img[srcset*='cdn.bettercms.ai'], source[srcset*='cdn.bettercms.ai']"
+    ],
+    "headers": {
+      "x-bcms-edge": ""
+    },
+    "icon": "BetterCMS.svg",
+    "meta": {
+      "generator": "^BetterCMS$"
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://bettercms.ai",
+    "xhr": [
+      "(?:api|cdn)\\.bettercms\\.ai"
+    ]
   },
   "BetterDocs": {
     "cats": [
@@ -3669,6 +3722,16 @@
     ],
     "website": "https://bombbomb.com"
   },
+  "Bombora": {
+    "cats": [
+      97
+    ],
+    "icon": "Bombora.png",
+    "scripts": [
+      "ml314\\.com"
+    ],
+    "website": "https://bombora.com"
+  },
   "BON Loyalty": {
     "cats": [
       84,
@@ -3741,6 +3804,16 @@
       "api\\.bontii\\.dk/"
     ],
     "website": "https://bontii.dk"
+  },
+  "Book Like A Boss": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "a[href*='bookme.name']"
+    ],
+    "icon": "Book Like A Boss.png",
+    "website": "https://www.booklikeaboss.com/"
   },
   "Book N Pay": {
     "cats": [
@@ -3849,6 +3922,19 @@
     ],
     "saas": true,
     "website": "https://www.bookedscheduler.com/"
+  },
+  "Bookedin": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "a[href*='bookedin.com']"
+    ],
+    "icon": "Bookedin.png",
+    "scriptSrc": [
+      "scheduler\\.bookedin\\.com"
+    ],
+    "website": "https://bookedin.com/"
   },
   "Bookeo": {
     "cats": [
@@ -3997,6 +4083,20 @@
     ],
     "website": "https://www.bookingkoala.com"
   },
+  "BookingPress": {
+    "cats": [
+      72,
+      87
+    ],
+    "dom": [
+      "[class='bpa-frontend-main-container']"
+    ],
+    "icon": "BookingPress.png",
+    "requires": [
+      "WordPress"
+    ],
+    "website": "https://www.bookingpressplugin.com"
+  },
   "Bookitit": {
     "cats": [
       72
@@ -4075,6 +4175,19 @@
     ],
     "website": "https://bookmanager.com"
   },
+  "Booknetic": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "a[href*='booknetic.com']"
+    ],
+    "html": [
+      "<iframe [^>]*src=[\"\\']https://[^/]+\\.booknetic\\.com/[^\"\\']*"
+    ],
+    "icon": "Booknetic.png",
+    "website": "https://booknetic.com/"
+  },
   "BookStack": {
     "cats": [
       4
@@ -4092,6 +4205,17 @@
     ],
     "oss": true,
     "website": "https://www.bookstackapp.com"
+  },
+  "Booksteam": {
+    "cats": [
+      72
+    ],
+    "html": [
+      "<script[^>]*src=['\"]//booksteam\\.com/booknowscript\\.ashx[^'\"]*['\"][^>]*></script>",
+      "<a[^>]*href=['\"]http://booksteam\\.com/[^'\"]*['\"][^>]*>.*?</a>"
+    ],
+    "icon": "Booksteam.png",
+    "website": "https://booksteam.com/"
   },
   "Bookster": {
     "cats": [
@@ -5332,6 +5456,20 @@
     ],
     "website": "https://www.bridgetownrb.com"
   },
+  "BridTV": {
+    "cats": [
+      14
+    ],
+    "icon": "BridTV.png",
+    "js": {
+      "BridChromePlugin": "",
+      "bridCanRunAds": ""
+    },
+    "scripts": [
+      "[/.]brid\\.tv"
+    ],
+    "website": "https://www.brid.tv"
+  },
   "Brightcove": {
     "cats": [
       14
@@ -5571,6 +5709,9 @@
       "<div[^>]+class=[\"']brz-root__container"
     ],
     "icon": "Brizy.svg",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://brizy.io"
   },
   "Broadstreet": {
@@ -5793,6 +5934,16 @@
     "saas": true,
     "website": "https://www.bsmart.co.il/"
   },
+  "BSmartData": {
+    "cats": [
+      10
+    ],
+    "icon": "BSmartData.png",
+    "scripts": [
+      "pixel\\.bsmartdata\\.com"
+    ],
+    "website": "https://www.bsmartdata.com"
+  },
   "Bsport": {
     "cats": [
       72
@@ -5885,6 +6036,20 @@
       "/wp-content/plugins/buddypress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://buddypress.org"
+  },
+  "Buffer button and social widgets": {
+    "cats": [
+      5
+    ],
+    "dom": [
+      "a.buffer-add-button"
+    ],
+    "icon": "Buffer button and social widgets.png",
+    "scriptSrc": [
+      "static\\.buffer(?:app)?\\.com/js/button",
+      "d389zggrogs7qo\\.cloudfront\\.net/js/button"
+    ],
+    "website": "https://buffer.com"
   },
   "Bugcrowd": {
     "cats": [

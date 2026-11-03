@@ -1114,6 +1114,26 @@
     "saas": true,
     "website": "https://www.youcms.eu"
   },
+  "YouDraw": {
+    "cats": [
+      6
+    ],
+    "description": "YouDraw is a Brazilian ecommerce and print-on-demand platform with hosted storefronts (YD Store).",
+    "headers": {
+      "X-Generator": "^YouDraw"
+    },
+    "icon": "YouDraw.png",
+    "meta": {
+      "generator": "^YouDraw"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://youdraw.com.br"
+  },
   "Youform": {
     "cats": [
       110

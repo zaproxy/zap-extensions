@@ -59,6 +59,19 @@
     ],
     "website": "https://gambio.de"
   },
+  "GameAnalytics": {
+    "cats": [
+      10
+    ],
+    "icon": "GameAnalytics.png",
+    "scriptSrc": [
+      "GameAnalytics(?:\\.min)?\\.js"
+    ],
+    "scripts": [
+      "GameAnalytics(?:\\.min)?\\.js"
+    ],
+    "website": "https://gameanalytics.com"
+  },
   "Gameball": {
     "cats": [
       84
@@ -485,6 +498,9 @@
       "<div[^>]+class=[\"']wp-block-atomic-blocks-*"
     ],
     "icon": "genesis-blocks.png",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": [
       "/wp-content/themes/genesis-blocks/lib/js/"
     ],
@@ -731,6 +747,19 @@
       "\\bGeodis\\b"
     ],
     "website": "https://geodis.com"
+  },
+  "GeoEdge": {
+    "cats": [
+      36
+    ],
+    "icon": "GeoEdge.png",
+    "js": {
+      "geoedgeApi": ""
+    },
+    "scripts": [
+      "geoedge\\.be"
+    ],
+    "website": "https://www.geoedge.com"
   },
   "Geonetric": {
     "cats": [
@@ -1148,6 +1177,16 @@
       "app\\.getterms\\.io"
     ],
     "website": "https://getterms.io"
+  },
+  "gettimely": {
+    "cats": [
+      72
+    ],
+    "icon": "gettimely.png",
+    "scriptSrc": [
+      "\\.gettimely\\.com/widget"
+    ],
+    "website": "https://gettimely.com"
   },
   "getUBetter": {
     "cats": [
@@ -3943,7 +3982,7 @@
     "oss": true,
     "website": "https://graphql.org",
     "xhr": [
-      "graphql\\.[\\w]+\\.(?:com|net)/"
+      "graphql\\.[\\w]+\\.(?:com|net)"
     ]
   },
   "Graphy": {

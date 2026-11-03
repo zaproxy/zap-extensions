@@ -503,10 +503,7 @@
     "url": [
       "/umbraco/login\\.aspx(?:$|\\?)"
     ],
-    "website": "https://umbraco.com/",
-    "xhr": [
-      "/umbraco/api/"
-    ]
+    "website": "https://umbraco.com/"
   },
   "UMI.CMS": {
     "cats": [

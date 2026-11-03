@@ -1122,6 +1122,9 @@
     ],
     "icon": "NewspackLogo.png",
     "oss": true,
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://github.com/Automattic/newspack-plugin"
   },
   "Newspack by Automattic": {

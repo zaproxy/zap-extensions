@@ -199,6 +199,9 @@
       "Icegram": "",
       "icegram_data": ""
     },
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": [
       "/wp-content/plugins/icegram/.*main\\.min\\.js\\?ver=([\\d\\.]+)\\;version:\\1"
@@ -724,6 +727,9 @@
     "meta": {
       "generator": "^dominant-color-images ([\\d.]+)?\\;version:\\1"
     },
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/dominant-color-images/"
   },
   "Image Prioritizer": {
@@ -736,6 +742,9 @@
     "meta": {
       "generator": "^image-prioritizer ([\\d.]+)?\\;version:\\1"
     },
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/image-prioritizer/"
   },
   "Image Relay": {
@@ -2836,7 +2845,7 @@
     "saas": true,
     "website": "https://ipapi.co",
     "xhr": [
-      "ipapi\\.co/"
+      "(?:^|\\.)ipapi\\.co$"
     ]
   },
   "IPB": {
@@ -2972,7 +2981,7 @@
     ],
     "website": "https://ipinfo.io",
     "xhr": [
-      "ipinfo\\.io/"
+      "ipinfo\\.io"
     ]
   },
   "IPInfoDB": {

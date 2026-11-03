@@ -297,6 +297,19 @@
     ],
     "website": "https://www.calendarwiz.com/"
   },
+  "Calendesk": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "iframe[src*='.calendesk.net']"
+    ],
+    "icon": "Calendesk.png",
+    "js": {
+      "Calendesk": ""
+    },
+    "website": "https://calendesk.com"
+  },
   "Calendly": {
     "cats": [
       72
@@ -1095,6 +1108,16 @@
     "saas": true,
     "website": "https://cargoserver.ch"
   },
+  "Caroda": {
+    "cats": [
+      36
+    ],
+    "icon": "Caroda.png",
+    "scripts": [
+      "caroda\\.io"
+    ],
+    "website": "https://www.caroda.io"
+  },
   "Carrd": {
     "cats": [
       51
@@ -1522,6 +1545,9 @@
     ],
     "description": "Cartylabs is a Shopify application that provides a fast checkout experience and enables merchants to implement upsell and cross-sell features directly within the shopping cart.",
     "icon": "Cartylabs.svg",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -1795,6 +1821,19 @@
       "\\.scripts\\.causalfunnel\\.com"
     ],
     "website": "https://www.causalfunnel.com"
+  },
+  "Cazamba": {
+    "cats": [
+      36
+    ],
+    "html": [
+      "id=.ad-cazamba"
+    ],
+    "icon": "Cazamba.png",
+    "scripts": [
+      "cazamba\\.com"
+    ],
+    "website": "https://cazamba.com"
   },
   "CCV Shop": {
     "cats": [
@@ -2332,6 +2371,19 @@
     "saas": true,
     "website": "https://channel.io"
   },
+  "Channel99": {
+    "cats": [
+      10
+    ],
+    "dom": [
+      "img[src*='api.c99.ai/']"
+    ],
+    "icon": "Channel99.png",
+    "scripts": [
+      "//api\\.c99\\.ai/api/v1/fire/"
+    ],
+    "website": "https://www.channel99.com/"
+  },
   "ChannelAdvisor": {
     "cats": [
       10,
@@ -2828,7 +2880,7 @@
     ],
     "website": "https://chatra.com",
     "xhr": [
-      "chat\\.chatra\\.io/"
+      "chat\\.chatra\\.io"
     ]
   },
   "Chatroll": {
@@ -3052,6 +3104,16 @@
     ],
     "website": "https://chayns.site"
   },
+  "CheckCherry": {
+    "cats": [
+      72
+    ],
+    "dom": [
+      "a[href*='checkcherry.com/reservation']"
+    ],
+    "icon": "CheckCherry.png",
+    "website": "https://www.checkcherry.com"
+  },
   "Checkfront": {
     "cats": [
       5,
@@ -3106,7 +3168,7 @@
     "saas": true,
     "website": "https://www.checklyhq.com",
     "xhr": [
-      "api\\.checklyhq\\.com/"
+      "api\\.checklyhq\\.com"
     ]
   },
   "Checkout Champ": {
@@ -4307,6 +4369,16 @@
     ],
     "website": "https://www.clever.com"
   },
+  "Clever Advertising": {
+    "cats": [
+      36
+    ],
+    "icon": "Clever Advertising.png",
+    "scripts": [
+      "clevernt\\.com"
+    ],
+    "website": "https://cleveradvertising.com"
+  },
   "Cleverbridge": {
     "cats": [
       6
@@ -4349,6 +4421,19 @@
     "icon": "CleverInsight.svg",
     "saas": true,
     "website": "https://clever-insight.com"
+  },
+  "CleverPush": {
+    "cats": [
+      32
+    ],
+    "icon": "CleverPush.png",
+    "js": {
+      "CleverPush": ""
+    },
+    "scripts": [
+      "//static\\.cleverpush\\.com/sdk/cleverpush-chat\\.js"
+    ],
+    "website": "https://cleverpush.com"
   },
   "CleverReach": {
     "cats": [
@@ -5194,6 +5279,22 @@
     "saas": true,
     "website": "https://cloudguard.ir"
   },
+  "Cloudbac": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "Cloudbac is a SaaS website builder and hosting platform for businesses.",
+    "headers": {
+      "X-Powered-By": "^Cloudbac$"
+    },
+    "icon": "Cloudbac.svg",
+    "meta": {
+      "generator": "^Cloudbac$"
+    },
+    "saas": true,
+    "website": "https://www.cloudbac.com"
+  },
   "Cloudbeds": {
     "cats": [
       72
@@ -5538,6 +5639,18 @@
       "poa"
     ],
     "website": "https://cloudinary.com"
+  },
+  "ClouDNS": {
+    "cats": [
+      88
+    ],
+    "dns": {
+      "NS": [
+        "\\.cloudns\\.(?:net|uk)"
+      ]
+    },
+    "icon": "ClouDNS.png",
+    "website": "https://www.cloudns.net/"
   },
   "Cloudrexx": {
     "cats": [
@@ -6053,6 +6166,9 @@
     ],
     "description": "Codetipi is a provider of WordPress themes and plugins designed for premium users.",
     "icon": "Codetipi.svg",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scripts": [
       "codetipi-"
@@ -6714,7 +6830,7 @@
     "saas": true,
     "website": "https://www.commercengine.io",
     "xhr": [
-      "prod\\.api\\.commercengine\\.io/"
+      "prod\\.api\\.commercengine\\.io"
     ]
   },
   "Commerce Server": {
@@ -6851,7 +6967,7 @@
     ],
     "website": "https://commercetools.com",
     "xhr": [
-      "\\.commercetools\\.com/"
+      "\\.commercetools\\.com"
     ]
   },
   "Commercio": {
@@ -7259,6 +7375,9 @@
     ],
     "description": "Conjured provides Shopify brands with Shopify apps and custom development.",
     "icon": "Conjured.svg",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "recurring",
       "mid"
@@ -7594,6 +7713,17 @@
     ],
     "saas": true,
     "website": "https://www.contentder.com"
+  },
+  "ContentExchange": {
+    "cats": [
+      36
+    ],
+    "html": [
+      "data-contentexchange-widget",
+      "href=\"https://tracker\\.contentexchange\\.me/"
+    ],
+    "icon": "ContentExchange.png",
+    "website": "https://www.contentexchange.me"
   },
   "Contentful": {
     "cats": [
@@ -8130,6 +8260,16 @@
     ],
     "website": "https://convertkit.com"
   },
+  "Converto": {
+    "cats": [
+      36
+    ],
+    "icon": "Converto.png",
+    "scripts": [
+      "converto\\.com"
+    ],
+    "website": "https://www.converto.com"
+  },
   "ConvertoBot": {
     "cats": [
       52
@@ -8391,6 +8531,9 @@
     ],
     "description": "Cookie Notice provides a simple, customizable website banner that can be used to help your website comply with certain cookie consent requirements under the EU GDPR cookie law and CCPA regulations and includes seamless integration with Cookie Compliance to help your site comply with the latest updates to existing consent laws.",
     "icon": "Cookie Notice.svg",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": [
       "/wp-content/plugins/cookie-notice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
@@ -8748,6 +8891,9 @@
     "pricing": [
       "freemium",
       "onetime"
+    ],
+    "requires": [
+      "WordPress"
     ],
     "saas": true,
     "website": "https://coreframework.com"
@@ -9223,6 +9369,9 @@
     ],
     "description": "Covet.pics is a customizable Shopify app for Instagram and Lookbook shoppable galleries.",
     "icon": "Covet.pics.svg",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
