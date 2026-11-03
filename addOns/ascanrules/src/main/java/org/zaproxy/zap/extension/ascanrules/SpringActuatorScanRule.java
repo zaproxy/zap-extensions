@@ -57,7 +57,16 @@ public class SpringActuatorScanRule extends AbstractHostPlugin implements Common
             Pattern.compile(
                     "application\\/vnd\\.spring-boot\\.actuator\\.v[0-9]\\+json|application\\/json",
                     Pattern.MULTILINE);
-    private static final Pattern JSON_PAYLOAD = Pattern.compile("\\{.*\\:.*\\}", Pattern.MULTILINE);
+    private static final Pattern ACTUATOR_CONTENT_TYPE =
+            Pattern.compile("application\\/vnd\\.spring-boot\\.actuator\\.v[0-9]\\+json");
+    // The statuses of Spring Boot's Status class, which are always upper case. Other JSON responses
+    // are only reported if they contain one of these.
+    private static final Pattern DEFAULT_HEALTH_STATUS =
+            Pattern.compile("\"status\"\\s*:\\s*\"(?:UP|DOWN|OUT_OF_SERVICE|UNKNOWN)\"");
+    // Applications can add their own statuses, so with the actuator media type, which other
+    // applications do not use, any status is enough.
+    private static final Pattern ANY_HEALTH_STATUS =
+            Pattern.compile("\"status\"\\s*:\\s*\"[A-Z_]+\"");
     private static final Map<String, String> ALERT_TAGS;
 
     static {
@@ -150,9 +159,13 @@ public class SpringActuatorScanRule extends AbstractHostPlugin implements Common
                 String contentType = testMsg.getResponseHeader().getNormalisedContentTypeValue();
                 if (contentType != null && isPage200(testMsg)) {
                     String responseBody = testMsg.getResponseBody().toString();
+                    Pattern healthStatus =
+                            ACTUATOR_CONTENT_TYPE.matcher(contentType).find()
+                                    ? ANY_HEALTH_STATUS
+                                    : DEFAULT_HEALTH_STATUS;
                     boolean matches =
                             CONTENT_TYPE.matcher(contentType).find()
-                                    && JSON_PAYLOAD.matcher(responseBody).find();
+                                    && healthStatus.matcher(responseBody).find();
                     if (matches) {
                         createAlert(testMsg.getResponseBody().toString())
                                 .setMessage(testMsg)
