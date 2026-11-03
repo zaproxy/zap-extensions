@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import java.util.Map;
@@ -248,5 +249,14 @@ class HtmlContextAnalyserUnitTest extends TestUtils {
         assertThat(ctx2.getParentTag(), is(equalTo("span")));
         assertThat(ctx2.getTagAttribute(), is(equalTo("name")));
         assertThat(ctx2.getSurroundingQuote(), is(equalTo("\"")));
+    }
+
+    @Test
+    void shouldThrowIfTargetIsEmpty() {
+        // Given
+        msg = new HttpMessage();
+        HtmlContextAnalyser analyser = new HtmlContextAnalyser(msg);
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> analyser.getHtmlContexts(""));
     }
 }
