@@ -6,9 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
+- Simple DOM patterns are now only attempted against HTML responses, like DOM patterns.
+- HTML patterns are no longer attempted against JavaScript, CSS, or JSON responses.
+- Improved performance on large responses by parsing the response once per scan instead of once per technology.
 
 ### Fixed
 - Typos in help content.
+- Match CSS patterns against the content of style elements instead of the whole response.
 
 ## [21.58.0] - 2026-10-08
 ### Changed

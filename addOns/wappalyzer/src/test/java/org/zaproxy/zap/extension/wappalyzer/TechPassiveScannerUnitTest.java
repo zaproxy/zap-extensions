@@ -252,6 +252,33 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
     }
 
     @Test
+    void shouldMatchHtmlPatternOnHtmlResponseForScriptUrl() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/assets/missing.js HTTP/1.1");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
+        msg.setResponseBody("<html><link href=\"/bitrix/templates/x.css\"></html>");
+        // When
+        scan(msg);
+        // Then
+        assertFoundApp("https://www.example.com", "1C-Bitrix");
+    }
+
+    @Test
+    void shouldNotMatchHtmlPatternOnJavaScriptResponse() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/assets/app.js HTTP/1.1");
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.CONTENT_TYPE, "application/javascript");
+        msg.setResponseBody("var s = '<link href=\"/bitrix/templates/x.css\">';");
+        // When
+        scan(msg);
+        // Then
+        assertNothingFound("https://www.example.com");
+    }
+
+    @Test
     void shouldMatchOnCssResponseWhenContentMatches() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
@@ -288,6 +315,21 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
         // Then
         assertFoundAppCount("https://www.example.com", 1);
         assertFoundApp("https://www.example.com", "Test Entry");
+    }
+
+    @Test
+    void shouldNotMatchCssPatternOutsideStyleElementOnHtmlResponse()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setResponseBody(
+                """
+                <html><head><style>.TEST {background-color: lightblue;}</style></head>\
+                <body><!-- .example {background-color: lightblue;} --></body></html>""");
+        // When
+        scan(msg);
+        // Then
+        assertNothingFound("https://www.example.com");
     }
 
     @Test
@@ -821,6 +863,8 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
                                 createAppPattern("HEADER", "Bitrix Site Manager"))));
         // URL pattern
         app.setUrl(List.of(createAppPattern("URL", "/bitrix/js")));
+        // HTML pattern
+        app.setHtml(List.of(createAppPattern("HTML", "href=\"/bitrix/templates")));
         // Implies PHP
         app.setImplies(List.of("PHP"));
 

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -75,8 +76,69 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     /** Functional interface for looped processing of HttpMessages in different ways. */
     @FunctionalInterface
     private interface CustomProcessor {
-        ApplicationMatch process(
-                ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source);
+        ApplicationMatch process(ApplicationMatch appMatch, Application currentApp, ScanData data);
+    }
+
+    /** Data derived from the message, computed at most once per scan and shared by all apps. */
+    private static final class ScanData {
+
+        private final HttpMessage msg;
+        private final Source source;
+        private Document document;
+        private Set<HtmlParameter> cookies;
+        private List<Element> metas;
+        private List<Element> styles;
+        private List<String> scriptSrcs;
+
+        private ScanData(HttpMessage msg, Source source) {
+            this.msg = msg;
+            this.source = source;
+        }
+
+        private HttpMessage getMessage() {
+            return msg;
+        }
+
+        private Set<HtmlParameter> getCookies() {
+            if (cookies == null) {
+                cookies = msg.getCookieParams();
+            }
+            return cookies;
+        }
+
+        private Document getDocument() {
+            if (document == null) {
+                document = Jsoup.parse(msg.getResponseBody().toString());
+            }
+            return document;
+        }
+
+        private List<Element> getMetas() {
+            if (metas == null) {
+                metas = source.getAllElements(HTMLElementName.META);
+            }
+            return metas;
+        }
+
+        private List<Element> getStyles() {
+            if (styles == null) {
+                styles = source.getAllElements(HTMLElementName.STYLE);
+            }
+            return styles;
+        }
+
+        private List<String> getScriptSrcs() {
+            if (scriptSrcs == null) {
+                scriptSrcs = new ArrayList<>();
+                for (Element script : source.getAllElements(HTMLElementName.SCRIPT)) {
+                    String src = script.getAttributeValue("src");
+                    if (src != null && !src.isEmpty()) {
+                        scriptSrcs.add(src);
+                    }
+                }
+            }
+            return scriptSrcs;
+        }
     }
 
     private List<CustomProcessor> messageHeaderProcessors =
@@ -114,6 +176,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
         }
 
         long startTime = System.currentTimeMillis();
+        ScanData scanData = new ScanData(msg, source);
         String site = getSite(msg);
         tracker.putIfAbsent(site, new HashSet<>());
         int reqCount = siteReqCount.merge(site, 1, Integer::sum);
@@ -127,7 +190,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
                     LOGGER.debug("\"{}\" already identified on {}", app.getName(), site);
                     continue;
                 }
-                ApplicationMatch appMatch = checkAppMatches(null, app, msg, source);
+                ApplicationMatch appMatch = checkAppMatches(null, app, scanData);
                 if (appMatch != null) {
                     LOGGER.debug(
                             "Adding \"{}\" to tracker {} identified via {}.",
@@ -185,10 +248,11 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     private ApplicationMatch checkAppMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
+        HttpMessage msg = data.getMessage();
 
         for (CustomProcessor cmp : messageHeaderProcessors) {
-            appMatch = cmp.process(appMatch, currentApp, msg, source);
+            appMatch = cmp.process(appMatch, currentApp, data);
             if (!Mode.EXHAUSTIVE.equals(mode) && appMatch != null) {
                 return appMatch;
             }
@@ -199,7 +263,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
         }
 
         for (CustomProcessor cmp : messageBodyProcessors) {
-            appMatch = cmp.process(appMatch, currentApp, msg, source);
+            appMatch = cmp.process(appMatch, currentApp, data);
             if (!Mode.EXHAUSTIVE.equals(mode) && appMatch != null) {
                 return appMatch;
             }
@@ -208,20 +272,24 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     private ApplicationMatch checkCssElementsMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
+        HttpMessage msg = data.getMessage();
+        if (currentApp.getCss().isEmpty()) {
+            return appMatch;
+        }
         for (AppPattern appPattern : currentApp.getCss()) {
             if (ResourceIdentificationUtils.isCss(msg)) {
                 appMatch =
                         addIfMatches(
                                 appMatch, currentApp, appPattern, msg.getResponseBody().toString());
             } else {
-                for (Element styleElement : source.getAllElements(HTMLElementName.STYLE)) {
+                for (Element styleElement : data.getStyles()) {
                     appMatch =
                             addIfMatches(
                                     appMatch,
                                     currentApp,
                                     appPattern,
-                                    styleElement.getSource().toString());
+                                    styleElement.getContent().toString());
                 }
             }
         }
@@ -229,22 +297,24 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     private ApplicationMatch checkScriptElementsMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
-        for (Element scriptElement : source.getAllElements(HTMLElementName.SCRIPT)) {
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
+        if (currentApp.getScript().isEmpty()) {
+            return appMatch;
+        }
+        for (String src : data.getScriptSrcs()) {
             for (AppPattern appPattern : currentApp.getScript()) {
-                String src = scriptElement.getAttributeValue("src");
-                if (src != null && !src.isEmpty()) {
-                    appMatch = addIfMatches(appMatch, currentApp, appPattern, src);
-                }
+                appMatch = addIfMatches(appMatch, currentApp, appPattern, src);
             }
         }
         return appMatch;
     }
 
     private ApplicationMatch checkMetaElementsMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
-        List<Element> metaElements = source.getAllElements(HTMLElementName.META);
-        for (Element metaElement : metaElements) {
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
+        if (currentApp.getMetas().isEmpty()) {
+            return appMatch;
+        }
+        for (Element metaElement : data.getMetas()) {
             for (Map<String, AppPattern> sp : currentApp.getMetas()) {
                 for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
                     String name = metaElement.getAttributeValue("name");
@@ -260,11 +330,15 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     private ApplicationMatch checkDomElementMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage message, Source source) {
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
+        HttpMessage message = data.getMessage();
         if (!message.getResponseHeader().isHtml()) {
             return appMatch;
         }
-        Document doc = Jsoup.parse(message.getResponseBody().toString());
+        if (currentApp.getDom().isEmpty()) {
+            return appMatch;
+        }
+        Document doc = data.getDocument();
         for (Map<String, Map<String, Map<String, AppPattern>>> domSelectorMap :
                 currentApp.getDom()) {
             for (Map.Entry<String, Map<String, Map<String, AppPattern>>> selectorMap :
@@ -301,16 +375,30 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     private ApplicationMatch checkSimpleDomMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
-        String body = msg.getResponseBody().toString();
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
+        HttpMessage msg = data.getMessage();
+        if (!msg.getResponseHeader().isHtml() || currentApp.getSimpleDom().isEmpty()) {
+            return appMatch;
+        }
+        Document doc = data.getDocument();
         for (String selector : currentApp.getSimpleDom()) {
-            appMatch = addIfDomMatches(appMatch, currentApp, selector, body);
+            appMatch = addIfDomMatches(appMatch, currentApp, selector, doc);
         }
         return appMatch;
     }
 
     private ApplicationMatch checkBodyMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
+        HttpMessage msg = data.getMessage();
+        if (currentApp.getHtml().isEmpty()
+                || (!msg.getResponseHeader().isHtml()
+                        && (ResourceIdentificationUtils.isJavaScript(msg)
+                                || ResourceIdentificationUtils.isCss(msg)))
+                || msg.getResponseHeader().isJson()) {
+            // The html patterns are for markup, not for scripts, styles or JSON data. An HTML
+            // response (such as an error page for a script URL) takes precedence over the URL.
+            return appMatch;
+        }
         String body = msg.getResponseBody().toString();
         for (AppPattern p : currentApp.getHtml()) {
             appMatch = addIfMatches(appMatch, currentApp, p, body);
@@ -319,7 +407,8 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     private ApplicationMatch checkHeadersMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
+        HttpMessage msg = data.getMessage();
         for (Map<String, AppPattern> sp : currentApp.getHeaders()) {
             for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
                 List<String> hasRelevantHeaders =
@@ -342,10 +431,10 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     private ApplicationMatch checkCookieMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
         for (Map<String, AppPattern> sp : currentApp.getCookies()) {
             for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
-                for (HtmlParameter cookie : msg.getCookieParams()) {
+                for (HtmlParameter cookie : data.getCookies()) {
                     if (entry.getKey().equals(cookie.getName())) {
                         if (skipValueCheck(entry)) {
                             AppPattern p = new AppPattern();
@@ -369,7 +458,8 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     private ApplicationMatch checkUrlMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
+            ApplicationMatch appMatch, Application currentApp, ScanData data) {
+        HttpMessage msg = data.getMessage();
         String url = msg.getRequestHeader().getURI().toString();
         for (AppPattern p : currentApp.getUrl()) {
             appMatch = addIfMatches(appMatch, currentApp, p, url);
@@ -378,8 +468,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     private static ApplicationMatch addIfDomMatches(
-            ApplicationMatch appMatch, Application currentApp, String selector, String content) {
-        Document doc = Jsoup.parse(content);
+            ApplicationMatch appMatch, Application currentApp, String selector, Document doc) {
         Elements elements = doc.select(selector);
         if (!elements.isEmpty()) {
             appMatch = getAppMatch(appMatch, currentApp);
