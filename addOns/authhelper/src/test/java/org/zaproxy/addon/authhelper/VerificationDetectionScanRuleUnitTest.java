@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -192,8 +191,17 @@ class VerificationDetectionScanRuleUnitTest
         }
     }
 
-    @Test
-    void shouldScanClientSpiderTraffic() {
-        assertThat(rule.appliesToHistoryType(HistoryReference.TYPE_CLIENT_SPIDER), equalTo(true));
+    @ParameterizedTest
+    @ValueSource(
+            ints = {
+                HistoryReference.TYPE_PROXIED,
+                HistoryReference.TYPE_ZAP_USER,
+                HistoryReference.TYPE_SPIDER,
+                HistoryReference.TYPE_SPIDER_AJAX,
+                HistoryReference.TYPE_AUTHENTICATION,
+                HistoryReference.TYPE_CLIENT_SPIDER
+            })
+    void shouldScanTrafficForHistoryType(int historyType) {
+        assertThat(rule.appliesToHistoryType(historyType), equalTo(true));
     }
 }

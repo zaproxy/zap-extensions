@@ -461,8 +461,17 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(alertsRaised, hasSize(0));
     }
 
-    @Test
-    void shouldScanClientSpiderTraffic() {
-        assertThat(rule.appliesToHistoryType(HistoryReference.TYPE_CLIENT_SPIDER), equalTo(true));
+    @ParameterizedTest
+    @ValueSource(
+            ints = {
+                HistoryReference.TYPE_PROXIED,
+                HistoryReference.TYPE_ZAP_USER,
+                HistoryReference.TYPE_SPIDER,
+                HistoryReference.TYPE_SPIDER_AJAX,
+                HistoryReference.TYPE_AUTHENTICATION,
+                HistoryReference.TYPE_CLIENT_SPIDER
+            })
+    void shouldScanTrafficForHistoryType(int historyType) {
+        assertThat(rule.appliesToHistoryType(historyType), equalTo(true));
     }
 }
