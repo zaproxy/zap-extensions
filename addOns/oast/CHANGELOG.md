@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Generate Interactsh callback identifiers compatible with server 1.4.x.
 
 
 ## [0.26.0] - 2026-09-16
