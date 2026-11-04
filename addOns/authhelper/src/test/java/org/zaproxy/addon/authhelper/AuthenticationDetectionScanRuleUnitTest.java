@@ -39,6 +39,7 @@ import org.mockito.Mock;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -514,5 +515,10 @@ class AuthenticationDetectionScanRuleUnitTest
                 conf.getString("context.authentication.form.loginbody"),
                 equalTo(
                         "{\"authentication\":{\"test\":{ \"email\":\"{%username%}\",\"password\":\"{%password%}\"}}}"));
+    }
+
+    @Test
+    void shouldScanClientSpiderTraffic() {
+        assertThat(rule.appliesToHistoryType(HistoryReference.TYPE_CLIENT_SPIDER), equalTo(true));
     }
 }

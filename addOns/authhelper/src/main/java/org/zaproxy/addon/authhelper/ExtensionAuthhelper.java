@@ -107,7 +107,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
             new Integer[] {
                 HistoryReference.TYPE_PROXIED, HistoryReference.TYPE_ZAP_USER,
                 HistoryReference.TYPE_SPIDER, HistoryReference.TYPE_SPIDER_AJAX,
-                HistoryReference.TYPE_AUTHENTICATION
+                HistoryReference.TYPE_CLIENT_SPIDER, HistoryReference.TYPE_AUTHENTICATION
             };
 
     public static final Set<Integer> HISTORY_TYPES_SET = Set.of(HISTORY_TYPES);

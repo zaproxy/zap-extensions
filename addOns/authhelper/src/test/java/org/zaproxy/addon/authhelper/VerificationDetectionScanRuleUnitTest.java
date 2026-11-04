@@ -33,12 +33,14 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -188,5 +190,10 @@ class VerificationDetectionScanRuleUnitTest
             assertThat(vrd.isLowPriority(), is(equalTo(lowPriority)));
             assertThat(ruleCaptor.getValue(), is(sameInstance(rule)));
         }
+    }
+
+    @Test
+    void shouldScanClientSpiderTraffic() {
+        assertThat(rule.appliesToHistoryType(HistoryReference.TYPE_CLIENT_SPIDER), equalTo(true));
     }
 }
