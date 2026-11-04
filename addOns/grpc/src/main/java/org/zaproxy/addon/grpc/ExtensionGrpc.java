@@ -101,7 +101,7 @@ public class ExtensionGrpc extends ExtensionAdaptor {
         public HttpPanelView getNewView() {
             return new HttpPanelGrpcView(
                     new ResponseBodyByteHttpPanelViewModel(),
-                    DecoderUtils.DecodingMethod.BASE64_ENCODED);
+                    DecoderUtils.DecodingMethod.AUTO);
         }
 
         @Override
@@ -123,7 +123,7 @@ public class ExtensionGrpc extends ExtensionAdaptor {
         public HttpPanelView getNewView() {
             return new HttpPanelGrpcView(
                     new RequestBodyByteHttpPanelViewModel(),
-                    DecoderUtils.DecodingMethod.BASE64_ENCODED);
+                    DecoderUtils.DecodingMethod.AUTO);
         }
 
         @Override
