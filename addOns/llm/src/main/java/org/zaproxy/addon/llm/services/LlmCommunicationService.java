@@ -224,6 +224,8 @@ public class LlmCommunicationService {
                             .listeners(listener != null ? List.of(listener) : List.of())
                             .logRequests(true)
                             .logResponses(true)
+                            .returnThinking(true)
+                            .sendThinking(true)
                             .build();
             case CLAUDE ->
                     AnthropicChatModel.builder()
