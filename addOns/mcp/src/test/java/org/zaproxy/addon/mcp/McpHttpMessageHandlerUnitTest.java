@@ -25,7 +25,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
@@ -203,6 +205,24 @@ class McpHttpMessageHandlerUnitTest {
     }
 
     @Test
+    void shouldSetContentLengthOfNonAsciiResponseInBytes() throws Exception {
+        // Given
+        param.setSecurityKeyEnabled(false);
+        toolRegistry.registerTool(new UnicodeTool());
+        HttpMessage unicodeMsg =
+                createPostMessage(
+                        "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"unicode\",\"arguments\":{}}}");
+        // When
+        handler.handleMessage(ctx, unicodeMsg);
+        // Then
+        assertThat(unicodeMsg.getResponseHeader().getStatusCode(), equalTo(HttpStatusCode.OK));
+        assertThat(unicodeMsg.getResponseBody().toString(), containsString("日本語"));
+        assertThat(
+                unicodeMsg.getResponseHeader().getContentLength(),
+                equalTo(unicodeMsg.getResponseBody().length()));
+    }
+
+    @Test
     void shouldAllowOptionsRequestOverHttpEvenWhenSecureOnly() throws Exception {
         param.setSecureOnly(true);
         HttpMessage optionsMsg = new HttpMessage();
@@ -211,6 +231,29 @@ class McpHttpMessageHandlerUnitTest {
         handler.handleMessage(ctx, optionsMsg);
 
         assertThat(optionsMsg.getResponseHeader().getStatusCode(), equalTo(HttpStatusCode.OK));
+    }
+
+    private static class UnicodeTool implements McpTool {
+
+        @Override
+        public String getName() {
+            return "unicode";
+        }
+
+        @Override
+        public String getDescription() {
+            return "Returns non-ASCII text.";
+        }
+
+        @Override
+        public InputSchema getInputSchema() {
+            return new InputSchema(Map.of(), List.of());
+        }
+
+        @Override
+        public McpToolResult execute(ToolArguments arguments) {
+            return McpToolResult.success("日本語");
+        }
     }
 
     private static HttpMessage createPostMessage(String body) throws Exception {

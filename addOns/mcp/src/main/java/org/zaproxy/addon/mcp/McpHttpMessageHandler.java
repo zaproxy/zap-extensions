@@ -181,7 +181,7 @@ class McpHttpMessageHandler implements HttpMessageHandler {
                         + getCorsHeaders();
         msg.setResponseHeader(header);
         msg.setResponseBody(body);
-        msg.getResponseHeader().setContentLength(body.length());
+        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
     }
 
     private void setAcceptedResponse(HttpMessage msg) throws HttpMalformedHeaderException {
