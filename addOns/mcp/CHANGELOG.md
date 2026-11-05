@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- Set the correct `Content-Length` in JSON responses containing non-ASCII characters (Issue 9532).
 
 ## [0.4.0] - 2026-08-26
 
