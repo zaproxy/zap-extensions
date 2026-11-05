@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -56,18 +57,23 @@ public class Repo {
 
     private final Map<String, RepoEntry> entries;
 
+    /** Content hash (lower case) to the library name and version it identifies. */
+    private final Map<String, String[]> hashes;
+
     public Repo(String resourcePath) throws IOException {
         try (InputStream in = Repo.class.getResourceAsStream(resourcePath);
                 BufferedReader reader =
                         new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)); ) {
             entries = createEntries(reader);
         }
+        hashes = createHashes(entries);
     }
 
     public Repo(Path file) throws IOException {
         try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             entries = createEntries(reader);
         }
+        hashes = createHashes(entries);
     }
 
     static Map<String, RepoEntry> createEntries(Reader reader) throws IOException {
@@ -83,6 +89,24 @@ public class Repo {
         } catch (Exception e) {
             throw new IOException("An error occurred while parsing the file.", e);
         }
+    }
+
+    private static Map<String, String[]> createHashes(Map<String, RepoEntry> entries) {
+        Map<String, String[]> hashes = new HashMap<>();
+        entries.forEach(
+                (name, entry) -> {
+                    if (entry.getExtractors() == null) {
+                        return;
+                    }
+                    entry.getExtractors()
+                            .getHashes()
+                            .forEach(
+                                    (hash, version) ->
+                                            hashes.putIfAbsent(
+                                                    hash.toLowerCase(Locale.ROOT),
+                                                    new String[] {name, version}));
+                });
+        return hashes;
     }
 
     public Result scanJS(HttpMessage msg) {
@@ -150,35 +174,22 @@ public class Repo {
     }
 
     /*
-     * This function computes the SHA 1 hash of the HTTP response body,
-     * IF the hash matches that of an existing entry in the vulnerability database
-     * corresponding info is returned.
+     * This function looks up the SHA 1 hash of the HTTP response body in the hashes map
+     * built when the data was loaded.
+     * IF the hash matches a known library version, the corresponding info is returned.
      * ELSE null is returned.
      */
     private Result scanHash(String hash) {
         // Testable URL: https://ajax.googleapis.com/ajax/libs/dojo/1.1.1/dojo/dojo.js
-        for (Map.Entry<String, RepoEntry> repoEntry : entries.entrySet()) {
-            Map<String, String> hashes = repoEntry.getValue().getExtractors().getHashes();
-
-            if (hashes != null && !hashes.isEmpty()) {
-                for (Entry<String, String> hashItem : hashes.entrySet()) {
-                    Map.Entry<String, String> hashEntry = hashItem;
-                    List<Vulnerability> vulnerabilities = repoEntry.getValue().getVulnerabilities();
-
-                    if (hash.equalsIgnoreCase(hashEntry.getKey())) {
-                        VulnerabilityData vulnData =
-                                isVersionVulnerable(vulnerabilities, hashEntry.getValue());
-                        Result result =
-                                new Result(repoEntry.getKey(), hashEntry.getValue(), vulnData, "");
-                        result.setOtherinfo(
-                                Constant.messages.getString(
-                                        "retire.rule.otherinfo.hash", hashEntry.getKey()));
-                        return result;
-                    }
-                }
-            }
+        String[] match = hashes.get(hash.toLowerCase(Locale.ROOT));
+        if (match == null) {
+            return null;
         }
-        return null;
+        VulnerabilityData vulnData =
+                isVersionVulnerable(entries.get(match[0]).getVulnerabilities(), match[1]);
+        Result result = new Result(match[0], match[1], vulnData, "");
+        result.setOtherinfo(Constant.messages.getString("retire.rule.otherinfo.hash", hash));
+        return result;
     }
 
     /*
