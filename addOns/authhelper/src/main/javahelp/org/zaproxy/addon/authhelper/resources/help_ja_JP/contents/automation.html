@@ -28,7 +28,7 @@ By default (<code>type</code> omitted) the job records all traffic for the whole
 as described above. Setting <code>type</code> to <code>auth_on_failure</code> or
 <code>auth_failure_rolling</code> switches to per-attempt recording instead: only failed authentication
 attempts are retained (successes are discarded), either just the latest one, or the last <code>count</code>
-of them. With <code>auth_on_failure</code>, to keep the overhead low, only the error step is recorded, with just its screenshot.
+of them. With <code>auth_on_failure</code>, to limit the stored data, only the last step and the error step (if any) are recorded, without the page elements or browser storage.
 <p>
 同一プラン内でこのジョブと <code>env</code> 認証診断（ブラウザ/クライアントの <code>authentication.parameters.diagnostics</code>）の両方を有効にすることは推奨されず、診断レコードが重複する可能性があります。 1つのプランにつき1つの診断メカニズムを使用することを推奨します。
 </BODY>

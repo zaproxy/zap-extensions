@@ -30,7 +30,7 @@ By default (<code>type</code> omitted) the job records all traffic for the whole
 as described above. Setting <code>type</code> to <code>auth_on_failure</code> or
 <code>auth_failure_rolling</code> switches to per-attempt recording instead: only failed authentication
 attempts are retained (successes are discarded), either just the latest one, or the last <code>count</code>
-of them. With <code>auth_on_failure</code>, to keep the overhead low, only the error step is recorded, with just its screenshot.
+of them. With <code>auth_on_failure</code>, to limit the stored data, only the last step and the error step (if any) are recorded, without the page elements or browser storage.
 <p>
 Enabling both this job and <code>env</code> authentication diagnostics (browser/client
 <code>authentication.parameters.diagnostics</code>) in the same plan is not recommended and may cause

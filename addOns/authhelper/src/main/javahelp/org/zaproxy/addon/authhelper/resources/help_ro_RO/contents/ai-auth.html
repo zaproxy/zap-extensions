@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+AI Assisted Authentication
+</TITLE>
+</HEAD>
+<BODY>
+<H1>AI Assisted Authentication</H1>
+
+This <a href="authhelper.html">add-on</a> adds a new authentication method which uses an LLM to drive a browser and login to the target website.
+<p>
+Unlike <a href="browser-auth.html">Browser Based Authentication</a>, which relies on heuristics to find the username and password fields, this method
+sends the LLM a description of the current page (URL, title, visible text and form elements) at each step and asks it to decide what to click, type
+or select next, repeating until it detects that login has succeeded or failed (or a maximum number of turns is reached).
+<p>
+The <b>LLM Support</b> add-on must be installed and configured with a working provider, since it is used to drive the login flow.
+
+<H2>Hints</H2>
+
+Some login flows have non-obvious steps that an LLM cannot infer just by looking at the page, for example choosing a specific option from a
+dropdown, or dismissing a cookie banner in a particular way. A free-text "Hints" field can be supplied (in the method's options or in the
+<a href="auth-tester.html">Authentication Tester</a> dialog) to give the LLM this kind of guidance, for example:
+<pre>
+      Set the domain dropdown to Project1 before clicking Next.
+</pre>
+
+<H2>Converting to Client Script Authentication</H2>
+
+Running the LLM to drive a browser on every authentication attempt would be slow and unreliable (since it depends on a third-party service).
+Instead, this method is only intended to be used once to work out how to login to a given page: while it drives the browser it records every
+successful action, and on success it automatically builds a Zest script from those actions and switches the context to use
+<a href="client-script.html">Client Script Authentication</a> with that script - which is then used for all subsequent (much faster and
+deterministic) authentication attempts.
+<p>
+If a script with the same name already exists (for example because AI Assisted Authentication was run before against the same login page) it is
+replaced.
+
+<H2>Automation Framework</H2>
+
+AI Assisted Authentication can be configured in the environment section of an Automation Framework plan using:
+<pre>
+      authentication:
+        method: "ai"
+        parameters:
+          loginPageUrl:                 # String, the URL of the login page, mandatory
+          browserId:                    # String, Browser Id to use, default: firefox-headless
+          loginPageWait:                # Int, the time in seconds to wait after the login page has loaded, default: 5
+          hint:                         # String, the free-text hint described above
+</pre>
+
+<p>
+As with <a href="browser-auth.html">Browser Based Authentication</a>, credentials are supplied under the user in the usual way:
+<pre>
+      credentials:
+        username: …
+        password: …
+</pre>
+
+<p>
+Once AI Assisted Authentication succeeds it automatically switches the context to <a href="client-script.html">Client Script Authentication</a>,
+as described above. If you re-run the plan then the context will use the generated script rather than the LLM from that point onwards, unless
+the context's authentication method is explicitly reset back to <code>"ai"</code>.
+
+<H2>API</H2>
+
+AI Assisted Authentication can also be configured via the ZAP API using the <code>aiAssistedAuthentication</code> action of the
+<code>authentication</code> API, which takes the following parameters:
+<table>
+  <tr><th>Name</th><th>Mandatory</th><th>Description</th></tr>
+  <tr><td><code>loginPageUrl</code></td><td>Yes</td><td>The URL of the login page.</td></tr>
+  <tr><td><code>browserId</code></td><td>No</td><td>The browser to use, default: firefox-headless.</td></tr>
+  <tr><td><code>loginPageWait</code></td><td>No</td><td>The time in seconds to wait after the login page has loaded, default: 5.</td></tr>
+  <tr><td><code>hint</code></td><td>No</td><td>The free-text hint described above.</td></tr>
+</table>
+
+<p>
+Note that due to restrictions in the core:
+<ul>
+<li>Existing contexts are not updated in the GUI if you add or remove this add-on
+</ul>
+This restriction will be addressed in a future release.
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/llm/AiAssistedAuthenticationMethodType.java">AiAssistedAuthenticationMethodType.java</a>
+
+</BODY>
+</HTML>
