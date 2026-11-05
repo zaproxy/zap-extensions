@@ -26,8 +26,8 @@
 		Короче говоря, все данные, отправляемые на сервер и получаемые с него.
 шифруется/дешифруется с использованием сертификата исходного сервера
 внутри ZAP.  Таким образом, ZAP знает открытый текст. 
-		Чтобы установить SSL-защищенный сеанс от вас (вашего браузера),
-ZAP использует собственный сертификат.  Это то, что вы можете создать. 
+		To establish a SSL protected session from you (your browser),
+		ZAP is using its own certificate. Это то, что вы можете создать. 
 		Каждый сертификат, созданный ZAP, будет подписан для одного и того же
 имени сервера.  В приведенном выше примере ZAP создаст сертификат
 для имени сервера <code>www.example.com</code>.  Таким образом, ваш браузер
@@ -163,7 +163,7 @@ ZAP использует собственный сертификат.  Это т
 
 	<h2><a name="issued_certificates">Выданные сертификаты </a></h2>
 	<p>
-		Каждый экземпляр ZAP использует собственный корневой сертификат.  Конечно вы можете
+		Each ZAP instance is using its own root certificate. Конечно вы можете
 импортировать корневые сертификаты, чтобы использовать их на нескольких машинах. 
 		When running, there will be sub-certificated created, each time an HTTPS
 		resource is requested.
@@ -270,7 +270,7 @@ ZAP использует собственный сертификат.  Это т
 
 	<h3>Mozilla Firefox</h3>
 	<p>
-		Firefox is using it's own certificate store. That's why you have to
+		Firefox is using its own certificate store. That's why you have to
 		import it twice, when you're using both browsers on Windows.
 		Installation and late on validation is done in the same preferences dialog:
 	</p>
