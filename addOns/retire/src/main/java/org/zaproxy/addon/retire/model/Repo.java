@@ -33,11 +33,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,8 +72,14 @@ public class Repo {
 
     static Map<String, RepoEntry> createEntries(Reader reader) throws IOException {
         try {
-            return new ObjectMapper()
-                    .readValue(reader, new TypeReference<Map<String, RepoEntry>>() {});
+            Map<String, RepoEntry> entries =
+                    new ObjectMapper()
+                            .readValue(reader, new TypeReference<Map<String, RepoEntry>>() {});
+            entries.values().stream()
+                    .map(RepoEntry::getExtractors)
+                    .filter(Objects::nonNull)
+                    .forEach(Extractors::compilePatterns);
+            return entries;
         } catch (Exception e) {
             throw new IOException("An error occurred while parsing the file.", e);
         }
@@ -183,34 +189,21 @@ public class Repo {
     private Result scan(String extractorType, String input) {
         // reading each entry for JS libraries in repo
         for (Map.Entry<String, RepoEntry> repoEntry : entries.entrySet()) {
-            List<String> extractors = repoEntry.getValue().getExtractors().get(extractorType);
-
             // Reading all regexes with this extractor type (i.e. fileURI, fileName or fileContent
-            // for
-            // this particular JS library
-            if (extractors != null && !extractors.isEmpty()) {
-                ListIterator<String> iterator = extractors.listIterator();
-                while (iterator.hasNext()) {
-                    String regex = iterator.next();
-                    if (regex != null) {
-                        Pattern pattern = Pattern.compile(regex);
-                        Matcher matcher = pattern.matcher(input);
-                        if (matcher.find()) {
-                            String versionString = matcher.group(1);
+            // for this particular JS library
+            for (Pattern pattern :
+                    repoEntry.getValue().getExtractors().getPatterns(extractorType)) {
+                Matcher matcher = pattern.matcher(input);
+                if (matcher.find()) {
+                    String versionString = matcher.group(1);
 
-                            // Now try to determine if this version is vulnerable
-                            List<Vulnerability> vulnerabilities =
-                                    repoEntry.getValue().getVulnerabilities();
-                            VulnerabilityData vulnData =
-                                    isVersionVulnerable(vulnerabilities, versionString);
-                            if (!vulnData.isEmpty()) {
-                                return new Result(
-                                        repoEntry.getKey(),
-                                        versionString,
-                                        vulnData,
-                                        matcher.group(0));
-                            }
-                        }
+                    // Now try to determine if this version is vulnerable
+                    List<Vulnerability> vulnerabilities = repoEntry.getValue().getVulnerabilities();
+                    VulnerabilityData vulnData =
+                            isVersionVulnerable(vulnerabilities, versionString);
+                    if (!vulnData.isEmpty()) {
+                        return new Result(
+                                repoEntry.getKey(), versionString, vulnData, matcher.group(0));
                     }
                 }
             }
@@ -223,26 +216,15 @@ public class Repo {
      * libraries designated "dont check", so just ignore those.
      */
     private boolean dontcheck(HashMap<String, String> msginfo) {
-        List<String> matches = null;
-
         RepoEntry dc = entries.get(DONT_CHECK_NAME);
         Extractors extractors = dc.getExtractors();
 
         // iterating over extractors
         for (Entry<String, String> criterion : msginfo.entrySet()) {
-            matches = extractors.get(criterion.getKey());
-            if (matches != null && !matches.isEmpty()) {
-                Iterator<String> iterator = matches.iterator();
-                while (iterator.hasNext()) {
-                    String next = iterator.next();
-                    if (next != null) {
-                        Pattern p = Pattern.compile(next);
-                        Matcher m = p.matcher(criterion.getValue());
-                        // doing a match for each filename regex
-                        if (m.find()) {
-                            return true;
-                        }
-                    }
+            for (Pattern p : extractors.getPatterns(criterion.getKey())) {
+                // doing a match for each filename regex
+                if (p.matcher(criterion.getValue()).find()) {
+                    return true;
                 }
             }
         }
