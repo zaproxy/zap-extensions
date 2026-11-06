@@ -43,6 +43,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -458,5 +459,19 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            ints = {
+                HistoryReference.TYPE_PROXIED,
+                HistoryReference.TYPE_ZAP_USER,
+                HistoryReference.TYPE_SPIDER,
+                HistoryReference.TYPE_SPIDER_AJAX,
+                HistoryReference.TYPE_AUTHENTICATION,
+                HistoryReference.TYPE_CLIENT_SPIDER
+            })
+    void shouldScanTrafficForHistoryType(int historyType) {
+        assertThat(rule.appliesToHistoryType(historyType), equalTo(true));
     }
 }

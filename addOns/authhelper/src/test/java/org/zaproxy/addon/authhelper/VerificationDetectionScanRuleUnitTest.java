@@ -39,6 +39,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -188,5 +189,19 @@ class VerificationDetectionScanRuleUnitTest
             assertThat(vrd.isLowPriority(), is(equalTo(lowPriority)));
             assertThat(ruleCaptor.getValue(), is(sameInstance(rule)));
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            ints = {
+                HistoryReference.TYPE_PROXIED,
+                HistoryReference.TYPE_ZAP_USER,
+                HistoryReference.TYPE_SPIDER,
+                HistoryReference.TYPE_SPIDER_AJAX,
+                HistoryReference.TYPE_AUTHENTICATION,
+                HistoryReference.TYPE_CLIENT_SPIDER
+            })
+    void shouldScanTrafficForHistoryType(int historyType) {
+        assertThat(rule.appliesToHistoryType(historyType), equalTo(true));
     }
 }
