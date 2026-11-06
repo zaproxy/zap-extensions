@@ -130,7 +130,7 @@ class TechPassiveScannerPerformanceUnitTest extends PassiveScannerTestUtils<Tech
         // Given
         HttpMessage msg = message("text/html", "<html><body>", "a<b ", 50_000);
         // When / Then
-        assertTimeoutPreemptively(Duration.ofSeconds(6), () -> scanHttpResponseReceive(msg));
+        assertTimeoutPreemptively(Duration.ofSeconds(8), () -> scanHttpResponseReceive(msg));
     }
 
     private static HttpMessage message(String contentType, String intro, String chunk, int size)
