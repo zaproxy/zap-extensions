@@ -324,6 +324,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.network.")
                     || key.startsWith("stats.oast.")
                     || key.startsWith("stats.openapi.")
+                    || key.startsWith("stats.pkg.")
                     || key.startsWith("stats.postman.")
                     || key.startsWith("stats.quickstart.")
                     || key.startsWith("stats.reports.")
