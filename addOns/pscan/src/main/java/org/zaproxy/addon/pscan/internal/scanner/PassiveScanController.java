@@ -176,7 +176,7 @@ public class PassiveScanController extends Thread {
     }
 
     public int getRecordsToScan() {
-        return this.getLastHistoryId() - getLastScannedId() + helper.getRunningTasks().size();
+        return this.getLastHistoryId() - getLastScannedId() + helper.getTaskListSize();
     }
 
     private int getLastScannedId() {
