@@ -28,16 +28,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.io.IOException;
 import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.DefaultValueProvider;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
@@ -203,5 +208,40 @@ class GraphQlParserUnitTest extends TestUtils {
         gqp.importFile(getResourcePath("introspectionResponse.json").toString());
         // Then
         assertThat(stats.getStat(GraphQlStats.SCHEMA_FILE_IMPORTED), is(1L));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1})
+    void shouldFailParseIfEndpointCannotBeReached(int maxMessages) throws Exception {
+        // Given
+        var extGraphQl = mock(ExtensionGraphQl.class);
+        when(extGraphQl.getParam()).thenReturn(defaultGraphQlParam());
+        Control.getSingleton().getExtensionLoader().addExtension(extGraphQl);
+        var extCommonLib =
+                mock(ExtensionCommonlib.class, withSettings().strictness(Strictness.LENIENT));
+        when(extCommonLib.getValueProvider()).thenReturn(new DefaultValueProvider());
+        Control.getSingleton().getExtensionLoader().addExtension(extCommonLib);
+        stopServer();
+        GraphQlParser gqp =
+                new GraphQlParser(endpointUrl, HttpSender.MANUAL_REQUEST_INITIATOR, true);
+        gqp.setMaxMessages(maxMessages);
+
+        // When / Then
+        assertThrows(IOException.class, () -> gqp.parse("type Query { test: String }"));
+    }
+
+    private static GraphQlParam defaultGraphQlParam() {
+        return new GraphQlParam(
+                GraphQlParam.DEFAULT_QUERY_GEN_ENABLED,
+                GraphQlParam.DEFAULT_MAX_QUERY_DEPTH,
+                GraphQlParam.DEFAULT_LENIENT_MAX_QUERY_DEPTH,
+                GraphQlParam.DEFAULT_MAX_ADDITIONAL_QUERY_DEPTH,
+                GraphQlParam.DEFAULT_MAX_ARGS_DEPTH,
+                GraphQlParam.DEFAULT_OPTIONAL_ARGS,
+                GraphQlParam.DEFAULT_ARGS_TYPE,
+                GraphQlParam.DEFAULT_QUERY_SPLIT_TYPE,
+                GraphQlParam.DEFAULT_REQUEST_METHOD,
+                GraphQlParam.DEFAULT_CYCLE_DETECTION_MODE,
+                GraphQlParam.DEFAULT_MAX_CYCLE_DETECTION_ALERTS);
     }
 }

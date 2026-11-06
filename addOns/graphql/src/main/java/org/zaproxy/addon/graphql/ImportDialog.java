@@ -194,7 +194,7 @@ public class ImportDialog extends AbstractDialog {
         try {
             parser =
                     new GraphQlParser(
-                            fieldEndpoint.getText(), HttpSender.MANUAL_REQUEST_INITIATOR, false);
+                            fieldEndpoint.getText(), HttpSender.MANUAL_REQUEST_INITIATOR, true);
             parser.setMaxMessages(getMaxMessagesField().getValue());
             parser.addRequesterListener(new HistoryPersister());
             return true;
