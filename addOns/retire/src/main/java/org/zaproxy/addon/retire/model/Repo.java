@@ -33,11 +33,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,27 +57,56 @@ public class Repo {
 
     private final Map<String, RepoEntry> entries;
 
+    /** Content hash (lower case) to the library name and version it identifies. */
+    private final Map<String, String[]> hashes;
+
     public Repo(String resourcePath) throws IOException {
         try (InputStream in = Repo.class.getResourceAsStream(resourcePath);
                 BufferedReader reader =
                         new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)); ) {
             entries = createEntries(reader);
         }
+        hashes = createHashes(entries);
     }
 
     public Repo(Path file) throws IOException {
         try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             entries = createEntries(reader);
         }
+        hashes = createHashes(entries);
     }
 
     static Map<String, RepoEntry> createEntries(Reader reader) throws IOException {
         try {
-            return new ObjectMapper()
-                    .readValue(reader, new TypeReference<Map<String, RepoEntry>>() {});
+            Map<String, RepoEntry> entries =
+                    new ObjectMapper()
+                            .readValue(reader, new TypeReference<Map<String, RepoEntry>>() {});
+            entries.values().stream()
+                    .map(RepoEntry::getExtractors)
+                    .filter(Objects::nonNull)
+                    .forEach(Extractors::compilePatterns);
+            return entries;
         } catch (Exception e) {
             throw new IOException("An error occurred while parsing the file.", e);
         }
+    }
+
+    private static Map<String, String[]> createHashes(Map<String, RepoEntry> entries) {
+        Map<String, String[]> hashes = new HashMap<>();
+        entries.forEach(
+                (name, entry) -> {
+                    if (entry.getExtractors() == null) {
+                        return;
+                    }
+                    entry.getExtractors()
+                            .getHashes()
+                            .forEach(
+                                    (hash, version) ->
+                                            hashes.putIfAbsent(
+                                                    hash.toLowerCase(Locale.ROOT),
+                                                    new String[] {name, version}));
+                });
+        return hashes;
     }
 
     public Result scanJS(HttpMessage msg) {
@@ -144,35 +174,22 @@ public class Repo {
     }
 
     /*
-     * This function computes the SHA 1 hash of the HTTP response body,
-     * IF the hash matches that of an existing entry in the vulnerability database
-     * corresponding info is returned.
+     * This function looks up the SHA 1 hash of the HTTP response body in the hashes map
+     * built when the data was loaded.
+     * IF the hash matches a known library version, the corresponding info is returned.
      * ELSE null is returned.
      */
     private Result scanHash(String hash) {
         // Testable URL: https://ajax.googleapis.com/ajax/libs/dojo/1.1.1/dojo/dojo.js
-        for (Map.Entry<String, RepoEntry> repoEntry : entries.entrySet()) {
-            Map<String, String> hashes = repoEntry.getValue().getExtractors().getHashes();
-
-            if (hashes != null && !hashes.isEmpty()) {
-                for (Entry<String, String> hashItem : hashes.entrySet()) {
-                    Map.Entry<String, String> hashEntry = hashItem;
-                    List<Vulnerability> vulnerabilities = repoEntry.getValue().getVulnerabilities();
-
-                    if (hash.equalsIgnoreCase(hashEntry.getKey())) {
-                        VulnerabilityData vulnData =
-                                isVersionVulnerable(vulnerabilities, hashEntry.getValue());
-                        Result result =
-                                new Result(repoEntry.getKey(), hashEntry.getValue(), vulnData, "");
-                        result.setOtherinfo(
-                                Constant.messages.getString(
-                                        "retire.rule.otherinfo.hash", hashEntry.getKey()));
-                        return result;
-                    }
-                }
-            }
+        String[] match = hashes.get(hash.toLowerCase(Locale.ROOT));
+        if (match == null) {
+            return null;
         }
-        return null;
+        VulnerabilityData vulnData =
+                isVersionVulnerable(entries.get(match[0]).getVulnerabilities(), match[1]);
+        Result result = new Result(match[0], match[1], vulnData, "");
+        result.setOtherinfo(Constant.messages.getString("retire.rule.otherinfo.hash", hash));
+        return result;
     }
 
     /*
@@ -183,34 +200,21 @@ public class Repo {
     private Result scan(String extractorType, String input) {
         // reading each entry for JS libraries in repo
         for (Map.Entry<String, RepoEntry> repoEntry : entries.entrySet()) {
-            List<String> extractors = repoEntry.getValue().getExtractors().get(extractorType);
-
             // Reading all regexes with this extractor type (i.e. fileURI, fileName or fileContent
-            // for
-            // this particular JS library
-            if (extractors != null && !extractors.isEmpty()) {
-                ListIterator<String> iterator = extractors.listIterator();
-                while (iterator.hasNext()) {
-                    String regex = iterator.next();
-                    if (regex != null) {
-                        Pattern pattern = Pattern.compile(regex);
-                        Matcher matcher = pattern.matcher(input);
-                        if (matcher.find()) {
-                            String versionString = matcher.group(1);
+            // for this particular JS library
+            for (Pattern pattern :
+                    repoEntry.getValue().getExtractors().getPatterns(extractorType)) {
+                Matcher matcher = pattern.matcher(input);
+                if (matcher.find()) {
+                    String versionString = matcher.group(1);
 
-                            // Now try to determine if this version is vulnerable
-                            List<Vulnerability> vulnerabilities =
-                                    repoEntry.getValue().getVulnerabilities();
-                            VulnerabilityData vulnData =
-                                    isVersionVulnerable(vulnerabilities, versionString);
-                            if (!vulnData.isEmpty()) {
-                                return new Result(
-                                        repoEntry.getKey(),
-                                        versionString,
-                                        vulnData,
-                                        matcher.group(0));
-                            }
-                        }
+                    // Now try to determine if this version is vulnerable
+                    List<Vulnerability> vulnerabilities = repoEntry.getValue().getVulnerabilities();
+                    VulnerabilityData vulnData =
+                            isVersionVulnerable(vulnerabilities, versionString);
+                    if (!vulnData.isEmpty()) {
+                        return new Result(
+                                repoEntry.getKey(), versionString, vulnData, matcher.group(0));
                     }
                 }
             }
@@ -223,26 +227,15 @@ public class Repo {
      * libraries designated "dont check", so just ignore those.
      */
     private boolean dontcheck(HashMap<String, String> msginfo) {
-        List<String> matches = null;
-
         RepoEntry dc = entries.get(DONT_CHECK_NAME);
         Extractors extractors = dc.getExtractors();
 
         // iterating over extractors
         for (Entry<String, String> criterion : msginfo.entrySet()) {
-            matches = extractors.get(criterion.getKey());
-            if (matches != null && !matches.isEmpty()) {
-                Iterator<String> iterator = matches.iterator();
-                while (iterator.hasNext()) {
-                    String next = iterator.next();
-                    if (next != null) {
-                        Pattern p = Pattern.compile(next);
-                        Matcher m = p.matcher(criterion.getValue());
-                        // doing a match for each filename regex
-                        if (m.find()) {
-                            return true;
-                        }
-                    }
+            for (Pattern p : extractors.getPatterns(criterion.getKey())) {
+                // doing a match for each filename regex
+                if (p.matcher(criterion.getValue()).find()) {
+                    return true;
                 }
             }
         }
