@@ -57,7 +57,7 @@ public class Requestor {
         try {
             for (RequestModel requestModel : requestsModel) {
                 String url = requestModel.getUrl();
-                HttpMessage httpRequest = new HttpMessage(new URI(url, false));
+                HttpMessage httpRequest = new HttpMessage(new URI(url, true));
                 httpRequest.getRequestHeader().setMethod(requestModel.getMethod().name());
                 for (HttpHeaderField hhf : requestModel.getHeaders()) {
                     httpRequest.getRequestHeader().setHeader(hhf.getName(), hhf.getValue());
