@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Select the scan policy from the available policies, to support policies provided by the Global Scan Policy Manager.
 
 ## [60] - 2026-10-08
 ### Changed

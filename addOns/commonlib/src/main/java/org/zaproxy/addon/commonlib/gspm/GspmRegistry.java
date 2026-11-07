@@ -541,6 +541,7 @@ public class GspmRegistry {
                                     legacyFile);
                             continue;
                         }
+                        migrated.setLegacyFile(legacyFile);
                         addPolicy(migrated);
                         migrated.save(policiesDir.toPath());
                         policy2BaseNames.add(base);

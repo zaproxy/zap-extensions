@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.commonlib.gspm.internal;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +39,10 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.commonlib.gspm.GspmCategory;
 import org.zaproxy.addon.commonlib.gspm.GspmPhase;
+import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRule;
 import org.zaproxy.addon.commonlib.gspm.GspmScanRuleRegistrar;
@@ -94,6 +99,18 @@ public class GspmActiveScanRegistrar {
      * GspmScanRuleRegistrar#unregisterRulesFromGspm}.
      */
     public void registerWithCore(GspmRegistry gspmRegistry) {
+        registerWithCore(gspmRegistry, null);
+    }
+
+    /**
+     * Same as {@link #registerWithCore(GspmRegistry)}, also providing the action that shows the
+     * policy manager dialog, used by the core when the scan policies are provided by GSPM.
+     *
+     * @param gspmRegistry the registry.
+     * @param policyManagerDisplayer the action to show the policy manager, might be {@code null}.
+     */
+    @SuppressWarnings("unchecked")
+    public void registerWithCore(GspmRegistry gspmRegistry, Runnable policyManagerDisplayer) {
         ExtensionActiveScan extAscan =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.class);
         if (extAscan == null) {
@@ -116,8 +133,28 @@ public class GspmActiveScanRegistrar {
                                     case "unregister":
                                         scanRuleRegistrar.unregisterRulesFromGspm(gspmRegistry);
                                         break;
-                                    default:
+                                    case "getPolicyNames":
+                                        return getPolicyNames(gspmRegistry);
+                                    case "getDefaultPolicyName":
+                                        return getDefaultPolicyName(gspmRegistry);
+                                    case "applyPolicy":
+                                        return applyPolicy(
+                                                gspmRegistry,
+                                                (String) args[0],
+                                                (PluginFactory) args[1]);
+                                    case "getDefaultThreshold":
+                                        return GspmPolicyOperations.getDefaultThreshold(
+                                                gspmRegistry, (String) args[0], TOOL);
+                                    case "getDefaultStrength":
+                                        return GspmPolicyOperations.getDefaultStrength(
+                                                gspmRegistry, (String) args[0], TOOL);
+                                    case "showPolicyManager":
+                                        if (policyManagerDisplayer != null) {
+                                            policyManagerDisplayer.run();
+                                        }
                                         break;
+                                    default:
+                                        return handleOther(proxy, method, args);
                                 }
                                 return null;
                             });
@@ -129,6 +166,89 @@ public class GspmActiveScanRegistrar {
             LOGGER.debug(
                     "GSPM: PluggableScanPolicyManager not available in this zaproxy version", e);
         }
+    }
+
+    /** Gets the names of the policies, as provided to the core. */
+    static List<String> getPolicyNames(GspmRegistry registry) {
+        return registry.getAllPolicies().stream().map(GspmPolicy::getName).toList();
+    }
+
+    /**
+     * Gets the name of the policy that the core should use by default, the current policy or the
+     * built-in default one.
+     */
+    static String getDefaultPolicyName(GspmRegistry registry) {
+        String name = registry.getCurrentPolicy();
+        if (name != null) {
+            return name;
+        }
+        name = GspmRegistry.getDefaultPolicyName();
+        return registry.getPolicy(name) != null ? name : null;
+    }
+
+    /**
+     * Applies the named policy to the given factory, setting the threshold, strength and enabled
+     * state of the plugins that have a GSPM rule. Plugins with no rule are left as they are.
+     *
+     * @return {@code true} if the policy exists and was applied, {@code false} otherwise.
+     */
+    static boolean applyPolicy(GspmRegistry registry, String name, PluginFactory pluginFactory) {
+        if (name == null || registry.getPolicy(name) == null) {
+            return false;
+        }
+        // Rules with the policy's default are left to inherit it, so changes to the defaults of
+        // the policy (e.g. by the Automation Framework) apply to them.
+        AlertThreshold defaultThreshold =
+                GspmPolicyOperations.getDefaultThreshold(registry, name, TOOL);
+        AttackStrength defaultStrength =
+                GspmPolicyOperations.getDefaultStrength(registry, name, TOOL);
+        for (GspmRule rule : registry.getRulesByTool(TOOL, name)) {
+            Plugin plugin = pluginFactory.getPlugin(rule.getId());
+            if (plugin == null) {
+                continue;
+            }
+            AlertThreshold threshold = rule.getAlertThreshold();
+            if (threshold != null) {
+                if (threshold != defaultThreshold) {
+                    plugin.setAlertThreshold(threshold);
+                }
+                plugin.setEnabled(threshold != AlertThreshold.OFF);
+            }
+            AttackStrength strength = rule.getAttackStrength();
+            if (strength != null && strength != defaultStrength) {
+                plugin.setAttackStrength(strength);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Handles the {@code Object} methods and the interface methods not handled by this class, so
+     * that the proxy never returns {@code null} for a primitive, and newer core methods (with
+     * default implementations) keep their default behaviour.
+     */
+    static Object handleOther(Object proxy, Method method, Object[] args) throws Throwable {
+        if (method.isDefault()) {
+            return InvocationHandler.invokeDefault(proxy, method, args);
+        }
+        switch (method.getName()) {
+            case "toString":
+                return "GspmPluggableScanPolicyManager";
+            case "hashCode":
+                return System.identityHashCode(proxy);
+            case "equals":
+                return proxy == args[0];
+            default:
+                return getDefaultValue(method.getReturnType());
+        }
+    }
+
+    /** Gets the value to return for the type, {@code null} unless a primitive (but void). */
+    private static Object getDefaultValue(Class<?> type) {
+        if (!type.isPrimitive() || type == void.class) {
+            return null;
+        }
+        return Array.get(Array.newInstance(type, 1), 0);
     }
 
     /** Unregisters the proxy from {@link ExtensionActiveScan} via reflection. */
@@ -193,7 +313,7 @@ public class GspmActiveScanRegistrar {
             return null;
         }
         try {
-            return policyManager.getDefaultScanPolicy().getPluginFactory().getAllPlugin();
+            return policyManager.getTemplatePolicy().getPluginFactory().getAllPlugin();
         } catch (Exception e) {
             LOGGER.debug("GSPM: failed to get active scan plugins", e);
             return null;
@@ -302,7 +422,7 @@ public class GspmActiveScanRegistrar {
         }
     }
 
-    private static String categoryKey(int category) {
+    static String categoryKey(int category) {
         return switch (category) {
             case Category.INFO_GATHER -> "info";
             case Category.BROWSER -> "browser";

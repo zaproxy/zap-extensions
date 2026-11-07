@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.commonlib;
 
+import java.awt.EventQueue;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRuleSource;
+import org.zaproxy.addon.commonlib.gspm.internal.GlobalScanPolicyApi;
 import org.zaproxy.addon.commonlib.gspm.internal.GspmActiveScanRegistrar;
 import org.zaproxy.addon.commonlib.gspm.internal.GspmPolicyManagerDialog;
 import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
@@ -137,10 +139,13 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
             extensionHook.getHookMenu().addPopupMenuItem(new GenerateFixPromptMenu(commonlibParam));
             extensionHook.getHookMenu().addPopupMenuItem(new SitesTreeInfoMenu());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuTreeTools());
-            if (Constant.isDevBuild()) {
+            if (Constant.isDevMode()) {
                 extensionHook.getHookMenu().addAnalyseMenuItem(getMenuItemGspm());
                 extensionHook.getHookView().addMainToolBarComponent(getGspmButton());
             }
+        }
+        if (Constant.isDevMode()) {
+            extensionHook.addApiImplementor(new GlobalScanPolicyApi(gspmRegistry));
         }
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
         extensionHook.addAddOnInstallationStatusListener(
@@ -149,10 +154,16 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
 
     @Override
     public void postInit() {
-        if (Constant.isDevBuild()) {
+        if (Constant.isDevMode()) {
             gspmRegistry.loadPolicies(Constant.getPoliciesDir());
         }
-        gspmAscanRegistrar.registerWithCore(gspmRegistry);
+        gspmAscanRegistrar.registerWithCore(
+                gspmRegistry,
+                () -> {
+                    if (hasView()) {
+                        EventQueue.invokeLater(this::showGspmPolicyManagerDialog);
+                    }
+                });
     }
 
     /**

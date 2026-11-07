@@ -366,6 +366,104 @@ class GspmPolicyUnitTest {
         }
 
         @Test
+        void clearRuleThresholdShouldTakeRuleOutOfSharedRuleSetKeepingOthers() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.getRuleSets().add(sharedRuleSet(AlertThreshold.OFF, null, 1, 2, 3));
+
+            // When
+            policy.clearRuleThreshold(2);
+
+            // Then
+            assertThat(policy.getEffectiveThreshold(testRule("ascan", 2)).isPresent(), is(false));
+            assertThat(
+                    policy.getEffectiveThreshold(testRule("ascan", 1)).get(),
+                    is(AlertThreshold.OFF));
+            assertThat(
+                    policy.getEffectiveThreshold(testRule("ascan", 3)).get(),
+                    is(AlertThreshold.OFF));
+            assertThat(policy.getRuleSets(), hasSize(1));
+        }
+
+        @Test
+        void clearRuleThresholdShouldKeepStrengthOfRuleInSharedRuleSet() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.getRuleSets().add(sharedRuleSet(AlertThreshold.OFF, AttackStrength.HIGH, 1, 2));
+
+            // When
+            policy.clearRuleThreshold(2);
+
+            // Then
+            GspmRule rule = testRule("ascan", 2);
+            assertThat(policy.getEffectiveThreshold(rule).isPresent(), is(false));
+            assertThat(policy.getEffectiveStrength(rule).get(), is(AttackStrength.HIGH));
+            GspmRule other = testRule("ascan", 1);
+            assertThat(policy.getEffectiveThreshold(other).get(), is(AlertThreshold.OFF));
+            assertThat(policy.getEffectiveStrength(other).get(), is(AttackStrength.HIGH));
+        }
+
+        @Test
+        void clearRuleStrengthShouldKeepThresholdOfRuleInSharedRuleSet() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.getRuleSets().add(sharedRuleSet(AlertThreshold.LOW, AttackStrength.HIGH, 1, 2));
+
+            // When
+            policy.clearRuleStrength(1);
+
+            // Then
+            GspmRule rule = testRule("ascan", 1);
+            assertThat(policy.getEffectiveStrength(rule).isPresent(), is(false));
+            assertThat(policy.getEffectiveThreshold(rule).get(), is(AlertThreshold.LOW));
+            assertThat(
+                    policy.getEffectiveStrength(testRule("ascan", 2)).get(),
+                    is(AttackStrength.HIGH));
+        }
+
+        @Test
+        void clearRuleThresholdShouldRemoveRuleSetOnlyHoldingThatRule() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.setRuleThreshold(10020, "rule", AlertThreshold.LOW);
+            policy.setRuleStrength(10020, "rule", AttackStrength.HIGH);
+
+            // When
+            policy.clearRuleThreshold(10020);
+
+            // Then
+            assertThat(policy.getRuleSets(), hasSize(1));
+            policy.clearRuleStrength(10020);
+            assertThat(policy.getRuleSets(), is(empty()));
+        }
+
+        @Test
+        void clearRuleThresholdShouldKeepPositionOfRuleSets() {
+            // Given
+            GspmPolicy policy = new GspmPolicy("P");
+            policy.getRuleSets().add(sharedRuleSet(AlertThreshold.OFF, AttackStrength.HIGH, 1, 2));
+            policy.setRuleThreshold(3, "later", AlertThreshold.HIGH);
+
+            // When
+            policy.clearRuleThreshold(2);
+
+            // Then
+            assertThat(policy.getRuleSets(), hasSize(3));
+            assertThat(policy.getRuleSets().get(2).getRules().get(0).getId(), is(3));
+        }
+
+        private GspmRuleSet sharedRuleSet(
+                AlertThreshold threshold, AttackStrength strength, int... ids) {
+            GspmRuleSet rs = new GspmRuleSet();
+            for (int id : ids) {
+                rs.addRule(new GspmRuleRef(id, "rule " + id));
+            }
+            rs.setThresholdEnum(threshold);
+            rs.setStrengthEnum(strength);
+            return rs;
+        }
+
+        @Test
         void clearRuleOverrideShouldNotAffectOtherRules() {
             // Given
             GspmPolicy policy = new GspmPolicy("P");

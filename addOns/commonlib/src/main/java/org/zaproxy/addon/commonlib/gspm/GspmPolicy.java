@@ -81,6 +81,12 @@ public class GspmPolicy {
     @JsonIgnore @Getter private File file;
 
     /**
+     * The legacy ({@code .policy}) file this policy was migrated from, to remove it with the policy
+     * (otherwise it would be migrated again), {@code null} if not migrated.
+     */
+    @JsonIgnore @Getter @Setter private File legacyFile;
+
+    /**
      * Creates a new policy with the given name.
      *
      * @throws NullPointerException if {@code name} is {@code null}
@@ -200,6 +206,71 @@ public class GspmPolicy {
         GspmRuleSet rs = findOrCreatePerRuleRuleSet(id, ruleName);
         rs.setStrengthEnum(strength);
         removeIfEmptyPerRuleRuleSet(rs);
+    }
+
+    /**
+     * Removes the threshold override of the given rule, wherever it is defined, so it falls back to
+     * the resolved category/catch-all default.
+     *
+     * <p>Unlike {@link #setRuleThreshold}, this also handles rule sets shared by several rules (as
+     * created by legacy policy migration): the rule is taken out of the shared rule set, keeping
+     * its strength override (if any) in a rule set of its own, and the other rules are unaffected.
+     *
+     * @param id the ID of the rule.
+     */
+    public void clearRuleThreshold(int id) {
+        clearRuleSetting(id, true);
+    }
+
+    /**
+     * Removes the strength override of the given rule, wherever it is defined, so it falls back to
+     * the resolved category/catch-all default.
+     *
+     * <p>Same as {@link #clearRuleThreshold(int)}, but for the strength.
+     *
+     * @param id the ID of the rule.
+     */
+    public void clearRuleStrength(int id) {
+        clearRuleSetting(id, false);
+    }
+
+    private void clearRuleSetting(int id, boolean threshold) {
+        for (int i = 0; i < ruleSets.size(); i++) {
+            GspmRuleSet rs = ruleSets.get(i);
+            List<GspmRuleRef> refs = rs.getRules();
+            if (refs == null || (threshold ? rs.getThreshold() : rs.getStrength()) == null) {
+                continue;
+            }
+            GspmRuleRef ref = refs.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
+            if (ref == null) {
+                continue;
+            }
+            // The other setting of the rule, if any, is kept in a rule set of its own.
+            String otherSetting = threshold ? rs.getStrength() : rs.getThreshold();
+            if (refs.size() == 1) {
+                if (threshold) {
+                    rs.setThreshold(null);
+                } else {
+                    rs.setStrength(null);
+                }
+                if (rs.getThreshold() == null && rs.getStrength() == null) {
+                    ruleSets.remove(i--);
+                }
+                continue;
+            }
+            refs.remove(ref);
+            if (otherSetting != null) {
+                GspmRuleSet own = new GspmRuleSet();
+                own.addRule(new GspmRuleRef(ref.getId(), ref.getName()));
+                if (threshold) {
+                    own.setStrength(otherSetting);
+                } else {
+                    own.setThreshold(otherSetting);
+                }
+                // Keeps the position, so the precedence is the same.
+                ruleSets.add(++i, own);
+            }
+        }
     }
 
     /**

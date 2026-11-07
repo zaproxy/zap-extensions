@@ -22,6 +22,7 @@ package org.zaproxy.addon.automation.jobs;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.configuration.ConfigurationException;
@@ -29,11 +30,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.gui.ActiveScanPolicyJobDialog;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
+import org.zaproxy.addon.commonlib.gspm.internal.GspmPolicyOperations;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 
@@ -45,7 +52,11 @@ public class ActiveScanPolicyJob extends AutomationJob {
 
     private static final String PARAM_NAME = "name";
 
+    private static final String GLOBAL_SCAN_POLICY_TOOL = "ascan";
+
     private ExtensionActiveScan extAScan;
+
+    private Supplier<GspmRegistry> gspmRegistrySupplier = ActiveScanPolicyJob::getGspmRegistry;
 
     private Parameters parameters = new Parameters();
     private PolicyDefinition policyDefinition = new PolicyDefinition();
@@ -114,6 +125,10 @@ public class ActiveScanPolicyJob extends AutomationJob {
 
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+        if (Constant.isDevMode()) {
+            runJobWithGlobalScanPolicy(progress);
+            return;
+        }
         try {
             ScanPolicy scanPolicy = this.getScanPolicy(progress);
 
@@ -131,6 +146,142 @@ public class ActiveScanPolicyJob extends AutomationJob {
             progress.error(
                     Constant.messages.getString("automation.dialog.error.misc", e.getMessage()));
             LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Sets how to get the registry of the Global Scan Policy Manager, used when running with the
+     * dev mode.
+     *
+     * @param supplier the supplier of the registry, might supply {@code null} if not available.
+     */
+    void setGspmRegistrySupplier(Supplier<GspmRegistry> supplier) {
+        gspmRegistrySupplier = supplier;
+    }
+
+    private static GspmRegistry getGspmRegistry() {
+        ExtensionCommonlib extCommonlib =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionCommonlib.class);
+        return extCommonlib != null ? extCommonlib.getGspmRegistry() : null;
+    }
+
+    /** Adds the policy to the Global Scan Policy Manager, with the same settings as the scan. */
+    private void runJobWithGlobalScanPolicy(AutomationProgress progress) {
+        String jobName = this.getName();
+        String policyName = this.getData().getParameters().getName();
+        GspmRegistry registry = gspmRegistrySupplier.get();
+        if (registry == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.scanpolicy.gspm.unavailable", jobName, policyName));
+            return;
+        }
+
+        PolicyDefinition definition = this.getData().getPolicyDefinition();
+        // Not defined, the policy has just the defaults.
+        boolean defined = definition.getDefaultStrength() != null;
+
+        AttackStrength strength = null;
+        AlertThreshold threshold = null;
+        if (defined) {
+            strength =
+                    JobUtils.parseAttackStrength(
+                            definition.getDefaultStrength(), jobName, progress);
+            if (strength != null) {
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.info.ascan.setdefstrength", jobName, strength.name()));
+            }
+            threshold =
+                    JobUtils.parseAlertThreshold(
+                            definition.getDefaultThreshold(), jobName, progress);
+            if (threshold != null) {
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.info.ascan.setdefthreshold",
+                                jobName,
+                                threshold.name()));
+            }
+        }
+
+        try {
+            GspmPolicyOperations.addPolicy(
+                    registry, policyName, GLOBAL_SCAN_POLICY_TOOL, threshold, strength);
+        } catch (IllegalStateException e) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "automation.error.scanpolicy.exists", jobName, policyName));
+            return;
+        } catch (RuntimeException e) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.scanpolicy.gspm.failed",
+                            jobName,
+                            policyName,
+                            e.getMessage()));
+            LOGGER.error(e.getMessage(), e);
+            return;
+        }
+        if (!defined) {
+            return;
+        }
+
+        for (Rule rule : definition.getEffectiveRules()) {
+            try {
+                configureRule(registry, policyName, rule, jobName, progress);
+            } catch (IllegalArgumentException e) {
+                // The rule does not exist.
+                progress.warn(
+                        Constant.messages.getString(
+                                "automation.error.ascan.rule.unknown",
+                                jobName,
+                                String.valueOf(rule.getId())));
+            } catch (RuntimeException e) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.scanpolicy.gspm.rule.failed",
+                                jobName,
+                                String.valueOf(rule.getId()),
+                                policyName,
+                                e.getMessage()));
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private static void configureRule(
+            GspmRegistry registry,
+            String policyName,
+            Rule rule,
+            String jobName,
+            AutomationProgress progress) {
+        String ruleId = String.valueOf(rule.getId());
+        AttackStrength strength =
+                JobUtils.parseAttackStrength(rule.getStrength(), jobName, progress);
+        if (strength != null) {
+            GspmPolicyOperations.setRuleStrength(
+                    registry, policyName, GLOBAL_SCAN_POLICY_TOOL, rule.getId(), strength);
+            // As when applying the policy to a scan, configuring the strength enables it.
+            GspmPolicyOperations.setRulesEnabled(
+                    registry, policyName, GLOBAL_SCAN_POLICY_TOOL, List.of(rule.getId()), true);
+            progress.info(
+                    Constant.messages.getString(
+                            "automation.info.ascan.rule.setstrength",
+                            jobName,
+                            ruleId,
+                            strength.name()));
+        }
+        AlertThreshold threshold =
+                JobUtils.parseAlertThreshold(rule.getThreshold(), jobName, progress);
+        if (threshold != null) {
+            GspmPolicyOperations.setRuleThreshold(
+                    registry, policyName, GLOBAL_SCAN_POLICY_TOOL, rule.getId(), threshold);
+            progress.info(
+                    Constant.messages.getString(
+                            "automation.info.ascan.rule.setthreshold",
+                            jobName,
+                            ruleId,
+                            threshold.name()));
         }
     }
 
