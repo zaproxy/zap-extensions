@@ -4,7 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - WSDL File Detection
+    - SOAP XML Injection
+    - SOAP Action Spoofing
 
+### Changed
+- The SOAP XML Injection and SOAP Action Spoofing scan rules now raise their alerts with distinct alert references (Issue 7100).
 
 ## [32] - 2026-08-12
 ### Added

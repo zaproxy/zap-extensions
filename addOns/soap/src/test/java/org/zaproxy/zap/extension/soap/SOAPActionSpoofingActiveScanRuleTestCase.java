@@ -21,26 +21,41 @@ package org.zaproxy.zap.extension.soap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.soap.SOAPActionSpoofingActiveScanRule.ResponseType;
+import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 
-class SOAPActionSpoofingActiveScanRuleTestCase {
+class SOAPActionSpoofingActiveScanRuleTestCase
+        extends ActiveScannerTestUtils<SOAPActionSpoofingActiveScanRule> {
 
     private HttpMessage originalMsg = new HttpMessage();
     private HttpMessage modifiedMsg = new HttpMessage();
-    private SOAPActionSpoofingActiveScanRule rule = new SOAPActionSpoofingActiveScanRule();
+
+    @Override
+    protected SOAPActionSpoofingActiveScanRule createScanner() {
+        return new SOAPActionSpoofingActiveScanRule();
+    }
+
+    @Override
+    protected void setUpMessages() {
+        mockMessages(new ExtensionImportWSDL());
+    }
 
     @BeforeEach
-    void setUp() throws HttpMalformedHeaderException {
+    void setUpSampleMessages() throws HttpMalformedHeaderException {
         /* Original. */
         Sample.setOriginalRequest(originalMsg);
         Sample.setOriginalResponse(originalMsg);
@@ -119,5 +134,40 @@ class SOAPActionSpoofingActiveScanRuleTestCase {
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given
+        String otherInfo =
+                Constant.messages.getString(
+                        "soap.soapactionspoofing.alertInfo",
+                        "1",
+                        "GetBalance",
+                        "AdminCloseAccount");
+        // When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(3));
+        assertExampleAlert(
+                alerts.get(0), "90026-1", Alert.RISK_MEDIUM, "soapaction_executed", otherInfo);
+        assertExampleAlert(alerts.get(1), "90026-2", Alert.RISK_LOW, "fault_code", otherInfo);
+        assertExampleAlert(
+                alerts.get(2), "90026-3", Alert.RISK_INFO, "soapaction_ignored", otherInfo);
+    }
+
+    private static void assertExampleAlert(
+            Alert alert, String alertRef, int risk, String responseKey, String otherInfo) {
+        assertThat(alert.getAlertRef(), is(equalTo(alertRef)));
+        assertThat(alert.getRisk(), is(equalTo(risk)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getCweId(), is(equalTo(451)));
+        assertThat(
+                alert.getOtherInfo(),
+                is(
+                        equalTo(
+                                Constant.messages.getString(
+                                                "soap.soapactionspoofing." + responseKey)
+                                        + otherInfo)));
     }
 }

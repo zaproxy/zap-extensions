@@ -191,7 +191,7 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin
                             isSoapVersionOne ? "1" : "2",
                             originalSoapAction,
                             soapAction.getAction());
-            raiseAlert(msg, code, otherAlertInfo);
+            buildAlert(code, otherAlertInfo).setMessage(msg).raise();
             if (code == ResponseType.SOAPACTION_IGNORED
                     || code == ResponseType.SOAPACTION_EXECUTED) {
                 return;
@@ -276,31 +276,34 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin
         }
     }
 
-    private void raiseAlert(HttpMessage msg, ResponseType code, String otherInfo) {
+    private AlertBuilder buildAlert(ResponseType code, String otherInfo) {
         int risk;
+        String alertRefSuffix;
         switch (code) {
             case INVALID_FORMAT:
             case FAULT_CODE:
             case EMPTY_RESPONSE:
                 risk = Alert.RISK_LOW;
+                alertRefSuffix = "-2";
                 break;
             case SOAPACTION_EXECUTED:
                 risk = Alert.RISK_MEDIUM;
+                alertRefSuffix = "-1";
                 break;
             case SOAPACTION_IGNORED:
             default:
                 risk = Alert.RISK_INFO;
+                alertRefSuffix = "-3";
                 break;
         }
         otherInfo =
                 Constant.messages.getString(MESSAGE_PREFIX + code.name().toLowerCase(Locale.ROOT))
                         + otherInfo;
-        newAlert()
+        return newAlert()
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setOtherInfo(otherInfo)
-                .setMessage(msg)
-                .raise();
+                .setAlertRef(getId() + alertRefSuffix);
     }
 
     @Override
@@ -322,5 +325,16 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String otherInfo =
+                Constant.messages.getString(
+                        MESSAGE_PREFIX + "alertInfo", "1", "GetBalance", "AdminCloseAccount");
+        return List.of(
+                buildAlert(ResponseType.SOAPACTION_EXECUTED, otherInfo).build(),
+                buildAlert(ResponseType.FAULT_CODE, otherInfo).build(),
+                buildAlert(ResponseType.SOAPACTION_IGNORED, otherInfo).build());
     }
 }
