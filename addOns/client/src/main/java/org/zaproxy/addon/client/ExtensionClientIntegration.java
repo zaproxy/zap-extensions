@@ -75,6 +75,7 @@ import org.zaproxy.addon.client.internal.db.TableJdo;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanRule;
+import org.zaproxy.addon.client.pscan.GspmClientPassiveScanRegistrar;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
 import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
@@ -155,6 +156,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private SpiderScanController spiderScanController;
     private ClientPassiveScanController passiveScanController;
     private ClientPassiveScanHelper pscanHelper;
+    private GspmClientPassiveScanRegistrar gspmPassiveScanRegistrar;
     private ClientOptions clientParam;
     private ClientSpiderOptions clientSpiderParam;
     private ClientIntegrationAPI api;
@@ -423,6 +425,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                 .getExtensionLoader()
                 .getExtension(ExtensionPassiveScan2.class)
                 .addPscanRuleProvider(clientPscanRuleProvider);
+        gspmPassiveScanRegistrar =
+                new GspmClientPassiveScanRegistrar(passiveScanController, getAddOn());
+        gspmPassiveScanRegistrar.register();
 
         ZAP.getEventBus()
                 .registerConsumer(
@@ -517,6 +522,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                 .getExtensionLoader()
                 .getExtension(ExtensionPassiveScan2.class)
                 .removePscanRuleProvider(clientPscanRuleProvider);
+        if (gspmPassiveScanRegistrar != null) {
+            gspmPassiveScanRegistrar.unregister();
+        }
 
         if (hasView()) {
             getClientSpiderPanel().unload();
