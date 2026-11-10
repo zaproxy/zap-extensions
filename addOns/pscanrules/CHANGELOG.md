@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Update dependency.
+- Server Side Technology Version with Known Vulnerabilities scan rule to also check for Apache HTTP Server versions against the httpd project's CVE records.
 
 ## [77] - 2026-10-22
 ### Added

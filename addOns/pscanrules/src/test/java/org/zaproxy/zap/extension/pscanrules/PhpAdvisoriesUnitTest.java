@@ -36,8 +36,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.zaproxy.zap.extension.pscanrules.AdvisoryUtils.ParsedRange;
 import org.zaproxy.zap.extension.pscanrules.KnownVulnerabilities.Vulnerability;
-import org.zaproxy.zap.extension.pscanrules.PhpAdvisories.ParsedRange;
 
 class PhpAdvisoriesUnitTest {
 
@@ -157,19 +157,19 @@ class PhpAdvisoriesUnitTest {
     @ParameterizedTest
     @CsvSource({"8.1.29, 8.1.30", "8.1, 8.1.1", "8, 8.0.1"})
     void shouldBumpPatch(String version, String expected) {
-        assertThat(PhpAdvisories.bumpPatch(version), is(expected));
+        assertThat(AdvisoryUtils.bumpPatch(version), is(expected));
     }
 
     @ParameterizedTest
     @CsvSource({"8.1.29, 8.1.0", "8, 8.0.0", "8.1, 8.1.0"})
     void shouldFindBranchStart(String version, String expected) {
-        assertThat(PhpAdvisories.branchStart(version), is(expected));
+        assertThat(AdvisoryUtils.branchStart(version), is(expected));
     }
 
     @ParameterizedTest
     @CsvSource({"8.1.0, true", "8.1, true", "8.1.1, false", "8, false"})
     void shouldRecogniseBranchStarts(String version, boolean expected) {
-        assertThat(PhpAdvisories.isBranchStart(version), is(expected));
+        assertThat(AdvisoryUtils.isBranchStart(version), is(expected));
     }
 
     @Test
@@ -186,14 +186,14 @@ class PhpAdvisoriesUnitTest {
     void shouldTakeFirstParagraphAsPlainText() {
         String md =
                 "### Summary\n\nA **bad** `thing` in [foo](https://x) happens.\nMore here.\n\n### Details\nlong";
-        assertThat(PhpAdvisories.firstParagraph(md), is("A bad thing in foo happens. More here."));
+        assertThat(AdvisoryUtils.firstParagraph(md), is("A bad thing in foo happens. More here."));
     }
 
     @Test
     void shouldSkipGreetingParagraphs() {
         String md = "Hi,\n\nThere is a problem with the thing that does the stuff.\n\nRegards";
         assertThat(
-                PhpAdvisories.firstParagraph(md),
+                AdvisoryUtils.firstParagraph(md),
                 is("There is a problem with the thing that does the stuff."));
     }
 
@@ -202,7 +202,7 @@ class PhpAdvisoriesUnitTest {
         String md =
                 "### Summary\r\nCertain inputs trigger an endless loop in the thing.\r\n\r\n### Details\r\nA pattern has not been identified yet at all.";
         assertThat(
-                PhpAdvisories.firstParagraph(md),
+                AdvisoryUtils.firstParagraph(md),
                 is("Certain inputs trigger an endless loop in the thing."));
     }
 
@@ -212,14 +212,14 @@ class PhpAdvisoriesUnitTest {
                 "Hi,\r\n\r\nI am a researcher. We recently found a vulnerability on PHP and would like to report it.\r\n\r\n"
                         + "# Impact\r\n\r\nAn attacker can execute arbitrary PHP code on the remote server.\r\n\r\n# Details\r\n\r\nLots more.";
         assertThat(
-                PhpAdvisories.firstParagraph(md),
+                AdvisoryUtils.firstParagraph(md),
                 is("An attacker can execute arbitrary PHP code on the remote server."));
     }
 
     @Test
     void shouldKeepUnderscoresInIdentifiers() {
         String md = "Certain inputs provided to mb_encode_mimeheader trigger an endless loop.";
-        assertThat(PhpAdvisories.firstParagraph(md), is(md));
+        assertThat(AdvisoryUtils.firstParagraph(md), is(md));
     }
 
     @Test
@@ -227,19 +227,19 @@ class PhpAdvisoriesUnitTest {
         String md =
                 "### PoC\n```\n<?php echo 'a very long line of code that is not a description at all';\n```\nRun the above and the process hangs forever.";
         assertThat(
-                PhpAdvisories.firstParagraph(md),
+                AdvisoryUtils.firstParagraph(md),
                 is("Run the above and the process hangs forever."));
     }
 
     @Test
     void shouldFallBackToShortParagraphWhenNothingElse() {
-        assertThat(PhpAdvisories.firstParagraph("Short."), is("Short."));
-        assertThat(PhpAdvisories.firstParagraph(""), is(""));
+        assertThat(AdvisoryUtils.firstParagraph("Short."), is("Short."));
+        assertThat(AdvisoryUtils.firstParagraph(""), is(""));
     }
 
     @Test
     void shouldTruncateLongDescriptions() {
-        String text = PhpAdvisories.firstParagraph("word ".repeat(200));
+        String text = AdvisoryUtils.firstParagraph("word ".repeat(200));
         assertThat(text.length(), is(lessThanOrEqualTo(503)));
         assertThat(text, endsWith("..."));
     }

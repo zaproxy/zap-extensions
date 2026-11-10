@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -73,6 +74,40 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
     static final String PHP_HELP_URL =
             "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/php-known-vulnerabilities/";
 
+    static final String APACHE_KNOWN_VULNERABILITIES_RESOURCE =
+            "/org/zaproxy/zap/extension/pscanrules/resources/apache-known-vulnerabilities.json";
+
+    static final String APACHE_HELP_URL =
+            "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/apache-known-vulnerabilities/";
+
+    /**
+     * A parenthesised comment right after a version, e.g. {@code (Ubuntu)} in {@code Apache/2.4.58
+     * (Ubuntu)}, bounded as the header values are attacker controlled.
+     */
+    private static final Pattern VERSION_COMMENT = Pattern.compile("^\\s*\\(([^()]{1,60})\\)");
+
+    /** A parenthesised comment anywhere in a header value, which applies to all its tokens. */
+    private static final Pattern HEADER_COMMENT = Pattern.compile("\\(([^()]{1,60})\\)");
+
+    /**
+     * A distribution package suffix right after a version, e.g. {@code -4ubuntu2.19} in {@code
+     * PHP/7.4.3-4ubuntu2.19} or {@code -0+deb7u14}, bounded as the header values are attacker
+     * controlled.
+     */
+    private static final Pattern VERSION_SUFFIX = Pattern.compile("^-[\\w.+~]{1,40}");
+
+    private static final Pattern DISTRIBUTION_SUFFIX =
+            Pattern.compile("ubuntu|deb|el\\d|fc\\d|mga|suse|alpine", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Names of distributions which package the technologies, and backport security fixes without
+     * changing the version, so a version followed by one of them is likely to be patched already.
+     */
+    private static final Pattern DISTRIBUTION =
+            Pattern.compile(
+                    "\\b(?:Debian|Ubuntu|Raspbian|Red ?Hat|RHEL|CentOS|Fedora|Rocky|Alma(?:Linux)?|Oracle|SUSE|openSUSE|SLES|Amazon|Gentoo|Mageia|Mint|FreeBSD|OpenBSD|NetBSD)\\b",
+                    Pattern.CASE_INSENSITIVE);
+
     /** The server side technologies detected, each with its own alert type. */
     public enum Technology {
         /**
@@ -84,14 +119,32 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
          */
         PHP(
                 1,
+                2,
                 "php",
                 Tech.PHP,
                 Pattern.compile(
                         "(?<![\\w-])PHP/(\\d{1,6}(?:\\.\\d{1,6}){0,2})", Pattern.CASE_INSENSITIVE),
                 PHP_KNOWN_VULNERABILITIES_RESOURCE,
-                PHP_HELP_URL);
+                PHP_HELP_URL),
+        /**
+         * Apache HTTP Server. Matches an {@code Apache/<version>} token, as sent in the {@code
+         * Server} header unless {@code ServerTokens} is lowered. {@code Apache} alone, {@code
+         * Apache-Coyote/1.1} (Tomcat) and module tokens such as {@code mod_apache/1.0} do not
+         * match.
+         */
+        APACHE(
+                3,
+                4,
+                "apache",
+                Tech.Apache,
+                Pattern.compile(
+                        "(?<![\\w-])Apache/(\\d{1,6}(?:\\.\\d{1,6}){0,2})",
+                        Pattern.CASE_INSENSITIVE),
+                APACHE_KNOWN_VULNERABILITIES_RESOURCE,
+                APACHE_HELP_URL);
 
         private final int alertRef;
+        private final int incompleteAlertRef;
         private final String messageKey;
         private final Tech tech;
         private final Pattern versionPattern;
@@ -100,12 +153,14 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
 
         Technology(
                 int alertRef,
+                int incompleteAlertRef,
                 String messageKey,
                 Tech tech,
                 Pattern versionPattern,
                 String knownVulnerabilitiesResource,
                 String helpUrl) {
             this.alertRef = alertRef;
+            this.incompleteAlertRef = incompleteAlertRef;
             this.messageKey = messageKey;
             this.tech = tech;
             this.versionPattern = versionPattern;
@@ -118,9 +173,21 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
             return tech;
         }
 
-        /** The alert reference of this technology's alert type, e.g. {@code 20020-1}. */
+        /**
+         * The alert reference of this technology's alert type for a complete version, e.g. {@code
+         * 20020-1}.
+         */
         public String getAlertRef() {
             return PLUGIN_ID + "-" + alertRef;
+        }
+
+        /**
+         * The alert reference of this technology's alert type for an incomplete version, e.g.
+         * {@code 20020-2}, raised at low risk and confidence as the version does not say whether
+         * the vulnerabilities have been fixed.
+         */
+        public String getIncompleteAlertRef() {
+            return PLUGIN_ID + "-" + incompleteAlertRef;
         }
 
         /** The display name of the technology, e.g. {@code PHP}. */
@@ -128,9 +195,14 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
             return Constant.messages.getString(MESSAGE_PREFIX + messageKey + ".tech");
         }
 
-        /** The name of this technology's alert type. */
+        /** The name of this technology's alert type for a complete version. */
         public String getAlertName() {
             return Constant.messages.getString(MESSAGE_PREFIX + messageKey + ".name");
+        }
+
+        /** The name of this technology's alert type for an incomplete version. */
+        public String getIncompleteAlertName() {
+            return Constant.messages.getString(MESSAGE_PREFIX + messageKey + ".name.incomplete");
         }
 
         String getSolution() {
@@ -139,6 +211,11 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
 
         String getReference() {
             return Constant.messages.getString(MESSAGE_PREFIX + messageKey + ".refs");
+        }
+
+        /** The note explaining what an assumed version range means for this technology. */
+        String getAssumedNote() {
+            return Constant.messages.getString(MESSAGE_PREFIX + messageKey + ".otherinfo.assumed");
         }
 
         /** Loads the known vulnerabilities of this technology, bundled with the add-on. */
@@ -199,15 +276,26 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
      * @param headerName the name of the header
      * @param version the numeric version, e.g. {@code 8.1.2}
      * @param evidence the matched text, e.g. {@code PHP/8.1.2}
+     * @param distribution the distribution named right after the version, e.g. {@code Ubuntu} for
+     *     {@code Apache/2.4.58 (Ubuntu)}, {@code null} if none
      */
     public record DetectedVersion(
-            Technology technology, String headerName, String version, String evidence) {
+            Technology technology,
+            String headerName,
+            String version,
+            String evidence,
+            String distribution) {
+
+        public DetectedVersion(
+                Technology technology, String headerName, String version, String evidence) {
+            this(technology, headerName, version, evidence, null);
+        }
 
         /**
          * Whether the version has all three components, e.g. {@code 8.1.2} rather than {@code 8.1}.
          */
         boolean isComplete() {
-            return version.split("\\.").length >= 3;
+            return KnownVulnerabilities.isCompleteVersion(version);
         }
     }
 
@@ -263,15 +351,20 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                                         v.matchingRange(version.version())
                                                 .map(VersionRange::assumed)
                                                 .orElse(false));
+        // An incomplete version, e.g. 2.4, matches every vulnerability of any 2.4.x release, but
+        // does not say which of them the server has fixed, so it gets its own low risk alert type.
+        boolean incomplete = !version.isComplete();
         return newAlert()
-                .setName(tech.getAlertName())
-                .setAlertRef(tech.getAlertRef())
-                .setRisk(mostSevere.getRisk())
+                .setName(incomplete ? tech.getIncompleteAlertName() : tech.getAlertName())
+                .setAlertRef(incomplete ? tech.getIncompleteAlertRef() : tech.getAlertRef())
+                .setRisk(incomplete ? Alert.RISK_LOW : mostSevere.getRisk())
                 .setConfidence(
-                        assumedOnly || !version.isComplete()
+                        incomplete || assumedOnly || version.distribution() != null
                                 ? Alert.CONFIDENCE_LOW
                                 : Alert.CONFIDENCE_MEDIUM)
-                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setDescription(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + (incomplete ? "desc.incomplete" : "desc")))
                 .setOtherInfo(getOtherInfo(version, vulnerabilities, assumedOnly))
                 .setSolution(tech.getSolution())
                 .setReference(getReferences(tech, vulnerabilities))
@@ -321,6 +414,14 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                                 version.technology().getDisplayName(),
                                 version.version(),
                                 version.headerName()));
+        if (version.distribution() != null) {
+            otherInfo
+                    .append("\n\n")
+                    .append(
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "otherinfo.distribution",
+                                    version.distribution()));
+        }
         otherInfo
                 .append("\n\n")
                 .append(
@@ -332,9 +433,7 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                                 count(cvesBySeverity, Severity.MEDIUM),
                                 count(cvesBySeverity, Severity.LOW)));
         if (assumedOnly) {
-            otherInfo
-                    .append("\n\n")
-                    .append(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.assumed"));
+            otherInfo.append("\n\n").append(version.technology().getAssumedNote());
         }
         cvesBySeverity.forEach(
                 (severity, cves) ->
@@ -369,10 +468,55 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
     }
 
     private static Stream<DetectedVersion> getVersions(Technology tech, HttpHeaderField field) {
+        String value = field.getValue();
         return tech.versionPattern
-                .matcher(field.getValue())
+                .matcher(value)
                 .results()
-                .map(r -> new DetectedVersion(tech, field.getName(), r.group(1), r.group()));
+                .map(
+                        r ->
+                                new DetectedVersion(
+                                        tech,
+                                        field.getName(),
+                                        r.group(1),
+                                        r.group(),
+                                        getDistribution(value.substring(r.end()), value)));
+    }
+
+    /**
+     * The distribution packaging the version, {@code null} if none is evident: the one named in a
+     * comment right after the version (e.g. {@code (Ubuntu)}), else a package suffix (e.g. {@code
+     * -4ubuntu2.19}), else one named in a comment elsewhere in the header, as a header such as
+     * {@code Apache/2.4.41 (Ubuntu) PHP/7.4.3} describes one installation.
+     *
+     * @param afterVersion the header value after the version
+     * @param header the whole header value
+     * @return the distribution name or package suffix, or {@code null}
+     */
+    static String getDistribution(String afterVersion, String header) {
+        Matcher comment = VERSION_COMMENT.matcher(afterVersion);
+        if (comment.find()) {
+            String distribution = getDistributionName(comment.group(1));
+            if (distribution != null) {
+                return distribution;
+            }
+        }
+        Matcher suffix = VERSION_SUFFIX.matcher(afterVersion);
+        if (suffix.find() && DISTRIBUTION_SUFFIX.matcher(suffix.group()).find()) {
+            return suffix.group();
+        }
+        Matcher anyComment = HEADER_COMMENT.matcher(header);
+        while (anyComment.find()) {
+            String distribution = getDistributionName(anyComment.group(1));
+            if (distribution != null) {
+                return distribution;
+            }
+        }
+        return null;
+    }
+
+    private static String getDistributionName(String comment) {
+        Matcher distribution = DISTRIBUTION.matcher(comment);
+        return distribution.find() ? distribution.group() : null;
     }
 
     private static KnownVulnerabilities getKnownVulnerabilities(Technology tech) {
@@ -411,6 +555,12 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
         ALERTED.clear();
     }
 
+    /** Forgets the known vulnerabilities loaded so far, so that the bundled ones are used again. */
+    static void resetKnownVulnerabilities() {
+        KNOWN_VULNERABILITIES.clear();
+        allAlertTags = null;
+    }
+
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
@@ -445,7 +595,7 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
 
     @Override
     public List<Alert> getExampleAlerts() {
-        Vulnerability example =
+        Vulnerability phpExample =
                 new Vulnerability(
                         "CVE-2024-4577",
                         "GHSA-3qgc-jrrr-25jv",
@@ -458,13 +608,40 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                         List.of(
                                 "https://github.com/php/php-src/security/advisories/GHSA-3qgc-jrrr-25jv"),
                         "2024-09-28",
-                        "github-advisories");
+                        PhpAdvisories.SOURCE_GENERATED);
+        Vulnerability apacheExample =
+                new Vulnerability(
+                        "CVE-2021-41773",
+                        null,
+                        "Path traversal and file disclosure vulnerability in Apache HTTP Server 2.4.49",
+                        "",
+                        "critical",
+                        null,
+                        null,
+                        List.of(new VersionRange("2.4.49", "2.4.50", false)),
+                        List.of(
+                                "https://httpd.apache.org/security/vulnerabilities_24.html#CVE-2021-41773"),
+                        "2021-10-05",
+                        ApacheHttpdAdvisories.SOURCE_GENERATED);
         return List.of(
-                buildAlert(
-                                new DetectedVersion(
-                                        Technology.PHP, "X-Powered-By", "8.1.2", "PHP/8.1.2"),
-                                List.of(example))
-                        .setTags(new HashMap<>(getAlertTags()))
-                        .build());
+                exampleAlert(
+                        new DetectedVersion(Technology.PHP, "X-Powered-By", "8.1.2", "PHP/8.1.2"),
+                        phpExample),
+                exampleAlert(
+                        new DetectedVersion(Technology.PHP, "X-Powered-By", "8.1", "PHP/8.1"),
+                        phpExample),
+                exampleAlert(
+                        new DetectedVersion(Technology.APACHE, "Server", "2.4.49", "Apache/2.4.49"),
+                        apacheExample),
+                exampleAlert(
+                        new DetectedVersion(Technology.APACHE, "Server", "2.4", "Apache/2.4"),
+                        apacheExample));
+    }
+
+    /** An example alert of the technology, carrying the tags of all the technologies. */
+    private Alert exampleAlert(DetectedVersion version, Vulnerability vulnerability) {
+        return buildAlert(version, List.of(vulnerability))
+                .setTags(new HashMap<>(getAlertTags()))
+                .build();
     }
 }
