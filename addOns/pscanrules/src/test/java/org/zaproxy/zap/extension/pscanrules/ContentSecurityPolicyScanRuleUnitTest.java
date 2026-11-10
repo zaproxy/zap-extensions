@@ -479,7 +479,7 @@ class ContentSecurityPolicyScanRuleUnitTest
     @ParameterizedTest
     @CsvSource(
             value = {
-                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; trusted-types | Empty trusted-types directive allows all policy names",
+                "default-src 'self'; frame-ancestors 'none'; form-action 'none'; trusted-types | Empty trusted-types directive blocks all policy names",
                 "default-src 'self'; frame-ancestors 'none'; form-action 'none'; require-trusted-types-for | The require-trusted-types-for directive requires a value"
             },
             delimiter = '|')
