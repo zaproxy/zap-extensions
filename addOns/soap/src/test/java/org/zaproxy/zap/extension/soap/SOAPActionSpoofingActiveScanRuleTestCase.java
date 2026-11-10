@@ -31,7 +31,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
@@ -55,7 +54,9 @@ class SOAPActionSpoofingActiveScanRuleTestCase
     }
 
     @BeforeEach
-    void setUpSampleMessages() throws HttpMalformedHeaderException {
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         /* Original. */
         Sample.setOriginalRequest(originalMsg);
         Sample.setOriginalResponse(originalMsg);
