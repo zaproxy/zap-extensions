@@ -102,6 +102,7 @@ val addOns =
         "spider",
         "spiderAjax",
         "sqliplugin",
+        "sqliwip",
         "sse",
         "svndigger",
         "tips",
