@@ -924,14 +924,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 new SeleniumScriptUtils(wd, requester, browserId, proxyAddress, proxyPort);
 
         // Run any hooks registered by add-ons first
-        browserHooks.forEach(
-                script -> {
-                    try {
-                        script.browserLaunched(ssu);
-                    } catch (Exception e) {
-                        LOGGER.error(e.getMessage(), e);
-                    }
-                });
+        runBrowserHooks(hook -> hook.browserLaunched(ssu));
 
         if (getExtScript() != null) {
             boolean synchronously = driverConf.isSyncScriptExecution();
@@ -969,7 +962,21 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             }
         }
 
+        // Everything that runs synchronously on launch (e.g. authentication) has now completed
+        runBrowserHooks(hook -> hook.browserReady(ssu));
+
         return wd;
+    }
+
+    private void runBrowserHooks(Consumer<BrowserHook> hookMethod) {
+        browserHooks.forEach(
+                hook -> {
+                    try {
+                        hookMethod.accept(hook);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
     }
 
     /**

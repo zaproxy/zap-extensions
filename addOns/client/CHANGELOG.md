@@ -4,6 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Notify when browser is ready, once everything that runs on browser launch (e.g. authentication) has completed.
+- Added method to get the user the scan is run as.
+
 ### Fixed
 - Typos in help content.
 

@@ -25,4 +25,16 @@ package org.zaproxy.zap.extension.selenium;
 public interface BrowserHook {
 
     void browserLaunched(SeleniumScriptUtils ssutils);
+
+    /**
+     * Called once all of the hooks (and any synchronous Selenium scripts) have run their {@link
+     * #browserLaunched(SeleniumScriptUtils)}, i.e. when anything they do synchronously, such as
+     * authenticating, has completed.
+     *
+     * <p>The default implementation does nothing.
+     *
+     * @param ssutils the utilities for the launched browser.
+     * @since 15.61.0
+     */
+    default void browserReady(SeleniumScriptUtils ssutils) {}
 }

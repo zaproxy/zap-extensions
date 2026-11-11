@@ -284,6 +284,25 @@ public class ClientIntegrationAPI extends ApiImplementor {
                 });
     }
 
+    void browserReady(WebDriver wd) {
+        ClientCallBackUtils ccbu = wdMap.get(wd);
+        if (ccbu == null) {
+            return;
+        }
+        browserReady(ccbu);
+    }
+
+    void browserReady(ClientCallBackUtils ccbu) {
+        this.clientCallBacks.forEach(
+                (n, callback) -> {
+                    try {
+                        callback.browserReady(ccbu);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
+    }
+
     void browserClosing(WebDriver wd) {
         if (!wdMap.containsKey(wd)) {
             return;

@@ -922,6 +922,16 @@ public class ClientSpider implements GenericScanner2 {
         return scanOptions.isExternalControl();
     }
 
+    /**
+     * Gets the user the scan is run as.
+     *
+     * @return the user, or {@code null} if the scan is not run as a user.
+     * @since 0.35.0
+     */
+    public User getUser() {
+        return scanOptions.getUser();
+    }
+
     private void finished() {
         if (!stopping.compareAndSet(false, true)) {
             return;
