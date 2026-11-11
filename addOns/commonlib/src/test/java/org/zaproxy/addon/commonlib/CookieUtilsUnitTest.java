@@ -311,6 +311,84 @@ class CookieUtilsUnitTest {
         assertThat(name, is(equalTo(expectedName)));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"0", "-1", "-0", "00"})
+    void shouldReportExpiredIfMaxAgeZeroOrNegative(String maxAge) {
+        // Given
+        String header = "name=value; Max-Age=" + maxAge;
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReportNotExpiredIfMaxAgePositive() {
+        // Given
+        String header = "name=value; Max-Age=3600";
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(false)));
+    }
+
+    @Test
+    void shouldReportNotExpiredIfMaxAgePositiveEvenIfExpiresInThePast() {
+        // Given
+        String header = "name=value; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=3600";
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "expiresFutureProvider")
+    void shouldReportExpiredIfMaxAgeZeroEvenIfExpiresInTheFuture(String date) {
+        // Given
+        String header = "name=value; Expires=" + date + "; Max-Age=0";
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldFallBackToExpiresInThePastIfMaxAgeInvalid() {
+        // Given
+        String header = "name=value; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=abc";
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(true)));
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "expiresFutureProvider")
+    void shouldFallBackToExpiresInTheFutureIfMaxAgeInvalid(String date) {
+        // Given
+        String header = "name=value; Expires=" + date + "; Max-Age=abc";
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "name=value; max-age=0",
+                "name=value; MAX-AGE=0",
+                "name=value; Max-Age = 0",
+                "name=value;Max-Age=0 ; Path=/"
+            })
+    void shouldReportExpiredIfMaxAgeZeroIgnoringCaseAndSpaces(String header) {
+        // Given / When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(true)));
+    }
+
     static Stream<String> expiresFutureProvider() {
         ZonedDateTime future =
                 ZonedDateTime.ofInstant(Instant.now().plus(1, ChronoUnit.DAYS), ZoneOffset.UTC);

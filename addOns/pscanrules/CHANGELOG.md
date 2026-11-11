@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update dependency.
 - Server Side Technology Version with Known Vulnerabilities scan rule to also check for Apache HTTP Server versions against the httpd project's CVE records.
 
+### Fixed
+- False positives/negatives in the Cookie No HttpOnly Flag, Cookie Without Secure Flag and Cookie without SameSite Attribute scan rules when the cookie has a Max-Age attribute (Issue 9560).
+
 ## [77] - 2026-10-22
 ### Added
 - Server Side Technology Version with Known Vulnerabilities scan rule, which checks technology versions disclosed in response headers against known vulnerabilities, initially PHP versions against the php-src security advisories.
