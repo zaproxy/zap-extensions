@@ -20,7 +20,9 @@
 package org.zaproxy.addon.client;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
@@ -47,6 +49,12 @@ public class RedirectScript implements BrowserHook {
     static Duration extensionConfigurePollInterval = Duration.ofMillis(200);
 
     private ClientIntegrationAPI api;
+
+    /**
+     * The browsers launched but for which the ZAP extension could not be configured, with the ID
+     * they were given.
+     */
+    private final Map<WebDriver, UUID> unconfiguredBrowsers = new ConcurrentHashMap<>();
 
     public RedirectScript(ClientIntegrationAPI api) {
         this.api = api;
@@ -80,6 +88,7 @@ public class RedirectScript implements BrowserHook {
             if (!waitForExtensionConfigured(ssutils.getWebDriver())) {
                 LOGGER.warn("Failed to configure ZAP extension on browser launch");
                 Stats.incCounter("stats.client.launch.fail." + browserName);
+                unconfiguredBrowsers.put(ssutils.getWebDriver(), uuid);
                 return;
             }
             Stats.incCounter("stats.client.launch.retry." + browserName);
@@ -87,6 +96,17 @@ public class RedirectScript implements BrowserHook {
             Stats.incCounter("stats.client.launch.pass." + browserName);
         }
         api.browserLaunched(new ClientCallBackUtils(ssutils, uuid));
+    }
+
+    @Override
+    public void browserReady(SeleniumScriptUtils ssutils) {
+        UUID uuid = unconfiguredBrowsers.remove(ssutils.getWebDriver());
+        if (uuid != null) {
+            // Everything else that runs on launch has completed, so still tell the callbacks.
+            api.browserReady(new ClientCallBackUtils(ssutils, uuid));
+            return;
+        }
+        api.browserReady(ssutils.getWebDriver());
     }
 
     private static boolean waitForExtensionConfigured(WebDriver driver) {

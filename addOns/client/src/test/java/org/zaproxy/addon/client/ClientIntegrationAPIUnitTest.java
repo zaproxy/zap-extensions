@@ -186,6 +186,51 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldCallBrowserReadyOnRegisteredCallbacksForLaunchedBrowser() {
+        // Given
+        BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
+        api.registerClientCallBack(callback);
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+        api.browserLaunched(ccbu);
+
+        // When
+        api.browserReady(ccbu.getWebDriver());
+
+        // Then
+        assertThat(callback.readyCcbu, is(sameInstance(ccbu)));
+    }
+
+    @Test
+    void shouldNotCallBrowserReadyForBrowserNotLaunched() {
+        // Given
+        BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
+        api.registerClientCallBack(callback);
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+
+        // When
+        api.browserReady(ccbu.getWebDriver());
+
+        // Then
+        assertThat(callback.readyCcbu, is(nullValue()));
+    }
+
+    @Test
+    void shouldNotCallBrowserReadyAfterBrowserClosed() {
+        // Given
+        BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
+        api.registerClientCallBack(callback);
+        ClientCallBackUtils ccbu = createClientCallBackUtils();
+        api.browserLaunched(ccbu);
+        api.browserClosing(ccbu.getWebDriver());
+
+        // When
+        api.browserReady(ccbu.getWebDriver());
+
+        // Then
+        assertThat(callback.readyCcbu, is(nullValue()));
+    }
+
+    @Test
     void shouldNotCallBrowserLaunchedOnUnregisteredCallbacks() {
         // Given
         BrowserEventCallBackImp callback = new BrowserEventCallBackImp("test");
@@ -469,6 +514,7 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
 
         private final String name;
         ClientCallBackUtils launchedCcbu;
+        ClientCallBackUtils readyCcbu;
         ClientCallBackUtils closingCcbu;
 
         BrowserEventCallBackImp(String name) {
@@ -488,6 +534,11 @@ class ClientIntegrationAPIUnitTest extends TestUtils {
         @Override
         public void browserLaunched(ClientCallBackUtils ccbu) {
             this.launchedCcbu = ccbu;
+        }
+
+        @Override
+        public void browserReady(ClientCallBackUtils ccbu) {
+            this.readyCcbu = ccbu;
         }
 
         @Override

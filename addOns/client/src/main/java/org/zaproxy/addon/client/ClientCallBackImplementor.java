@@ -69,6 +69,20 @@ public interface ClientCallBackImplementor {
     }
 
     /**
+     * Called once everything that runs synchronously on browser launch, such as authentication, has
+     * completed. Implementors that must not start work against the target until then should defer
+     * it until this method is called.
+     *
+     * <p>Called after {@link #browserLaunched(ClientCallBackUtils)}, or instead of it if the ZAP
+     * browser extension could not be configured, and only with a Selenium add-on version that
+     * supports it. The default implementation does nothing.
+     *
+     * @param ccbutils the utilities for the browser.
+     * @since 0.35.0
+     */
+    default void browserReady(ClientCallBackUtils ccbutils) {}
+
+    /**
      * @since 0.22.0
      */
     default void browserClosing(ClientCallBackUtils ccbutils) {}

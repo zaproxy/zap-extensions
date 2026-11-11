@@ -85,6 +85,14 @@ class RedirectScriptUnitTest {
     }
 
     @Test
+    void shouldForwardBrowserReadyToApi() {
+        // Given / When
+        script.browserReady(ssutils);
+        // Then
+        verify(api).browserReady(wd);
+    }
+
+    @Test
     void shouldDisableClientForZestRecorder() {
         // Given
         given(ssutils.getRequester()).willReturn(RedirectScript.ZEST_CLIENT_RECORDER_INITIATOR);
@@ -161,6 +169,28 @@ class RedirectScriptUnitTest {
         verify(wd, times(2)).get(urlCaptor.capture());
         assertUrlsHavePrefixAndValidZapid(urlCaptor, "callback-url?zapenable=true&zapid=");
         verify(api, never()).browserLaunched(any());
+    }
+
+    @Test
+    void shouldReportBrowserReadyWithZapIdWhenExtensionNeverConfigured() {
+        // Given
+        RedirectScript.extensionConfigureTimeout = Duration.ofMillis(50);
+        RedirectScript.extensionConfigurePollInterval = Duration.ofMillis(10);
+        given(ssutils.getRequester()).willReturn(HttpSender.PROXY_INITIATOR);
+        given(wd.executeScript(RedirectScript.EXTENSION_CONFIGURED_SCRIPT)).willReturn(null);
+        ArgumentCaptor<String> urlCaptor = ArgumentCaptor.captor();
+        script.browserLaunched(ssutils);
+        verify(wd, times(2)).get(urlCaptor.capture());
+        String zapid = urlCaptor.getValue().substring(urlCaptor.getValue().indexOf("zapid=") + 6);
+
+        // When
+        script.browserReady(ssutils);
+
+        // Then
+        ArgumentCaptor<ClientCallBackUtils> utilsCaptor = ArgumentCaptor.captor();
+        verify(api).browserReady(utilsCaptor.capture());
+        assertThat(utilsCaptor.getValue().getUuid().toString(), is(zapid));
+        verify(api, never()).browserReady(wd);
     }
 
     private static void assertUrlsHavePrefixAndValidZapid(
