@@ -29,10 +29,14 @@ import static org.mockito.Mockito.withSettings;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -245,44 +249,43 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
-    @Test
-    void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
-        // Given - value empty and epoch start date
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Max-Age=0",
+                "expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                "expires=Thu, 01-Jan-1970 00:00:00 GMT"
+            })
+    void shouldNotAlertOnDelete(String attr) throws HttpMalformedHeaderException {
+        // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader()
-                .setHeader(
-                        HttpResponseHeader.SET_COOKIE,
-                        "test=\"\"; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/");
+                .setHeader(HttpResponseHeader.SET_COOKIE, "test=\"\"; " + attr + "; Path=/");
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
-    @Test
-    void shouldNotAlertOnDeleteHyphenatedDate() throws HttpMalformedHeaderException {
-        // Given - value empty and epoch start date
-        HttpMessage msg = createMessage();
-        msg.getResponseHeader()
-                .setHeader(
-                        HttpResponseHeader.SET_COOKIE,
-                        "test=\"\"; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+    static Stream<String> futureDelete() {
+        LocalDateTime nowPlusOneYear = LocalDateTime.now().plusYears(1);
+        return Stream.of(
+                "Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=3600",
+                "expires=" + HttpDateUtils.format(nowPlusOneYear.toInstant(ZoneOffset.UTC)),
+                "expires="
+                        + nowPlusOneYear.format(
+                                DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz")
+                                        .withLocale(Locale.US)
+                                        .withZone(ZoneOffset.UTC)));
     }
 
-    @Test
-    void shouldAlertWhenFutureExpiry() throws HttpMalformedHeaderException {
-        // Given - value empty, expiry in +1 year
-        String expiry =
-                HttpDateUtils.format(LocalDateTime.now().plusYears(1).toInstant(ZoneOffset.UTC));
-
+    @ParameterizedTest
+    @MethodSource("futureDelete")
+    void shouldAlertOnFutureDelete(String attr) throws HttpMalformedHeaderException {
+        // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader()
-                .setHeader(
-                        HttpResponseHeader.SET_COOKIE, "test=\"\"; expires=" + expiry + "; Path=/");
+                .setHeader(HttpResponseHeader.SET_COOKIE, "test=\"\"; " + attr + "; Path=/");
         // Then
         scanHttpResponseReceive(msg);
         // Then
