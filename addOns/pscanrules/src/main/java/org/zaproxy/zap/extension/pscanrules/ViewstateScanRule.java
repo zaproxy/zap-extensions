@@ -278,13 +278,19 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
                 Constant.messages.getString(MESSAGE_PREFIX + "content.email.pattern.source"),
                 2),
 
-        // TODO: once the viewstate parser is implemented, filter out all the version numbers of the
-        // serialized objects which also trigger this filter
-        // Example: Microsoft.SharePoint.WebControls.SPControlMode, Microsoft.SharePoint,
+        // Only matches valid dotted-quad addresses (octets 0-255, no leading zeros) that are not
+        // part of a longer run of digits and dots (e.g. 1.2.3.4.5).
+        // Assembly version numbers of serialized objects are also excluded, for example:
+        // Microsoft.SharePoint.WebControls.SPControlMode, Microsoft.SharePoint,
         // Version=12.0.0.0, Culture=neutral,
-        // TODO: maybe replace this regex by a tighter rule, avoiding detecting 999.999.999.999
+        // TODO: once the viewstate parser is implemented, filter out version numbers more
+        // generally, based on the context of the serialized objects.
         IPADDRESS(
-                Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"),
+                Pattern.compile(
+                        "(?<!Version=)(?<!\\d)(?<!\\d\\.)"
+                                + "(?:(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}"
+                                + "(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)"
+                                + "(?!\\.?\\d)"),
                 Constant.messages.getString(MESSAGE_PREFIX + "content.ip.name"),
                 Constant.messages.getString(MESSAGE_PREFIX + "content.ip.desc"),
                 Constant.messages.getString(MESSAGE_PREFIX + "content.ip.pattern.source"),

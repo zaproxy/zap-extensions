@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update dependency.
 - Server Side Technology Version with Known Vulnerabilities scan rule to also check for Apache HTTP Server versions against the httpd project's CVE records.
 
+### Fixed
+- Viewstate scan rule: reduce false positives for IP addresses, no longer matching assembly version numbers (e.g. `Version=12.0.0.0`), invalid addresses (e.g. `999.999.999.999`) or parts of longer dotted number sequences.
+
 ## [77] - 2026-10-22
 ### Added
 - Server Side Technology Version with Known Vulnerabilities scan rule, which checks technology versions disclosed in response headers against known vulnerabilities, initially PHP versions against the php-src security advisories.
