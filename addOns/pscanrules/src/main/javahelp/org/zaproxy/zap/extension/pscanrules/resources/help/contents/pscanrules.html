@@ -265,12 +265,16 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10036/">10036</a>.
 <H2 id="id-10041">HTTP to HTTPS Insecure Transition in Form Post</H2>
 This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
 <p>
+Both the form's <code>action</code> attribute and the <code>formaction</code> attribute of its submit buttons are checked, as the latter overrides the former when the form is submitted with that button.
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InsecureFormLoadScanRule.java">InsecureFormLoadScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10041/">10041</a>.
 
 <H2 id="id-10042">HTTPS to HTTP Insecure Transition in Form Post</H2>
 This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
+<p>
+Both the form's <code>action</code> attribute and the <code>formaction</code> attribute of its submit buttons are checked, as the latter overrides the former when the form is submitted with that button.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InsecureFormPostScanRule.java">InsecureFormPostScanRule.java</a>
 <br> 
