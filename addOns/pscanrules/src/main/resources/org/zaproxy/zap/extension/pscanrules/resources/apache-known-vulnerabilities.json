@@ -19,8 +19,65 @@
     "  source      - 'apache-httpd-json' for generated entries, 'manual' for hand maintained ones."
   ],
   "schemaVersion": 1,
-  "lastUpdated": "2026-10-23",
+  "lastUpdated": "2026-11-12",
   "vulnerabilities": [
+    {
+      "cve": "CVE-2026-106023",
+      "name": "mod_md NULL pointer dereference leads to child process crash",
+      "description": "NULL pointer dereference vulnerability in Apache HTTP Server's mod_md during HTTP request processing.",
+      "severity": "high",
+      "affected": [
+        {
+          "introduced": "2.4.30",
+          "fixed": "2.4.71"
+        }
+      ],
+      "links": [
+        "https://httpd.apache.org/security/vulnerabilities_24.html#CVE-2026-106023",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-106023",
+        "https://httpd.apache.org/security/json/CVE-2026-106023.json"
+      ],
+      "published": "2026-11-11",
+      "source": "apache-httpd-json"
+    },
+    {
+      "cve": "CVE-2026-109163",
+      "name": "mod_vhost_alias 1 byte stack buffer overwrite (after CVE-2026-63292)",
+      "description": "Stack-based buffer overflow vulnerability in Apache HTTP Server's mod_vhost_alias (after CVE-2026-63292)",
+      "severity": "low",
+      "affected": [
+        {
+          "introduced": "2.4.69",
+          "fixed": "2.4.71"
+        }
+      ],
+      "links": [
+        "https://httpd.apache.org/security/vulnerabilities_24.html#CVE-2026-109163",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-109163",
+        "https://httpd.apache.org/security/json/CVE-2026-109163.json"
+      ],
+      "published": "2026-11-11",
+      "source": "apache-httpd-json"
+    },
+    {
+      "cve": "CVE-2026-119618",
+      "name": "mod_http2: heap corruption and RCE in assign_headers",
+      "description": "Concurrent Execution using Shared Resource with Improper Synchronization vulnerability in Apache HTTP Server's mod_http2 in assign_headers() can lead to RCE.",
+      "severity": "critical",
+      "affected": [
+        {
+          "introduced": "2.4.55",
+          "fixed": "2.4.71"
+        }
+      ],
+      "links": [
+        "https://httpd.apache.org/security/vulnerabilities_24.html#CVE-2026-119618",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-119618",
+        "https://httpd.apache.org/security/json/CVE-2026-119618.json"
+      ],
+      "published": "2026-11-11",
+      "source": "apache-httpd-json"
+    },
     {
       "cve": "CVE-2026-42356",
       "name": "limited RCE for some internal redirects to non-CGI files in CGI directories",
@@ -28,7 +85,7 @@
       "severity": "low",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.60",
           "fixed": "2.4.69"
         }
       ],
@@ -180,7 +237,7 @@
       "severity": "medium",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.17",
           "fixed": "2.4.69"
         }
       ],
@@ -313,7 +370,7 @@
       "severity": "low",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.30",
           "fixed": "2.4.69"
         }
       ],
@@ -617,7 +674,7 @@
       "severity": "low",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.55",
           "fixed": "2.4.68"
         }
       ],
@@ -636,7 +693,7 @@
       "severity": "medium",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.17",
           "fixed": "2.4.68"
         }
       ],
@@ -712,7 +769,7 @@
       "severity": "low",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.30",
           "fixed": "2.4.67"
         }
       ],
@@ -864,7 +921,7 @@
       "severity": "low",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.30",
           "fixed": "2.4.66"
         }
       ],
@@ -940,7 +997,7 @@
       "severity": "medium",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.7",
           "fixed": "2.4.66"
         }
       ],
@@ -1054,7 +1111,7 @@
       "severity": "medium",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.35",
           "fixed": "2.4.64"
         }
       ],
@@ -1073,7 +1130,7 @@
       "severity": "low",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.26",
           "fixed": "2.4.64"
         }
       ],
@@ -1111,7 +1168,7 @@
       "severity": "medium",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.17",
           "fixed": "2.4.64"
         }
       ],
@@ -1130,7 +1187,7 @@
       "severity": "high",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.60",
           "fixed": "2.4.62"
         }
       ],
@@ -1187,7 +1244,7 @@
       "severity": "low",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.55",
           "fixed": "2.4.60"
         }
       ],
@@ -1377,7 +1434,7 @@
       "severity": "medium",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.17",
           "fixed": "2.4.59"
         }
       ],
@@ -1415,7 +1472,7 @@
       "severity": "low",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.55",
           "fixed": "2.4.58"
         }
       ],
@@ -1434,7 +1491,7 @@
       "severity": "medium",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.17",
           "fixed": "2.4.58"
         }
       ],
@@ -1472,7 +1529,7 @@
       "severity": "medium",
       "affected": [
         {
-          "introduced": "2.4.0",
+          "introduced": "2.4.30",
           "fixed": "2.4.56"
         }
       ],
@@ -3824,7 +3881,7 @@
         }
       ],
       "links": [
-        "https://httpd.apache.org/security/vulnerabilities_22.html#CVE-2010-2068",
+        "https://httpd.apache.org/security/vulnerabilities_23.html#CVE-2010-2068",
         "https://nvd.nist.gov/vuln/detail/CVE-2010-2068",
         "https://httpd.apache.org/security/json/CVE-2010-2068.json"
       ],
