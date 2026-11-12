@@ -75,7 +75,8 @@ final class ApacheHttpdAdvisories {
     private static final Pattern VERSION = Pattern.compile("^(\\d+(?:\\.\\d+)*)(?:-\\w+)?$");
 
     private static final Pattern DATE = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}");
-    private static final Set<String> BRANCHES_WITH_PAGES = Set.of("1.3", "2.0", "2.2", "2.4");
+    private static final Set<String> BRANCHES_WITH_PAGES =
+            Set.of("1.3", "1.4", "2.0", "2.2", "2.3", "2.4");
     private static final Map<String, Severity> SEVERITIES =
             Map.of(
                     "low", Severity.LOW,
