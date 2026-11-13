@@ -87,8 +87,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private TechPassiveScanner passiveScanner;
 
     public enum Mode {
-        QUICK(Constant.messages.getString("wappalyzer.mode.quick")),
-        EXHAUSTIVE(Constant.messages.getString("wappalyzer.mode.exhaustive"));
+        QUICK(Constant.messages.getString("techdetect.mode.quick")),
+        EXHAUSTIVE(Constant.messages.getString("techdetect.mode.exhaustive"));
         private final String name;
 
         Mode(String name) {
@@ -113,6 +113,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public ExtensionWappalyzer() {
         super(NAME);
         this.setOrder(201);
+        this.setI18nPrefix("techdetect");
     }
 
     @Override
@@ -194,12 +195,12 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public void optionsLoaded() {
         super.optionsLoaded();
 
-        setWappalyzer(techDetectParam.isEnabled());
+        setTechDetectEnabled(techDetectParam.isEnabled());
         passiveScanner.setMode(techDetectParam.getMode());
         passiveScanner.setRaiseAlerts(techDetectParam.isRaiseAlerts());
     }
 
-    void setWappalyzer(boolean enabled) {
+    void setTechDetectEnabled(boolean enabled) {
         if (this.enabled == enabled) {
             return;
         }
@@ -214,7 +215,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         }
     }
 
-    boolean isWappalyzerEnabled() {
+    boolean isTechDetectEnabled() {
         return enabled;
     }
 
@@ -255,12 +256,12 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("wappalyzer.desc");
+        return Constant.messages.getString("techdetect.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("wappalyzer.name");
+        return Constant.messages.getString("techdetect.name");
     }
 
     @Override

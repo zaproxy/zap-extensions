@@ -112,7 +112,7 @@ public class TechPanel extends AbstractPanel {
         this.extension = extension;
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
-        this.setName(Constant.messages.getString("wappalyzer.panel.title"));
+        this.setName(Constant.messages.getString("techdetect.panel.title"));
         this.setIcon(
                 new ImageIcon(
                         getClass()
@@ -126,9 +126,9 @@ public class TechPanel extends AbstractPanel {
                                 KeyEvent.VK_T,
                                 InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK,
                                 false));
-        this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
+        this.setMnemonic(Constant.messages.getChar("techdetect.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
-        this.getEnableToggleButton().setSelected(extension.isWappalyzerEnabled());
+        this.getEnableToggleButton().setSelected(extension.isTechDetectEnabled());
     }
 
     /**
@@ -174,10 +174,10 @@ public class TechPanel extends AbstractPanel {
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
             panelToolbar.setPreferredSize(new Dimension(800, 30));
-            panelToolbar.setName("WappTechToolbar");
+            panelToolbar.setName("TechDetectToolbar");
 
             panelToolbar.add(
-                    new JLabel(Constant.messages.getString("wappalyzer.toolbar.site.label")));
+                    new JLabel(Constant.messages.getString("techdetect.toolbar.site.label")));
             panelToolbar.add(getSiteSelect());
             panelToolbar.add(getLinkWithSitesTreeButton());
             panelToolbar.add(getExportButton());
@@ -311,7 +311,7 @@ public class TechPanel extends AbstractPanel {
         currentSite = null;
 
         siteModel.removeAllElements();
-        siteSelect.addItem(Constant.messages.getString("wappalyzer.toolbar.site.select"));
+        siteSelect.addItem(Constant.messages.getString("techdetect.toolbar.site.select"));
         siteSelect.setSelectedIndex(0);
 
         techModel.removeAllElements();
@@ -348,7 +348,7 @@ public class TechPanel extends AbstractPanel {
         if (enableButton == null) {
             enableButton =
                     new ZapToggleButton(
-                            Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled"),
+                            Constant.messages.getString("techdetect.toolbar.toggle.state.enabled"),
                             true);
             enableButton.setIcon(
                     DisplayUtils.getScaledIcon(
@@ -356,24 +356,24 @@ public class TechPanel extends AbstractPanel {
                                     ExtensionWappalyzer.RESOURCE + "/off.png")));
             enableButton.setToolTipText(
                     Constant.messages.getString(
-                            "wappalyzer.toolbar.toggle.state.disabled.tooltip"));
+                            "techdetect.toolbar.toggle.state.disabled.tooltip"));
             enableButton.setSelectedIcon(
                     DisplayUtils.getScaledIcon(
                             TechPanel.class.getResource(ExtensionWappalyzer.RESOURCE + "/on.png")));
             enableButton.setSelectedToolTipText(
-                    Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled.tooltip"));
+                    Constant.messages.getString("techdetect.toolbar.toggle.state.enabled.tooltip"));
             enableButton.addItemListener(
                     event -> {
                         if (event.getStateChange() == ItemEvent.SELECTED) {
                             enableButton.setText(
                                     Constant.messages.getString(
-                                            "wappalyzer.toolbar.toggle.state.enabled"));
-                            extension.setWappalyzer(true);
+                                            "techdetect.toolbar.toggle.state.enabled"));
+                            extension.setTechDetectEnabled(true);
                         } else {
                             enableButton.setText(
                                     Constant.messages.getString(
-                                            "wappalyzer.toolbar.toggle.state.disabled"));
-                            extension.setWappalyzer(false);
+                                            "techdetect.toolbar.toggle.state.disabled"));
+                            extension.setTechDetectEnabled(false);
                         }
                     });
         }
@@ -384,7 +384,7 @@ public class TechPanel extends AbstractPanel {
         if (optionsButton == null) {
             optionsButton = new JButton();
             optionsButton.setToolTipText(
-                    Constant.messages.getString("wappalyzer.toolbar.options.name"));
+                    Constant.messages.getString("techdetect.toolbar.options.name"));
             optionsButton.setIcon(
                     DisplayUtils.getScaledIcon(
                             TechPanel.class.getResource("/resource/icon/16/041.png")));
@@ -395,7 +395,7 @@ public class TechPanel extends AbstractPanel {
                                     .getMenuToolsControl()
                                     .options(
                                             Constant.messages.getString(
-                                                    "wappalyzer.optionspanel.name")));
+                                                    "techdetect.optionspanel.name")));
         }
         return optionsButton;
     }
@@ -407,12 +407,12 @@ public class TechPanel extends AbstractPanel {
                     new ImageIcon(TechPanel.class.getResource("/resource/icon/16/earth-grey.png")));
             linkWithSitesTreeButton.setToolTipText(
                     Constant.messages.getString(
-                            "wappalyzer.toolbar.toggle.site.link.disabled.tooltip"));
+                            "techdetect.toolbar.toggle.site.link.disabled.tooltip"));
             linkWithSitesTreeButton.setSelectedIcon(
                     new ImageIcon(TechPanel.class.getResource("/resource/icon/16/094.png")));
             linkWithSitesTreeButton.setSelectedToolTipText(
                     Constant.messages.getString(
-                            "wappalyzer.toolbar.toggle.site.link.enabled.tooltip"));
+                            "techdetect.toolbar.toggle.site.link.enabled.tooltip"));
             DisplayUtils.scaleIcon(linkWithSitesTreeButton);
             setLinkWithSitesTreeSelection(true);
             linkWithSitesTreeButton.addActionListener(
