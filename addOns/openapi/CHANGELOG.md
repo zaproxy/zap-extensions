@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update reference to avoid redirect.
 - Dependency update.
 
+### Fixed
+- Do not double-escape pre-encoded path parameters in OpenAPI requests (Issue 8821).
+
 ## [58] - 2026-08-12
 ### Changed
 - Allow users to limit the number of OpenAPI messages to import (`maxMessages`). Ex: If testing authentication, access, etc.

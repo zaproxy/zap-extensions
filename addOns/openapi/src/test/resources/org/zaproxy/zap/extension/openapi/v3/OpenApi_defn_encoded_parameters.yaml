@@ -1,0 +1,28 @@
+openapi: 3.0.0
+info:
+  title: Encoded Parameters Spec
+  version: 1.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@
+paths:
+  /path/{param}:
+    get:
+      summary: Get with encoded parameters
+      parameters:
+        - name: param
+          in: path
+          required: true
+          example: a%20b%2Fc
+          schema:
+            type: string
+        - name: queryParam
+          in: query
+          required: true
+          example: x%20y%2Fz
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain: {}
