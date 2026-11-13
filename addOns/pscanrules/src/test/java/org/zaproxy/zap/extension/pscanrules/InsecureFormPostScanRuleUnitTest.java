@@ -263,4 +263,25 @@ class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<InsecureFormPo
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("http://example.com/processform"));
     }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "<form action=\"/login\"></form>",
+                "<form action=\"login\"></form>",
+                "<form action=\"//example.com/login\"></form>",
+                "<form action=\"/login\"><button formaction=\"/signin\">Log in</button></form>",
+                "<form action=\"/login\"><button formaction=\"signin\">Log in</button></form>",
+                "<form action=\"/login\"><button formaction=\"//example.com/signin\">Log in</button></form>"
+            })
+    void shouldNotRaiseAlertIfTargetIsRelative(String form) throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody("<html>" + form + "</html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
 }
