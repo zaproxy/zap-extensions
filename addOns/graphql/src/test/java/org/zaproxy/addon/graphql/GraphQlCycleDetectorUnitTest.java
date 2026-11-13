@@ -132,15 +132,15 @@ class GraphQlCycleDetectorUnitTest extends TestUtils {
                                         .setTags(
                                                 Map.of(
                                                         "API_2023_API4_RESOURCE_CONSUMPTION",
-                                                        "https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/",
+                                                        "https://api-security.owasp.org/editions/2023/en/0xa4-unrestricted-resource-consumption/",
                                                         "OWASP_2025_A06",
-                                                        "https://owasp.org/Top10/2025/A06_2025-Insecure_Design/",
+                                                        "https://top10.owasp.org/2025/A06_2025-Insecure_Design/",
                                                         "OWASP_2025_A10",
-                                                        "https://owasp.org/Top10/2025/A10_2025-Mishandling_of_Exceptional_Conditions/",
+                                                        "https://top10.owasp.org/2025/A10_2025-Mishandling_of_Exceptional_Conditions/",
                                                         "OWASP_2021_A04",
                                                         "https://owasp.org/Top10/A04_2021-Insecure_Design/",
                                                         "WSTG-v42-APIT-01",
-                                                        "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/12-API_Testing/01-Testing_GraphQL",
+                                                        "https://wstg.owasp.org/v4.2/4-Web_Application_Security_Testing/12-API_Testing/01-Testing_GraphQL/",
                                                         "CWE-16",
                                                         "https://cwe.mitre.org/data/definitions/16.html"))
                                         .setOtherInfo("Query -> (Thread -> Message -> Thread)")

@@ -171,7 +171,7 @@ has been mapped to SARIF 2.1.0:
                             "properties": {
                                 "references": [
                                     "http://projects.webappsec.org/Cross-Site-Scripting",
-                                    "https://owasp.org/www-community/attacks/xss/",
+                                    "https://community.owasp.org/attacks/xss/",
                                     "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html",
                                     "https://owasp.org/www-project-top-ten/2017/A7_2017-Cross-Site_Scripting_(XSS)"
                                 ],

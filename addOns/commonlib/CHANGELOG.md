@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update dependencies.
 - Maintenance changes.
+- Updated Alert Tag and generic vulnerability links aligning with recent OWASP website changes.
 
 ## [1.44.0] - 2026-08-26
 ### Added
