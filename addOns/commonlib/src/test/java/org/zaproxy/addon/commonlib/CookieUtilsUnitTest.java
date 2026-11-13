@@ -322,6 +322,48 @@ class CookieUtilsUnitTest {
         assertThat(expired, is(equalTo(true)));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"-99999999999999999999", "-9223372036854775809"})
+    void shouldReportExpiredIfMaxAgeNegativeAndTooLargeForLong(String maxAge) {
+        // Given
+        String header = "name=value; Max-Age=" + maxAge;
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(true)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"99999999999999999999", "9223372036854775808"})
+    void shouldReportNotExpiredIfMaxAgePositiveAndTooLargeForLong(String maxAge) {
+        // Given
+        String header = "name=value; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=" + maxAge;
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFallBackToExpiresIfMaxAgeEmpty() {
+        // Given
+        String header = "name=value; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=";
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReportNotExpiredIfMaxAgeEmptyAndExpiresMissing() {
+        // Given
+        String header = "name=value; Max-Age=";
+        // When
+        boolean expired = CookieUtils.isExpired(header);
+        // Then
+        assertThat(expired, is(equalTo(false)));
+    }
+
     @Test
     void shouldReportNotExpiredIfMaxAgePositive() {
         // Given

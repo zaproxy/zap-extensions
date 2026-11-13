@@ -220,7 +220,7 @@ public final class CookieUtils {
      *     5.3</a>
      */
     public static boolean isExpired(String headerValue) {
-        String maxAge = CookieUtils.getAttributeValue(headerValue, "max-age");
+        String maxAge = getAttributeValue(headerValue, "max-age");
         if (maxAge != null && MAX_AGE_VALUE_PATTERN.matcher(maxAge).matches()) {
             // BigInteger avoids overflow with very large values.
             return new BigInteger(maxAge).signum() <= 0;

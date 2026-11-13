@@ -8,9 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Update dependency.
 - Server Side Technology Version with Known Vulnerabilities scan rule to also check for Apache HTTP Server versions against the httpd project's CVE records.
+- Now depends on minimum Common Library version 1.45.0.
 
 ### Fixed
-- False positives/negatives in the Cookie No HttpOnly Flag, Cookie Without Secure Flag and Cookie without SameSite Attribute scan rules when the cookie has a Max-Age attribute (Issue 9560).
+- The Cookie No HttpOnly Flag, Cookie Without Secure Flag and Cookie without SameSite Attribute scan rules now honour the Max-Age attribute, no longer alerting on cookies deleted with a zero or negative Max-Age, and alerting on cookies with a past Expires but a positive Max-Age (Issue 9560).
 
 ## [77] - 2026-10-22
 ### Added
