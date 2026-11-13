@@ -33,6 +33,32 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
 
+<H2 id="id-40049">Payment Amount Manipulation</H2>
+Checks whether an API accepts a monetary amount that has been altered to an invalid value, such as a negative or zero amount, instead of rejecting it.
+<p>
+Only POST, PUT, PATCH and DELETE requests which originally resulted in a successful response are tested.
+A parameter is tested only if its name contains a money related word (for example <code>amount</code>, <code>price</code>,
+<code>total</code>, <code>fee</code>, <code>refund</code>), at a word boundary such as <code>_</code>, <code>-</code> or camelCase,
+and its original value is a decimal number.
+The list of words can be replaced by setting the rule configuration <code>rules.common.paymentamount.moneywords</code> to a comma separated list of words.
+<p>
+An alert is raised in either of these cases:
+<ul>
+    <li>An altered amount receives a successful response that contains that amount, and the original response did not.
+    The confidence is medium if the altered amount is negative or zero, otherwise low.</li>
+    <li>An altered amount receives a successful response similar to the original, while a control request with a non-numeric value does not.
+    The confidence is low.</li>
+</ul>
+A response is not treated as accepting the amount if its body is a JSON object that declares a failure at the top level (a non-empty <code>error</code>, <code>errors</code> or <code>errorMessage</code>, a false <code>success</code> or <code>ok</code>, or a failure <code>status</code> such as <code>rejected</code>); other body formats are not inspected.
+<p>
+The number of payloads sent per parameter depends on the Attack Strength.
+<p>
+Note that the altered amounts are really submitted to the target, so this rule may create or alter records on a vulnerable application.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/PaymentAmountManipulationScanRule.java">PaymentAmountManipulationScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40049/">40049</a>.
+
 <H2 id="id-100044">Suspicious Input Transformation</H2>
 This is an active script scan rule. It detects various types of suspicious input transformations that may indicate
 potential security vulnerabilities such as template injection, expression evaluation, quote consumption, and issues
