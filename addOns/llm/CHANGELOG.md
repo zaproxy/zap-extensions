@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.3.0] - 2026-11-13
 ### Fixed
 - Support Google Gemini thought_signature in function call history (Issue 9530).
 
@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - A tabbed LLM Chat panel.
 - Integration with the MCP add-on.
 
+[0.3.0]: https://github.com/zaproxy/zap-extensions/releases/llm-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/llm-v0.2.0
 [0.1.0]: https://github.com/zaproxy/zap-extensions/releases/llm-v0.1.0
 [0.0.1]: https://github.com/zaproxy/zap-extensions/releases/llm-v0.0.1
