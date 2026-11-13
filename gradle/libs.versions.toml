@@ -93,6 +93,7 @@ pscanrules-antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 pscanrules-antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 pscanrules-htmlunit-csp = "org.htmlunit:htmlunit-csp:5.7.0"
 pscanrules-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
+pscanrulesAlpha-jackson-dataformat-toml.module = "com.fasterxml.jackson.dataformat:jackson-dataformat-toml"
 pscanrulesAlpha-re2j = { module = "com.google.re2j:re2j", version.ref = "re2j" }
 reports-flyingSaucerPdf = "org.xhtmlrenderer:flying-saucer-pdf:9.13.4"
 reports-thymeleaf = "org.thymeleaf:thymeleaf:3.1.5.RELEASE"

@@ -8,7 +8,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.40.0 & < 2.0.0")
+                    version.set(">= 1.42.0 & < 2.0.0")
                 }
             }
         }
@@ -19,6 +19,11 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
 
+    implementation(platform(libs.commonlib.jackson.bom))
+    implementation(libs.pscanrulesAlpha.jackson.dataformat.toml) {
+        // Provided by commonlib add-on:
+        exclude(group = "com.fasterxml.jackson.core")
+    }
     implementation(libs.pscanrulesAlpha.re2j)
     testImplementation(project(":testutils"))
 }
