@@ -93,6 +93,19 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldDecodeBinaryLengthDelimitedFieldWithoutFailingUtf8Validation() {
+        byte[] input =
+                new byte[] {
+                    0x0A, 0x04, (byte) 0xFF, 0x00, (byte) 0xFE, 0x01
+                };
+
+        decoder.decode(input);
+
+        assertEquals("1:2B::ff00fe01\n", decoder.getDecodedOutput());
+        assertEquals(1, decoder.getDecodedToList().size());
+    }
+
+    @Test
     void shouldDecodeWithDoubleAndFloatInput() {
         String inputString = "AAAAAA4JzczMzMzcXkAVrseHQg";
         String expectedOutput = "1:1D::123.45\n2:5F::67.89\n";
