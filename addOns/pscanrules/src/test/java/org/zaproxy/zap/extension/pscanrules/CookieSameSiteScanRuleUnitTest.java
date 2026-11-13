@@ -246,6 +246,32 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
     }
 
     @Test
+    void shouldAlertWhenExpiresInThePastButMaxAgePositive() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader()
+                .setHeader(
+                        HttpResponseHeader.SET_COOKIE,
+                        "sid=abc; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=3600; Path=/");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("sid"));
+    }
+
+    @Test
+    void shouldNotAlertOnDeleteWithMaxAgeZero() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "sid=; Max-Age=0; Path=/");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
     void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = createMessage();

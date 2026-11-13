@@ -233,6 +233,47 @@ class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFl
     }
 
     @Test
+    void shouldAlertWhenExpiresInThePastButMaxAgePositive() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: sid=abc; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=3600; Path=/\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("sid"));
+    }
+
+    @Test
+    void shouldNotAlertOnDeleteWithMaxAgeZero() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Set-Cookie: sid=; Max-Age=0; Path=/\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
     void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
         // Given - value empty and epoch start date
         HttpMessage msg = new HttpMessage();

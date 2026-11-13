@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.commonlib;
 
+import java.math.BigInteger;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -37,6 +38,8 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 public final class CookieUtils {
 
     private static final int NOT_FOUND = -1;
+
+    private static final Pattern MAX_AGE_VALUE_PATTERN = Pattern.compile("-?\\d+");
 
     private CookieUtils() {
         // Utility class.
@@ -203,13 +206,26 @@ public final class CookieUtils {
     }
 
     /**
-     * Returns {@code true} if the cookie's "expire" value was set in the past, {@code false}
-     * otherwise (including if no "expires" value is set at all.).
+     * Tells whether or not the cookie in the given Set-Cookie header value is expired.
+     *
+     * <p>As per RFC 6265, the "Max-Age" attribute takes precedence over the "Expires" attribute. If
+     * the cookie has a "Max-Age" attribute with a valid value (an optional leading {@code -}
+     * followed by digits) the cookie is expired if the value is zero or negative. Otherwise, the
+     * cookie is expired if the "Expires" value is in the past or has an unknown format.
      *
      * @param headerValue the value of the header
-     * @return {@code true} if the "expires" value is in the past, {@code false} otherwise.
+     * @return {@code true} if the cookie is expired, {@code false} otherwise (including if neither
+     *     a valid "Max-Age" nor an "Expires" value is set).
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6265#section-5.3">RFC 6265 - Section
+     *     5.3</a>
      */
     public static boolean isExpired(String headerValue) {
+        String maxAge = getAttributeValue(headerValue, "max-age");
+        if (maxAge != null && MAX_AGE_VALUE_PATTERN.matcher(maxAge).matches()) {
+            // BigInteger avoids overflow with very large values.
+            return new BigInteger(maxAge).signum() <= 0;
+        }
+
         String expiry = CookieUtils.getAttributeValue(headerValue, "expires");
 
         if (expiry == null) {

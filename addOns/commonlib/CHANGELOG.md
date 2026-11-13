@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update dependencies.
 - Maintenance changes.
 
+### Fixed
+- Honour the Max-Age attribute, which takes precedence over Expires, when checking if a cookie is expired (Issue 9560).
+
 ## [1.44.0] - 2026-08-26
 ### Added
 - Add standard header for other add-ons to use.
