@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- When importing a WSDL from a URL, referenced resources are only retrieved over HTTP or HTTPS and requests are subject to the current ZAP Mode. When importing from a local file, local file references remain supported (Issue 9438).
 
 ## [32] - 2026-08-12
 ### Added
