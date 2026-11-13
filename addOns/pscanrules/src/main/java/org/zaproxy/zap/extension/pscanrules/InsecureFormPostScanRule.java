@@ -73,13 +73,14 @@ public class InsecureFormPostScanRule extends PluginPassiveScanner
 
         List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
         for (Element formElement : formElements) {
-            String formAction = formElement.getAttributeValue("action");
-            if (formAction != null && formAction.trim().toLowerCase().startsWith("http://")) {
-                buildAlert(
-                                msg.getRequestHeader().getURI().toString(),
-                                formElement.toString(),
-                                formElement.getAttributeValue("action").trim())
-                        .raise();
+            for (FormUtils.SubmissionTarget target : FormUtils.getSubmissionTargets(formElement)) {
+                if (target.url().toLowerCase().startsWith(HttpHeader.SCHEME_HTTP)) {
+                    buildAlert(
+                                    msg.getRequestHeader().getURI().toString(),
+                                    target.element().toString(),
+                                    target.url())
+                            .raise();
+                }
             }
         }
     }

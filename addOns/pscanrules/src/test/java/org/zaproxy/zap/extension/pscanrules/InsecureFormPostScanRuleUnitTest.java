@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +31,8 @@ import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -166,5 +169,119 @@ class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<InsecureFormPo
         List<Alert> alerts = rule.getExampleAlerts();
         // THen
         assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "<button formaction=\"http://example.com/login\">Log in</button>",
+                "<button type=\"submit\" formaction=\"http://example.com/login\">Log in</button>",
+                "<input type=\"submit\" formaction=\"http://example.com/login\">",
+                "<input type=\"image\" src=\"/login.png\" formaction=\"http://example.com/login\">"
+            })
+    void shouldRaiseAlertIfSubmitterFormActionIsInsecure(String submitter) throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><form action=\"/login\"><input name=\"pw\" type=\"password\">"
+                        + submitter
+                        + "</form></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("http://example.com/login"));
+        assertThat(alertsRaised.get(0).getOtherInfo(), containsString(submitter));
+    }
+
+    @Test
+    void shouldRaiseAlertIfSubmitterFormActionIsInsecureWithUppercaseScheme() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><form action=\"/login\"><button formaction=\"HTTP://example.com/login\">Log in</button></form></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("HTTP://example.com/login"));
+    }
+
+    @Test
+    void shouldRaiseAlertIfSubmitterFormActionIsInsecureWithSurroundingWhitespace()
+            throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><form action=\"/login\"><button formaction=\"  http://example.com/login  \">Log in</button></form></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("http://example.com/login"));
+    }
+
+    @Test
+    void shouldNotRaiseAlertIfSubmitterFormActionIsSecure() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><form action=\"/login\"><button formaction=\"https://example.com/login\">Log in</button></form></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotRaiseAlertIfNonSubmitButtonFormActionIsInsecure() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><form action=\"/login\"><button type=\"button\" formaction=\"http://example.com/login\">Log in</button></form></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldRaiseAlertForFormActionIfSubmitterFormActionIsSecure() throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><form action=\"http://example.com/processform\"><button formaction=\"https://example.com/login\">Log in</button></form></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("http://example.com/processform"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "<form action=\"/login\"></form>",
+                "<form action=\"login\"></form>",
+                "<form action=\"//example.com/login\"></form>",
+                "<form action=\"/login\"><button formaction=\"/signin\">Log in</button></form>",
+                "<form action=\"/login\"><button formaction=\"signin\">Log in</button></form>",
+                "<form action=\"/login\"><button formaction=\"//example.com/signin\">Log in</button></form>"
+            })
+    void shouldNotRaiseAlertIfTargetIsRelative(String form) throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody("<html>" + form + "</html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 }
