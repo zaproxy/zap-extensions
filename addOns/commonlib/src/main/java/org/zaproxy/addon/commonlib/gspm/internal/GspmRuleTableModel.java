@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -34,8 +35,8 @@ import org.zaproxy.zap.control.AddOn;
 /**
  * Table model for the GSPM dialog showing one row per {@link GspmRule}.
  *
- * <p>Columns: Name, Threshold, Strength (dash for passive rules that lack attack strength), Status.
- * Threshold and Strength cells are editable for rules that support them.
+ * <p>Columns: Name, Tool, Threshold, Strength (dash for passive rules that lack attack strength),
+ * Status. Threshold and Strength cells are editable for rules that support them.
  *
  * @since 1.45.0
  */
@@ -45,13 +46,26 @@ public class GspmRuleTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
     static final int COL_NAME = 0;
-    static final int COL_THRESHOLD = 1;
-    static final int COL_STRENGTH = 2;
-    static final int COL_STATUS = 3;
-    static final int COL_COUNT = 4;
+    static final int COL_TOOL = 1;
+    static final int COL_THRESHOLD = 2;
+    static final int COL_STRENGTH = 3;
+    static final int COL_STATUS = 4;
+    static final int COL_COUNT = 5;
 
+    private final UnaryOperator<String> toolDisplayNames;
     private List<GspmRule> rules = new ArrayList<>();
     private Map<String, String> i18nToEnum;
+
+    GspmRuleTableModel() {
+        this(UnaryOperator.identity());
+    }
+
+    /**
+     * @param toolDisplayNames maps a tool id (e.g. {@code ascan}) to its display name.
+     */
+    GspmRuleTableModel(UnaryOperator<String> toolDisplayNames) {
+        this.toolDisplayNames = toolDisplayNames;
+    }
 
     /** Replaces the displayed rules and fires a full table-data-changed event. */
     public void setRules(List<GspmRule> newRules) {
@@ -78,6 +92,7 @@ public class GspmRuleTableModel extends AbstractTableModel {
     public String getColumnName(int col) {
         return switch (col) {
             case COL_NAME -> Constant.messages.getString("commonlib.gspm.dialog.table.col.name");
+            case COL_TOOL -> Constant.messages.getString("commonlib.gspm.dialog.table.col.tool");
             case COL_THRESHOLD ->
                     Constant.messages.getString("commonlib.gspm.dialog.table.col.threshold");
             case COL_STRENGTH ->
@@ -106,6 +121,7 @@ public class GspmRuleTableModel extends AbstractTableModel {
         GspmRule rule = rules.get(row);
         return switch (col) {
             case COL_NAME -> rule.getName();
+            case COL_TOOL -> toolDisplayNames.apply(rule.getTool());
             case COL_THRESHOLD -> thresholdToI18n(rule.getAlertThreshold());
             case COL_STRENGTH -> {
                 AttackStrength s = rule.getAttackStrength();
@@ -138,7 +154,7 @@ public class GspmRuleTableModel extends AbstractTableModel {
                 }
             }
             default -> {
-                // Name and Status columns are not editable
+                // Name, Tool and Status columns are not editable
             }
         }
     }

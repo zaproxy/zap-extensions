@@ -293,8 +293,9 @@ public class GspmRegistry {
     /**
      * Renames the given policy and re-indexes it under the new name.
      *
-     * <p>The policy keeps the file it was loaded from or last saved to (via {@link
-     * GspmPolicy#getFileName()}), so the on-disk file name is unaffected by the rename.
+     * <p>A policy that has been loaded or saved keeps its file (via {@link
+     * GspmPolicy#getFileName()}), so the on-disk file name is unaffected by the rename. One that
+     * has never been persisted has no file yet, so its file name follows the new name.
      *
      * @throws IllegalArgumentException if {@code policy} is not currently registered, or if another
      *     policy is already registered under {@code newName}
@@ -315,11 +316,14 @@ public class GspmRegistry {
                 throw new IllegalArgumentException(
                         "A policy named '" + newName + "' is already registered");
             }
-            // Lock in the current effective file name so the rename doesn't change which file
-            // this policy is persisted to.
-            policy.setFileName(policy.getFileName());
+            // Once persisted, lock in the current effective file name so the rename doesn't change
+            // which file this policy is saved to. A never-saved policy has no file to preserve,
+            // so its file name keeps following its name (e.g. a new policy given its real name).
+            boolean followsName = policy.getFile() == null && oldName.equals(policy.getFileName());
+            policy.setFileName(followsName ? null : policy.getFileName());
             policies.remove(oldName);
             policy.setName(newName);
+            ensureUniqueFileName(policy);
             policies.put(newName, policy);
         }
         if (oldName.equals(currentPolicyName)) {
