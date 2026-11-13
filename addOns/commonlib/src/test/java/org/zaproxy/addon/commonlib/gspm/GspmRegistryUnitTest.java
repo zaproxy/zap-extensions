@@ -974,6 +974,22 @@ class GspmRegistryUnitTest extends TestUtils {
         }
 
         @Test
+        void shouldRecordLegacyFileOfMigratedPolicy(@TempDir Path dir) throws Exception {
+            // Given
+            Path legacy = dir.resolve("My Policy.policy");
+            Files.writeString(legacy, LEGACY_POLICY_XML);
+
+            // When
+            registry.loadPolicies(dir.toFile());
+
+            // Then
+            assertThat(registry.getPolicy("My Policy").getLegacyFile(), is(legacy.toFile()));
+            assertThat(
+                    registry.getPolicy(GspmRegistry.getDefaultPolicyName()).getLegacyFile(),
+                    is(nullValue()));
+        }
+
+        @Test
         void shouldNotMigrateLegacyPolicyWhenPolicy2AlreadyExists(@TempDir Path dir)
                 throws Exception {
             // Given

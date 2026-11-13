@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.event.HierarchyEvent;
 import java.net.URL;
 import java.util.List;
 import javax.swing.Box;
@@ -40,7 +41,6 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.ascan.PolicyManager;
 import org.zaproxy.zap.extension.search.SearchPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -57,6 +57,16 @@ public class AttackPanel extends QuickStartSubPanel {
     private JButton attackButton;
     private JButton stopButton;
     private JComboBox<String> policyField;
+
+    /** Whether or not the saved policy was selected, it might not be available initially. */
+    private boolean savedPolicySelected;
+
+    /** Whether or not the user selected a policy, which should then not be changed. */
+    private boolean policyChangedByUser;
+
+    /** Whether or not the policies are being changed, not by the user. */
+    private boolean updatingPolicies;
+
     private JComboBox<String> urlField;
     private DefaultComboBoxModel<String> urlModel;
     private JButton selectButton;
@@ -79,6 +89,15 @@ public class AttackPanel extends QuickStartSubPanel {
         super(extension, qsp);
 
         this.setMode(Control.getSingleton().getMode());
+
+        // The policies might change after the panel is created, e.g. the Global Scan Policy
+        // Manager provides them once the scanner is ready.
+        addHierarchyListener(
+                e -> {
+                    if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
+                        refreshPolicies();
+                    }
+                });
     }
 
     @Override
@@ -187,28 +206,87 @@ public class AttackPanel extends QuickStartSubPanel {
     private JComboBox<String> getPolicyField() {
         if (policyField == null) {
             policyField = new JComboBox<>();
+            addPolicies();
+            policyField.addActionListener(
+                    e -> {
+                        if (!updatingPolicies) {
+                            policyChangedByUser = true;
+                        }
+                    });
+        }
+        return policyField;
+    }
+
+    private void addPolicies() {
+        ExtensionActiveScan extAscan =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.class);
+        if (extAscan != null) {
+            extAscan.getPolicyManager().getAllPolicyNames().forEach(policyField::addItem);
+        }
+    }
+
+    /**
+     * Reloads the available policies, keeping the selected one if still available.
+     *
+     * <p>The saved policy is selected once it is available, unless the user selected another one.
+     */
+    private void refreshPolicies() {
+        if (policyField == null) {
+            return;
+        }
+        Object selected = policyField.getSelectedItem();
+        updatingPolicies = true;
+        try {
+            policyField.removeAllItems();
+            addPolicies();
+            if ((!savedPolicySelected && !policyChangedByUser)
+                    || selected == null
+                    || !setPolicy(selected.toString())) {
+                selectScanPolicy();
+            }
+        } finally {
+            updatingPolicies = false;
+        }
+    }
+
+    private void selectScanPolicy() {
+        boolean wasUpdating = updatingPolicies;
+        updatingPolicies = true;
+        try {
+            String savedPolicy = getExtensionQuickStart().getQuickStartParam().getScanPolicyName();
+            savedPolicySelected = setPolicy(savedPolicy);
+            if (savedPolicySelected || setPolicy(DEFAULT_SCAN_POLICY)) {
+                return;
+            }
+            // The policies might not include the ones above, e.g. if provided by the Global Scan
+            // Policy Manager, use the one the scanner would use by default.
             ExtensionActiveScan extAscan =
                     Control.getSingleton()
                             .getExtensionLoader()
                             .getExtension(ExtensionActiveScan.class);
             if (extAscan != null) {
-                extAscan.getPolicyManager().getAllPolicyNames().forEach(policyField::addItem);
+                setPolicy(extAscan.getPolicyManager().getDefaultScanPolicy().getName());
             }
-        }
-        return policyField;
-    }
-
-    private void selectScanPolicy() {
-        String savedPolicy = getExtensionQuickStart().getQuickStartParam().getScanPolicyName();
-        if (!setPolicy(savedPolicy)) {
-            setPolicy(DEFAULT_SCAN_POLICY);
+        } finally {
+            updatingPolicies = wasUpdating;
         }
     }
 
+    /**
+     * Selects the policy with the given name, if it's one of the available policies.
+     *
+     * <p>Checks the policies listed (instead of the policies directory) as they might not be saved
+     * there, e.g. when provided by the Global Scan Policy Manager.
+     */
     private boolean setPolicy(String policyName) {
-        if (policyName != null && PolicyManager.policyExists(policyName)) {
-            policyField.setSelectedItem(policyName);
-            return true;
+        if (policyName == null) {
+            return false;
+        }
+        for (int i = 0; i < policyField.getItemCount(); i++) {
+            if (policyName.equals(policyField.getItemAt(i))) {
+                policyField.setSelectedItem(policyName);
+                return true;
+            }
         }
         return false;
     }
