@@ -21,17 +21,31 @@ package org.zaproxy.zap.extension.soap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 
-class SOAPXMLInjectionActiveScanRuleTestCase {
+class SOAPXMLInjectionActiveScanRuleTestCase
+        extends ActiveScannerTestUtils<SOAPXMLInjectionActiveScanRule> {
 
-    private SOAPXMLInjectionActiveScanRule rule = new SOAPXMLInjectionActiveScanRule();
+    @Override
+    protected SOAPXMLInjectionActiveScanRule createScanner() {
+        return new SOAPXMLInjectionActiveScanRule();
+    }
+
+    @Override
+    protected void setUpMessages() {
+        mockMessages(new ExtensionImportWSDL());
+    }
 
     @Test
     void craftAttackMessageTest() throws Exception {
@@ -101,5 +115,38 @@ class SOAPXMLInjectionActiveScanRuleTestCase {
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(2));
+        Alert injectionAlert = alerts.get(0);
+        assertThat(injectionAlert.getAlertRef(), is(equalTo("90029-1")));
+        assertThat(injectionAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(injectionAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(injectionAlert.getCweId(), is(equalTo(91)));
+        assertThat(
+                injectionAlert.getAttack(),
+                is(equalTo("1001</accountId><accountId>1001_modified")));
+        assertThat(
+                injectionAlert.getOtherInfo(),
+                is(
+                        equalTo(
+                                Constant.messages.getString("soap.soapxmlinjection.warn2")
+                                        + " SOAP version 1.1.")));
+        Alert nonSoapResponseAlert = alerts.get(1);
+        assertThat(nonSoapResponseAlert.getAlertRef(), is(equalTo("90029-2")));
+        assertThat(nonSoapResponseAlert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(nonSoapResponseAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(nonSoapResponseAlert.getCweId(), is(equalTo(91)));
+        assertThat(
+                nonSoapResponseAlert.getOtherInfo(),
+                is(
+                        equalTo(
+                                Constant.messages.getString("soap.soapxmlinjection.warn1")
+                                        + " SOAP version 1.1.")));
     }
 }
