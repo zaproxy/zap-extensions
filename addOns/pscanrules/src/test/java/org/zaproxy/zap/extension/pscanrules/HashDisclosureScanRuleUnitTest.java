@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.startsWith;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,6 +46,12 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
     @Override
     protected HashDisclosureScanRule createScanner() {
         return new HashDisclosureScanRule();
+    }
+
+    @Override
+    public Set<Integer> getSkippedAlertRefs() {
+        // 10097-15 (LanMan) retired; skip contiguous check.
+        return Set.of(15);
     }
 
     @BeforeEach
@@ -185,7 +192,7 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
-        assertThat(alerts.size(), is(equalTo(16)));
+        assertThat(alerts.size(), is(equalTo(15)));
         assertThat(alerts.get(0).getCweId(), is(equalTo(497)));
     }
 

@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - The Content Security Policy scan rule now also reports a missing or wildcard `base-uri` directive.
 
+### Removed
+- Hash Disclosure "LanMan" alert (10097-15) is no longer raised (its pattern never matched, such values are reported as MD4 / MD5).
+
 ## [78] - 2026-11-13
 ### Changed
 - Maintenance changes.
