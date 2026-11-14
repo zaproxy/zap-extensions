@@ -23,8 +23,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.util.StdConverter;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @JsonIgnoreProperties("filecontentreplace")
 public class Extractors {
@@ -48,6 +50,25 @@ public class Extractors {
     private List<String> filecontent = null;
 
     private Map<String, String> hashes; // hash, version
+
+    private final Map<String, List<Pattern>> patterns = new HashMap<>();
+
+    /** Compiles the regexes once, so that they are not compiled on each scan. */
+    void compilePatterns() {
+        patterns.clear();
+        for (String type : List.of(TYPE_FUNC, TYPE_URI, TYPE_FILENAME, TYPE_FILECONTENT)) {
+            List<String> regexes = get(type);
+            if (regexes != null) {
+                patterns.put(
+                        type,
+                        regexes.stream().filter(r -> r != null).map(Pattern::compile).toList());
+            }
+        }
+    }
+
+    public List<Pattern> getPatterns(String type) {
+        return patterns.getOrDefault(type, List.of());
+    }
 
     public List<String> getFunc() {
         return func;
