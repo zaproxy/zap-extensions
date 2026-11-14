@@ -12,6 +12,15 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.40.0 & < 2.0.0")
                 }
+                register("client") {
+                    version.set(">=0.7.0")
+                }
+                register("network") {
+                    version.set(">=0.2.0")
+                }
+                register("selenium") {
+                    version.set(">=15.0.0")
+                }
             }
         }
 
@@ -33,7 +42,11 @@ zapAddOn {
 
 dependencies {
     zapAddOn("commonlib")
-
+    zapAddOn("client")
+    zapAddOn("network")
+    zapAddOn("selenium")
+    compileOnly(parent!!.project("client"))
+    compileOnly(parent!!.project("selenium"))
     testImplementation(project(":testutils"))
     testImplementation(project(":addOns:graaljs"))
     testImplementation(project(":addOns:scripts"))
