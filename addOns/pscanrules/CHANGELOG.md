@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Content Security Policy scan rule now also reports a missing or wildcard `base-uri` directive.
 
 ### Fixed
+- Information Disclosure - Debug Error Messages scan rule no longer depends on the default locale, and no longer fails or reports wrong evidence when the response contains characters whose lower case form is longer.
 - Viewstate scan rule no longer fails on ViewState values too short to contain a MAC, and now reports them as having no MAC.
 - Charset Mismatch scan rule no longer raises an alert for XML responses whose XML declaration has no encoding.
 - Cookie Poisoning scan rule no longer fails on cookie values containing malformed percent-encoding.
