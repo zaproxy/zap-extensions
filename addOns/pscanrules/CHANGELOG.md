@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Content Security Policy scan rule now also reports a missing or wildcard `base-uri` directive.
 
 ### Fixed
+- Absence of Anti-CSRF Tokens scan rule: the ignore attribute annotation on one form no longer lowers the risk of alerts for subsequent forms in the same response.
 - Hash Disclosure scan rule now detects all BCrypt version prefixes ($2$, $2a$, $2b$, $2x$, $2y$) at any cost.
 
 ### Removed

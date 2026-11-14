@@ -121,8 +121,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
         List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
 
         if (formElements != null && !formElements.isEmpty()) {
-            boolean hasSecurityAnnotation = false;
-
             // Loop through all of the FORM tags
             LOGGER.debug("Found {} forms", formElements.size());
 
@@ -166,6 +164,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
                 if (formOnIgnoreList(formElement, ignoreList)) {
                     continue;
                 }
+                boolean hasSecurityAnnotation = false;
                 if (!StringUtils.isEmpty(ignoreAttName)) {
                     // Check to see if the specific security annotation is present
                     Attribute att = formElement.getAttributes().get(ignoreAttName);
