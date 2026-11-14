@@ -7,8 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - The Content Security Policy scan rule now also reports a missing or wildcard `base-uri` directive.
 
+### Fixed
+- Hash Disclosure scan rule now detects all BCrypt version prefixes ($2$, $2a$, $2b$, $2x$, $2y$) at any cost.
+
 ### Removed
 - Hash Disclosure "LanMan" alert (10097-15) is no longer raised (its pattern never matched, such values are reported as MD4 / MD5).
+- Hash Disclosure "OpenBSD Blowfish" alert (10097-3) is no longer raised (it duplicated BCrypt, such values are reported as BCrypt).
+
 
 ## [78] - 2026-11-13
 ### Changed

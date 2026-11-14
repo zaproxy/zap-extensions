@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -50,8 +51,8 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
 
     @Override
     public Set<Integer> getSkippedAlertRefs() {
-        // 10097-15 (LanMan) retired; skip contiguous check.
-        return Set.of(15);
+        // 10097-3 (OpenBSD Blowfish) and 10097-15 (LanMan) retired; skip contiguous check.
+        return Set.of(3, 15);
     }
 
     @BeforeEach
@@ -71,6 +72,40 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
         assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - MD4 / MD5"));
         assertThat(alertsRaised.get(0).getEvidence(), is(hashVal));
         assertThat(alertsRaised.get(0).getAlertRef(), is("10097-16"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "$2$05$", "$2$12$", "$2a$05$", "$2a$12$", "$2b$05$", "$2b$12$", "$2x$05$",
+                "$2x$12$", "$2y$05$", "$2y$12$"
+            })
+    void shouldRaiseSingleBcryptAlertForAllVersionPrefixes(String prefix) throws Exception {
+        // Given
+        String hashVal = prefix + "bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe";
+        HttpMessage msg = createMsg(hashVal);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - BCrypt"));
+        assertThat(alertsRaised.get(0).getEvidence(), is(hashVal));
+        assertThat(alertsRaised.get(0).getAlertRef(), is("10097-7"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "$2c$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe",
+                "$2b$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFp"
+            })
+    void shouldNotRaiseBcryptAlertForInvalidValues(String value) throws Exception {
+        // Given
+        HttpMessage msg = createMsg(value);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
     }
 
     @Test
@@ -192,7 +227,7 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
-        assertThat(alerts.size(), is(equalTo(15)));
+        assertThat(alerts.size(), is(equalTo(14)));
         assertThat(alerts.get(0).getCweId(), is(equalTo(497)));
     }
 
