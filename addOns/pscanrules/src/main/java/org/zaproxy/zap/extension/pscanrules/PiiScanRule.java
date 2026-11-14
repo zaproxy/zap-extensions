@@ -117,14 +117,14 @@ public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveSc
             }
             List<Candidate> candidates = getNumberSequences(componentText, getAlertThreshold());
             for (Candidate candidate : candidates) {
+                if (isDecimal(candidate.getContainingString())
+                        && !this.getAlertThreshold().equals(AlertThreshold.LOW)) {
+                    continue;
+                }
                 for (CreditCard cc : CreditCard.values()) {
                     Matcher matcher = cc.matcher(candidate.getCandidate());
                     while (matcher.find()) {
                         String evidence = candidate.getOriginal();
-                        if (isDecimal(candidate.getContainingString())
-                                && !this.getAlertThreshold().equals(AlertThreshold.LOW)) {
-                            return;
-                        }
                         if (PiiUtils.isValidLuhn(candidate.getCandidate())
                                 && !isSci(candidate.getContainingString())) {
                             BinRecord binRec = BinList.getSingleton().get(evidence);
