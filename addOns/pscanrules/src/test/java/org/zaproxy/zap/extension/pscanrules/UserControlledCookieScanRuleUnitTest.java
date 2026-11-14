@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrules;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
 import java.util.Map;
@@ -144,6 +145,19 @@ class UserControlledCookieScanRuleUnitTest
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+    }
+
+    @Test
+    void shouldRaiseAlertIfParamMatchesCookieValueWithMalformedPercentEncoding() throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader().setURI(new URI("http://example.com/i.php?place=50%", false));
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.SET_COOKIE, "Set-Cookie: aCookie=50%; Secure");
+        // When / Then
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
     }
 
     @Test
