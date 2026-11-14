@@ -430,6 +430,8 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
         // TODO: replace this bool by a more fuzzy indicator
         public boolean hasMACtest1() {
             int l = this.decodedValue.length();
+            // Too short to hold the terminator and a MAC
+            if (l < 22) return false;
             // By default, the MAC is 20 characters long
             String lastCharsBeforeMac = this.decodedValue.substring(l - 22, l - 20);
 
