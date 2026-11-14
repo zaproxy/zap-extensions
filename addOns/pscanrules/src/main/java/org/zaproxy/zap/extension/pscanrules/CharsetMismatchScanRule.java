@@ -212,7 +212,9 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
             if (!xmlDeclarationTags.isEmpty()) {
                 StartTag xmlDeclarationTag = xmlDeclarationTags.get(0);
                 String encoding = xmlDeclarationTag.getAttributeValue("encoding");
-                if (!headerCharset.equalsIgnoreCase(encoding)) {
+                // Without an encoding the declaration can't conflict with the header (which takes
+                // precedence in browsers, RFC 7303).
+                if (encoding != null && !headerCharset.equalsIgnoreCase(encoding)) {
                     buildAlert(headerCharset, encoding, MismatchType.XML_MISMATCH).raise();
                 }
             }

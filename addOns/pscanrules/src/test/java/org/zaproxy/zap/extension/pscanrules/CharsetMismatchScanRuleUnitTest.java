@@ -259,6 +259,26 @@ class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetMismatch
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"UTF-8", "ISO-8859-1"})
+    void shouldPassWhenNoEncodingInXmlDeclaration(String headerCharset)
+            throws HttpMalformedHeaderException {
+        // Given
+        msg.setResponseBody("<?xml version='1.0'?>" + "<zap></zap>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Content-Type: text/xml;charset="
+                        + headerCharset
+                        + "\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
     @Test
     void shouldRaiseAlertWhenDifferentEncodingAndHeaderXml() throws HttpMalformedHeaderException {
         // Given
