@@ -32,6 +32,7 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -196,6 +197,46 @@ class UserControlledHTMLAttributesScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldRaiseAlertIfRequestParamValuesUsedInMetaRefreshWithSpacesAroundEquals()
+            throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader()
+                .setURI(new URI("http://example.com/i.php?place=http://example.com/", false));
+        msg.setResponseBody(
+                "<html><meta http-equiv=\"refresh\" content=\"0; url = http://example.com/\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "0; url='http://example.com/'",
+                "0; url=&quot;http://example.com/&quot;",
+                "0; URL=http://example.com/"
+            })
+    void shouldRaiseAlertIfRequestParamValuesUsedInQuotedOrUpperCaseMetaRefresh(String content)
+            throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader()
+                .setURI(new URI("http://example.com/i.php?place=http://example.com/", false));
+        msg.setResponseBody(
+                "<html><meta http-equiv=\"refresh\" content=\"" + content + "\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
     }
 
     @Test
