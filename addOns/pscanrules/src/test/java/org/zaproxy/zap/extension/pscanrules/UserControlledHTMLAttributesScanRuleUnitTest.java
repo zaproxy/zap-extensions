@@ -199,6 +199,23 @@ class UserControlledHTMLAttributesScanRuleUnitTest
     }
 
     @Test
+    void shouldRaiseAlertIfRequestParamValuesUsedInMetaRefreshWithSpacesAroundEquals()
+            throws Exception {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.getRequestHeader()
+                .setURI(new URI("http://example.com/i.php?place=http://example.com/", false));
+        msg.setResponseBody(
+                "<html><meta http-equiv=\"refresh\" content=\"0; url = http://example.com/\"></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
+    }
+
+    @Test
     void shouldRaiseAlertIfRequestParamValuesUsedInMetaRefresh() throws Exception {
         // Given
         HttpMessage msg = createMessage();
