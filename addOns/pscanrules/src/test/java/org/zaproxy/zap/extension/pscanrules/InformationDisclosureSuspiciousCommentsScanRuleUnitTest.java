@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -370,6 +371,20 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
         // Then
         assertEquals(1, alertsRaised.size());
+    }
+
+    @Test
+    void shouldTreatCustomPayloadsAsLiteralText() throws Exception {
+        // Given
+        Iterable<String> customPayloads = List.of("todo(", "a.b");
+        String body = "<h1>Some text <!-- a.b: a test --><!-- axb: not a match --></h1>";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+        InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(() -> customPayloads);
+        // When
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getEvidence(), containsString("a.b"));
     }
 
     @Test
