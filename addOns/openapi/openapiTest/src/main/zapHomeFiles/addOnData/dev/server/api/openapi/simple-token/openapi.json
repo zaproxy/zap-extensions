@@ -1,0 +1,29 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Simple OpenAPI Token Example",
+    "version": "1.0.0",
+    "description": "A simple API with one endpoint protected by a fixed security token in a header"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:9091/api/openapi/simple-token"
+    }
+  ],
+  "paths": {
+    "/test-api": {
+      "get": {
+        "summary": "A simple API endpoint",
+        "operationId": "test",
+        "responses": {
+          "200": {
+            "description": "API response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

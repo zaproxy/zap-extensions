@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2023 The ZAP Development Team
+ * Copyright 2026 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,43 +17,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.api.openapi.simpleAuth;
+package org.zaproxy.addon.openapitest.simpletoken;
 
 import net.sf.json.JSONObject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class OpenApiVerificationPage extends TestPage {
+/** The endpoint described by the spec, it requires the security token header. */
+public class OpenApiTokenTestApiPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenApiVerificationPage.class);
-
-    public OpenApiVerificationPage(TestProxyServer server) {
-        super(server, "user");
+    public OpenApiTokenTestApiPage(TestProxyServer server) {
+        super(server, "test-api");
     }
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
-        String user = getParent().getUser(token);
-        LOGGER.debug("Token: {} user: {}", token, user);
-
         JSONObject response = new JSONObject();
-        if (user != null) {
-            response.put("result", "OK");
-            response.put("user", user);
+        if (OpenApiSimpleTokenDir.TOKEN.equals(
+                msg.getRequestHeader().getHeader(OpenApiSimpleTokenDir.TOKEN_HEADER))) {
+            response.put("result", "Success");
+            this.getServer().setJsonResponse(TestProxyServer.STATUS_OK, response, msg);
         } else {
             response.put("result", "FAIL");
+            this.getServer().setJsonResponse(TestProxyServer.STATUS_FORBIDDEN, response, msg);
         }
-        this.getServer().setJsonResponse(response, msg);
-    }
-
-    @Override
-    public OpenApiSimpleAuthDir getParent() {
-        return (OpenApiSimpleAuthDir) super.getParent();
     }
 }

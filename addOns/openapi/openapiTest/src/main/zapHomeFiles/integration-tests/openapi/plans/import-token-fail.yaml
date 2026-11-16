@@ -1,0 +1,115 @@
+---
+# Checks that importing the OpenAPI test app definition, with an endpoint protected by a fixed security token in a header,
+# adds the endpoint to the Sites tree but that the request made by the import is forbidden when the token is wrong.
+# The wrong token is added to all requests by a replacer rule, so the authentication method is manual.
+# The diagnostics job records the requests and an authentication report is generated, its summary must show
+# the 2 responses received, with no connection failures, and it must contain the expected requests. The report is written next to the plan, which the script finds from the running plan.
+# The statistics should be empty before running this plan.
+# Needs ZAP to be run in dev mode, with the Dev add-on's test server running (http://localhost:9091).
+env:
+  contexts:
+    - name: "openapi-import-token-fail"
+      urls:
+        - "http://localhost:9091/api/openapi/simple-token"
+      includePaths:
+        - 'http://localhost:9091/api/openapi/simple-token.*'
+      authentication:
+        method: "manual"
+        verification:
+          method: "response"
+          loggedInRegex: 'HTTP\/\d\.\d 200'
+          loggedOutRegex: 'HTTP\/\d\.\d 403'
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "diagnostics"
+    name: "record diagnostics"
+    parameters:
+      enabled: true
+  - type: "replacer"
+    name: "add security token"
+    parameters:
+      deleteAllRules: true
+    rules:
+      - description: "Security token header"
+        url: 'http://localhost:9091/api/openapi/simple-token/.*'
+        matchType: "req_header"
+        matchString: "X-Security-Token"
+        replacementString: "wrong-security-token"
+  - type: "openapi"
+    name: "import token protected definition with wrong token"
+    parameters:
+      apiUrl: "http://localhost:9091/api/openapi/simple-token/openapi.json"
+      context: "openapi-import-token-fail"
+    tests:
+      - name: "Endpoint imported and request with wrong token forbidden"
+        type: "url"
+        operator: "or"
+        url: "http://localhost:9091/api/openapi/simple-token/test-api"
+        responseHeaderRegex: 'HTTP\/\d\.\d 403'
+        onFail: "error"
+  - type: "report"
+    name: "auth report"
+    parameters:
+      template: "auth-report-json"
+      reportFile: "openapi-import-token-fail"
+  - type: "script"
+    name: "add check"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "ECMAScript : Graal.js"
+      name: "openapi-import-token-fail-check"
+      inline: |
+        var Files = Java.type("java.nio.file.Files");
+        var File = Java.type("java.io.File");
+
+        var extAutomation = control.getExtensionLoader().getExtension("ExtensionAutomation");
+        var plan = null;
+        extAutomation.getRunningPlans().forEach(function(p) {
+            if (p.getFile() !== null && p.getFile().getName() === "import-token-fail.yaml") {
+                plan = p;
+            }
+        });
+        if (plan === null) {
+            throw new Error("Running plan not found: import-token-fail.yaml");
+        }
+        var reportFile = new File(plan.getFile().getParentFile(), "openapi-import-token-fail.json");
+        if (!reportFile.exists()) {
+            throw new Error("Auth report not found: " + reportFile);
+        }
+        var report = JSON.parse(Files.readString(reportFile.toPath()));
+
+        var expected = {"auth.summary.connection_successes": 2, "auth.summary.connection_failures": 0};
+        var errors = [];
+        Object.keys(expected).forEach(function(key) {
+            var item = report.summaryItems.filter(function(i) { return i.key === key; })[0];
+            if (!item) {
+                errors.push("Missing summary item " + key);
+            } else if (item.value !== expected[key]) {
+                errors.push("Summary item " + key + " value=" + item.value + ", expected " + expected[key]);
+            }
+        });
+
+        // The definition fetch and the imported request.
+        var expectedRequests = 2;
+        var requests = report.diagnostics.reduce(function(total, d) {
+            return d.steps.reduce(function(t, step) { return t + step.messages.length; }, total);
+        }, 0);
+        if (requests !== expectedRequests) {
+            errors.push("Diagnostics requests=" + requests + ", expected " + expectedRequests);
+        }
+        if (errors.length > 0) {
+            throw new Error(errors.join("; "));
+        }
+  - type: "script"
+    name: "check auth report summary"
+    parameters:
+      action: "run"
+      type: "standalone"
+      name: "openapi-import-token-fail-check"
+      failureLevel: "error"

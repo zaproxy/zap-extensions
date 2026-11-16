@@ -1,0 +1,28 @@
+---
+# Checks that importing the unauthenticated OpenAPI test app definition adds its endpoint to the Sites tree.
+# Needs ZAP to be run in dev mode, with the Dev add-on's test server running (http://localhost:9091).
+env:
+  contexts:
+    - name: "openapi-import-unauth"
+      urls:
+        - "http://localhost:9091/api/openapi/simple-unauth"
+      includePaths:
+        - 'http://localhost:9091/api/openapi/simple-unauth.*'
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "openapi"
+    name: "import unauthenticated definition"
+    parameters:
+      apiUrl: "http://localhost:9091/api/openapi/simple-unauth/openapi.yaml"
+      context: "openapi-import-unauth"
+    tests:
+      - name: "GET endpoint imported"
+        type: "url"
+        operator: "or"
+        url: "http://localhost:9091/api/openapi/simple-unauth/test-api"
+        onFail: "error"

@@ -1,0 +1,57 @@
+---
+# Checks that importing the OpenAPI test app definition, with an endpoint protected by a fixed security token in a header,
+# adds the endpoint to the Sites tree and that the request made by the import is successful.
+# The token is added to all requests by a replacer rule, so the authentication method is manual.
+# The diagnostics job records the requests and an authentication report is generated.
+# Needs ZAP to be run in dev mode, with the Dev add-on's test server running (http://localhost:9091).
+env:
+  contexts:
+    - name: "openapi-import-token"
+      urls:
+        - "http://localhost:9091/api/openapi/simple-token"
+      includePaths:
+        - 'http://localhost:9091/api/openapi/simple-token.*'
+      authentication:
+        method: "manual"
+        verification:
+          method: "response"
+          loggedInRegex: 'HTTP\/\d\.\d 200'
+          loggedOutRegex: 'HTTP\/\d\.\d 403'
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "diagnostics"
+    name: "record diagnostics"
+    parameters:
+      enabled: true
+  - type: "replacer"
+    name: "add security token"
+    parameters:
+      deleteAllRules: true
+    rules:
+      - description: "Security token header"
+        url: 'http://localhost:9091/api/openapi/simple-token/.*'
+        matchType: "req_header"
+        matchString: "X-Security-Token"
+        replacementString: "zap-test-security-token"
+  - type: "openapi"
+    name: "import token protected definition"
+    parameters:
+      apiUrl: "http://localhost:9091/api/openapi/simple-token/openapi.json"
+      context: "openapi-import-token"
+    tests:
+      - name: "Endpoint imported and request with token succeeded"
+        type: "url"
+        operator: "or"
+        url: "http://localhost:9091/api/openapi/simple-token/test-api"
+        responseHeaderRegex: 'HTTP\/\d\.\d 200'
+        onFail: "error"
+  - type: "report"
+    name: "auth report"
+    parameters:
+      template: "auth-report-json"
+      reportFile: "openapi-import-token"

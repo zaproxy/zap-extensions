@@ -39,8 +39,6 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.dev.api.openapi.simpleAuth.OpenApiSimpleAuthDir;
-import org.zaproxy.addon.dev.api.openapi.simpleUnauth.OpenApiSimpleUnauthDir;
 import org.zaproxy.addon.dev.auth.basicHttp.BasicHttpDir;
 import org.zaproxy.addon.dev.auth.jsonMultipleCookies.JsonMultipleCookiesDir;
 import org.zaproxy.addon.dev.auth.nonStdJsonBearer.NonStdJsonBearerDir;
@@ -124,12 +122,6 @@ public class TestProxyServer {
         authDir.addDirectory(new UuidLoginRootDir(this, "uuid-login"));
         authDir.addDirectory(new OAuth2RootDir(this, "oauth2"));
 
-        TestDirectory apiDir = new TestDirectory(this, "api");
-        TestDirectory openapiDir = new TestDirectory(this, "openapi");
-        apiDir.addDirectory(openapiDir);
-        openapiDir.addDirectory(new OpenApiSimpleAuthDir(this, "simple-auth"));
-        openapiDir.addDirectory(new OpenApiSimpleUnauthDir(this, "simple-unauth"));
-
         TestDirectory csrfDir = new TestDirectory(this, "csrf");
         TestDirectory csrfBasicDir = new BasicCsrfDir(this, "basic");
         csrfDir.addDirectory(csrfBasicDir);
@@ -152,7 +144,6 @@ public class TestProxyServer {
         rndDir.addDirectory(new SimpleDir(this));
 
         root.addDirectory(authDir);
-        root.addDirectory(apiDir);
         root.addDirectory(csrfDir);
         root.addDirectory(fullDir);
         root.addDirectory(htmlDir);
