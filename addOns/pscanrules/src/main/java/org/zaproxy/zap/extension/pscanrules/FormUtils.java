@@ -19,13 +19,12 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.network.HttpMessage;
 
 /** Utility methods for HTML forms. */
@@ -71,10 +70,9 @@ final class FormUtils {
     static boolean hasScheme(HttpMessage msg, String url, String scheme) {
         try {
             return scheme.equalsIgnoreCase(
-                    new URI(msg.getRequestHeader().getURI().toString()).resolve(url).getScheme());
-        } catch (URISyntaxException | IllegalArgumentException e) {
-            // URI rejects characters browsers accept (e.g. unencoded spaces), check the prefix.
-            return url.toLowerCase(Locale.ROOT).startsWith(scheme + "://");
+                    new URI(msg.getRequestHeader().getURI(), new URI(url, false)).getScheme());
+        } catch (URIException e) {
+            return false;
         }
     }
 
