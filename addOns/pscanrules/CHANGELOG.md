@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - The Content Security Policy scan rule now also reports a missing or wildcard `base-uri` directive.
 
+### Fixed
+- Viewstate scan rule: reduce false positives for IP addresses, no longer matching assembly version numbers (e.g. `Version=12.0.0.0`), invalid addresses (e.g. `999.999.999.999`) or parts of longer dotted number sequences.
+
 ## [78] - 2026-11-13
 ### Changed
 - Maintenance changes.

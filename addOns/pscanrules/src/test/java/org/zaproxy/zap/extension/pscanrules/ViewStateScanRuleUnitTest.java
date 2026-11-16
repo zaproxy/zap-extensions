@@ -33,7 +33,9 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
@@ -303,9 +305,18 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
         assertSame(msg, alertsRaised.get(0).getMessage());
     }
 
-    @Test
-    void shouldRaiseAlertBecauseTheParametersDoesHaveIP() {
-        String encodedViewstate = getViewstateWithText("127.0.0.1");
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            value = {
+                "127.0.0.1|127.0.0.1",
+                "Data Source=10.1.2.3;|10.1.2.3",
+                "server 192.168.0.255.|192.168.0.255",
+                "0.0.0.0|0.0.0.0",
+                "255.255.255.255|255.255.255.255"
+            })
+    void shouldRaiseAlertBecauseTheParametersDoesHaveIP(String text, String expectedIp) {
+        String encodedViewstate = getViewstateWithText(text);
         msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"" + encodedViewstate + "\">");
 
         scanHttpResponseReceive(msg);
@@ -320,11 +331,32 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
                 alertsRaised.get(0).getDescription(),
                 equalTo(
                         "Potential IP addresses were found being serialized in the viewstate field."));
-        assertThat(alertsRaised.get(0).getOtherInfo(), equalTo("[127.0.0.1]"));
+        assertThat(alertsRaised.get(0).getOtherInfo(), equalTo("[" + expectedIp + "]"));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
         assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
         assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10032-1"));
         assertSame(msg, alertsRaised.get(0).getMessage());
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Microsoft.SharePoint, Version=12.0.0.0, Culture=neutral",
+                "System.Web, Version=4.0.0.0, Culture=neutral",
+                "999.999.999.999",
+                "256.1.1.1",
+                "192.168.1.300",
+                "1.2.3.4.5",
+                "10.0.0.01"
+            })
+    void shouldNotRaiseAlertForVersionNumbersOrInvalidIps(String text) {
+        // Given
+        String encodedViewstate = getViewstateWithText(text);
+        msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"" + encodedViewstate + "\">");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
