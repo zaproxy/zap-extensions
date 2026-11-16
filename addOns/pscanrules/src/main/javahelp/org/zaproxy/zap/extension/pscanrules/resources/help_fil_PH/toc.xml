@@ -7,6 +7,7 @@
 	<tocitem text="Gabay ng Gumagamit ng ZAP" tocid="toplevelitem">
 		<tocitem text="Mga Add On" tocid="addons">
 			<tocitem text="Mga Patakaran ng Pasibong Pag-scan" image="pscanrules-icon" target="pscanrules">
+				<tocitem text="Apache HTTP Server Known Vulnerabilities" target="pscanrules.apacheknownvulnerabilities"/>
 				<tocitem text="PHP Known Vulnerabilities" target="pscanrules.phpknownvulnerabilities"/>
 			</tocitem>
 		</tocitem>
