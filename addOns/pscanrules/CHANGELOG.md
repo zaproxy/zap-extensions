@@ -6,10 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - The Content Security Policy scan rule now also reports a missing or wildcard `base-uri` directive.
+- Information Disclosure - Suspicious Comments scan rule custom payloads are now treated as literal text instead of regular expressions.
 
 ### Fixed
 - User Controllable HTML Element Attribute scan rule now handles meta refresh URLs written with whitespace around the equals sign (e.g. `url = http://example.com/`) or enclosed in quotes (e.g. `url='http://example.com/'`).
-- Information Disclosure - Suspicious Comments scan rule now treats custom payloads as literal text, so a payload that is not a valid regular expression no longer makes the rule fail.
+- Information Disclosure - Suspicious Comments scan rule no longer throws an exception when a custom payload is not a valid regular expression (which would previously have prevented it from raising alerts).
 - Information Disclosure - Debug Error Messages scan rule no longer depends on the default locale, and no longer fails or reports wrong evidence when the response contains characters whose lower case form is longer.
 - Viewstate scan rule no longer fails on ViewState values too short to contain a MAC, and now reports them as having no MAC.
 - Charset Mismatch scan rule no longer raises an alert for XML responses whose XML declaration has no encoding.
@@ -21,7 +22,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Hash Disclosure "LanMan" alert (10097-15) is no longer raised (its pattern never matched, such values are reported as MD4 / MD5).
 - Hash Disclosure "OpenBSD Blowfish" alert (10097-3) is no longer raised (it duplicated BCrypt, such values are reported as BCrypt).
-
 
 ## [78] - 2026-11-13
 ### Changed
