@@ -22,6 +22,7 @@ package org.zaproxy.addon.graphql;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,6 +38,7 @@ public class Requestor {
     private List<RequesterListener> listeners = new ArrayList<>();
     private HttpSender sender;
     private final HttpRequestConfig requestConfig;
+    private final AtomicReference<IOException> requestFailure = new AtomicReference<>();
     private static final Logger LOGGER = LogManager.getLogger(Requestor.class);
 
     public Requestor(GraphQlQueryMessageBuilder queryMsgBuilder, int initiator) {
@@ -53,14 +55,29 @@ public class Requestor {
 
     public HttpMessage sendQuery(
             String query, String variables, GraphQlParam.RequestMethodOption method) {
+        if (requestFailure.get() != null) {
+            return null;
+        }
         try {
             HttpMessage message = queryMsgBuilder.buildQueryMessage(query, variables, method);
             send(message);
             return message;
         } catch (IOException e) {
+            requestFailure.compareAndSet(null, e);
             LOGGER.warn(e.getMessage(), e);
         }
         return null;
+    }
+
+    void throwIfRequestFailed() throws IOException {
+        IOException failure = requestFailure.get();
+        if (failure != null) {
+            throw failure;
+        }
+    }
+
+    boolean hasRequestFailed() {
+        return requestFailure.get() != null;
     }
 
     public void send(HttpMessage message) throws IOException {
