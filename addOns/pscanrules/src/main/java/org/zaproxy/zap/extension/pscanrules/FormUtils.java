@@ -19,10 +19,14 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
+import org.parosproxy.paros.network.HttpMessage;
 
 /** Utility methods for HTML forms. */
 final class FormUtils {
@@ -53,6 +57,25 @@ final class FormUtils {
             }
         }
         return targets;
+    }
+
+    /**
+     * Tells whether or not the given URL, resolved against the request URI of the message, has the
+     * given scheme.
+     *
+     * @param msg the message that contains the URL.
+     * @param url the URL, absolute or relative.
+     * @param scheme the scheme, for example, {@code http}.
+     * @return {@code true} if the resolved URL has the given scheme, {@code false} otherwise.
+     */
+    static boolean hasScheme(HttpMessage msg, String url, String scheme) {
+        try {
+            return scheme.equalsIgnoreCase(
+                    new URI(msg.getRequestHeader().getURI().toString()).resolve(url).getScheme());
+        } catch (URISyntaxException | IllegalArgumentException e) {
+            // URI rejects characters browsers accept (e.g. unencoded spaces), check the prefix.
+            return url.toLowerCase(Locale.ROOT).startsWith(scheme + "://");
+        }
     }
 
     private static void addTarget(List<SubmissionTarget> targets, Element element, String attr) {

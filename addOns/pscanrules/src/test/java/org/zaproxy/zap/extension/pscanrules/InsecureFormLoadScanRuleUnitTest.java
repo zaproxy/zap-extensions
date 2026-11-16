@@ -284,4 +284,27 @@ class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<InsecureFormLo
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
     }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "https:/login",
+                "https:login",
+                "https://example.com/a b",
+                "https://example.com/?q=|"
+            })
+    void shouldRaiseAlertIfTargetIsSecureButNotPlainUrl(String url) throws URIException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseBody(
+                "<html><form action=\"/login\"><button formaction=\""
+                        + url
+                        + "\">Log in</button></form></html>");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(url));
+    }
 }
