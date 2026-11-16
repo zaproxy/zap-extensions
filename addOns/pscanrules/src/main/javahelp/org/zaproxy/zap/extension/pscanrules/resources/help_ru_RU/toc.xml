@@ -7,6 +7,7 @@
 	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
 		<tocitem text="Дополнения" tocid="addons">
 			<tocitem text="Правила Пассивного Сканирования" image="pscanrules-icon" target="pscanrules">
+				<tocitem text="Apache HTTP Server Known Vulnerabilities" target="pscanrules.apacheknownvulnerabilities"/>
 				<tocitem text="PHP Known Vulnerabilities" target="pscanrules.phpknownvulnerabilities"/>
 			</tocitem>
 		</tocitem>
