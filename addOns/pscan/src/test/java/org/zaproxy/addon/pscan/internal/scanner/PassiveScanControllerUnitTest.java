@@ -57,7 +57,6 @@ import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
 /** Unit test for {@link PassiveScanController}. */
-@Disabled("Requires latest core changes to work properly.")
 class PassiveScanControllerUnitTest extends TestUtils {
 
     private static final String EXAMPLE_URL = "https://www.example.com";
@@ -111,6 +110,7 @@ class PassiveScanControllerUnitTest extends TestUtils {
     }
 
     @Test
+    @Disabled("Requires latest core changes to work properly.")
     void shouldProcessInScopeHistoryRecord() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage(new URI(EXAMPLE_URL, true));
@@ -169,6 +169,7 @@ class PassiveScanControllerUnitTest extends TestUtils {
     }
 
     @Test
+    @Disabled("Requires latest core changes to work properly.")
     void shouldProcessOutOfScopeHistoryRecordByDefault() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage(new URI(EXAMPLE_URL, true));
@@ -229,6 +230,7 @@ class PassiveScanControllerUnitTest extends TestUtils {
     }
 
     @Test
+    @Disabled("Requires latest core changes to work properly.")
     void shouldReturnRunningTasks() throws Exception {
         // Given
         String exampleUrl1 = EXAMPLE_URL + "/1";
@@ -282,6 +284,50 @@ class PassiveScanControllerUnitTest extends TestUtils {
         assertThat(tasks.get(1).getHistoryReference().getHistoryId(), is(equalTo(2)));
         assertThat(tasks.get(0).getURI().toString(), is(equalTo(exampleUrl1)));
         assertThat(tasks.get(1).getURI().toString(), is(equalTo(exampleUrl2)));
+    }
+
+    @Test
+    void shouldCountQueuedTasksInRecordsToScan() throws Exception {
+        // Given
+        given(options.getPassiveScanThreads()).willReturn(1);
+        when(extHistory.getLastHistoryId()).thenReturn(0, 2);
+        HistoryReference href1 = createHistoryReference(1);
+        HistoryReference href2 = createHistoryReference(2);
+        given(extHistory.getHistoryReference(1)).willReturn(href1);
+        given(extHistory.getHistoryReference(2)).willReturn(href2);
+        CountDownLatch bothSubmitted = new CountDownLatch(1);
+        given(extHistory.getHistoryReference(3))
+                .willAnswer(
+                        invocation -> {
+                            bothSubmitted.countDown();
+                            return null;
+                        });
+
+        ScanState scanState = new ScanState(true, 1);
+        TestPassiveScanner scanner = new TestPassiveScanner(true, scanState);
+        given(scanRuleManager.getScanners()).willReturn(List.of(scanner));
+
+        // When
+        psc.start();
+        psc.responseReceived();
+        scanState.waitScanStarted();
+        assertThat(bothSubmitted.await(5, TimeUnit.SECONDS), is(equalTo(true)));
+        int recordsToScan = psc.getRecordsToScan();
+        scanState.continueScan();
+        sleep(500);
+
+        // Then
+        assertThat(recordsToScan, is(equalTo(2)));
+        assertThat(psc.getRecordsToScan(), is(equalTo(0)));
+    }
+
+    private static HistoryReference createHistoryReference(int id) throws Exception {
+        HttpMessage msg = new HttpMessage(new URI(EXAMPLE_URL + "/" + id, true));
+        msg.setResponseFromTargetHost(true);
+        HistoryReference href = mock(HistoryReference.class);
+        given(href.getHistoryId()).willReturn(id);
+        given(href.getHttpMessage()).willReturn(msg);
+        return href;
     }
 
     static class TestPassiveScanner implements PassiveScanner {

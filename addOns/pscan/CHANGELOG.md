@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - To depend on Common Library add-on 1.45.0.
 
+### Fixed
+- Correct the number of records to scan, which left out the messages still queued for scanning (Issue 9499).
+
 ## [0.6.0] - 2025-12-15
 ### Changed
 - Migrate handling of Alerts raised statistics from the core.
