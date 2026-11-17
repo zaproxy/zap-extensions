@@ -31,7 +31,11 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -232,9 +236,15 @@ class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFl
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
     }
 
-    @Test
-    void shouldNotAlertOnDelete() throws HttpMalformedHeaderException {
-        // Given - value empty and epoch start date
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Max-Age=0",
+                "expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                "expires=Thu, 01-Jan-1970 00:00:00 GMT"
+            })
+    void shouldNotAlertOnDelete(String attr) throws HttpMalformedHeaderException {
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
@@ -242,52 +252,8 @@ class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFl
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=\"\"; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(0));
-    }
-
-    @Test
-    void shouldNotAlertOnDeleteHyphenatedDate() throws HttpMalformedHeaderException {
-        // Given - value empty and epoch start date
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        // When
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=\"\"; expires=Thu, 01-Jan-1970 00:00:00 GMT; Path=/; HttpOnly\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(0));
-    }
-
-    @Test
-    void shouldAlertWhenFutureExpiry() throws HttpMalformedHeaderException {
-        // Given - value empty and epoch start date
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        // When
-        msg.setResponseBody("<html></html>");
-
-        String expiry =
-                HttpDateUtils.format(LocalDateTime.now().plusYears(1).toInstant(ZoneOffset.UTC));
-
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=\"\"; expires="
-                        + expiry
+                        + "Set-Cookie: test=\"\"; "
+                        + attr
                         + "; Path=/; HttpOnly\r\n"
                         + "Content-Type: text/html;charset=ISO-8859-1\r\n"
                         + "Content-Length: "
@@ -295,31 +261,35 @@ class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFl
                         + "\r\n");
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
-    @Test
-    void shouldAlertWhenFutureExpiryHyphenatedDate() throws HttpMalformedHeaderException {
-        // Given - value empty and epoch start date
+    static Stream<String> futureDelete() {
+        LocalDateTime nowPlusOneYear = LocalDateTime.now().plusYears(1);
+        return Stream.of(
+                "Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=3600",
+                "expires=" + HttpDateUtils.format(nowPlusOneYear.toInstant(ZoneOffset.UTC)),
+                "expires="
+                        + nowPlusOneYear.format(
+                                DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz")
+                                        .withLocale(Locale.US)
+                                        .withZone(ZoneOffset.UTC)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("futureDelete")
+    void shouldAlertOnFutureDelete(String attr) throws HttpMalformedHeaderException {
+        // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
         msg.setResponseBody("<html></html>");
 
-        DateTimeFormatter df =
-                DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz")
-                        .withLocale(Locale.US)
-                        .withZone(ZoneOffset.UTC);
-        LocalDateTime dateTime = LocalDateTime.now().plusYears(1);
-        String expiry = dateTime.format(df);
-
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
-                        + "Set-Cookie: test=\"\"; expires="
-                        + expiry
+                        + "Set-Cookie: test=\"\"; "
+                        + attr
                         + "; Path=/; HttpOnly\r\n"
                         + "Content-Type: text/html;charset=ISO-8859-1\r\n"
                         + "Content-Length: "
