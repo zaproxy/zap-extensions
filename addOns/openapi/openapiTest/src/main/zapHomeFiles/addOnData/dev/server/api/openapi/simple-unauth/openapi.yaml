@@ -5,7 +5,15 @@ info:
 servers:
   - url: http://localhost:9091
 paths:
-  /api/openapi/simple-unauth/api-test:
+  /api/openapi/simple-unauth/test-api:
+    get:
+      summary: Example GET Endpoint
+      description: This is an example GET endpoint.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: { }
     post:
       summary: Example Endpoint
       description: This is an example endpoint.

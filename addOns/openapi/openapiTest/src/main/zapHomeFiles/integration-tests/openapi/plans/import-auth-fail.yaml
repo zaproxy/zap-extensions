@@ -1,0 +1,121 @@
+---
+# Checks that importing the OpenAPI test app definition with an authenticated endpoint, as a user with the wrong
+# password, still adds the endpoint to the Sites tree but that the request made by the import is forbidden.
+# The diagnostics job records the authentication attempts and an authentication report is generated, its
+# auth summary item must have failed and it must contain the expected requests. The report is written next to the plan, which the script finds from the running plan.
+# Needs ZAP to be run in dev mode, with the Dev add-on's test server running (http://localhost:9091).
+env:
+  contexts:
+    - name: "openapi-import-auth-fail"
+      urls:
+        - "http://localhost:9091/api/openapi/simple-auth"
+      includePaths:
+        - 'http://localhost:9091/api/openapi/simple-auth.*'
+      authentication:
+        method: "json"
+        parameters:
+          loginPageUrl: "http://localhost:9091/api/openapi/simple-auth/"
+          loginRequestUrl: "http://localhost:9091/api/openapi/simple-auth/login"
+          loginRequestBody: '{"user":"{%username%}","password":"{%password%}"}'
+        verification:
+          method: "poll"
+          loggedInRegex: '\Q"result":"OK"\E'
+          loggedOutRegex: '\Q"result":"FAIL"\E'
+          pollFrequency: 1
+          pollUnits: "requests"
+          pollUrl: "http://localhost:9091/api/openapi/simple-auth/user"
+          pollPostData: ""
+      sessionManagement:
+        method: "headers"
+        parameters:
+          Authorization: "{%json:accesstoken%}"
+      users:
+        - name: "test-user"
+          credentials:
+            username: "test@test.com"
+            password: "not-the-right-password"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "diagnostics"
+    name: "record diagnostics"
+    parameters:
+      enabled: true
+  - type: "openapi"
+    name: "import authenticated definition with bad credentials"
+    parameters:
+      apiUrl: "http://localhost:9091/api/openapi/simple-auth/openapi.json"
+      context: "openapi-import-auth-fail"
+      user: "test-user"
+    tests:
+      - name: "Endpoint imported and authenticated request forbidden"
+        type: "url"
+        operator: "or"
+        url: "http://localhost:9091/api/openapi/simple-auth/test-api"
+        responseHeaderRegex: 'HTTP\/\d\.\d 403'
+        onFail: "error"
+  - type: "report"
+    name: "auth report"
+    parameters:
+      template: "auth-report-json"
+      reportFile: "openapi-import-auth-fail"
+  - type: "script"
+    name: "add check"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "ECMAScript : Graal.js"
+      name: "openapi-import-auth-fail-check"
+      inline: |
+        var Files = Java.type("java.nio.file.Files");
+        var File = Java.type("java.io.File");
+
+        var extAutomation = control.getExtensionLoader().getExtension("ExtensionAutomation");
+        var plan = null;
+        extAutomation.getRunningPlans().forEach(function(p) {
+            if (p.getFile() !== null && p.getFile().getName() === "import-auth-fail.yaml") {
+                plan = p;
+            }
+        });
+        if (plan === null) {
+            throw new Error("Running plan not found: import-auth-fail.yaml");
+        }
+        var reportFile = new File(plan.getFile().getParentFile(), "openapi-import-auth-fail.json");
+        if (!reportFile.exists()) {
+            throw new Error("Auth report not found: " + reportFile);
+        }
+        var report = JSON.parse(Files.readString(reportFile.toPath()));
+
+        var expected = {"auth.summary.auth": false, "auth.summary.session": true, "auth.summary.verif": true};
+        var errors = [];
+        Object.keys(expected).forEach(function(key) {
+            var item = report.summaryItems.filter(function(i) { return i.key === key; })[0];
+            if (!item) {
+                errors.push("Missing summary item " + key);
+            } else if (item.passed !== expected[key]) {
+                errors.push("Summary item " + key + " passed=" + item.passed + ", expected " + expected[key]);
+            }
+        });
+
+        // The failed login attempts (page, login and verification requests), the definition fetch and the imported request.
+        var expectedRequests = 13;
+        var requests = report.diagnostics.reduce(function(total, d) {
+            return d.steps.reduce(function(t, step) { return t + step.messages.length; }, total);
+        }, 0);
+        if (requests !== expectedRequests) {
+            errors.push("Diagnostics requests=" + requests + ", expected " + expectedRequests);
+        }
+        if (errors.length > 0) {
+            throw new Error(errors.join("; "));
+        }
+  - type: "script"
+    name: "check auth report summary"
+    parameters:
+      action: "run"
+      type: "standalone"
+      name: "openapi-import-auth-fail-check"
+      failureLevel: "error"

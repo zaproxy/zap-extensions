@@ -1,0 +1,54 @@
+---
+# Checks that importing the OpenAPI test app definition with an authenticated endpoint, as an authenticated user,
+# adds the endpoint to the Sites tree and that the request made by the import was successful.
+# Needs ZAP to be run in dev mode, with the Dev add-on's test server running (http://localhost:9091).
+env:
+  contexts:
+    - name: "openapi-import-auth"
+      urls:
+        - "http://localhost:9091/api/openapi/simple-auth"
+      includePaths:
+        - 'http://localhost:9091/api/openapi/simple-auth.*'
+      authentication:
+        method: "json"
+        parameters:
+          loginPageUrl: "http://localhost:9091/api/openapi/simple-auth/"
+          loginRequestUrl: "http://localhost:9091/api/openapi/simple-auth/login"
+          loginRequestBody: '{"user":"{%username%}","password":"{%password%}"}'
+        verification:
+          method: "poll"
+          loggedInRegex: '\Q"result":"OK"\E'
+          loggedOutRegex: '\Q"result":"FAIL"\E'
+          pollFrequency: 1
+          pollUnits: "requests"
+          pollUrl: "http://localhost:9091/api/openapi/simple-auth/user"
+          pollPostData: ""
+      sessionManagement:
+        method: "headers"
+        parameters:
+          Authorization: "{%json:accesstoken%}"
+      users:
+        - name: "test-user"
+          credentials:
+            username: "test@test.com"
+            password: "password123"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "openapi"
+    name: "import authenticated definition"
+    parameters:
+      apiUrl: "http://localhost:9091/api/openapi/simple-auth/openapi.json"
+      context: "openapi-import-auth"
+      user: "test-user"
+    tests:
+      - name: "Endpoint imported and authenticated request succeeded"
+        type: "url"
+        operator: "or"
+        url: "http://localhost:9091/api/openapi/simple-auth/test-api"
+        responseHeaderRegex: 'HTTP\/\d\.\d 200'
+        onFail: "error"

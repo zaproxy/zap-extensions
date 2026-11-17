@@ -1,0 +1,101 @@
+---
+# Checks that importing the OpenAPI test app definition with an endpoint protected by OAuth2, as a user with the wrong
+# password, still adds the endpoint to the Sites tree but that the request made by the import is unauthorized.
+# The OAuth2 authentication method diagnostics are enabled and an authentication report is generated, which is
+# checked. The report is written next to the plan, which the script finds from the running plan.
+# The statistics should be empty before running this plan.
+# Needs ZAP to be run in dev mode, with the Dev add-on's test server running (http://localhost:9091).
+env:
+  contexts:
+    - name: "openapi-import-oauth2-fail"
+      urls:
+        - "http://localhost:9091/api/openapi/simple-oauth2"
+      includePaths:
+        - 'http://localhost:9091/api/openapi/simple-oauth2.*'
+      authentication:
+        method: "oauth2"
+        parameters:
+          grantType: "password"
+          tokenEndpoint: "http://localhost:9091/api/openapi/simple-oauth2/token"
+          clientId: "test-client"
+          clientSecret: "test-secret"
+          diagnostics: true
+        verification:
+          method: "response"
+          loggedInRegex: 'HTTP\/\d\.\d 200'
+          loggedOutRegex: 'HTTP\/\d\.\d 401'
+      sessionManagement:
+        method: "headers"
+        parameters:
+          Authorization: "Bearer {%json:access_token%}"
+      users:
+        - name: "test-user"
+          credentials:
+            username: "test@test.com"
+            password: "not-the-right-password"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "openapi"
+    name: "import oauth2 protected definition with bad credentials"
+    parameters:
+      apiUrl: "http://localhost:9091/api/openapi/simple-oauth2/openapi.json"
+      context: "openapi-import-oauth2-fail"
+      user: "test-user"
+    tests:
+      - name: "Endpoint imported and authenticated request unauthorized"
+        type: "url"
+        operator: "or"
+        url: "http://localhost:9091/api/openapi/simple-oauth2/test-api"
+        responseHeaderRegex: 'HTTP\/\d\.\d 401'
+        onFail: "error"
+  - type: "report"
+    name: "auth report"
+    parameters:
+      template: "auth-report-json"
+      reportFile: "openapi-import-oauth2-fail"
+  - type: "script"
+    name: "add check"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "ECMAScript : Graal.js"
+      name: "openapi-import-oauth2-fail-check"
+      inline: |
+        var Files = Java.type("java.nio.file.Files");
+        var File = Java.type("java.io.File");
+
+        var extAutomation = control.getExtensionLoader().getExtension("ExtensionAutomation");
+        var plan = null;
+        extAutomation.getRunningPlans().forEach(function(p) {
+            if (p.getFile() !== null && p.getFile().getName() === "import-oauth2-fail.yaml") {
+                plan = p;
+            }
+        });
+        if (plan === null) {
+            throw new Error("Running plan not found: import-oauth2-fail.yaml");
+        }
+        var reportFile = new File(plan.getFile().getParentFile(), "openapi-import-oauth2-fail.json");
+        if (!reportFile.exists()) {
+            throw new Error("Auth report not found: " + reportFile);
+        }
+        var report = JSON.parse(Files.readString(reportFile.toPath()));
+
+        var item = report.summaryItems.filter(function(i) { return i.key === "auth.summary.auth"; })[0];
+        if (!item) {
+            throw new Error("Missing summary item auth.summary.auth");
+        }
+        if (item.passed !== false) {
+            throw new Error("Summary item auth.summary.auth passed=" + item.passed + ", expected false");
+        }
+  - type: "script"
+    name: "check auth report summary"
+    parameters:
+      action: "run"
+      type: "standalone"
+      name: "openapi-import-oauth2-fail-check"
+      failureLevel: "error"

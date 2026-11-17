@@ -17,22 +17,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.api.openapi.simpleAuth;
+package org.zaproxy.addon.openapitest.simpleunauth;
 
-import org.zaproxy.addon.dev.TestAuthDirectory;
+import org.zaproxy.addon.dev.TestDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 
-/**
- * A directory which contains an OpenAPI spec. The spec is available unauthenticated but the
- * endpoint it describes can only be accessed when a valid Authentication header is supplied. The
- * login page uses one JSON request to login endpoint. The token is returned in a standard field.
- */
-public class OpenApiSimpleAuthDir extends TestAuthDirectory {
+/** A directory which contains an OpenAPI spec, no authentication. */
+public class OpenApiSimpleUnauthDir extends TestDirectory {
 
-    public OpenApiSimpleAuthDir(TestProxyServer server, String name) {
+    public OpenApiSimpleUnauthDir(TestProxyServer server, String name) {
         super(server, name);
-        this.addPage(new OpenApiLoginPage(server));
-        this.addPage(new OpenApiVerificationPage(server));
-        this.addPage(new OpenApiTestApiPage(server));
     }
 }

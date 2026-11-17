@@ -1,0 +1,52 @@
+---
+# Checks that importing the OpenAPI test app definition with an endpoint protected by OAuth2, as an authenticated user,
+# adds the endpoint to the Sites tree and that the request made by the import was successful.
+# The user gets a token using the OAuth2 password grant from the token endpoint of the test app.
+# Needs ZAP to be run in dev mode, with the Dev add-on's test server running (http://localhost:9091).
+env:
+  contexts:
+    - name: "openapi-import-oauth2"
+      urls:
+        - "http://localhost:9091/api/openapi/simple-oauth2"
+      includePaths:
+        - 'http://localhost:9091/api/openapi/simple-oauth2.*'
+      authentication:
+        method: "oauth2"
+        parameters:
+          grantType: "password"
+          tokenEndpoint: "http://localhost:9091/api/openapi/simple-oauth2/token"
+          clientId: "test-client"
+          clientSecret: "test-secret"
+        verification:
+          method: "response"
+          loggedInRegex: 'HTTP\/\d\.\d 200'
+          loggedOutRegex: 'HTTP\/\d\.\d 401'
+      sessionManagement:
+        method: "headers"
+        parameters:
+          Authorization: "Bearer {%json:access_token%}"
+      users:
+        - name: "test-user"
+          credentials:
+            username: "test@test.com"
+            password: "password123"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "openapi"
+    name: "import oauth2 protected definition"
+    parameters:
+      apiUrl: "http://localhost:9091/api/openapi/simple-oauth2/openapi.json"
+      context: "openapi-import-oauth2"
+      user: "test-user"
+    tests:
+      - name: "Endpoint imported and authenticated request succeeded"
+        type: "url"
+        operator: "or"
+        url: "http://localhost:9091/api/openapi/simple-oauth2/test-api"
+        responseHeaderRegex: 'HTTP\/\d\.\d 200'
+        onFail: "error"
