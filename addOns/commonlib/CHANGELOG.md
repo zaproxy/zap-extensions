@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update dependencies.
 - Maintenance changes.
+- Updated Alert Tag and generic vulnerability links aligning with recent OWASP website changes.
 
 ### Fixed
 - Honour the Max-Age attribute, which takes precedence over Expires, when checking if a cookie is expired (Issue 9560).

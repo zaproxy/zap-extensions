@@ -49,7 +49,7 @@ import org.zaproxy.zap.model.TechSet;
 
 /**
  * Active scan rule for Command Injection testing and verification.
- * https://owasp.org/www-community/attacks/Command_Injection
+ * https://community.owasp.org/attacks/Command_Injection
  *
  * @author yhawke (2013)
  */
