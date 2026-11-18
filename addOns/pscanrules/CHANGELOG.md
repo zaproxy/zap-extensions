@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [79] - 2026-11-18
 ### Added
 - The Server Side Technology Version with Known Vulnerabilities scan rule now also detects nginx versions with known vulnerabilities.
