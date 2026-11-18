@@ -29,6 +29,8 @@ import java.util.TreeSet;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
@@ -138,30 +140,24 @@ class UserControlledOpenRedirectScanRuleUnitTest
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
-    @Test
-    void shouldRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParam() {
+    @ParameterizedTest
+    @ValueSource(
+            ints = {
+                HttpStatusCode.MULTIPLE_CHOICES,
+                HttpStatusCode.MOVED_PERMANENTLY,
+                HttpStatusCode.FOUND,
+                HttpStatusCode.SEE_OTHER,
+                HttpStatusCode.TEMPORARY_REDIRECT,
+                307,
+                308
+            })
+    void shouldRaiseAlertIfResponseIsRedirectHasLocationHeaderBasedOnParam(int statusCode) {
         // Given
         HttpMessage msg = createMessage();
         TreeSet<HtmlParameter> params = new TreeSet<>();
         params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "http://evil.com"));
         msg.setGetParams(params);
-        msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
-        msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("place"));
-    }
-
-    @Test
-    void shouldRaiseAlertIfResponseIsTempRedirectHasLocationHeaderBasedOnParam() {
-        // Given
-        HttpMessage msg = createMessage();
-        TreeSet<HtmlParameter> params = new TreeSet<>();
-        params.add(new HtmlParameter(HtmlParameter.Type.url, "place", "http://evil.com"));
-        msg.setGetParams(params);
-        msg.getResponseHeader().setStatusCode(HttpStatusCode.FOUND);
+        msg.getResponseHeader().setStatusCode(statusCode);
         msg.getResponseHeader().setHeader(HttpHeader.LOCATION, "http://evil.com");
         // When
         scanHttpResponseReceive(msg);

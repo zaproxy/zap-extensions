@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - also reports a missing or wildcard `base-uri` directive.
     - accepts commas in `meta` policies, treating each as a separate policy (as Chromium based browsers do, Firefox treats the content as a single policy) and notes this in the alerts.
     - reports, at Low threshold, `script-src` policies which include `'wasm-unsafe-eval'` (informational).
+- The User Controlled Open Redirect scan rule now detects redirects with all redirection status codes (e.g. 303, 307, 308), not just 301 and 302.
 - Update dependency.
 
 ## [79] - 2026-11-18
