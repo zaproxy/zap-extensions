@@ -42,11 +42,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.htmlunit.csp.FetchDirectiveKind;
 import org.htmlunit.csp.Policy;
-import org.htmlunit.csp.Policy.PolicyErrorConsumer;
+import org.htmlunit.csp.Policy.MetaCommaHandling;
 import org.htmlunit.csp.Policy.PolicyListErrorConsumer;
 import org.htmlunit.csp.PolicyList;
 import org.htmlunit.csp.PolicyListInOrigin;
-import org.htmlunit.csp.directive.HostSourceDirective;
 import org.htmlunit.csp.directive.SourceExpressionDirective;
 import org.htmlunit.csp.url.URI;
 import org.htmlunit.csp.url.URLWithScheme;
@@ -131,6 +130,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         List<Policy> enforcedPolicies = new ArrayList<>();
         List<String> enforcedPolicyTexts = new ArrayList<>();
         boolean headerContributedPolicy = false;
+        boolean metaContainedCommas = false;
 
         for (String csp : cspOptions) {
             List<PolicyError> observedErrors = new ArrayList<>();
@@ -165,32 +165,47 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                 continue;
             }
             List<PolicyError> metaObservedErrors = new ArrayList<>();
-            PolicyErrorConsumer metaConsumer =
-                    (severity, message, directiveIndex, valueIndex) ->
+            PolicyListErrorConsumer metaConsumer =
+                    (severity, message, policyIndex, directiveIndex, valueIndex) ->
                             metaObservedErrors.add(
                                     new PolicyError(severity, message, directiveIndex, valueIndex));
-            Policy parsedMetaPolicy =
+            PolicyList parsedMetaPolicies =
                     parseWithErrorHandling(
-                            () -> Policy.parseSerializedCSP(metaPolicy, metaConsumer, true),
+                            () ->
+                                    Policy.parseSerializedCSPList(
+                                            metaPolicy, metaConsumer, MetaCommaHandling.SPLIT),
                             metaPolicy,
                             msg,
                             id);
-            if (parsedMetaPolicy == null) {
+            if (parsedMetaPolicies == null) {
                 continue;
             }
             checkObservedErrors(metaObservedErrors, msg, metaPolicy, true);
-            if (parsedMetaPolicy.sandbox().isPresent()
-                    || parsedMetaPolicy.frameAncestors().isPresent()
-                    || parsedMetaPolicy.reportUri().isPresent()) {
-                buildBadMetaAlert(metaField, metaPolicy).raise();
+            if (parsedMetaPolicies.getPolicies().isEmpty()) {
+                continue;
             }
-            enforcedPolicies.add(parsedMetaPolicy);
+            if (parsedMetaPolicies.getPolicies().stream()
+                    .anyMatch(
+                            pol ->
+                                    pol.sandbox().isPresent()
+                                            || pol.frameAncestors().isPresent()
+                                            || pol.reportUri().isPresent())) {
+                buildBadMetaAlert(metaField, metaPolicy)
+                        .setOtherInfo(getMetaCommaInfo(metaPolicy))
+                        .raise();
+            }
+            metaContainedCommas |= hasComma(metaPolicy);
+            enforcedPolicies.addAll(parsedMetaPolicies.getPolicies());
             enforcedPolicyTexts.add(metaPolicy);
         }
 
         if (!enforcedPolicies.isEmpty()) {
             checkEffectivePolicies(
-                    msg, enforcedPolicies, enforcedPolicyTexts, headerContributedPolicy);
+                    msg,
+                    enforcedPolicies,
+                    enforcedPolicyTexts,
+                    headerContributedPolicy,
+                    metaContainedCommas);
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
@@ -200,7 +215,8 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
             HttpMessage msg,
             List<Policy> enforcedPolicies,
             List<String> enforcedPolicyTexts,
-            boolean headerContributedPolicy) {
+            boolean headerContributedPolicy,
+            boolean metaContainedCommas) {
         PolicyList policyList = new PolicyList(enforcedPolicies);
         PolicyListInOrigin bound = new PolicyListInOrigin(policyList, HTTP_URI.get());
         String evidence = enforcedPolicyTexts.get(0);
@@ -215,6 +231,9 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                                 MESSAGE_PREFIX + "multipolicy.otherinfo",
                                 enforcedPolicies.size(),
                                 String.join("\n", enforcedPolicyTexts));
+        if (metaContainedCommas) {
+            multiPolicyInfo = appendMultiPolicyInfo(multiPolicyInfo, getMetaCommaNote());
+        }
 
         List<String> allowedWildcardSources = getAllowedWildcardSources(policyList);
         checkWildcardSources(allowedWildcardSources, param, evidence, multiPolicyInfo);
@@ -231,9 +250,13 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         if (isUnsafeHashesEffectivelyAllowed(policyList, FetchDirectiveKind.StyleSrc)) {
             buildStyleUnsafeHashAlert(param, evidence, multiPolicyInfo).raise();
         }
-        if (isEffectiveKeywordAllowed(
-                policyList, FetchDirectiveKind.ScriptSrc, SourceExpressionDirective::unsafeEval)) {
+        if (policyList.allowsEval()
+                && anyPolicyDeclares(policyList, SourceExpressionDirective::unsafeEval)) {
             buildScriptUnsafeEvalAlert(param, evidence, multiPolicyInfo).raise();
+        } else if (AlertThreshold.LOW.equals(this.getAlertThreshold())
+                && policyList.allowsWasmEval()
+                && anyPolicyDeclares(policyList, SourceExpressionDirective::unsafeWasm)) {
+            buildScriptWasmUnsafeEvalAlert(param, evidence, multiPolicyInfo).raise();
         }
     }
 
@@ -311,7 +334,8 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                                     : getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
                                             .get(0),
                             csp,
-                            cspNoticesString)
+                            appendMultiPolicyInfo(
+                                    cspNoticesString, isMeta ? getMetaCommaInfo(csp) : ""))
                     .raise();
         }
     }
@@ -346,22 +370,19 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
     }
 
     /**
-     * Determines whether every policy effectively allows the given keyword for the given fetch
-     * directive, resolving each policy's governing directive via the CSP fallback chain (e.g.
-     * {@code script-src} falling back to {@code default-src}). A policy with no governing directive
-     * in the chain is unrestricted and does not block the keyword. At least one policy must
-     * actually declare the keyword, otherwise there is nothing to alert on.
+     * Whether at least one policy actually declares the keyword on its governing script directive,
+     * so that a {@link PolicyList} query being true is not merely due to nothing restricting
+     * script.
      */
-    private static boolean isEffectiveKeywordAllowed(
-            PolicyList policyList,
-            FetchDirectiveKind source,
-            Predicate<SourceExpressionDirective> hasKeyword) {
-        List<Optional<SourceExpressionDirective>> effectiveDirectives =
-                policyList.getPolicies().stream()
-                        .map(pol -> pol.getGoverningDirectiveForEffectiveDirective(source))
-                        .toList();
-        return effectiveDirectives.stream().anyMatch(d -> d.filter(hasKeyword).isPresent())
-                && effectiveDirectives.stream().allMatch(d -> d.map(hasKeyword::test).orElse(true));
+    private static boolean anyPolicyDeclares(
+            PolicyList policyList, Predicate<SourceExpressionDirective> hasKeyword) {
+        return policyList.getPolicies().stream()
+                .anyMatch(
+                        pol ->
+                                pol.getGoverningDirectiveForEffectiveDirective(
+                                                FetchDirectiveKind.ScriptSrc)
+                                        .filter(hasKeyword)
+                                        .isPresent());
     }
 
     /**
@@ -478,7 +499,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         if (checkPolicy(pol::allowsImage)) {
             allowedSources.add("img-src");
         }
-        if (checkPolicy(pol::allowsConnection)) {
+        if (checkPolicy((source, origin) -> pol.allowsConnection(source, origin))) {
             allowedSources.add("connect-src");
         }
         if (checkPolicy(pol::allowsFrame)) {
@@ -505,13 +526,23 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         if (checkPolicy(pol::allowsFormAction)) {
             allowedSources.add("form-action");
         }
-        // base-uri has no query method; missing or wildcard in every policy allows any <base>
-        if (pol.getPolicies().stream()
-                .allMatch(p -> p.baseUri().map(HostSourceDirective::star).orElse(true))) {
+        if (pol.isBaseUriUnrestricted()) {
             allowedSources.add(BASE_URI);
         }
 
         return allowedSources;
+    }
+
+    private static String getMetaCommaNote() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "meta.commas.otherinfo");
+    }
+
+    private static boolean hasComma(String metaPolicy) {
+        return metaPolicy.contains(",");
+    }
+
+    private static String getMetaCommaInfo(String metaPolicy) {
+        return hasComma(metaPolicy) ? getMetaCommaNote() : "";
     }
 
     private static String appendMultiPolicyInfo(String otherInfo, String multiPolicyInfo) {
@@ -735,6 +766,18 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                 multiPolicyInfo);
     }
 
+    private AlertBuilder buildScriptWasmUnsafeEvalAlert(
+            String param, String evidence, String multiPolicyInfo) {
+        return getBuilder(
+                Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.wasm.unsafe.eval.name"),
+                "14",
+                param,
+                evidence,
+                Alert.RISK_INFO,
+                "scriptsrc.wasm.unsafe.eval.otherinfo",
+                multiPolicyInfo);
+    }
+
     private AlertBuilder buildBadMetaAlert(String param, String evidence) {
         return getBuilder(
                         Constant.messages.getString(MESSAGE_PREFIX + "meta.bad.directive.name"),
@@ -835,6 +878,12 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                                 HttpFieldsNames.CONTENT_SECURITY_POLICY,
                                 "connect-src *; default-src 'self'; form-action 'none'",
                                 List.of(FRAME_ANCESTORS),
+                                "")
+                        .build());
+        alerts.add(
+                buildScriptWasmUnsafeEvalAlert(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
+                                "default-src 'self'; script-src 'wasm-unsafe-eval'",
                                 "")
                         .build());
         return alerts;
