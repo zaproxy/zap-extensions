@@ -183,6 +183,14 @@ class PhpAdvisoriesUnitTest {
     }
 
     @Test
+    void shouldReplaceNonBreakingSpacesInParagraph() {
+        String md = "A bad thing happens in the worker process.\u00a0Additionally,\u00a0more.";
+        assertThat(
+                AdvisoryUtils.firstParagraph(md),
+                is("A bad thing happens in the worker process. Additionally, more."));
+    }
+
+    @Test
     void shouldTakeFirstParagraphAsPlainText() {
         String md =
                 "### Summary\n\nA **bad** `thing` in [foo](https://x) happens.\nMore here.\n\n### Details\nlong";

@@ -93,15 +93,17 @@ final class KnownVulnerabilitiesUpdater {
     private static final Duration TIMEOUT = Duration.ofSeconds(60);
     private static final String GITHUB_TOKEN_ENV = "GITHUB_TOKEN";
 
+    private static final Duration CVE_API_DELAY = Duration.ofMillis(500);
+
     private KnownVulnerabilitiesUpdater() {}
 
     /**
      * Runs one of two commands: {@code update <technology> <json file>} regenerates the known
-     * vulnerabilities file of the technology ({@code php} or {@code apache}) from its advisories,
-     * and {@code help <help source dir> <help output dir> <json file> <page file name>...} fills in
-     * the vulnerabilities in each help page with one of the given file names under the source
-     * directory, writing the pages to the same relative paths under the output directory, as done
-     * when the add-on is built.
+     * vulnerabilities file of the technology ({@code php}, {@code apache} or {@code nginx}) from
+     * its advisories, and {@code help <help source dir> <help output dir> <json file> <page file
+     * name>...} fills in the vulnerabilities in each help page with one of the given file names
+     * under the source directory, writing the pages to the same relative paths under the output
+     * directory, as done when the add-on is built.
      *
      * @param args the command and its arguments
      * @throws Exception if the advisories cannot be fetched or the files cannot be read or written
@@ -173,8 +175,41 @@ final class KnownVulnerabilitiesUpdater {
                 }
                 return generated;
             }
+            case NGINX -> {
+                return fetchNginx(client);
+            }
         }
         throw new IllegalArgumentException("Unsupported technology: " + tech);
+    }
+
+    /**
+     * Fetches the nginx advisories and the CVE record of each. A record which is not published
+     * (404) is tolerated, any other failure is not, so that details are not silently dropped.
+     */
+    private static List<Vulnerability> fetchNginx(HttpClient client)
+            throws IOException, InterruptedException {
+        List<NginxAdvisories.Advisory> advisories =
+                NginxAdvisories.parse(get(client, NginxAdvisories.ADVISORIES_URL, Map.of()).body());
+        System.out.printf("Fetching %d CVE records.%n", advisories.size());
+        List<Vulnerability> generated = new ArrayList<>();
+        for (NginxAdvisories.Advisory advisory : advisories) {
+            JsonNode record = null;
+            if (advisory.hasCve()) {
+                Optional<String> body =
+                        getIfFound(client, NginxAdvisories.CVE_API_URL + advisory.id());
+                if (body.isPresent()) {
+                    record = MAPPER.readTree(body.get());
+                } else {
+                    System.out.printf(
+                            "WARNING: No CVE record for %s, its description, CVSS score and date are"
+                                    + " missing.%n",
+                            advisory.id());
+                }
+                Thread.sleep(CVE_API_DELAY.toMillis());
+            }
+            NginxAdvisories.toVulnerability(advisory, record).ifPresent(generated::add);
+        }
+        return generated;
     }
 
     private static void generateHelp(Path sourceDir, Path outputDir, String[] jsonFilesAndPageNames)
@@ -293,15 +328,33 @@ final class KnownVulnerabilitiesUpdater {
     private static HttpResponse<String> get(
             HttpClient client, String url, Map<String, String> headers)
             throws IOException, InterruptedException {
+        return request(client, url, headers, false).orElseThrow();
+    }
+
+    /**
+     * Sends a GET request, returning the body, or empty if the response status is 404 and failing
+     * on any other status than 200.
+     */
+    private static Optional<String> getIfFound(HttpClient client, String url)
+            throws IOException, InterruptedException {
+        return request(client, url, Map.of(), true).map(HttpResponse::body);
+    }
+
+    private static Optional<HttpResponse<String>> request(
+            HttpClient client, String url, Map<String, String> headers, boolean notFoundAllowed)
+            throws IOException, InterruptedException {
         HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(url)).timeout(TIMEOUT);
         headers.forEach(request::header);
         HttpResponse<String> response =
                 client.send(request.build(), BodyHandlers.ofString(StandardCharsets.UTF_8));
+        if (notFoundAllowed && response.statusCode() == 404) {
+            return Optional.empty();
+        }
         if (response.statusCode() != 200) {
             throw new IOException(
                     "GET " + url + " returned " + response.statusCode() + ": " + response.body());
         }
-        return response;
+        return Optional.of(response);
     }
 
     /** The URL of the {@code rel="next"} link of a Link header, {@code null} if none. */

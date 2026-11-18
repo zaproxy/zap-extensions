@@ -37,6 +37,7 @@ jobs:
         TECHNOLOGIES=(
           "php|PHP known vulnerabilities from the php-src security advisories"
           "apache|Apache HTTP Server known vulnerabilities from the Apache HTTP Server project CVE records"
+          "nginx|nginx known vulnerabilities from the nginx security advisories"
         )
         # Build the feature branch
         git checkout -b $BRANCH
@@ -57,7 +58,7 @@ jobs:
           done
           git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
           git add .
-          git commit -m "Known Vulnerabilities Update $SHORT_DATE" -m "Updates based on https://github.com/php/php-src/security/advisories and https://httpd.apache.org/security/json/" --signoff
+          git commit -m "Known Vulnerabilities Update $SHORT_DATE" -m "Updates based on https://github.com/php/php-src/security/advisories, https://httpd.apache.org/security/json/ and https://nginx.org/en/security_advisories.html" --signoff
           git push --set-upstream origin $BRANCH --force
           # Open the PR
           BODY="$(git log -1 --format=%b)"

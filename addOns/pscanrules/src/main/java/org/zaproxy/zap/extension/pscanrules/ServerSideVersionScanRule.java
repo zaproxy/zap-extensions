@@ -81,6 +81,22 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
             "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/apache-known-vulnerabilities/";
 
     /**
+     * The nginx technology, which the core does not have. Added to ZAP when the rule is loaded so
+     * that it can be selected in the context technology tree.
+     */
+    private static final Tech NGINX_TECH = new Tech(Tech.WS, "Nginx");
+
+    static {
+        Tech.add(NGINX_TECH);
+    }
+
+    static final String NGINX_KNOWN_VULNERABILITIES_RESOURCE =
+            "/org/zaproxy/zap/extension/pscanrules/resources/nginx-known-vulnerabilities.json";
+
+    static final String NGINX_HELP_URL =
+            "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/nginx-known-vulnerabilities/";
+
+    /**
      * A parenthesised comment right after a version, e.g. {@code (Ubuntu)} in {@code Apache/2.4.58
      * (Ubuntu)}, bounded as the header values are attacker controlled.
      */
@@ -141,7 +157,23 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                         "(?<![\\w-])Apache/(\\d{1,6}(?:\\.\\d{1,6}){0,2})",
                         Pattern.CASE_INSENSITIVE),
                 APACHE_KNOWN_VULNERABILITIES_RESOURCE,
-                APACHE_HELP_URL);
+                APACHE_HELP_URL),
+        /**
+         * nginx. Matches an {@code nginx/<version>} token, as sent in the {@code Server} header
+         * unless {@code server_tokens off} is set. {@code nginx} alone, {@code openresty/1.21.4.1}
+         * (which has its own version numbers) and names such as {@code nginx-ingress/1.0} do not
+         * match. The technology is added by this rule, as ZAP does not have one for nginx.
+         */
+        NGINX(
+                5,
+                6,
+                "nginx",
+                NGINX_TECH,
+                Pattern.compile(
+                        "(?<![\\w-])nginx/(\\d{1,6}(?:\\.\\d{1,6}){0,2})",
+                        Pattern.CASE_INSENSITIVE),
+                NGINX_KNOWN_VULNERABILITIES_RESOURCE,
+                NGINX_HELP_URL);
 
         private final int alertRef;
         private final int incompleteAlertRef;
@@ -374,10 +406,17 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                 .setWascId(13); // WASC-13: Information Leakage
     }
 
+    /** Adds the CVE tag of the vulnerability, if it has a CVE (some only have another ID). */
+    private static void putCve(Map<String, String> tags, Vulnerability vulnerability) {
+        if (KnownVulnerabilities.isCve(vulnerability.cve())) {
+            CommonAlertTag.putCve(tags, vulnerability.cve());
+        }
+    }
+
     /** The static tags plus a CVE tag for each of the given vulnerabilities. */
     private static Map<String, String> getAlertTags(List<Vulnerability> vulnerabilities) {
         Map<String, String> tags = new HashMap<>(STATIC_ALERT_TAGS);
-        vulnerabilities.forEach(v -> CommonAlertTag.putCve(tags, v.cve()));
+        vulnerabilities.forEach(v -> putCve(tags, v));
         return tags;
     }
 
@@ -583,9 +622,7 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
         if (tags == null) {
             Map<String, String> all = new HashMap<>(STATIC_ALERT_TAGS);
             for (Technology tech : Technology.values()) {
-                getKnownVulnerabilities(tech)
-                        .vulnerabilities()
-                        .forEach(v -> CommonAlertTag.putCve(all, v.cve()));
+                getKnownVulnerabilities(tech).vulnerabilities().forEach(v -> putCve(all, v));
             }
             tags = Collections.unmodifiableMap(all);
             allAlertTags = tags;
@@ -623,6 +660,20 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                                 "https://httpd.apache.org/security/vulnerabilities_24.html#CVE-2021-41773"),
                         "2021-10-05",
                         ApacheHttpdAdvisories.SOURCE_GENERATED);
+        Vulnerability nginxExample =
+                new Vulnerability(
+                        "CVE-2021-23017",
+                        null,
+                        "Off-by-one in nginx resolver",
+                        "",
+                        "medium",
+                        null,
+                        null,
+                        List.of(new VersionRange("0.6.18", "1.20.1", false)),
+                        List.of(
+                                "https://mailman.nginx.org/pipermail/nginx-announce/2021/000300.html"),
+                        "2021-06-01",
+                        NginxAdvisories.SOURCE_GENERATED);
         return List.of(
                 exampleAlert(
                         new DetectedVersion(Technology.PHP, "X-Powered-By", "8.1.2", "PHP/8.1.2"),
@@ -635,7 +686,13 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                         apacheExample),
                 exampleAlert(
                         new DetectedVersion(Technology.APACHE, "Server", "2.4", "Apache/2.4"),
-                        apacheExample));
+                        apacheExample),
+                exampleAlert(
+                        new DetectedVersion(Technology.NGINX, "Server", "1.20.0", "nginx/1.20.0"),
+                        nginxExample),
+                exampleAlert(
+                        new DetectedVersion(Technology.NGINX, "Server", "1.20", "nginx/1.20"),
+                        nginxExample));
     }
 
     /** An example alert of the technology, carrying the tags of all the technologies. */

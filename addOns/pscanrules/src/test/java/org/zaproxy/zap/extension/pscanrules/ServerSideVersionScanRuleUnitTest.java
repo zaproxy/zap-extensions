@@ -88,6 +88,19 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
             ] }
             """;
 
+    private static final String NGINX_PROBLEMS =
+            """
+            { "vulnerabilities": [
+              { "cve": "CVE-2022-0001", "name": "nginx high", "severity": "high",
+                "links": [ "https://example.com/n1" ],
+                "affected": [ { "introduced": "1.1.3", "fixed": "1.22.1" },
+                              { "introduced": "1.23.0", "fixed": "1.23.2" } ] },
+              { "cve": "CORE-2010-0121", "name": "nginx Windows only", "severity": "high",
+                "links": [ "https://example.com/n2" ],
+                "affected": [ { "introduced": "0.7.52", "fixed": "0.8.33", "assumed": true } ] }
+            ] }
+            """;
+
     @TempDir Path tempDir;
 
     @Override
@@ -110,6 +123,9 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
         ServerSideVersionScanRule.setKnownVulnerabilitiesFile(
                 Technology.APACHE,
                 Files.writeString(tempDir.resolve("apache-vulnerabilities.json"), APACHE_PROBLEMS));
+        ServerSideVersionScanRule.setKnownVulnerabilitiesFile(
+                Technology.NGINX,
+                Files.writeString(tempDir.resolve("nginx-vulnerabilities.json"), NGINX_PROBLEMS));
     }
 
     @Test
@@ -117,7 +133,7 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(15)));
+        assertThat(tags.size(), is(equalTo(16)));
         assertThat(tags.containsKey(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getTag()), is(true));
         assertThat(tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()), is(true));
         assertThat(tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()), is(true));
@@ -137,6 +153,8 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
         assertThat(tags.containsKey("CVE-2024-0003"), is(true));
         assertThat(tags.containsKey("CVE-2021-0001"), is(true));
         assertThat(tags.containsKey("CVE-2021-0002"), is(true));
+        assertThat(tags.containsKey("CVE-2022-0001"), is(true));
+        assertThat(tags.containsKey("CORE-2010-0121"), is(false));
     }
 
     @Test
@@ -224,7 +242,10 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
                 "Server: Apache-Coyote/1.1",
                 "Server: Apache Tomcat/9.0.1",
                 "Server: mod_apache/2.4.1",
-                "Server: nginx/1.24.0",
+                "Server: nginx",
+                "Server: openresty/1.21.4.1",
+                "Server: nginx-ingress/1.0.0",
+                "Server: mod_nginx/1.0.0",
             })
     void shouldNotExtractVersionWhenNoneDisclosed(String header) throws Exception {
         // Given
@@ -286,6 +307,126 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
                                 expectedVersion,
                                 expectedEvidence,
                                 distribution)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "Server: nginx/1.24.0, 1.24.0, nginx/1.24.0,",
+        "Server: nginx/1.18.0 (Ubuntu), 1.18.0, nginx/1.18.0, Ubuntu",
+        "Server: NGINX/1.25.3, 1.25.3, NGINX/1.25.3,",
+        "Server: nginx/1.25, 1.25, nginx/1.25,",
+        "Server: nginx/1, 1, nginx/1,",
+    })
+    void shouldExtractNginxVersionFromHeader(
+            String header, String expectedVersion, String expectedEvidence, String distribution)
+            throws Exception {
+        // Given
+        HttpResponseHeader responseHeader = createResponseHeader(header);
+        // When
+        List<DetectedVersion> versions = ServerSideVersionScanRule.getVersions(responseHeader);
+        // Then
+        assertThat(
+                versions,
+                contains(
+                        new DetectedVersion(
+                                Technology.NGINX,
+                                "Server",
+                                expectedVersion,
+                                expectedEvidence,
+                                distribution)));
+    }
+
+    @Test
+    void shouldRaiseNginxAlertForVulnerableVersion() throws Exception {
+        // Given
+        HttpMessage msg = createMessage("http://www.example.com/", "Server: nginx/1.20.0");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getAlertRef(), is("20020-5"));
+        assertThat(alert.getName(), is("nginx Version with Known Vulnerabilities"));
+        assertThat(alert.getRisk(), is(Alert.RISK_HIGH));
+        assertThat(alert.getEvidence(), is("nginx/1.20.0"));
+        assertThat(
+                alert.getReference(),
+                is(
+                        "https://nginx.org/en/security_advisories.html\nhttps://nginx.org/en/CHANGES\n"
+                                + ServerSideVersionScanRule.NGINX_HELP_URL
+                                + "#cve-2022-0001"));
+        assertThat(alert.getTags().containsKey("CVE-2022-0001"), is(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1.22.1", "1.22.9", "1.23.2", "1.24.0"})
+    void shouldNotRaiseNginxAlertForPatchedVersions(String version) throws Exception {
+        // Given
+        HttpMessage msg = createMessage("http://www.example.com/", "Server: nginx/" + version);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @Test
+    void shouldRaiseNginxAlertWithoutCveTagForAdvisoryWithoutCve() throws Exception {
+        // Given
+        HttpMessage msg = createMessage("http://www.example.com/", "Server: nginx/0.8.10");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getAlertRef(), is("20020-5"));
+        assertThat(alertsRaised.get(0).getConfidence(), is(Alert.CONFIDENCE_LOW));
+        assertThat(alertsRaised.get(0).getTags().containsKey("CORE-2010-0121"), is(false));
+    }
+
+    @Test
+    void shouldRaiseIncompleteNginxAlertAtLowRisk() throws Exception {
+        // Given
+        HttpMessage msg = createMessage("http://www.example.com/", "Server: nginx/1.23");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getAlertRef(), is("20020-6"));
+        assertThat(alertsRaised.get(0).getRisk(), is(Alert.RISK_LOW));
+    }
+
+    @Test
+    void shouldNotRaiseNginxAlertWhenWebServerTechIsDisabled() throws Exception {
+        // Given
+        TechSet techSet = new TechSet(TechSet.getAllTech());
+        techSet.exclude(Tech.WS);
+        given(passiveScanData.getTechSet()).willReturn(techSet);
+        HttpMessage msg = createMessage("http://www.example.com/", "Server: nginx/1.20.0");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @Test
+    void shouldAddNginxTechnologyUnderWebServers() {
+        // Given / When
+        Tech tech = Technology.NGINX.getTech();
+        // Then
+        assertThat(tech.getParent(), is(Tech.WS));
+        assertThat(Tech.getAll().contains(tech), is(true));
+    }
+
+    @Test
+    void shouldNotRaiseNginxAlertWhenNginxTechIsDisabled() throws Exception {
+        // Given
+        TechSet techSet = new TechSet(TechSet.getAllTech());
+        techSet.exclude(Technology.NGINX.getTech());
+        given(passiveScanData.getTechSet()).willReturn(techSet);
+        HttpMessage msg = createMessage("http://www.example.com/", "Server: nginx/1.20.0");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -706,7 +847,7 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
-        assertThat(alerts, hasSize(4));
+        assertThat(alerts, hasSize(6));
         Alert alert = alerts.get(0);
         assertThat(alert.getAlertRef(), is("20020-1"));
         assertThat(alert.getName(), is("PHP Version with Known Vulnerabilities"));
@@ -727,6 +868,12 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
                 containsString("\n" + ServerSideVersionScanRule.PHP_HELP_URL + "#cve-2024-4577"));
         assertThat(alert.getCweId(), is(1395));
         assertThat(alert.getWascId(), is(13));
+
+        Alert nginxAlert = alerts.get(4);
+        assertThat(nginxAlert.getAlertRef(), is("20020-5"));
+        assertThat(nginxAlert.getName(), is("nginx Version with Known Vulnerabilities"));
+        assertThat(nginxAlert.getEvidence(), is("nginx/1.20.0"));
+        assertThat(alerts.get(5).getAlertRef(), is("20020-6"));
 
         Alert apacheAlert = alerts.get(2);
         assertThat(apacheAlert.getAlertRef(), is("20020-3"));

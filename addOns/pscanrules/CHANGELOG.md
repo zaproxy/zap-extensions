@@ -4,8 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The Server Side Technology Version with Known Vulnerabilities scan rule now also detects nginx versions with known vulnerabilities.
+
 ### Changed
 - The Content Security Policy scan rule now also reports a missing or wildcard `base-uri` directive.
+- Updated the Apache HTTP Server known vulnerabilities, and replaced non-breaking spaces in their descriptions.
 
 ### Fixed
 - Viewstate scan rule: reduce false positives for IP addresses, no longer matching assembly version numbers (e.g. `Version=12.0.0.0`), invalid addresses (e.g. `999.999.999.999`) or parts of longer dotted number sequences.
