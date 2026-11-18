@@ -19,7 +19,7 @@
     "  source      - 'apache-httpd-json' for generated entries, 'manual' for hand maintained ones."
   ],
   "schemaVersion": 1,
-  "lastUpdated": "2026-11-12",
+  "lastUpdated": "2026-11-18",
   "vulnerabilities": [
     {
       "cve": "CVE-2026-106023",
@@ -43,7 +43,7 @@
     {
       "cve": "CVE-2026-109163",
       "name": "mod_vhost_alias 1 byte stack buffer overwrite (after CVE-2026-63292)",
-      "description": "Stack-based buffer overflow vulnerability in Apache HTTP Server's mod_vhost_alias (after CVE-2026-63292)",
+      "description": "Stack-based buffer overflow vulnerability in Apache HTTP Server's mod_vhost_alias (after CVE-2026-63292)",
       "severity": "low",
       "affected": [
         {
@@ -233,7 +233,7 @@
     {
       "cve": "CVE-2026-57941",
       "name": "Apache HTTP Server: mod_http2 use-after-free / wild write via shared session->bbtmp re-entrancy",
-      "description": "Use After Free vulnerability in Apache HTTP Server's mod_http2 via shared session->bbtmp re-entrancy",
+      "description": "Use After Free vulnerability in Apache HTTP Server's mod_http2 via shared session->bbtmp re-entrancy",
       "severity": "medium",
       "affected": [
         {
@@ -423,7 +423,7 @@
     {
       "cve": "CVE-2026-79768",
       "name": "mod_userdir information disclosure",
-      "description": "Path equivalence: '/./' (single dot directory) vulnerability in Apache HTTP Server's mod_userdir module when configured with absolute non-wildcard UserDir directive (the 2nd form in https://httpd.apache.org/docs/2.4/mod/mod_userdir.html#userdir)",
+      "description": "Path equivalence: '/./' (single dot directory) vulnerability in Apache HTTP Server's mod_userdir module when configured with absolute non-wildcard UserDir directive (the 2nd form in https://httpd.apache.org/docs/2.4/mod/mod_userdir.html#userdir)",
       "severity": "low",
       "affected": [
         {
@@ -537,7 +537,7 @@
     {
       "cve": "CVE-2026-42535",
       "name": "mod_dav_fs protected directory access",
-      "description": "A path handling issue in mod_dav_fs in Apache 2.4.67 and earlier allows a WebDAV content author to directly manipulate trusted DAV property databases, potentially causing child process crashes.",
+      "description": "A path handling issue in mod_dav_fs in Apache 2.4.67 and earlier allows a WebDAV content author to directly manipulate trusted DAV property databases, potentially causing child process crashes.",
       "severity": "medium",
       "affected": [
         {
@@ -556,7 +556,7 @@
     {
       "cve": "CVE-2026-42536",
       "name": "mod_xml2enc heap overflow",
-      "description": "Heap-based Buffer Overflow vulnerability in Apache HTTP Server with mod_xml2enc, xml2StartParse, and untrusted content",
+      "description": "Heap-based Buffer Overflow vulnerability in Apache HTTP Server with mod_xml2enc, xml2StartParse, and untrusted content",
       "severity": "low",
       "affected": [
         {
@@ -765,7 +765,7 @@
     {
       "cve": "CVE-2026-29168",
       "name": "Apache HTTP Server: mod_md unrestricted OCSP response",
-      "description": "Allocation of Resources Without Limits or Throttling vulnerability in Apache HTTP Server's  mod_md via OCSP response data.",
+      "description": "Allocation of Resources Without Limits or Throttling vulnerability in Apache HTTP Server's mod_md via OCSP response data.",
       "severity": "low",
       "affected": [
         {
@@ -1126,7 +1126,7 @@
     {
       "cve": "CVE-2025-49630",
       "name": "Apache HTTP Server: mod_proxy_http2 denial of service",
-      "description": "In certain proxy configurations, a denial of service attack against Apache HTTP Server versions 2.4.26 through to 2.4.63 can be triggered by untrusted clients causing an assertion in mod_proxy_http2.",
+      "description": "In certain proxy configurations, a denial of service attack against Apache HTTP Server versions 2.4.26 through to 2.4.63 can be triggered by untrusted clients causing an assertion in mod_proxy_http2.",
       "severity": "low",
       "affected": [
         {

@@ -299,6 +299,13 @@ record KnownVulnerabilities(
     /** Matches a dotted numeric version with components which fit in a {@code long}. */
     private static final Pattern VERSION_PATTERN = Pattern.compile("\\d{1,18}(?:\\.\\d{1,18})*");
 
+    private static final String CVE_PREFIX = "CVE-";
+
+    /** Whether the ID is a CVE, as opposed to the ID of an advisory from another source. */
+    static boolean isCve(String id) {
+        return id.startsWith(CVE_PREFIX);
+    }
+
     static boolean isVersion(String version) {
         return version != null && VERSION_PATTERN.matcher(version).matches();
     }

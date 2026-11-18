@@ -39,7 +39,8 @@ final class AdvisoryUtils {
     private static final List<String> PREFERRED_SECTIONS = List.of("summary", "impact");
     private static final Pattern MARKDOWN_LINK = Pattern.compile("\\[([^]]*)]\\([^)]*\\)");
     private static final Pattern MARKDOWN_EMPHASIS = Pattern.compile("[`*]");
-    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    private static final Pattern WHITESPACE =
+            Pattern.compile("\\s+", Pattern.UNICODE_CHARACTER_CLASS);
 
     /**
      * A range parsed from an advisory, {@code introduced <= version < fixed}.

@@ -102,6 +102,13 @@ val knownVulnerabilitiesTechnologies =
             file("$knownVulnerabilitiesResources/apache-known-vulnerabilities.json"),
             "apache-known-vulnerabilities.html",
         ),
+        KnownVulnerabilitiesTechnology(
+            "nginx",
+            "Nginx",
+            "the nginx security advisories and CVE records",
+            file("$knownVulnerabilitiesResources/nginx-known-vulnerabilities.json"),
+            "nginx-known-vulnerabilities.html",
+        ),
     )
 
 val updateKnownVulnerabilities by tasks.registering {
