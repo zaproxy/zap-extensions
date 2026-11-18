@@ -119,6 +119,9 @@ public class UserControlledCookieScanRule extends PluginPassiveScanner
                 return URLDecoder.decode(cookie, charset);
             } catch (UnsupportedEncodingException e) {
                 // try other possible charsets
+            } catch (IllegalArgumentException e) {
+                // malformed percent-encoding, match against the raw value
+                return cookie;
             }
         }
 
@@ -138,6 +141,9 @@ public class UserControlledCookieScanRule extends PluginPassiveScanner
             try {
                 return URLDecoder.decode(cookie, possibleCharset.name());
             } catch (UnsupportedEncodingException e) {
+            } catch (IllegalArgumentException e) {
+                // malformed percent-encoding, match against the raw value
+                return cookie;
             }
         }
 

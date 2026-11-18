@@ -75,19 +75,8 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
                         2,
                         "$K4$aabbccdd11223344,"));
 
-        HashAlert openBsdBlowfishAlert =
-                new HashAlert(
-                        "OpenBSD Blowfish",
-                        Alert.RISK_HIGH,
-                        Alert.CONFIDENCE_HIGH,
-                        3,
-                        "$2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe");
-        hashPatterns.put(
-                Pattern.compile("\\$2a\\$05\\$[a-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
-                openBsdBlowfishAlert);
-        hashPatterns.put(
-                Pattern.compile("\\$2y\\$05\\$[a-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
-                openBsdBlowfishAlert);
+        // Alert ref 10097-3 ("OpenBSD Blowfish") is retired/deprecated and should not be reused,
+        // such values are reported as BCrypt.
 
         // MD5 Crypt
         // Example: $1$O3JMY.Tw$AdLnLjQ/5jXF9.MTp3gHv/
@@ -145,8 +134,8 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
                         Alert.CONFIDENCE_HIGH,
                         7,
                         "$2$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe");
-        hashPatterns.put(Pattern.compile("\\$2\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"), bcryptAlert);
-        hashPatterns.put(Pattern.compile("\\$2a\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"), bcryptAlert);
+        hashPatterns.put(
+                Pattern.compile("\\$2[abxy]?\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"), bcryptAlert);
 
         // NTLM
         // Example: $NT$7f8fe03093cc84b267b109625f6bbf4b
@@ -214,18 +203,9 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
                         14,
                         "da39a3ee5e6b4b0d3255bfef95601890afd80709"));
 
-        // LanMan (clashes with MD4/MD5) - note the case sensitivity here, however
-        // Example: 855c3697d9979e78ac404c4ba2c66533)
-        hashPatterns.put(
-                Pattern.compile("\\b\\[0-9a-f]{32}\\b"),
-                new HashAlert(
-                        "LanMan",
-                        Alert.RISK_LOW,
-                        Alert.CONFIDENCE_LOW,
-                        15,
-                        "855c3697d9979e78ac404c4ba2c66533"));
+        // Alert ref 10097-15 ("LanMan") is retired/deprecated and should not be reused.
 
-        // MD4/5 (clashes with LanMan)
+        // MD4/5
         // MD4/5 hashes occur fairly frequently in various legitimate uses, and are not necessarily
         // indicative of an issue.
         hashPatterns.put(

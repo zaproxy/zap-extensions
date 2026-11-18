@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
@@ -50,6 +52,9 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
         implements CommonPassiveScanRuleInfo {
+
+    private static final Pattern META_REFRESH_URL =
+            Pattern.compile("^\\s*?[0-9]+?\\s*?;\\s*?url\\s*?=(.*)");
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.usercontrolledhtmlattributes.";
@@ -132,8 +137,9 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
         // special handling of meta tag
         if (htmlElement.getName().equalsIgnoreCase(HTMLElementName.META)
                 && attribute.getName().equalsIgnoreCase("content")) {
-            if (attrValue.matches("^\\s*?[0-9]+?\\s*?;\\s*?url\\s*?=.*")) {
-                attrValue = attrValue.substring(attrValue.indexOf("url=") + 4).trim();
+            Matcher refreshMatcher = META_REFRESH_URL.matcher(attrValue);
+            if (refreshMatcher.matches()) {
+                attrValue = refreshMatcher.group(1).trim();
             }
         }
 

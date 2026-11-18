@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - The Content Security Policy scan rule now also reports a missing or wildcard `base-uri` directive.
+- Information Disclosure - Suspicious Comments scan rule custom payloads are now treated as literal text instead of regular expressions.
+
+### Fixed
+- User Controllable HTML Element Attribute scan rule now handles meta refresh URLs written with whitespace around the equals sign (e.g. `url = http://example.com/`).
+- Information Disclosure - Suspicious Comments scan rule no longer throws an exception when a custom payload is not a valid regular expression (which would previously have prevented it from raising alerts).
+- Information Disclosure - Debug Error Messages scan rule no longer depends on the default locale, and no longer fails or reports wrong evidence when the response contains characters whose lower case form is longer.
+- Viewstate scan rule no longer fails on ViewState values too short to contain a MAC, and now reports them as having no MAC.
+- Charset Mismatch scan rule no longer raises an alert for XML responses whose XML declaration has no encoding.
+- Cookie Poisoning scan rule no longer fails on cookie values containing malformed percent-encoding.
+- PII Disclosure scan rule no longer stops analyzing a response at the first decimal number that resembles a credit card number, at Medium and High thresholds.
+- Absence of Anti-CSRF Tokens scan rule: the ignore attribute annotation on one form no longer lowers the risk of alerts for subsequent forms in the same response.
+- Hash Disclosure scan rule now detects all BCrypt version prefixes ($2$, $2a$, $2b$, $2x$, $2y$) at any cost.
+
+### Removed
+- Hash Disclosure "LanMan" alert (10097-15) is no longer raised (its pattern never matched, such values are reported as MD4 / MD5).
+- Hash Disclosure "OpenBSD Blowfish" alert (10097-3) is no longer raised (it duplicated BCrypt, such values are reported as BCrypt).
 
 ### Fixed
 - Viewstate scan rule: reduce false positives for IP addresses, no longer matching assembly version numbers (e.g. `Version=12.0.0.0`), invalid addresses (e.g. `999.999.999.999`) or parts of longer dotted number sequences.

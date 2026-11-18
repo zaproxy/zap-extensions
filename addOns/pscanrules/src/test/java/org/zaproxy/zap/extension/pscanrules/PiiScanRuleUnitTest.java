@@ -197,6 +197,23 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         assertThat(alertsRaised.size(), is(0));
     }
 
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"MEDIUM", "HIGH"})
+    void shouldRaiseAlertForCardFollowingDecimalNumber(AlertThreshold alertThreshold)
+            throws Exception {
+        // Given
+        String content = "2.4111111111111111 then card 4111111111111111";
+        HttpMessage msg = createMsg(content);
+        // When
+        rule.setAlertThreshold(alertThreshold);
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("4111111111111111"));
+    }
+
     @Test
     void shouldRaiseAlertInDecimalNumbersAtLowThreshold() throws Exception {
         // Given

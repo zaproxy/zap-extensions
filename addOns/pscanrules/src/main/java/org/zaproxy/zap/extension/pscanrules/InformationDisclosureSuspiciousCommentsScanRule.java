@@ -237,7 +237,9 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     }
 
     private static Pattern compilePayload(String payload) {
-        return Pattern.compile("\\b" + payload + "\\b", Pattern.CASE_INSENSITIVE);
+        // Escape only the regex metacharacters, so plain words give the same pattern as before
+        String literal = payload.replaceAll("[\\\\.\\[\\]{}()*+?^$|]", "\\\\$0");
+        return Pattern.compile("\\b" + literal + "\\b", Pattern.CASE_INSENSITIVE);
     }
 
     public static void setPayloadProvider(Supplier<Iterable<String>> provider) {

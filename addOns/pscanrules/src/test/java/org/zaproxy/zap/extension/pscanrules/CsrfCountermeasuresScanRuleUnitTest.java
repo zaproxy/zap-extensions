@@ -416,6 +416,25 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     }
 
     @Test
+    void shouldOnlyApplyAttributeAnnotationToAnnotatedForm() {
+        // Given
+        rule.setCSRFIgnoreAttName("data-no-csrf");
+        msg.setResponseBody(
+                """
+                <html><head></head><body>
+                <form name="annotated" method="POST" data-no-csrf><input type="text" name="name"/><input type="submit"/></form>
+                <form name="plain" method="POST"><input type="text" name="name"/><input type="submit"/></form>
+                </body></html>
+                """);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(2, alertsRaised.size());
+        assertEquals(Alert.RISK_INFO, alertsRaised.get(0).getRisk());
+        assertEquals(Alert.RISK_MEDIUM, alertsRaised.get(1).getRisk());
+    }
+
+    @Test
     void shouldRaiseInfoAlertWhenFormAttributeAndValueMatchRuleConfig() {
         // Given
         rule.setCSRFIgnoreAttName("data-no-csrf");

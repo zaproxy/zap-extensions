@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,6 +31,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -244,6 +246,39 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldReturnExactEvidenceWhenBodyHasCharactersWithLongerLowerCaseForm() throws Exception {
+        // Given - U+0130 lower cases to two characters, shifting offsets in a lower cased copy
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET " + URI + " HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\nContent-Type: text/html;charset=UTF-8\r\n\r\n");
+        msg.getResponseBody().setCharset("UTF-8");
+        msg.setResponseBody(
+                "\u0130\u0130\u0130\u0130\u0130\u0130\u0130\u0130 " + DEFAULT_ERROR_MESSAGE);
+        // When
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE));
+    }
+
+    @Test
+    void shouldAlertRegardlessOfDefaultLocale() throws Exception {
+        // Given
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+            rule.setDebugErrorFile(testFolder.resolve("debug-error-messages.txt"));
+            HttpMessage msg = createHttpMessageWithRespBody("internal server error");
+            // When
+            scanHttpResponseReceive(msg);
+            // Then
+            assertThat(alertsRaised.size(), equalTo(1));
+        } finally {
+            Locale.setDefault(defaultLocale);
+        }
     }
 
     @Test

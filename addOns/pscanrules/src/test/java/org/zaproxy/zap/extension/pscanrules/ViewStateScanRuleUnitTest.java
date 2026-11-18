@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrules;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
@@ -255,6 +256,18 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
         assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
         assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10032-5"));
         assertSame(msg, alertsRaised.get(0).getMessage());
+    }
+
+    @Test
+    void shouldRaiseNoMacAlertForViewStateTooShortToContainMac() {
+        // Given - 19 bytes, a 20 byte MAC can't fit
+        msg.setResponseBody("<input name=\"__VIEWSTATE\" value=\"/wEPDwUKLTE2MTY2ODcyMjlkZA==\">");
+        // When / Then
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getName(), equalTo("Viewstate without MAC Signature (Sure)"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10032-5"));
     }
 
     @Test

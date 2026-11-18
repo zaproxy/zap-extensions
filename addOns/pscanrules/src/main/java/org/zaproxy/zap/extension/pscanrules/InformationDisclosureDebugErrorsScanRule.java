@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,7 +68,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
     private static final String debugErrorFile = "xml/debug-error-messages.txt";
     private static final Logger LOGGER =
             LogManager.getLogger(InformationDisclosureDebugErrorsScanRule.class);
-    private List<String> errors = null;
+    private List<Pattern> errors = null;
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -99,19 +101,19 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         if (this.errors == null) {
             this.errors = loadFile(Paths.get(Constant.getZapHome(), debugErrorFile));
         }
-        String sBody = body.toString().toLowerCase();
-        for (String error : this.errors) {
-            int start = sBody.indexOf(error);
-            if (start >= 0) {
+        String sBody = body.toString();
+        for (Pattern error : this.errors) {
+            Matcher matcher = error.matcher(sBody);
+            if (matcher.find()) {
                 // Return the original (case exact) string so we can match it in the response
-                return body.toString().substring(start, start + error.length());
+                return matcher.group();
             }
         }
         return null;
     }
 
-    private static List<String> loadFile(Path path) {
-        List<String> strings = new ArrayList<>();
+    private static List<Pattern> loadFile(Path path) {
+        List<Pattern> strings = new ArrayList<>();
         BufferedReader reader = null;
         File f = path.toFile();
         if (!f.exists()) {
@@ -123,7 +125,10 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
             reader = new BufferedReader(new FileReader(f));
             while ((line = reader.readLine()) != null) {
                 if (!line.startsWith("#")) {
-                    strings.add(line.trim().toLowerCase());
+                    strings.add(
+                            Pattern.compile(
+                                    Pattern.quote(line.trim()),
+                                    Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE));
                 }
             }
         } catch (IOException e) {
