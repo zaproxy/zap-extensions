@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Notify when browser is ready, once all of the launch hooks and synchronous scripts have completed.
 
+### Changed
+- Update Selenium to version 4.53.0.
+
 ## [15.60.0] - 2026-11-03
 ### Changed
 - Update Selenium to version 4.52.0.
