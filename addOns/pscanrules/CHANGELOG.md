@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The Content Security Policy scan rule now:
+    - also reports a missing or wildcard `base-uri` directive.
+    - accepts commas in `meta` policies, treating each as a separate policy (as Chromium based browsers do, Firefox treats the content as a single policy) and notes this in the alerts.
+    - reports, at Low threshold, `script-src` policies which include `'wasm-unsafe-eval'` (informational).
+- Update dependency.
 
 ## [79] - 2026-11-18
 ### Added

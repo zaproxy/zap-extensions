@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -113,7 +114,7 @@ class ContentSecurityPolicyScanRuleUnitTest
                         .filter(alert -> Alert.RISK_MEDIUM == alert.getRisk())
                         .count();
         // Then
-        assertThat(count, is(equalTo(12)));
+        assertThat(count, is(equalTo(13)));
         assertThat(countLows, is(equalTo(3L)));
         assertThat(countMediums, is(equalTo(9L)));
     }
@@ -289,22 +290,68 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    void shouldNotNpeOrAlertOnInvalidMetaCsp() {
-        // Given
+    void shouldScanMetaCspWithTrailingCommaAsSeparatePoliciesAndNoteBrowserDifferences() {
+        // Given — commas in meta content split it into policies (empty members are dropped)
         HttpMessage msg = createHttpMessage();
         msg.setResponseBody(
-                "<html><head><meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        // The comma here causes the parsing to fail and return null
-                        + REASONABLE_META_POLICY
-                        + ","
-                        + "\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s,"></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then — same as without the comma: only the missing frame-ancestors, plus the note
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                containsString(
+                        "Chromium based browsers (and, it is believed, Safari) split the content"));
+    }
+
+    @Test
+    void shouldRaiseSingleBadMetaAlertWithCommaNoteWhenSeveralMetaMembersAreBad() {
+        // Given
+        String content = REASONABLE_META_POLICY + "; sandbox, default-src 'self'; report-uri /r";
+        HttpMessage msg = createHttpMessage();
+        msg.setResponseBody(
+                """
+                <html><head><meta http-equiv="%s" content="%s"></head></html>"""
+                        .formatted(HttpFieldsNames.CONTENT_SECURITY_POLICY, content));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        List<Alert> badMetaAlerts =
+                alertsRaised.stream().filter(a -> "10055-11".equals(a.getAlertRef())).toList();
+        assertThat(badMetaAlerts.size(), equalTo(1));
+        assertThat(
+                badMetaAlerts.get(0).getOtherInfo(),
+                containsString("Chromium based browsers (and, it is believed, Safari)"));
+    }
+
+    @Test
+    void shouldNoteMetaCommaHandlingInNoticesWhenMetaContainsCommas() {
+        // Given — the empty trusted-types directive produces a notice
+        String content = REASONABLE_META_POLICY + "; trusted-types,";
+        HttpMessage msg = createHttpMessage();
+        msg.setResponseBody(
+                """
+                <html><head><meta http-equiv="%s" content="%s"></head></html>"""
+                        .formatted(HttpFieldsNames.CONTENT_SECURITY_POLICY, content));
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        Alert notices =
+                alertsRaised.stream()
+                        .filter(a -> "10055-3".equals(a.getAlertRef()))
+                        .findFirst()
+                        .orElseThrow();
+        assertThat(
+                notices.getOtherInfo(),
+                containsString("Chromium based browsers (and, it is believed, Safari)"));
     }
 
     @Test
@@ -632,6 +679,65 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.get(3).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(3).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
         assertThat(alertsRaised.get(3).getAlertRef(), equalTo("10055-10"));
+    }
+
+    @Test
+    void shouldRaiseInfoAlertWhenCspIncludesWasmUnsafeEvalAtLowThreshold() {
+        // Given
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        HttpMessage msg = createHttpMessage("script-src 'wasm-unsafe-eval'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        Alert alert =
+                alertsRaised.stream()
+                        .filter(a -> "10055-14".equals(a.getAlertRef()))
+                        .findFirst()
+                        .orElseThrow();
+        assertThat(alert.getName(), equalTo("CSP: script-src wasm-unsafe-eval"));
+        assertThat(alert.getRisk(), equalTo(Alert.RISK_INFO));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(alert.getEvidence(), equalTo("script-src 'wasm-unsafe-eval'"));
+    }
+
+    @Test
+    void shouldNotRaiseWasmUnsafeEvalAlertWhenAnotherPolicyRestrictsScript() {
+        // Given — the second policy blocks WebAssembly compilation, so the intersection does too
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        HttpMessage msg = createHttpMessage("script-src 'wasm-unsafe-eval'");
+        msg.getResponseHeader()
+                .addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, "script-src 'self'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(
+                alertsRaised.stream().noneMatch(a -> "10055-14".equals(a.getAlertRef())), is(true));
+    }
+
+    @Test
+    void shouldNotRaiseWasmUnsafeEvalAlertAtMediumThreshold() {
+        // Given
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        HttpMessage msg = createHttpMessage("script-src 'wasm-unsafe-eval'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(
+                alertsRaised.stream().noneMatch(a -> "10055-14".equals(a.getAlertRef())), is(true));
+    }
+
+    @Test
+    void shouldNotRaiseWasmUnsafeEvalAlertWhenUnsafeEvalAlsoPresent() {
+        // Given
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        HttpMessage msg = createHttpMessage("script-src 'wasm-unsafe-eval' 'unsafe-eval'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(
+                alertsRaised.stream().anyMatch(a -> "10055-10".equals(a.getAlertRef())), is(true));
+        assertThat(
+                alertsRaised.stream().noneMatch(a -> "10055-14".equals(a.getAlertRef())), is(true));
     }
 
     @Test
