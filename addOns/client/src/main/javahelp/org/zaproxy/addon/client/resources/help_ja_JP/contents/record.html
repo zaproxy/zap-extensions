@@ -28,7 +28,8 @@ Zestスクリプトはデスクトップ環境でも自動化環境でも、ZAP�
 ZAPブラウザ拡張機能はすべて、ポップアップパネルを介して詳細なヘルプを含んでいます。
 
 <h2>ZAPからの記録</h2>
-ZAPからクライアントサイドスクリプトを記録する最も簡単な方法は「Zestスクリプトの記録」ダイアログを使用することです。<br>「記録タイプ」を「クライアント (ブラウザ) サイドスクリプト」に変更し、有効なURLを提供する必要があります。<br>
+ZAPからクライアントサイドスクリプトを記録する最も簡単な方法は「Zestスクリプトの記録」ダイアログを使用することです。<br>
+「記録タイプ」を「クライアント (ブラウザ) サイドスクリプト」に変更し、有効なURLを提供する必要があります。<br>
 ZAPは選択したブラウザを起動し、ブラウザでアクションを実行すると、スクリプトコンソールにZestステートメントを記録します。
 
 <h2>レコーダーに関するアドバイスとガイダンス</h2>
@@ -45,10 +46,11 @@ URLが動的な場合は、レコーダーダイアログに適切な静的URL�
 <p>
 既存のアプリケーション状態が残らないように、記録時にはプライベート/シークレットモードを使用することが推奨されます。
 <p>
-一部のモダンなWebアプリケーションの「ボタン」は、自動化を使用してクリックするのが難しい場合がある複雑なHTMLコンポーネントである可能性があります。フォームが Return キーを使用して送信可能な場合は、記録時にはその方法を使用する方が多くの場合より良い選択肢となります。
+一部のモダンなWebアプリケーションの「ボタン」は、自動化を使用してクリックするのが難しい場合がある複雑なHTMLコンポーネントである可能性があります。
+フォームが Return キーを使用して送信可能な場合は、記録時にはその方法を使用する方が多くの場合より良い選択肢となります。
 <p>
 Try recording the same script twice, making sure you perform exactly the same actions.
-Then diff the scripts - if they are significantly different then its possible that ZAP is using 
+Then diff the scripts - if they are significantly different then it's possible that ZAP is using 
 values to reference HTML elements that are not consistent.
 If that is the case then you may need to manually edit the script in order to use values which are consistent.
 
