@@ -393,6 +393,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                         }
 
                         boolean loggedIn = isLoggedIn(ard) && !isLoggedUnknown(ard);
+                        boolean verificationFailed = AuthUtils.hasVerificationFailed(authContext);
 
                         boolean overallStatus =
                                 sessionPassed
@@ -400,6 +401,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                                         && (!authBBA || passedCount != null)
                                         && !hasAfErrors
                                         && !hasMoreFailures
+                                        && !verificationFailed
                                         && loggedIn;
                         addSummaryItem(ard, "auth", overallStatus);
                         if (!overallStatus) {
@@ -420,6 +422,9 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                             }
                             if (hasAfErrors) {
                                 ard.addFailureDetail(FailureDetail.AF_PLAN_ERRORS);
+                            }
+                            if (verificationFailed) {
+                                ard.addFailureDetail(FailureDetail.VERIF_FAILED);
                             }
                             if (!loggedIn) {
                                 ard.addFailureDetail(FailureDetail.LOGGED_IN);

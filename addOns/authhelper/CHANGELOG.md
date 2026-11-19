@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- Report failed authentication verification, including the verification request, in the diagnostics and the Authentication Report.
+
 ### Fixed
 - Detect authentication, session management, and verification requests from the Client Spider (Issue 9523).
 

@@ -57,7 +57,8 @@ public class AuthReportData implements Closeable {
         LOGIN_FAILURES("login.failures"),
         AF_PLAN_ERRORS("afplan.errors"),
         NO_SUCCESSFUL_LOGINS("no.successful.logins"),
-        VERIF_IDENT("verif.failed");
+        VERIF_IDENT("verif.failed"),
+        VERIF_FAILED("verification.failed");
 
         private final String key;
         private final String detail;
