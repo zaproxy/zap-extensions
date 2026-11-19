@@ -248,6 +248,54 @@ class CookieUtilsUnitTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"Cookie", "cookie", "Set", "set", "ok", "ie", "Cook", "e", "t"})
+    void shouldFindCookiePlusNameWhenCookieNameIsSubstringOfHeaderName(String cookieName) {
+        // Given
+        String fullHeader = "Set-Cookie: " + cookieName + "=value; Path=/; Secure";
+        String headerValue = cookieName + "=value; Path=/; Secure";
+        // When
+        String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
+        // Then
+        assertThat(name, is(equalTo("Set-Cookie: " + cookieName)));
+    }
+
+    @Test
+    void shouldFindCookiePlusNameInSetCookie2() {
+        // Given
+        String fullHeader = "Set-Cookie2: Cookie=value; Version=1";
+        String headerValue = "Cookie=value; Version=1";
+        // When
+        String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
+        // Then
+        assertThat(name, is(equalTo("Set-Cookie2: Cookie")));
+    }
+
+    @Test
+    void shouldFindCookiePlusNameInMultiLineHeader() {
+        // Given
+        String fullHeader =
+                "HTTP/1.1 200 OK\r\n"
+                        + "Set-Cookie: sessionid=12345; Path=/\r\n"
+                        + "Set-Cookie: id=99999; Secure\r\n";
+        String headerValue = "id=99999; Secure";
+        // When
+        String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
+        // Then
+        assertThat(name, is(equalTo("Set-Cookie: id")));
+    }
+
+    @Test
+    void shouldFindCookiePlusNameWhenNameRepeatedInAttribute() {
+        // Given
+        String fullHeader = "Set-Cookie: foo=bar; domain=foo.com; Path=/";
+        String headerValue = "foo=bar; domain=foo.com; Path=/";
+        // When
+        String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
+        // Then
+        assertThat(name, is(equalTo("Set-Cookie: foo")));
+    }
+
+    @ParameterizedTest
     @ValueSource(
             strings = {
                 "Sun, 06 Nov 1994 08:49:37 GMT",
