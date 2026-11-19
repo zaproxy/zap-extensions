@@ -6,7 +6,7 @@
 </head>
 <body>
 <div class="roundContainer">
-	<h1>Simple Login Page with JSON Response, verification always fails</H1>
+	<h1>Simple Login Page with JSON Response, verification fails</H1>
 	<h2>Login</h2>
 	
 	<div id="result"></div>
@@ -33,7 +33,7 @@
 		<li>username = test@test.com
 		<li>password = password123
 	</ul>
-	The verification URL returns JSON without the username and a 200 response if valid, otherwise a 403 response.
+	Login succeeds with the test credentials, but the verification URL returns a 403 response, always by default. Use the <a href="config">config page</a> to only fail after a number of successful verifications.
 	
 </div>
 <script>

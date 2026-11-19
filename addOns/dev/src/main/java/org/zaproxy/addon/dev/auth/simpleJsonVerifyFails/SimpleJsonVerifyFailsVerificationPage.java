@@ -20,13 +20,19 @@
 package org.zaproxy.addon.dev.auth.simpleJsonVerifyFails;
 
 import net.sf.json.JSONObject;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-/** A verification page which always fails, even for a valid token. */
+/**
+ * A verification page which fails, always by default, or after the number of successful
+ * verifications set in the config page.
+ */
 public class SimpleJsonVerifyFailsVerificationPage extends TestPage {
+
+    private static final String BEARER_PREFIX = "Bearer ";
 
     public SimpleJsonVerifyFailsVerificationPage(TestProxyServer server) {
         super(server, "user");
@@ -34,8 +40,26 @@ public class SimpleJsonVerifyFailsVerificationPage extends TestPage {
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
+        if (token != null && token.startsWith(BEARER_PREFIX)) {
+            token = token.substring(BEARER_PREFIX.length());
+        } else {
+            token = null;
+        }
+
         JSONObject response = new JSONObject();
-        response.put("result", "FAIL");
-        this.getServer().setJsonResponse(TestProxyServer.STATUS_FORBIDDEN, response, msg);
+        String status = TestProxyServer.STATUS_FORBIDDEN;
+        if (getParent().getUser(token) != null && getParent().nextVerificationSucceeds()) {
+            response.put("result", "OK");
+            status = TestProxyServer.STATUS_OK;
+        } else {
+            response.put("result", "FAIL");
+        }
+        this.getServer().setJsonResponse(status, response, msg);
+    }
+
+    @Override
+    public SimpleJsonVerifyFailsDir getParent() {
+        return (SimpleJsonVerifyFailsDir) super.getParent();
     }
 }

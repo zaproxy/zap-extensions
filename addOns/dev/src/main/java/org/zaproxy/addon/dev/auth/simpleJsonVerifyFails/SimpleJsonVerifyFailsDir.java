@@ -19,19 +19,54 @@
  */
 package org.zaproxy.addon.dev.auth.simpleJsonVerifyFails;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 
 /**
  * A login page which uses one JSON request to login endpoint and always succeeds with valid
- * credentials, but the verification URL always fails. Exercises the failed authentication
- * verification handling.
+ * credentials, but the verification URL fails. By default it always fails, it can be configured (in
+ * the config page) to only fail after a number of successful verifications. Exercises the failed
+ * authentication verification handling.
  */
 public class SimpleJsonVerifyFailsDir extends TestAuthDirectory {
 
+    private final AtomicInteger verifications = new AtomicInteger();
+    private volatile int failAfter;
+
     public SimpleJsonVerifyFailsDir(TestProxyServer server, String name) {
         super(server, name);
+        onReset(() -> verifications.set(0));
         this.addPage(new SimpleJsonVerifyFailsLoginPage(server));
         this.addPage(new SimpleJsonVerifyFailsVerificationPage(server));
+        this.addPage(new SimpleJsonVerifyFailsConfigPage(server));
+    }
+
+    /**
+     * Tells if the verification being done should succeed, counting it.
+     *
+     * @return {@code true} if it is one of the first {@code failAfter} verifications, {@code false}
+     *     otherwise, always the case if {@code failAfter} is zero.
+     */
+    boolean nextVerificationSucceeds() {
+        return failAfter > 0 && verifications.incrementAndGet() <= failAfter;
+    }
+
+    int getFailAfter() {
+        return failAfter;
+    }
+
+    int getVerifications() {
+        return verifications.get();
+    }
+
+    /**
+     * Sets the number of verifications that succeed before they all fail, restarting the count.
+     *
+     * @param failAfter the number of verifications, zero (or less) to always fail.
+     */
+    void setFailAfter(int failAfter) {
+        this.failAfter = Math.max(0, failAfter);
+        verifications.set(0);
     }
 }
