@@ -31,7 +31,7 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
 
     private static final Logger LOGGER = LogManager.getLogger(ClientSpiderOptions.class);
 
-    protected static final int CURRENT_CONFIG_VERSION = 1;
+    protected static final int CURRENT_CONFIG_VERSION = 2;
 
     static final String CLIENT_SPIDER_BASE_KEY = "client.spider";
 
@@ -44,6 +44,7 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
     public static final int DEFAULT_SHUTDOWN_TIME = 5;
     public static final int DEFAULT_ACTION_WAIT_TIME = 0;
     public static final boolean DEFAULT_LOGOUT_AVOIDANCE = true;
+    static final int DEFAULT_ADAPTIVE_TIMEOUT = 30_000;
 
     private static final String CONFIG_VERSION_KEY = CLIENT_SPIDER_BASE_KEY + VERSION_ATTRIBUTE;
     private static final String BROWSER_ID_KEY = CLIENT_SPIDER_BASE_KEY + ".browserId";
@@ -144,7 +145,7 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
         this.actionWaitTimeInSecs = getInt(ACTION_WAIT_TIME_KEY, DEFAULT_ACTION_WAIT_TIME);
         this.showAdvancedDialog = getBoolean(SHOW_ADV_OPTIONS_KEY, false);
 
-        this.adaptiveTimeout = getInt(ADAPTIVE_WAIT_TIMEOUT_KEY, 15_000);
+        this.adaptiveTimeout = getInt(ADAPTIVE_WAIT_TIMEOUT_KEY, DEFAULT_ADAPTIVE_TIMEOUT);
         this.adaptiveQuiesceFirstAccess = getInt(ADAPTIVE_WAIT_QUIESCE_FIRST_ACCESS_KEY, 2_500);
     }
 
@@ -164,7 +165,22 @@ public class ClientSpiderOptions extends VersionedAbstractParam {
     }
 
     @Override
+    @SuppressWarnings("fallthrough")
     protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+                migrateOriginalClientKeys();
+            case 1:
+                if (getConfig().getInt(ADAPTIVE_WAIT_TIMEOUT_KEY, -1) == 15_000) {
+                    getConfig().setProperty(ADAPTIVE_WAIT_TIMEOUT_KEY, DEFAULT_ADAPTIVE_TIMEOUT);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void migrateOriginalClientKeys() {
         if (getConfig().containsKey(OLD_CLIENT_BASE_KEY + ".browserId")) {
             migrateConfigIfSet(OLD_CLIENT_BASE_KEY + ".browserId", BROWSER_ID_KEY);
             migrateConfigIfSet(OLD_CLIENT_BASE_KEY + ".threads", THREAD_COUNT_KEY);
