@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Login with a non std header and unrelated (but required) cookies.
  - Login with no link to the login form. Access is only via a redirect to a one time URL.
  - Login with fields under shadow DOM.
+ - Login where the verification always fails.
  - Login where the session token is base64 encoded when passed to the browser.
  - HTML page with input elements added with increasing delays.
  - A mock MS online login.
