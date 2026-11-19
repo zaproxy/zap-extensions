@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.util.ArrayList;
+import java.util.List;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.zaproxy.zest.core.v1.ZestClientElement;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
@@ -52,6 +55,7 @@ public class ZestStatementFromJson {
     private static final String FRAME_NAME = "frameName";
     private static final String FRAME_ISPARENT = "parent";
     private static final String WAIT_FOR_MSEC = "waitForMsec";
+    private static final String SHADOW_PATH = "shadowPath";
     private static final String X_VALUE = "x";
     private static final String Y_VALUE = "y";
 
@@ -147,6 +151,15 @@ public class ZestStatementFromJson {
             if (stmt instanceof ZestClientElement clientEl && json.containsKey(WAIT_FOR_MSEC)) {
                 // The key was not used in older versions of the ZAP browser extension
                 clientEl.setWaitForMsec(json.getInt(WAIT_FOR_MSEC));
+            }
+
+            if (stmt instanceof ZestClientElement clientEl && json.containsKey(SHADOW_PATH)) {
+                List<String> shadowPath = new ArrayList<>();
+                JSONArray hosts = json.getJSONArray(SHADOW_PATH);
+                for (int i = 0; i < hosts.size(); i++) {
+                    shadowPath.add(hosts.getString(i));
+                }
+                clientEl.setShadowPath(shadowPath);
             }
         } else {
             throw new Exception("Element not recognised " + json.toString());
