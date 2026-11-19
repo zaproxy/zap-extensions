@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.zest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -28,18 +29,49 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
+import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestResponse;
 
 /** Unit test for {@link ZestZapUtils}. */
-class ZestZapUtilsUnitTest {
+class ZestZapUtilsUnitTest extends TestUtils {
+
+    @BeforeAll
+    static void setUpAll() {
+        mockMessages(new ExtensionZest());
+    }
+
+    @Test
+    void shouldNotPrefixClientElementUiStringWithoutShadowPath() {
+        // Given
+        ZestClientElementClick click = new ZestClientElementClick("win", "cssSelector", "#button");
+        // When
+        String ui = ZestZapUtils.toUiString(click);
+        // Then
+        assertThat(ui, containsString("#button"));
+        assertThat(ui, not(containsString("(Shadow DOM)")));
+    }
+
+    @Test
+    void shouldPrefixClientElementUiStringWithShadowDomIfShadowPath() {
+        // Given
+        ZestClientElementClick click = new ZestClientElementClick("win", "cssSelector", "#button");
+        click.setShadowPath(List.of("#host"));
+        // When
+        String ui = ZestZapUtils.toUiString(click);
+        // Then
+        assertThat(ui, containsString("(Shadow DOM) #button"));
+    }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})

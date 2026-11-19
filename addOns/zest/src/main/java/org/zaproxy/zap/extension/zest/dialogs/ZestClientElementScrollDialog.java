@@ -51,11 +51,13 @@ public class ZestClientElementScrollDialog extends ZestClientElementDialog {
         super.init(script, parent, child, req, client, add);
 
         this.addNumberField(
+                0,
                 FIELD_X,
                 Integer.MIN_VALUE,
                 Integer.MAX_VALUE,
                 ((ZestClientElementScroll) client).getX());
         this.addNumberField(
+                0,
                 FIELD_Y,
                 Integer.MIN_VALUE,
                 Integer.MAX_VALUE,

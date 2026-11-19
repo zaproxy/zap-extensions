@@ -1,0 +1,166 @@
+---
+# Runs a standalone Zest script which clicks a link, clicks a button and submits a form in the
+# shadow root(s) (closed > open) of the Shadow DOM test app, then checks that the targets were reached.
+# Needs a browser (Firefox), and ZAP to be run in dev mode.
+env:
+  contexts:
+    - name: "shadow-dom-closed-open"
+      urls:
+        - "http://localhost:9091/zest/shadow-dom/closed-open/"
+      includePaths:
+        - "http://localhost:9091/zest/shadow-dom/closed-open/.*"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "script"
+    name: "add script"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "Mozilla Zest"
+      name: "shadow-dom-closed-open"
+      inline: |
+        {
+          "about": "This is a Zest script. For more details about Zest visit https://github.com/zaproxy/zest/",
+          "zestVersion": "0.8",
+          "title": "shadow-dom-closed-open",
+          "description": "Acts on the elements in the shadow root(s) of the case closed-open.",
+          "prefix": "",
+          "type": "StandAlone",
+          "parameters": {
+            "tokenStart": "{{",
+            "tokenEnd": "}}",
+            "tokens": {},
+            "elementType": "ZestVariables"
+          },
+          "statements": [
+            {
+              "windowHandle": "shadowdom",
+              "browserType": "firefox",
+              "url": "http://localhost:9091/zest/shadow-dom/closed-open/",
+              "capabilities": "",
+              "headless": true,
+              "enabled": true,
+              "elementType": "ZestClientLaunch",
+              "index": 1
+            },
+            {
+              "windowHandle": "shadowdom",
+              "type": "cssSelector",
+              "element": "#link",
+              "shadowPath": [
+                "#host0",
+                "#host1"
+              ],
+              "waitForMsec": 10000,
+              "enabled": true,
+              "elementType": "ZestClientElementClick",
+              "index": 2
+            },
+            {
+              "windowHandle": "shadowdom",
+              "url": "http://localhost:9091/zest/shadow-dom/closed-open/",
+              "enabled": true,
+              "elementType": "ZestClientWindowOpenUrl",
+              "index": 3
+            },
+            {
+              "windowHandle": "shadowdom",
+              "type": "cssSelector",
+              "element": "#button",
+              "shadowPath": [
+                "#host0",
+                "#host1"
+              ],
+              "waitForMsec": 10000,
+              "enabled": true,
+              "elementType": "ZestClientElementClick",
+              "index": 4
+            },
+            {
+              "windowHandle": "shadowdom",
+              "url": "http://localhost:9091/zest/shadow-dom/closed-open/",
+              "enabled": true,
+              "elementType": "ZestClientWindowOpenUrl",
+              "index": 5
+            },
+            {
+              "value": "zest",
+              "windowHandle": "shadowdom",
+              "type": "cssSelector",
+              "element": "#input",
+              "shadowPath": [
+                "#host0",
+                "#host1"
+              ],
+              "waitForMsec": 10000,
+              "enabled": true,
+              "elementType": "ZestClientElementSendKeys",
+              "index": 6
+            },
+            {
+              "windowHandle": "shadowdom",
+              "type": "cssSelector",
+              "element": "#input",
+              "shadowPath": [
+                "#host0",
+                "#host1"
+              ],
+              "waitForMsec": 10000,
+              "enabled": true,
+              "elementType": "ZestClientElementSubmit",
+              "index": 7
+            },
+            {
+              "windowHandle": "shadowdom",
+              "sleepInSeconds": 0,
+              "enabled": true,
+              "elementType": "ZestClientWindowClose",
+              "index": 8
+            }
+          ],
+          "authentication": [],
+          "index": 0,
+          "enabled": true,
+          "elementType": "ZestScript"
+        }
+  - type: "script"
+    name: "run script"
+    parameters:
+      action: "run"
+      type: "standalone"
+      engine: "Mozilla Zest"
+      name: "shadow-dom-closed-open"
+      failureLevel: "error"
+    tests:
+      - name: "link reached"
+        type: "url"
+        url: "http://localhost:9091/zest/shadow-dom/closed-open/link"
+        operator: "and"
+        requestHeaderRegex: "Referer: \\Qhttp://localhost:9091/zest/shadow-dom/closed-open/\\E"
+        requestBodyRegex: "^$"
+        responseHeaderRegex: "200 OK"
+        responseBodyRegex: "\\Q<p id=\"result\">closed-open link OK</p>\\E"
+        onFail: "error"
+      - name: "button reached"
+        type: "url"
+        url: "http://localhost:9091/zest/shadow-dom/closed-open/button"
+        operator: "and"
+        requestHeaderRegex: "Referer: \\Qhttp://localhost:9091/zest/shadow-dom/closed-open/\\E"
+        requestBodyRegex: "^$"
+        responseHeaderRegex: "200 OK"
+        responseBodyRegex: "\\Q<p id=\"result\">closed-open button OK</p>\\E"
+        onFail: "error"
+      - name: "form reached"
+        type: "url"
+        url: "http://localhost:9091/zest/shadow-dom/closed-open/form?value=zest"
+        operator: "and"
+        requestHeaderRegex: "Referer: \\Qhttp://localhost:9091/zest/shadow-dom/closed-open/\\E"
+        requestBodyRegex: "^$"
+        responseHeaderRegex: "200 OK"
+        responseBodyRegex: "\\Q<p id=\"result\">closed-open form OK</p>\\E\\s*\\Q<p id=\"value\">zest</p>\\E"
+        onFail: "error"
