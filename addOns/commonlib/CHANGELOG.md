@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Honour the Max-Age attribute, which takes precedence over Expires, when checking if a cookie is expired (Issue 9560).
+- Fix Dice's coefficient implementation, previously strings differing only in their last character could be reported as fully similar (Issue 9568).
 
 ## [1.44.0] - 2026-08-26
 ### Added

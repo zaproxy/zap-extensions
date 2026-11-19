@@ -43,6 +43,7 @@ public final class DiceMatcher {
      * Author : Jelle Fresen
      * Changes : Fixed indexing to prevent out of array access
      *           Address various issues identified by static analysis
+     *           Fixed bigram generation to include the last character
      * Released under CC-BY-SA.
      */
 
@@ -85,14 +86,9 @@ public final class DiceMatcher {
     private static int[] getBigrams(String str) {
         final int n = str.length() - 1;
         final int[] pairs = new int[n];
-        for (int i = 0; i < n; i++)
-            if (i == 0) pairs[i] = str.charAt(i) << 16;
-            else if (i == n - 1) pairs[i - 1] |= str.charAt(i);
-            else {
-                int p = pairs[i - 1] | str.charAt(i);
-                pairs[i - 1] = p;
-                pairs[i] = p << 16;
-            }
+        for (int i = 0; i < n; i++) {
+            pairs[i] = (str.charAt(i) << 16) | str.charAt(i + 1);
+        }
         return pairs;
     }
 }
