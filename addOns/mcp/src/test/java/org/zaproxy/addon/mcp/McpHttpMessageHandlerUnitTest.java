@@ -25,11 +25,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -222,6 +225,38 @@ class McpHttpMessageHandlerUnitTest {
                 equalTo(unicodeMsg.getResponseBody().length()));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"é日本語", "\\u00e9\\u65e5\\u672c\\u8a9e"})
+    void shouldDecodeRequestBodyAsUtf8(String text) throws Exception {
+        // Given
+        param.setSecurityKeyEnabled(false);
+        toolRegistry.registerTool(new EchoTool());
+        byte[] body =
+                """
+                {
+                  "jsonrpc": "2.0",
+                  "id": 1,
+                  "method": "tools/call",
+                  "params": {
+                    "name": "echo",
+                    "arguments": {"text": "%s"}
+                  }
+                }
+                """
+                        .formatted(text)
+                        .getBytes(StandardCharsets.UTF_8);
+        HttpMessage echoMsg = new HttpMessage();
+        echoMsg.setRequestHeader("POST / HTTP/1.1");
+        echoMsg.setRequestBody(body);
+        echoMsg.getRequestHeader().setContentLength(body.length);
+        // When
+        handler.handleMessage(ctx, echoMsg);
+        // Then
+        assertThat(
+                new String(echoMsg.getResponseBody().getBytes(), StandardCharsets.UTF_8),
+                containsString("é日本語"));
+    }
+
     @Test
     void shouldAllowOptionsRequestOverHttpEvenWhenSecureOnly() throws Exception {
         param.setSecureOnly(true);
@@ -231,6 +266,29 @@ class McpHttpMessageHandlerUnitTest {
         handler.handleMessage(ctx, optionsMsg);
 
         assertThat(optionsMsg.getResponseHeader().getStatusCode(), equalTo(HttpStatusCode.OK));
+    }
+
+    private static class EchoTool implements McpTool {
+
+        @Override
+        public String getName() {
+            return "echo";
+        }
+
+        @Override
+        public String getDescription() {
+            return "Echoes the text argument.";
+        }
+
+        @Override
+        public InputSchema getInputSchema() {
+            return new InputSchema(Map.of(), List.of());
+        }
+
+        @Override
+        public McpToolResult execute(ToolArguments arguments) {
+            return McpToolResult.success(arguments.getString("text"));
+        }
     }
 
     private static class UnicodeTool implements McpTool {
