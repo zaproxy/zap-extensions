@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
@@ -703,6 +704,65 @@ return getSelector(arguments[0], document)
         }
         finishCurrentStep(message.getRequestHeader().getURI().toString(), description);
         keepErrorAndLastStepOnly();
+    }
+
+    /**
+     * Runs the given verification and records it as the current step, including the verification
+     * request, if sent by the core (e.g. poll URL), even if only the failure is being retained.
+     *
+     * @param message the authentication message.
+     * @param verification the verification, returns {@code true} if authenticated.
+     * @return {@code true} if authenticated, {@code false} otherwise.
+     */
+    public boolean recordVerification(HttpMessage message, BooleanSupplier verification) {
+        if (!enabled) {
+            return verification.getAsBoolean();
+        }
+
+        List<HttpMessage> pollMessages = new ArrayList<>();
+        HttpSenderListener pollListener =
+                new HttpSenderListener() {
+
+                    @Override
+                    public void onHttpRequestSend(
+                            HttpMessage msg, int initiator, HttpSender sender) {
+                        // Nothing to do.
+                    }
+
+                    @Override
+                    public void onHttpResponseReceive(
+                            HttpMessage msg, int initiator, HttpSender sender) {
+                        if (initiator == HttpSender.AUTHENTICATION_POLL_INITIATOR) {
+                            pollMessages.add(msg);
+                        }
+                    }
+
+                    @Override
+                    public int getListenerOrder() {
+                        return Integer.MAX_VALUE;
+                    }
+                };
+
+        boolean authenticated;
+        HttpSender.addListener(pollListener);
+        try {
+            authenticated = verification.getAsBoolean();
+        } finally {
+            HttpSender.removeListener(pollListener);
+        }
+
+        if (failureOnly) {
+            // The listener recording all messages is not in use.
+            pollMessages.forEach(
+                    msg -> addMessageToStep(msg, HttpSender.AUTHENTICATION_POLL_INITIATOR));
+        }
+        recordStep(
+                message,
+                Constant.messages.getString(
+                        authenticated
+                                ? "authhelper.auth.method.diags.steps.authenticated"
+                                : "authhelper.auth.method.diags.steps.unauthenticated"));
+        return authenticated;
     }
 
     @Override

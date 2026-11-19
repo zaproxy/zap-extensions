@@ -375,22 +375,17 @@ public class OAuth2AuthenticationMethodType extends AuthenticationMethodType {
                 WebSession session = sessionManagementMethod.extractWebSession(msg);
                 user.setAuthenticatedSession(session);
 
-                if (this.isAuthenticated(msg, user, true)) {
+                HttpMessage verifiedMsg = msg;
+                if (diags.recordVerification(
+                        verifiedMsg, () -> this.isAuthenticated(verifiedMsg, user, true))) {
                     AuthenticationHelper.notifyOutputAuthSuccessful(msg);
                     user.getAuthenticationState().setLastAuthFailure("");
-                    diags.recordStep(
-                            Constant.messages.getString(
-                                    "authhelper.auth.method.diags.steps.authenticated"));
                     return session;
                 }
 
-                user.getAuthenticationState()
-                        .setLastAuthFailure("OAuth2 authentication verification failed");
+                user.getAuthenticationState().setLastAuthFailure(AuthUtils.VERIFICATION_FAILED);
                 user.setAuthenticatedSession(null);
                 AuthenticationHelper.notifyOutputAuthFailure(msg);
-                diags.recordStep(
-                        Constant.messages.getString(
-                                "authhelper.auth.method.diags.steps.unauthenticated"));
                 return null;
             }
         }
