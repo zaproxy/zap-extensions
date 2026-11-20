@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Set the correct `Content-Length` in JSON responses containing non-ASCII characters (Issue 9532).
+- Decode request bodies as UTF-8 so non-ASCII tool arguments are not corrupted (Issue 9576).
 
 ## [0.4.0] - 2026-08-26
 

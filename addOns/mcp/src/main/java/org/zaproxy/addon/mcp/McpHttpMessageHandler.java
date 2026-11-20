@@ -107,7 +107,8 @@ class McpHttpMessageHandler implements HttpMessageHandler {
                 return;
             }
 
-            String requestBody = msg.getRequestBody().toString();
+            String requestBody =
+                    new String(msg.getRequestBody().getBytes(), StandardCharsets.UTF_8);
             if (requestBody.isBlank()) {
                 setErrorResponse(msg, HttpStatusCode.BAD_REQUEST, "Request body required");
                 recordInHistoryIfEnabled(msg);
