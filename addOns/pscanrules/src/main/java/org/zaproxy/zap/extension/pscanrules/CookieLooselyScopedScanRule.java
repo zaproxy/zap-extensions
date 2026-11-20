@@ -116,11 +116,17 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
 
         Matcher m;
         for (String header : cookieHeaders) {
-            List<HttpCookie> parsedCookies = HttpCookie.parse(header);
+            List<HttpCookie> parsedCookies;
+            try {
+                parsedCookies = HttpCookie.parse(header);
+            } catch (IllegalArgumentException e) {
+                // Skip headers that can't be parsed, e.g. a cookie without a name.
+                continue;
+            }
 
             for (HttpCookie parsedCookie : parsedCookies) {
                 if (parsedCookie.getName().equals(cookie.getName())
-                        && parsedCookie.getDomain().equals(domain)) {
+                        && domain.equals(parsedCookie.getDomain())) {
 
                     m = DOMAIN_PATTERN.matcher(header);
                     while (m.find()) {

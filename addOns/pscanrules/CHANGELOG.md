@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The User Controlled Open Redirect scan rule now detects redirects with all redirection status codes (e.g. 303, 307, 308), not just 301 and 302.
 - Update dependency.
 
+### Fixed
+- Loosely Scoped Cookie scan rule no longer fails when the response also sets an invalid cookie or a cookie with the same name and no domain.
+
 ## [79] - 2026-11-18
 ### Added
 - The Server Side Technology Version with Known Vulnerabilities scan rule now also detects nginx versions with known vulnerabilities.

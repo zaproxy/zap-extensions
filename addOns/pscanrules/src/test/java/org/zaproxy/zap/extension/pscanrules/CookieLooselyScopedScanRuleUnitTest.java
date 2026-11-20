@@ -403,4 +403,37 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
                 is(
                         "The origin domain used for comparison was:\ntest.example.com\nCookie name: a\n"));
     }
+
+    @Test
+    void shouldAlertWhenSameNamedCookieWithoutDomainIsSetBefore()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
+        msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "a=; Max-Age=0");
+        msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.example.com");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("domain=.example.com"));
+    }
+
+    @Test
+    void shouldAlertWhenInvalidCookieIsSetBefore() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
+        msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "=nameless");
+        msg.getResponseHeader().addHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.example.com");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("domain=.example.com"));
+    }
 }
