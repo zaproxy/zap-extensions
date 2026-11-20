@@ -30,12 +30,16 @@ public class AutomationParam extends AbstractParam {
     private static final String SHOW_GUI_KEY = AUTO_KEY + ".gui";
     private static final String OPEN_LAST_PLAN = AUTO_KEY + ".last.open";
     private static final String LAST_PLAN_PATH = AUTO_KEY + ".last.path";
+    private static final String BATCH_DIRECTORY_KEY = AUTO_KEY + ".batch.dir";
+    private static final String BATCH_NEW_SESSION_KEY = AUTO_KEY + ".batch.newSession";
 
     private boolean showGui = true;
     private boolean openLastPlan;
 
     private String planDirectory;
     private String lastPlanPath;
+    private String batchDirectory;
+    private boolean batchNewSession = true;
 
     public AutomationParam() {}
 
@@ -45,6 +49,8 @@ public class AutomationParam extends AbstractParam {
         this.showGui = getBoolean(SHOW_GUI_KEY, true);
         this.openLastPlan = getBoolean(OPEN_LAST_PLAN, false);
         this.lastPlanPath = this.getString(LAST_PLAN_PATH, null);
+        this.batchDirectory = this.getString(BATCH_DIRECTORY_KEY, null);
+        this.batchNewSession = getBoolean(BATCH_NEW_SESSION_KEY, true);
     }
 
     public String getPlanDirectory() {
@@ -72,6 +78,36 @@ public class AutomationParam extends AbstractParam {
     public void setOpenLastPlan(boolean openLastPlan) {
         this.openLastPlan = openLastPlan;
         getConfig().setProperty(OPEN_LAST_PLAN, openLastPlan);
+    }
+
+    /** The directory last used in the batch tab, or {@code null} if none. */
+    public String getBatchDirectory() {
+        return batchDirectory;
+    }
+
+    public void setBatchDirectory(String batchDirectory) {
+        this.batchDirectory = batchDirectory;
+        getConfig().setProperty(BATCH_DIRECTORY_KEY, batchDirectory);
+        try {
+            getConfig().save();
+        } catch (ConfigurationException e) {
+            // Ignore
+        }
+    }
+
+    /** Tells if a new session is started before each plan of a batch run from the batch tab. */
+    public boolean isBatchNewSession() {
+        return batchNewSession;
+    }
+
+    public void setBatchNewSession(boolean batchNewSession) {
+        this.batchNewSession = batchNewSession;
+        getConfig().setProperty(BATCH_NEW_SESSION_KEY, batchNewSession);
+        try {
+            getConfig().save();
+        } catch (ConfigurationException e) {
+            // Ignore
+        }
     }
 
     public String getLastPlanPath() {
