@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
@@ -79,8 +80,6 @@ public class RedirectScript implements BrowserHook {
         sb.append(uuid);
         String zapurl = sb.toString();
         ssutils.getWebDriver().get(zapurl);
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) ssutils.getWebDriver();
-        jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + apiurl + "')");
         String browserName = ClientUtils.getBrowserName(ssutils.getWebDriver());
         if (!waitForExtensionConfigured(ssutils.getWebDriver())) {
             // Content script did not run on first navigation — retry
@@ -113,6 +112,10 @@ public class RedirectScript implements BrowserHook {
         try {
             new WebDriverWait(driver, extensionConfigureTimeout)
                     .pollingEvery(extensionConfigurePollInterval)
+                    // The browser might not have loaded the callback page yet, for example if it
+                    // does not wait for the navigation to finish, in which case the script can
+                    // fail, as the page might not have a usable localStorage.
+                    .ignoring(WebDriverException.class)
                     .until(
                             d ->
                                     "true"
@@ -122,6 +125,8 @@ public class RedirectScript implements BrowserHook {
                                                                     EXTENSION_CONFIGURED_SCRIPT)));
             return true;
         } catch (Exception e) {
+            // Timed out, the cause is the last error ignored while waiting, if any.
+            LOGGER.debug("The ZAP extension was not configured: {}", e.getMessage(), e);
             return false;
         }
     }
