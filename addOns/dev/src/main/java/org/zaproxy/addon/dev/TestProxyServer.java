@@ -55,6 +55,7 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieD
 import org.zaproxy.addon.dev.auth.simpleJsonBearerDiffCookies.SimpleJsonBearerDiffCookiesDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
+import org.zaproxy.addon.dev.auth.simpleJsonVerifyFails.SimpleJsonVerifyFailsDir;
 import org.zaproxy.addon.dev.auth.sso1.SSO1RootDir;
 import org.zaproxy.addon.dev.auth.sso2.SSO2RootDir;
 import org.zaproxy.addon.dev.auth.ssoMs.SSOMSRootDir;
@@ -112,6 +113,7 @@ public class TestProxyServer {
         authDir.addDirectory(
                 new SimpleJsonBearerDiffCookiesDir(this, "simple-json-bearer-js-diff-cookies"));
         authDir.addDirectory(new SimpleJsonCookieDir(this, "simple-json-cookie"));
+        authDir.addDirectory(new SimpleJsonVerifyFailsDir(this, "simple-json-verify-fails"));
         authDir.addDirectory(new PasswordAddedJsonDir(this, "password-added-json"));
         authDir.addDirectory(new PasswordHiddenJsonDir(this, "password-hidden-json"));
         authDir.addDirectory(new PasswordNewPageDir(this, "password-new-page"));

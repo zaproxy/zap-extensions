@@ -70,11 +70,13 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.authhelper.AuthDiagnosticsPolicy.Mode;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.users.User;
 
@@ -328,6 +330,55 @@ class AuthenticationDiagnosticsUnitTest extends TestUtils {
         assertThat(diagnostic.getSteps(), hasSize(1));
         assertThat(diagnostic.getSteps().get(0).getUrl(), is(equalTo("https://www.example.com")));
         assertThat(diagnostic.getSteps().get(0).getMessages(), is(empty()));
+    }
+
+    @Test
+    void shouldRecordVerificationRequestAndStepOnAuthOnFailure() throws Exception {
+        // Given
+        policy.configure(CONTEXT_NAME, Mode.AUTH_ON_FAILURE, 2);
+        User user = mockUser();
+        HttpMessage authMsg = new HttpMessage();
+        authMsg.getRequestHeader().setMethod("GET");
+        authMsg.getRequestHeader().setURI(new URI("https://www.example.com/login", true));
+        HttpMessage pollMsg = new HttpMessage();
+        pollMsg.getRequestHeader().setMethod("GET");
+        pollMsg.getRequestHeader().setURI(new URI("https://www.example.com/poll", true));
+        boolean authenticated;
+        // When
+        try (MockedStatic<HttpSender> sender = mockStatic(HttpSender.class);
+                MockedConstruction<HistoryReference> history =
+                        mockConstruction(HistoryReference.class)) {
+            ArgumentCaptor<HttpSenderListener> captor =
+                    ArgumentCaptor.forClass(HttpSenderListener.class);
+            try (AuthenticationDiagnostics diags =
+                    new AuthenticationDiagnostics(false, "method", CONTEXT_NAME, "user")) {
+                authenticated =
+                        diags.recordVerification(
+                                authMsg,
+                                () -> {
+                                    sender.verify(() -> HttpSender.addListener(captor.capture()));
+                                    captor.getAllValues()
+                                            .get(captor.getAllValues().size() - 1)
+                                            .onHttpResponseReceive(
+                                                    pollMsg,
+                                                    HttpSender.AUTHENTICATION_POLL_INITIATOR,
+                                                    null);
+                                    return false;
+                                });
+            }
+            // Then
+            assertThat(history.constructed(), hasSize(1));
+            sender.verify(
+                    () -> HttpSender.removeListener(any(HttpSenderListener.class)), atLeastOnce());
+        }
+        assertThat(authenticated, is(equalTo(false)));
+        policy.onAuthenticationRequestFailure(user, mock(HttpMessage.class));
+        Diagnostic diagnostic = persistedDiagnostic();
+        assertThat(diagnostic.getSteps(), hasSize(1));
+        assertThat(
+                diagnostic.getSteps().get(0).getDescription(),
+                is(equalTo("Unauthenticated Message")));
+        assertThat(diagnostic.getSteps().get(0).getMessages(), hasSize(1));
     }
 
     private static User mockUser() {

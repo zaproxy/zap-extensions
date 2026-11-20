@@ -138,6 +138,9 @@ public class AuthUtils {
     public static final String AUTH_BROWSER_HTTP_AUTH_UNKNOWN_STATS =
             "stats.auth.browser.http.unknown";
 
+    /** The last authentication failure set when the verification of the authentication failed. */
+    public static final String VERIFICATION_FAILED = "Authentication verification failed";
+
     public static final String[] HEADERS = {HttpHeader.AUTHORIZATION, "X-CSRF-Token"};
     public static final String[] JSON_IDS = {"accesstoken", "token"};
     private static final List<String> USERNAME_FIELD_INDICATORS =
@@ -1423,6 +1426,20 @@ public class AuthUtils {
         }
 
         return contextList;
+    }
+
+    /**
+     * Tells whether the verification of the last authentication failed for any user of the given
+     * context.
+     */
+    public static boolean hasVerificationFailed(Context context) {
+        ExtensionUserManagement extUser = getExtension(ExtensionUserManagement.class);
+        return extUser != null
+                && extUser.getContextUserAuthManager(context.getId()).getUsers().stream()
+                        .anyMatch(
+                                u ->
+                                        VERIFICATION_FAILED.equals(
+                                                u.getAuthenticationState().getLastAuthFailure()));
     }
 
     static User getUser(Context context, String userName) {
