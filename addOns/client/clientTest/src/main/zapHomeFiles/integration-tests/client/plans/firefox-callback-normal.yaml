@@ -1,0 +1,37 @@
+---
+# Control for firefox-callback-none.yaml: Firefox is launched with the "normal" page load strategy, so the
+# launch waits for the callback page, and the ZAP browser extension must be configured.
+# Needs a Firefox browser, ZAP to be run in dev mode (for the slow loading test app) and the
+# Automation Framework and Graal.js add-ons.
+env:
+  contexts:
+    - name: "firefox-callback-normal"
+      urls:
+        - "http://localhost:9091/client/slow-load"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "script"
+    name: "add launch check"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "ECMAScript : Graal.js"
+      name: "firefox-callback-normal"
+      inline: |
+        var LaunchCheck = Java.type("org.zaproxy.addon.clienttest.LaunchCheck");
+        print(LaunchCheck.check(
+            "firefox-headless",
+            "normal",
+            "http://localhost:9091/client/slow-load/page?delay=3000"));
+  - type: "script"
+    name: "launch firefox"
+    parameters:
+      action: "run"
+      type: "standalone"
+      name: "firefox-callback-normal"
+      failureLevel: "error"

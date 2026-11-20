@@ -4,6 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- No longer write the unused `localzapurl` item to the browser local storage on launch.
+
+### Fixed
+- Wait for the browser to load the ZAP callback page when configuring the browser extension on launch, instead of failing if the page is not usable yet, for example in Firefox when the page load strategy is `none`.
 
 
 ## [0.35.0] - 2026-11-18

@@ -1,0 +1,41 @@
+---
+# Checks that the ZAP browser extension is configured when Firefox is launched with the "none" page
+# load strategy, which does not wait for the callback page to load. The launch is the same as the one
+# the Client Spider does. The browser is still on the initial page (about:home or about:blank) when
+# the launch starts to configure the extension, and in Firefox localStorage is not usable there. The
+# launch must wait for the callback page, if it does not this plan fails with "The command does not
+# support browsing contexts in privileged scope".
+# Needs a Firefox browser, ZAP to be run in dev mode (for the slow loading test app) and the
+# Automation Framework and Graal.js add-ons.
+env:
+  contexts:
+    - name: "firefox-callback-none"
+      urls:
+        - "http://localhost:9091/client/slow-load"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "script"
+    name: "add launch check"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "ECMAScript : Graal.js"
+      name: "firefox-callback-none"
+      inline: |
+        var LaunchCheck = Java.type("org.zaproxy.addon.clienttest.LaunchCheck");
+        print(LaunchCheck.check(
+            "firefox-headless",
+            "none",
+            "http://localhost:9091/client/slow-load/page?delay=3000"));
+  - type: "script"
+    name: "launch firefox"
+    parameters:
+      action: "run"
+      type: "standalone"
+      name: "firefox-callback-none"
+      failureLevel: "error"

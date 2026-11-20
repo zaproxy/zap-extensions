@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Slow loading page</h1>
+	<p>The page <a href="page">page</a> only responds after a delay, which is set with the
+	<code>delay</code> parameter in milliseconds (default 3000, maximum 30000).</p>
+	<p>A browser using the <code>none</code> page load strategy returns from the navigation to
+	the page straight away. Until the page has loaded the browser is still on
+	<code>about:blank</code>, where in Firefox <code>localStorage</code> is not usable.</p>
+	<ul>
+		<li><a href="page?delay=0">No delay</a></li>
+		<li><a href="page?delay=1000">1 second</a></li>
+		<li><a href="page?delay=3000">3 seconds</a></li>
+		<li><a href="page?delay=10000">10 seconds</a></li>
+	</ul>
+</div>
+</body>
+</html>
