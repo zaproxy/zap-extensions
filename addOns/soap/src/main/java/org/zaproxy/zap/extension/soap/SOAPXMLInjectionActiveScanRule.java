@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
@@ -133,34 +134,32 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin
                      * Response has no SOAP format. It is still notified since it is an unexpected
                      * result.
                      */
-                    newAlert()
-                            .setRisk(Alert.RISK_LOW)
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setAttack(finalValue)
-                            .setOtherInfo(
-                                    Constant.messages.getString(MESSAGE_PREFIX + "warn1")
-                                            + soapVersionInfo)
-                            .setMessage(attackMsg)
-                            .raise();
+                    buildAlert(false, finalValue, soapVersionInfo).setMessage(attackMsg).raise();
                 } else if (responsesAreEqual(modifiedMsg, attackMsg)
                         && !(responsesAreEqual(originalMsg, modifiedMsg))) {
                     /*
                      * The attack message has achieved the same result as the modified message, so
                      * XML injection attack worked.
                      */
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setAttack(finalValue)
-                            .setOtherInfo(
-                                    Constant.messages.getString(MESSAGE_PREFIX + "warn2")
-                                            + soapVersionInfo)
-                            .setMessage(attackMsg)
-                            .raise();
+                    buildAlert(true, finalValue, soapVersionInfo).setMessage(attackMsg).raise();
                 }
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private AlertBuilder buildAlert(
+            boolean injectionWorked, String attack, String soapVersionInfo) {
+        return newAlert()
+                .setRisk(injectionWorked ? getRisk() : Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAttack(attack)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                        MESSAGE_PREFIX + (injectionWorked ? "warn2" : "warn1"))
+                                + soapVersionInfo)
+                .setAlertRef(getId() + (injectionWorked ? "-1" : "-2"));
     }
 
     /* Checks whether server response follows a SOAP message format. */
@@ -226,5 +225,13 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String attack = "1001</accountId><accountId>1001_modified";
+        return List.of(
+                buildAlert(true, attack, " SOAP version 1.1.").build(),
+                buildAlert(false, attack, " SOAP version 1.1.").build());
     }
 }
