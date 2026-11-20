@@ -24,7 +24,11 @@ import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -56,8 +60,21 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
     private ZestClientElement client = null;
     private boolean add = false;
 
+    private final ShadowPathTableModel shadowPathModel = new ShadowPathTableModel();
+    private JTable shadowPathTable;
+    private JButton addShadowButton;
+    private JButton modifyShadowButton;
+    private JButton removeShadowButton;
+    private ZestShadowPathEntryDialog shadowPathDialog;
+
     public ZestClientElementDialog(ExtensionZest ext, Frame owner, String title, Dimension dim) {
-        super(owner, title, dim);
+        super(
+                owner,
+                title,
+                dim,
+                new String[] {
+                    "zest.dialog.client.tab.client", "zest.dialog.client.tab.shadowPath"
+                });
         this.extension = ext;
     }
 
@@ -80,18 +97,104 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
         // Pull down of all the valid window ids
         List<String> windowIds = new ArrayList<>(script.getZestScript().getClientWindowHandles());
         Collections.sort(windowIds);
-        this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
+        this.addComboField(0, FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
 
         String clientType = client.getType();
         if (clientType != null) {
             clientType =
                     Constant.messages.getString(ELEMENT_TYPE_PREFIX + clientType.toLowerCase());
         }
-        this.addComboField(FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
-        this.addTextField(FIELD_ELEMENT, client.getElement());
-        this.addNumberField(FIELD_WAIT_FOR_MSEC, 0, Integer.MAX_VALUE, client.getWaitForMsec());
+        this.addComboField(0, FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
+        this.addTextField(0, FIELD_ELEMENT, client.getElement());
+
+        this.addNumberField(0, FIELD_WAIT_FOR_MSEC, 0, Integer.MAX_VALUE, client.getWaitForMsec());
+
+        shadowPathModel.setValues(
+                client.getShadowPath() != null ? client.getShadowPath() : List.of());
+        List<JButton> buttons = new ArrayList<>();
+        buttons.add(getAddShadowButton());
+        buttons.add(getModifyShadowButton());
+        buttons.add(getRemoveShadowButton());
+        this.addTableField(1, getShadowPathTable(), buttons);
 
         setFieldMainPopupMenu(FIELD_ELEMENT);
+    }
+
+    private JTable getShadowPathTable() {
+        if (shadowPathTable == null) {
+            shadowPathTable = new JTable(shadowPathModel);
+            shadowPathTable
+                    .getSelectionModel()
+                    .addListSelectionListener(
+                            e -> {
+                                boolean single = shadowPathTable.getSelectedRowCount() == 1;
+                                getModifyShadowButton().setEnabled(single);
+                                getRemoveShadowButton().setEnabled(single);
+                            });
+        }
+        return shadowPathTable;
+    }
+
+    private JButton getAddShadowButton() {
+        if (addShadowButton == null) {
+            addShadowButton =
+                    new JButton(Constant.messages.getString("zest.dialog.script.button.add"));
+            addShadowButton.addActionListener(
+                    e -> {
+                        ZestShadowPathEntryDialog dialog = getShadowPathDialog();
+                        if (!dialog.isVisible()) {
+                            dialog.init("", true, -1);
+                            dialog.setVisible(true);
+                        }
+                    });
+        }
+        return addShadowButton;
+    }
+
+    private JButton getModifyShadowButton() {
+        if (modifyShadowButton == null) {
+            modifyShadowButton =
+                    new JButton(Constant.messages.getString("zest.dialog.script.button.modify"));
+            modifyShadowButton.setEnabled(false);
+            modifyShadowButton.addActionListener(
+                    e -> {
+                        ZestShadowPathEntryDialog dialog = getShadowPathDialog();
+                        if (!dialog.isVisible()) {
+                            int row = getShadowPathTable().getSelectedRow();
+                            dialog.init((String) shadowPathModel.getValueAt(row, 0), false, row);
+                            dialog.setVisible(true);
+                        }
+                    });
+        }
+        return modifyShadowButton;
+    }
+
+    private JButton getRemoveShadowButton() {
+        if (removeShadowButton == null) {
+            removeShadowButton =
+                    new JButton(Constant.messages.getString("zest.dialog.script.button.remove"));
+            removeShadowButton.setEnabled(false);
+            removeShadowButton.addActionListener(
+                    e -> {
+                        if (JOptionPane.OK_OPTION
+                                == View.getSingleton()
+                                        .showConfirmDialog(
+                                                this,
+                                                Constant.messages.getString(
+                                                        "zest.dialog.shadowPath.remove"))) {
+                            shadowPathModel.remove(getShadowPathTable().getSelectedRow());
+                        }
+                    });
+        }
+        return removeShadowButton;
+    }
+
+    private ZestShadowPathEntryDialog getShadowPathDialog() {
+        if (shadowPathDialog == null) {
+            shadowPathDialog =
+                    new ZestShadowPathEntryDialog(shadowPathModel, this, new Dimension(400, 150));
+        }
+        return shadowPathDialog;
     }
 
     private List<String> getElementTypeFields() {
@@ -143,6 +246,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
         client.setType(getSelectedElementType());
         client.setElement(this.getStringValue(FIELD_ELEMENT));
         client.setWaitForMsec(this.getIntValue(FIELD_WAIT_FOR_MSEC));
+        client.setShadowPath(toShadowPath(shadowPathModel.getValues()));
 
         this.saveFields();
 
@@ -166,6 +270,17 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
             return Constant.messages.getString("zest.dialog.client.error.element");
         }
 
+        return validateShadowPath(shadowPathModel.getValues(), getSelectedElementType());
+    }
+
+    static List<String> toShadowPath(List<String> values) {
+        return values == null || values.isEmpty() ? null : new ArrayList<>(values);
+    }
+
+    static String validateShadowPath(List<String> shadowPath, String selectedType) {
+        if (shadowPath != null && !shadowPath.isEmpty() && !"cssselector".equals(selectedType)) {
+            return Constant.messages.getString("zest.dialog.client.error.shadowPathType");
+        }
         return null;
     }
 

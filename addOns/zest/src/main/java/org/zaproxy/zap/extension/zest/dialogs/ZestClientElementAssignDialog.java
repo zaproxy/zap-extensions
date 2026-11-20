@@ -50,9 +50,9 @@ public class ZestClientElementAssignDialog extends ZestClientElementDialog {
         super.init(script, parent, child, req, client, add);
 
         this.addTextField(
-                FIELD_ATTRIBUTE, ((ZestClientElementAssign) this.getClient()).getAttribute());
+                0, FIELD_ATTRIBUTE, ((ZestClientElementAssign) this.getClient()).getAttribute());
         this.addTextField(
-                FIELD_VARIABLE, ((ZestClientElementAssign) this.getClient()).getVariableName());
+                0, FIELD_VARIABLE, ((ZestClientElementAssign) this.getClient()).getVariableName());
 
         if (add) {
             this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssign.add.title"));

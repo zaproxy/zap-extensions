@@ -49,7 +49,7 @@ public class ZestClientElementSendKeysDialog extends ZestClientElementDialog {
             boolean add) {
         super.init(script, parent, child, req, client, add);
 
-        this.addTextField(FIELD_VALUE, ((ZestClientElementSendKeys) client).getValue());
+        this.addTextField(0, FIELD_VALUE, ((ZestClientElementSendKeys) client).getValue());
 
         if (add) {
             this.setTitle(
