@@ -1,0 +1,48 @@
+name: Create Gitleaks Update PR
+
+on:
+  schedule:
+    - cron:  '0 4 2,16 * *'
+  workflow_dispatch:
+
+jobs:
+  create_pr:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Feature Branch and Raise PR
+      run: |
+        # Setup git details
+        export GITHUB_USER=zapbot
+        git config --global user.email "12745184+zapbot@users.noreply.github.com"
+        git config --global user.name $GITHUB_USER
+        # Clone repos
+        git clone https://github.com/gitleaks/gitleaks.git --depth 1
+        git clone -o upstream https://github.com/zaproxy/zap-extensions.git
+        cd zap-extensions
+        git remote add origin https://github.com/$GITHUB_USER/zap-extensions.git
+        cd ../gitleaks
+        # Setup env vars for later
+        SRC_BASE="gitleaks/gitleaks@"$(git log -1 --format=format:%h)
+        BRANCH="gitleaks-update"
+        SHORT_DATE="$(date +"%Y-%m-%d")"
+        export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
+        # Build the feature branch
+        cd ../zap-extensions
+        git checkout -b $BRANCH
+        cd ..
+        cp -f gitleaks/config/gitleaks.toml zap-extensions/addOns/pscanrulesAlpha/src/main/resources/org/zaproxy/zap/extension/pscanrulesAlpha/resources/gitleaks.toml
+        cd zap-extensions
+        ## Update the index to be sure git is aware of changes
+        git update-index -q --refresh
+        ## If there are changes: comment, commit, PR
+        if ! git diff-index --quiet HEAD --; then 
+          ./gradlew :addOns:pscanrulesAlpha:updateChangelog --change="- Updated Gitleaks patterns for Secrets Disclosure (10005)."
+          ./gradlew :addOns:pscanrulesAlpha:prepareRelease
+          git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
+          git add .
+          git commit -m "Gitleaks Update $SHORT_DATE" -m "Updates based on $SRC_BASE" --signoff
+          git push --set-upstream origin $BRANCH --force
+          # Open the PR
+          gh pr create -f
+        fi
