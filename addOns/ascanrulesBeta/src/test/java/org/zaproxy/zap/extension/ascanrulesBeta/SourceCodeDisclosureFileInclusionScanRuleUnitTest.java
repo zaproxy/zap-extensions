@@ -201,10 +201,39 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertWhenConditionsRightAndNoExtensionMatchesAnyContent() throws IOException {
-        // Given
-        String path = "/shouldAlertWhenConditionsRightAndNoExtensionMatchesAnyContent";
+    void shouldNotAlertWhenNoExtensionAndBodyLacksSourcePatterns() throws IOException {
+        // Given: extensionless path, different body, but no JSP/PHP/Java markers
+        String path = "/shouldNotAlertWhenNoExtensionAndBodyLacksSourcePatterns";
         nano.addHandler(new FiHandler(path, Response.Status.OK, "different"));
+        HttpMessage msg = this.getHttpMessage("GET", path + "?inc=bar", DEFAULT_RESPONSE_STRING);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+        assertThat(httpMessagesSent, is(not(empty())));
+    }
+
+    @Test
+    void shouldNotAlertOnExtensionlessReflectingEchoPage() throws IOException {
+        // Given: page HTML-escapes and echoes the query param (zaproxy/zaproxy#9514)
+        String path = "/echo";
+        nano.addHandler(new EchoHandler(path));
+        HttpMessage msg =
+                this.getHttpMessage(
+                        "GET", path + "?q=hello", "<html><body><p>echo: hello</p></body></html>");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @Test
+    void shouldAlertWhenNoExtensionButBodyMatchesPhpSource() throws IOException {
+        // Given: still alert when extensionless response looks like PHP source
+        String path = "/shouldAlertWhenNoExtensionButBodyMatchesPhpSource";
+        nano.addHandler(new FiHandler(path, Response.Status.OK, "different", "<?php echo 1;"));
         HttpMessage msg = this.getHttpMessage("GET", path + "?inc=bar", DEFAULT_RESPONSE_STRING);
         rule.init(msg, parent);
         // When
@@ -242,11 +271,18 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
     private static class FiHandler extends NanoServerHandler {
         private final Response.IStatus status;
         private final String randBody;
+        private final String disclosureBody;
 
         public FiHandler(String path, Response.IStatus status, String randBody) {
+            this(path, status, randBody, "something");
+        }
+
+        public FiHandler(
+                String path, Response.IStatus status, String randBody, String disclosureBody) {
             super(path);
             this.status = status;
             this.randBody = randBody;
+            this.disclosureBody = disclosureBody;
         }
 
         @Override
@@ -268,10 +304,32 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
             } else if (uri.endsWith("empty")) {
                 return newFixedLengthResponse("");
             } else if (uri.endsWith(pValue)) {
-                return newFixedLengthResponse("something");
+                return newFixedLengthResponse(disclosureBody);
             }
             return newFixedLengthResponse(
                     NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_HTML, DEFAULT_RESPONSE_STRING);
+        }
+    }
+
+    /** Reflects HTML-escaped query param q (repro for zaproxy/zaproxy#9514). */
+    private static class EchoHandler extends NanoServerHandler {
+        public EchoHandler(String path) {
+            super(path);
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            String q = getFirstParamValue(session, "q");
+            if (q == null) {
+                q = "";
+            }
+            String escaped =
+                    q.replace("&", "&amp;")
+                            .replace("<", "&lt;")
+                            .replace(">", "&gt;")
+                            .replace("\"", "&quot;");
+            String body = "<html><body><p>echo: " + escaped + "</p></body></html>";
+            return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, body);
         }
     }
 }

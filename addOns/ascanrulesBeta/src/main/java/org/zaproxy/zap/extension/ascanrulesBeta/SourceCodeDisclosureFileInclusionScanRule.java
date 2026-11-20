@@ -481,8 +481,18 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             // known file type, but not matched. do not accept it.
             return false;
         } else {
-            // no file extension, therefore no way to verify the source code.. so accept it as it is
-            return true;
+            // No file extension: do not accept on similarity alone. Require a known
+            // source-code pattern so HTML pages that only echo the parameter (issue
+            // zaproxy/zaproxy#9514) do not raise a High alert.
+            String body = new String(data);
+            if (PATTERN_JSP.matcher(body).find()
+                    || PATTERN_PHP.matcher(body).find()
+                    || PATTERN_JAVA.matcher(body).find()) {
+                return true;
+            }
+            LOGGER.debug(
+                    "No file extension and response does not match known source patterns; not accepting.");
+            return false;
         }
     }
 
