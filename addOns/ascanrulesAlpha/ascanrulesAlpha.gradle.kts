@@ -16,6 +16,18 @@ zapAddOn {
         }
 
         extensions {
+            register("org.zaproxy.zap.extension.ascanrulesAlpha.payloader.ExtensionPayloader") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.ascanrulesAlpha.payloader"))
+                }
+                dependencies {
+                    addOns {
+                        register("custompayloads") {
+                            version.set(">= 0.15.0 & < 1.0.0")
+                        }
+                    }
+                }
+            }
             register("org.zaproxy.zap.extension.ascanrulesAlpha.scripts.ExtensionAscanRulesAlphaScripts") {
                 classnames {
                     allowed.set(listOf("org.zaproxy.zap.extension.ascanrulesAlpha.scripts"))
@@ -33,6 +45,7 @@ zapAddOn {
 
 dependencies {
     zapAddOn("commonlib")
+    zapAddOn("custompayloads")
 
     testImplementation(project(":testutils"))
     testImplementation(project(":addOns:graaljs"))
