@@ -472,7 +472,7 @@ When the disclosed version is incomplete (e.g. "PHP/8.1" rather than "PHP/8.1.2"
 that version are listed, but as the version does not say which of them have been fixed a separate alert type is raised, at
 low risk and low confidence.
 The confidence is also lowered when the version is only assumed to be affected (for PHP, when it is older than any version
-listed in the advisories; for Apache HTTP Server, when the project lists it as only possibly affected; for nginx, when the issue only affects Windows), or when it appears to
+listed in the advisories; for Apache HTTP Server, when the project lists it as only possibly affected; for nginx, when the issue only affects Windows; for Ruby, when the version is older than any version listed in the advisories, or the advisories list its patch levels separately), or when it appears to
 be a distribution package (e.g. "Apache/2.4.58 (Ubuntu)" or "PHP/7.4.3-4ubuntu2.19"), as distributions usually backport
 security fixes without changing the version.<br>
 The lists of known vulnerabilities are bundled with the add-on and updated with each release.
@@ -497,6 +497,12 @@ incomplete, e.g. "Apache/2.4".</li>
 detailed in the <a href="nginx-known-vulnerabilities.html">nginx Known Vulnerabilities</a> help page.</li>
 <li><b>20020-6: nginx Version with Possible Known Vulnerabilities</b> - raised instead of 20020-5 when the version is
 incomplete, e.g. "nginx/1.25".</li>
+<li><b>20020-7: Ruby Version with Known Vulnerabilities</b> - detects versions such as "Ruby/3.2.0" in the "Server" header
+(e.g. "WEBrick/1.8.1 (Ruby/3.2.0)") and the version given by the "X-Ruby-Version" header. The known vulnerabilities are generated from the
+<a href="https://github.com/rubysec/ruby-advisory-db">ruby advisory database</a>, and are detailed in the
+<a href="ruby-known-vulnerabilities.html">Ruby Known Vulnerabilities</a> help page.</li>
+<li><b>20020-8: Ruby Version with Possible Known Vulnerabilities</b> - raised instead of 20020-7 when the version is
+incomplete, e.g. "Ruby/3.2".</li>
 </ul>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ServerSideVersionScanRule.java">ServerSideVersionScanRule.java</a>

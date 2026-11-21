@@ -101,6 +101,18 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
             ] }
             """;
 
+    private static final String RUBY_PROBLEMS =
+            """
+            { "vulnerabilities": [
+              { "cve": "CVE-2023-0001", "name": "Ruby high", "severity": "high",
+                "links": [ "https://example.com/r1" ],
+                "affected": [ { "introduced": "3.1.0", "fixed": "3.2.2" } ] },
+              { "cve": "CVE-2023-0002", "name": "Ruby old", "severity": "low",
+                "links": [ "https://example.com/r2" ],
+                "affected": [ { "introduced": "0.0.0", "fixed": "2.7.0", "assumed": true } ] }
+            ] }
+            """;
+
     @TempDir Path tempDir;
 
     @Override
@@ -126,6 +138,9 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
         ServerSideVersionScanRule.setKnownVulnerabilitiesFile(
                 Technology.NGINX,
                 Files.writeString(tempDir.resolve("nginx-vulnerabilities.json"), NGINX_PROBLEMS));
+        ServerSideVersionScanRule.setKnownVulnerabilitiesFile(
+                Technology.RUBY,
+                Files.writeString(tempDir.resolve("ruby-vulnerabilities.json"), RUBY_PROBLEMS));
     }
 
     @Test
@@ -133,7 +148,7 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(16)));
+        assertThat(tags.size(), is(equalTo(18)));
         assertThat(tags.containsKey(CommonAlertTag.OWASP_2025_A03_SUPPLY_CHAIN.getTag()), is(true));
         assertThat(tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()), is(true));
         assertThat(tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()), is(true));
@@ -334,6 +349,133 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
                                 expectedVersion,
                                 expectedEvidence,
                                 distribution)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "Server: WEBrick/1.8.1 (Ruby/3.2.0), Server, 3.2.0, Ruby/3.2.0",
+        "Server: WEBrick/1.6.1 (Ruby/2.7.4/2021-07-07), Server, 2.7.4, Ruby/2.7.4",
+        "Server: webrick/1.8.1 (ruby/3.2), Server, 3.2, ruby/3.2",
+        "X-Ruby-Version: 3.2.0, X-Ruby-Version, 3.2.0, 3.2.0",
+        "x-ruby-version: 3.2.0 , x-ruby-version, 3.2.0, 3.2.0",
+        "X-Ruby-Version: 3.2, X-Ruby-Version, 3.2, 3.2",
+    })
+    void shouldExtractRubyVersionFromHeader(
+            String header, String expectedHeader, String expectedVersion, String expectedEvidence)
+            throws Exception {
+        // Given
+        HttpResponseHeader responseHeader = createResponseHeader(header);
+        // When
+        List<DetectedVersion> versions = ServerSideVersionScanRule.getVersions(responseHeader);
+        // Then
+        assertThat(
+                versions,
+                contains(
+                        new DetectedVersion(
+                                Technology.RUBY,
+                                expectedHeader,
+                                expectedVersion,
+                                expectedEvidence)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Server: WEBrick/1.8.1",
+                "Server: JRuby/9.4.5.0",
+                "Server: mod_ruby/1.3",
+                "Server: Some-Ruby/1.0",
+                "Server: Ruby",
+                "X-Ruby-Version: not-a-version",
+                "X-Ruby-Version: 3.2.0-p1",
+                "X-Ruby-Version: Ruby 3.2.0",
+                "X-Ruby-Version:",
+                "X-Other-Version: 3.2.0",
+                "X-Powered-By: 3.2.0"
+            })
+    void shouldNotExtractRubyVersionFromOtherHeaders(String header) throws Exception {
+        // Given
+        HttpResponseHeader responseHeader = createResponseHeader(header);
+        // When
+        List<DetectedVersion> versions = ServerSideVersionScanRule.getVersions(responseHeader);
+        // Then
+        assertThat(versions, is(empty()));
+    }
+
+    @Test
+    void shouldRaiseRubyAlertForVulnerableVersion() throws Exception {
+        // Given
+        HttpMessage msg =
+                createMessage("http://www.example.com/", "Server: WEBrick/1.8.1 (Ruby/3.2.0)");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getAlertRef(), is("20020-7"));
+        assertThat(alert.getName(), is("Ruby Version with Known Vulnerabilities"));
+        assertThat(alert.getRisk(), is(Alert.RISK_HIGH));
+        assertThat(alert.getEvidence(), is("Ruby/3.2.0"));
+        assertThat(
+                alert.getReference(),
+                is(
+                        "https://www.ruby-lang.org/en/security/\nhttps://github.com/rubysec/ruby-advisory-db/tree/master/rubies/ruby\n"
+                                + ServerSideVersionScanRule.RUBY_HELP_URL
+                                + "#cve-2023-0001"));
+        assertThat(alert.getTags().containsKey("CVE-2023-0001"), is(true));
+    }
+
+    @Test
+    void shouldRaiseRubyAlertForVulnerableVersionInRubyVersionHeader() throws Exception {
+        // Given
+        HttpMessage msg = createMessage("http://www.example.com/", "X-Ruby-Version: 3.1.4");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getAlertRef(), is("20020-7"));
+        assertThat(alert.getEvidence(), is("3.1.4"));
+        assertThat(alert.getOtherInfo(), containsString("\"X-Ruby-Version\" HTTP response header"));
+    }
+
+    @Test
+    void shouldRaiseOneRubyAlertWhenBothHeadersGiveTheSameVersion() throws Exception {
+        // Given
+        HttpMessage msg =
+                createMessage(
+                        "http://www.example.com/",
+                        "Server: WEBrick/1.8.1 (Ruby/3.2.0)\r\nX-Ruby-Version: 3.2.0");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldRaiseLowConfidenceRubyAlertForIncompleteVersion() throws Exception {
+        // Given
+        HttpMessage msg = createMessage("http://www.example.com/", "X-Ruby-Version: 3.2");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getAlertRef(), is("20020-8"));
+        assertThat(alert.getName(), is("Ruby Version with Possible Known Vulnerabilities"));
+        assertThat(alert.getRisk(), is(Alert.RISK_LOW));
+        assertThat(alert.getConfidence(), is(Alert.CONFIDENCE_LOW));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"3.2.2", "3.3.0", "4.0.1"})
+    void shouldNotRaiseRubyAlertForPatchedVersions(String version) throws Exception {
+        // Given
+        HttpMessage msg = createMessage("http://www.example.com/", "X-Ruby-Version: " + version);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -847,7 +989,7 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
-        assertThat(alerts, hasSize(6));
+        assertThat(alerts, hasSize(8));
         Alert alert = alerts.get(0);
         assertThat(alert.getAlertRef(), is("20020-1"));
         assertThat(alert.getName(), is("PHP Version with Known Vulnerabilities"));
@@ -874,6 +1016,14 @@ class ServerSideVersionScanRuleUnitTest extends PassiveScannerTest<ServerSideVer
         assertThat(nginxAlert.getName(), is("nginx Version with Known Vulnerabilities"));
         assertThat(nginxAlert.getEvidence(), is("nginx/1.20.0"));
         assertThat(alerts.get(5).getAlertRef(), is("20020-6"));
+
+        Alert rubyAlert = alerts.get(6);
+        assertThat(rubyAlert.getAlertRef(), is("20020-7"));
+        assertThat(rubyAlert.getName(), is("Ruby Version with Known Vulnerabilities"));
+        assertThat(rubyAlert.getEvidence(), is("Ruby/3.2.0"));
+        Alert rubyIncomplete = alerts.get(7);
+        assertThat(rubyIncomplete.getAlertRef(), is("20020-8"));
+        assertThat(rubyIncomplete.getEvidence(), is("3.2"));
 
         Alert apacheAlert = alerts.get(2);
         assertThat(apacheAlert.getAlertRef(), is("20020-3"));

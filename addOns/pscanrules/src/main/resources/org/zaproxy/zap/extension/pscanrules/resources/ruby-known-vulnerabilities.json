@@ -1,0 +1,2500 @@
+{
+  "_comment": [
+    "Known vulnerabilities in Ruby itself (the interpreter, including the default and bundled gems it ships with, not other gems), used by the Server Side Technology Version with Known Vulnerabilities passive scan rule.",
+    "The 'vulnerabilities' array is GENERATED from the advisories under rubies/ruby in https://github.com/rubysec/ruby-advisory-db by",
+    "':addOns:pscanrules:updateRubyKnownVulnerabilities'; do not hand edit generated entries, they will be overwritten.",
+    "Entries with \"source\": \"manual\" are preserved by the generator and are for problems the advisories do not cover.",
+    "Fields:",
+    "  cve         - the CVE identifier, e.g. CVE-2024-27282.",
+    "  name        - a short title for the problem, taken from the advisory.",
+    "  description - a brief, plain-text description of the problem and its impact, from the advisory.",
+    "  severity    - one of: critical, high, medium, low. Maps to the ZAP alert risk. Derived from the CVSS score (v3 if given, else v2); medium when the advisory has none.",
+    "  cvss        - the CVSS base score from the advisory, when it has one.",
+    "  affected    - A version V is affected when introduced <= V < fixed. Ranges must not overlap each other. Versions are plain dotted numerics as reported in headers (e.g. 3.2.0).",
+    "                The advisories list the versions which are NOT affected (the patched release of each line, and later releases, and sometimes versions which were never affected), so the ranges are what is left.",
+    "                Versions are cut down to three components. A release which the advisory lists by patch level (e.g. 1.8.7.352) cannot be told from the header, so it is taken to be affected.",
+    "                Ranges which start at 0.0.0, as no advisory says where the issue was introduced, and ranges involving a patch level are marked \"assumed\": true, which lowers the alert confidence.",
+    "  links       - the NVD entry, the advisory's own link and the first of its related links. The first link is treated as the primary reference.",
+    "  published   - the date of the advisory.",
+    "  source      - 'ruby-advisory-db' for generated entries, 'manual' for hand maintained ones."
+  ],
+  "schemaVersion": 1,
+  "lastUpdated": "2026-11-19",
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2026-46727",
+      "ghsa": "jfc8-2xw7-c79m",
+      "name": "CVE-2026-46727 - Use-after-free in pthread-based getaddrinfo timeout handler",
+      "description": "A race condition leading to a use-after-free in the pthread-based getaddrinfo timeout handler (rb_getaddrinfo in ext/socket/raddrinfo.c) allows a remote attacker who can delay DNS responses near the user-specified timeout to crash a Ruby process that calls Addrinfo.getaddrinfo(..., timeout:) or Socket.tcp(..., resolv_timeout:). Memory-corruption-based exploitation is theoretically possible. The attack could, for example, be carried out through a crafted authoritative DNS server or recursive...",
+      "severity": "high",
+      "cvss": 8.1,
+      "affected": [
+        {
+          "introduced": "4.0.0",
+          "fixed": "4.0.5"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-46727",
+        "https://www.ruby-lang.org/en/news/2026/05/20/ruby-4-0-5-released",
+        "https://github.com/ruby/ruby/releases/tag/v4.0.5",
+        "https://www.ruby-lang.org/en/news/2026/05/20/getaddrinfo-cve-2026-46727",
+        "https://hackerone.com/reports/3607434",
+        "https://github.com/advisories/GHSA-jfc8-2xw7-c79m"
+      ],
+      "published": "2026-05-20",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2026-41316",
+      "ghsa": "q339-8rmv-2mhv",
+      "name": "ERB has an @_init deserialization guard bypass via def_module / def_method / def_class",
+      "description": "ERB implements an @_init guard to prevent code execution when ERB objects are reconstructed via Marshal.load on untrusted data. However, ERB#def_method, ERB#def_module, and ERB#def_class evaluate the template source without checking this guard, allowing an attacker who controls the data passed to Marshal.load to bypass the protection and execute arbitrary code. In particular, def_module takes no arguments, making it straightforward to invoke as part of a deserialization gadget chain.",
+      "severity": "high",
+      "cvss": 8.1,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "3.3.12",
+          "assumed": true
+        },
+        {
+          "introduced": "3.4.0",
+          "fixed": "3.4.10"
+        },
+        {
+          "introduced": "3.5.0",
+          "fixed": "4.0.3"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-41316",
+        "https://www.ruby-lang.org/en/news/2026/07/16/ruby-3-3-12-released",
+        "https://www.ruby-lang.org/en/news/2026/06/30/ruby-3-4-10-released",
+        "https://www.ruby-lang.org/en/news/2026/04/21/ruby-4-0-3-released",
+        "https://www.ruby-lang.org/en/news/2026/04/21/erb-cve-2026-41316",
+        "https://github.com/ruby/erb/blob/master/NEWS.md"
+      ],
+      "published": "2026-04-21",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2025-61594",
+      "ghsa": "j4pr-3wm6-xx2r",
+      "name": "URI Credential Leakage Bypass",
+      "description": "A vulnerability in the URI library bundled with Ruby allows sensitive user credentials (such as usernames or passwords) in a URI to be unintentionally leaked when combining URIs using the + operator. This issue bypasses the previous fix for CVE-2025-27221.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "3.3.10",
+          "assumed": true
+        },
+        {
+          "introduced": "3.4.0",
+          "fixed": "3.4.7"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-61594",
+        "https://www.ruby-lang.org/en/news/2025/10/07/uri-cve-2025-61594/",
+        "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/uri/CVE-2025-61594.yml",
+        "https://www.cve.org/CVERecord?id=CVE-2025-61594",
+        "https://www.ruby-lang.org/en/news/2025/10/23/ruby-3-3-10-released/",
+        "https://www.ruby-lang.org/en/news/2025/10/07/ruby-3-4-7-released/"
+      ],
+      "published": "2025-10-07",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2025-58767",
+      "ghsa": "c2f4-jgmc-q2r5",
+      "name": "DoS vulnerability in REXML",
+      "description": "REXML has a DoS condition when parsing malformed XML file",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "3.2.10",
+          "assumed": true
+        },
+        {
+          "introduced": "3.3.0",
+          "fixed": "3.3.10"
+        },
+        {
+          "introduced": "3.4.0",
+          "fixed": "3.4.8"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-58767",
+        "https://www.ruby-lang.org/en/news/2025/09/18/dos-rexml-cve-2025-58767/",
+        "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/rexml/CVE-2025-58767.yml",
+        "https://www.cve.org/CVERecord?id=CVE-2025-58767",
+        "https://www.ruby-lang.org/en/news/2025/12/17/ruby-3-4-8-released/",
+        "https://bugs.ruby-lang.org/issues/21632"
+      ],
+      "published": "2025-09-18",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2025-24294",
+      "ghsa": "xh69-987w-hrp8",
+      "name": "Possible Denial of Service in resolv gem",
+      "description": "A denial of service vulnerability has been discovered in the resolv gem bundled with Ruby.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "3.2.9",
+          "assumed": true
+        },
+        {
+          "introduced": "3.3.0",
+          "fixed": "3.3.9"
+        },
+        {
+          "introduced": "3.4.0",
+          "fixed": "3.4.5"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-24294",
+        "https://www.ruby-lang.org/en/news/2025/07/08/dos-resolv-cve-2025-24294/",
+        "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/resolv/CVE-2025-24294.yml",
+        "https://www.cve.org/CVE-2025-24294",
+        "https://www.ruby-lang.org/en/news/2025/07/24/ruby-3-2-9-released/",
+        "https://www.ruby-lang.org/en/news/2025/07/24/ruby-3-3-9-released/"
+      ],
+      "published": "2025-07-08",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2024-27282",
+      "ghsa": "63cq-cj6g-qfr2",
+      "name": "Arbitrary memory address read vulnerability with Regex search",
+      "description": "If attacker-supplied data is provided to the Ruby regex compiler, it is possible to extract arbitrary heap data relative to the start of the text, including pointers and sensitive strings.",
+      "severity": "medium",
+      "cvss": 6.6,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "3.0.7",
+          "assumed": true
+        },
+        {
+          "introduced": "3.1.0",
+          "fixed": "3.1.5"
+        },
+        {
+          "introduced": "3.2.0",
+          "fixed": "3.2.4"
+        },
+        {
+          "introduced": "3.3.0",
+          "fixed": "3.3.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-27282",
+        "https://www.ruby-lang.org/en/news/2024/04/23/arbitrary-memory-address-read-regexp-cve-2024-27282/",
+        "https://www.ruby-lang.org/en/news/2024/04/23/arbitrary-memory-address-read-regexp-cve-2024-27282",
+        "https://hackerone.com/reports/2122624",
+        "https://lists.debian.org/debian-lts-announce/2024/09/msg00000.html",
+        "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/27LUWREIFTP3MQAW7QE4PJM4DPAQJWXF"
+      ],
+      "published": "2024-04-23",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2021-33621",
+      "ghsa": "vc47-6rqg-c7f5",
+      "name": "HTTP response splitting in CGI",
+      "description": "If an application that generates HTTP responses using the cgi gem with untrusted user input, an attacker can exploit it to inject a malicious HTTP response header and/or body.",
+      "severity": "high",
+      "cvss": 8.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.7.7",
+          "assumed": true
+        },
+        {
+          "introduced": "2.8.0",
+          "fixed": "3.0.5"
+        },
+        {
+          "introduced": "3.1.0",
+          "fixed": "3.1.3"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-33621",
+        "https://www.ruby-lang.org/en/news/2022/11/22/http-response-splitting-in-cgi-cve-2021-33621/",
+        "https://www.ruby-lang.org/en/news/2022/11/22/http-response-splitting-in-cgi-cve-2021-33621",
+        "https://github.com/advisories/GHSA-vc47-6rqg-c7f5"
+      ],
+      "published": "2022-11-22",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2016-2338",
+      "ghsa": "r46x-xjwr-8v2g",
+      "name": "Exploitable heap overflow vulnerability exists in Ruby's Psych::Emitter start_document function",
+      "description": "An exploitable heap overflow vulnerability exists in the Psych::Emitter start_document function of Ruby. In Psych::Emitter start_document function heap buffer \"head\" allocation is made based on tags array length. Specially constructed object passed as element of tags array can increase this array size after mentioned allocation and cause heap overflow.",
+      "severity": "critical",
+      "cvss": 9.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.3.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2016-2338",
+        "https://lists.debian.org/debian-lts-announce/2020/03/msg00032.html",
+        "https://security.netapp.com/advisory/ntap-20221228-0005",
+        "https://cve.reconshell.com/cve/CVE-2016-2338",
+        "https://alas.aws.amazon.com/AL2/ALAS2-2025-2990.html",
+        "https://github.com/advisories/GHSA-r46x-xjwr-8v2g"
+      ],
+      "published": "2022-09-28",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2022-28738",
+      "ghsa": "8pqg-8p79-j5j8",
+      "name": "Double free in Regexp compilation",
+      "description": "A double-free vulnerability is discovered in Regexp compilation. This vulnerability has been assigned the CVE identifier CVE-2022-28738. We strongly recommend upgrading Ruby.",
+      "severity": "critical",
+      "cvss": 9.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.6.0",
+          "assumed": true
+        },
+        {
+          "introduced": "2.8.0",
+          "fixed": "3.0.4"
+        },
+        {
+          "introduced": "3.1.0",
+          "fixed": "3.1.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2022-28738",
+        "https://www.ruby-lang.org/en/news/2022/04/12/double-free-in-regexp-compilation-cve-2022-28738/",
+        "https://www.ruby-lang.org/en/news/2022/04/12/double-free-in-regexp-compilation-cve-2022-28738",
+        "https://hackerone.com/reports/1220911",
+        "https://security-tracker.debian.org/tracker/CVE-2022-28738",
+        "https://security.netapp.com/advisory/ntap-20220624-0002"
+      ],
+      "published": "2022-04-12",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2022-28739",
+      "ghsa": "mvgc-rxvg-hqc6",
+      "name": "Buffer overrun in String-to-Float conversion",
+      "description": "A buffer-overrun vulnerability is discovered in a conversion algorithm from a String to a Float. This vulnerability has been assigned the CVE identifier CVE-2022-28739. We strongly recommend upgrading Ruby.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.6.10",
+          "assumed": true
+        },
+        {
+          "introduced": "2.7.0",
+          "fixed": "2.7.6"
+        },
+        {
+          "introduced": "2.8.0",
+          "fixed": "3.0.4"
+        },
+        {
+          "introduced": "3.1.0",
+          "fixed": "3.1.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2022-28739",
+        "https://www.ruby-lang.org/en/news/2022/04/12/buffer-overrun-in-string-to-float-cve-2022-28739/",
+        "https://www.ruby-lang.org/en/news/2022/04/12/buffer-overrun-in-string-to-float-cve-2022-28739",
+        "https://github.com/advisories/GHSA-mvgc-rxvg-hqc6"
+      ],
+      "published": "2022-04-12",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2021-32066",
+      "ghsa": "gx49-h5r3-q3xj",
+      "name": "imap - StartTLS stripping attack",
+      "description": "An issue was discovered in Ruby through 2.6.7, 2.7.x through 2.7.3, and 3.x through 3.0.1. Net::IMAP does not raise an exception when StartTLS fails with an an unknown response, which might allow man-in-the-middle attackers to bypass the TLS protections by leveraging a network position between the client and the registry to block the StartTLS command, aka a \"StartTLS stripping attack.\"",
+      "severity": "high",
+      "cvss": 7.4,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.6.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.7.0",
+          "fixed": "2.7.4"
+        },
+        {
+          "introduced": "2.8.0",
+          "fixed": "3.0.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-32066",
+        "https://www.ruby-lang.org/en/news/2021/07/07/ruby-3-0-2-released",
+        "https://www.ruby-lang.org/en/news/2021/07/07/ruby-2-7-4-released",
+        "https://www.ruby-lang.org/en/news/2021/07/07/ruby-2-6-8-released",
+        "https://www.ruby-lang.org/en/news/2021/07/07/starttls-stripping-in-net-imap",
+        "https://github.com/ruby/ruby/commit/a21a3b7d23704a01d34bd79d09dc37897e00922a"
+      ],
+      "published": "2021-08-01",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2021-31810",
+      "ghsa": "wr95-679j-87v9",
+      "name": "Trusting FTP PASV responses vulnerability in Net::FTP",
+      "description": "An issue was discovered in Ruby through 2.6.7, 2.7.x through 2.7.3, and 3.x through 3.0.1. A malicious FTP server can use the PASV response to trick Net::FTP into connecting back to a given IP address and port. This potentially makes curl extract information about services that are otherwise private and not disclosed (e.g., the attacker can conduct port scans and service banner extractions).",
+      "severity": "medium",
+      "cvss": 5.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.6.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.7.0",
+          "fixed": "2.7.4"
+        },
+        {
+          "introduced": "2.8.0",
+          "fixed": "3.0.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-31810",
+        "https://www.ruby-lang.org/en/news/2021/07/07/ruby-3-0-2-released",
+        "https://www.ruby-lang.org/en/news/2021/07/07/ruby-2-7-4-released",
+        "https://www.ruby-lang.org/en/news/2021/07/07/ruby-2-6-8-released",
+        "https://www.ruby-lang.org/en/news/2021/07/07/trusting-pasv-responses-in-net-ftp",
+        "https://hackerone.com/reports/1145454"
+      ],
+      "published": "2021-07-13",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2020-10933",
+      "ghsa": "g5hm-28jr-53fh",
+      "name": "Heap exposure vulnerability in the socket library",
+      "description": "A heap exposure vulnerability was discovered in the socket library. This vulnerability has been assigned the CVE identifier CVE-2020-10933. We strongly recommend upgrading Ruby.",
+      "severity": "medium",
+      "cvss": 5.3,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.4.0",
+          "assumed": true
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.8"
+        },
+        {
+          "introduced": "2.6.0",
+          "fixed": "2.6.6"
+        },
+        {
+          "introduced": "2.7.0",
+          "fixed": "2.7.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2020-10933",
+        "https://lists.debian.org/debian-security-announce/2020/msg00126.html",
+        "https://security.netapp.com/advisory/ntap-20200625-0001",
+        "https://www.ruby-lang.org/en/news/2020/03/31/heap-exposure-in-socket-cve-2020-10933",
+        "https://github.com/advisories/GHSA-g5hm-28jr-53fh"
+      ],
+      "published": "2020-03-31",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2020-10663",
+      "ghsa": "jphg-qwrw-7w9g",
+      "name": "Unsafe Object Creation Vulnerability in JSON (Additional fix)",
+      "description": "When parsing certain JSON documents, the json gem (including the one bundled with Ruby) can be coerced into creating arbitrary objects in the target system.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.4.10",
+          "assumed": true
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.8"
+        },
+        {
+          "introduced": "2.6.0",
+          "fixed": "2.6.6"
+        },
+        {
+          "introduced": "2.7.0",
+          "fixed": "2.7.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2020-10663",
+        "https://www.ruby-lang.org/en/news/2020/03/19/json-dos-cve-2020-10663/",
+        "https://www.ruby-lang.org/en/news/2020/03/19/json-dos-cve-2020-10663",
+        "https://github.com/advisories/GHSA-jphg-qwrw-7w9g"
+      ],
+      "published": "2020-03-19",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2011-4121",
+      "ghsa": "mjg4-5rfj-952f",
+      "name": "Private Ruby OpenSSL RSA key generation is always \"1\"",
+      "description": "The OpenSSL extension of Ruby (Git trunk) versions after 2011-09-01 up to 2011-11-03 always generated an exponent value of '1' to be used for private RSA key generation. A remote attacker could use this flaw to bypass or corrupt integrity of services, depending on strong private RSA keys generation mechanism.",
+      "severity": "critical",
+      "cvss": 9.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.3",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2011-4121",
+        "https://github.com/saltstack/salt/commit/5dd304276ba5745ec21fc1e6686a0b28da29e6fc",
+        "https://access.redhat.com/security/cve/cve-2011-4121",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=CVE-2011-4121",
+        "https://security-tracker.debian.org/tracker/CVE-2011-4121",
+        "https://github.com/advisories/GHSA-mjg4-5rfj-952f"
+      ],
+      "published": "2019-11-26",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2019-15845",
+      "ghsa": "x99v-c5pj-9m7r",
+      "name": "A NUL injection vulnerability of File.fnmatch and File.fnmatch?",
+      "description": "Built-in methods File.fnmatch and its alias File.fnmatch? accept the path pattern as their first parameter. When the pattern contains NUL character (\\0), the methods recognize that the path pattern ends immediately before the NUL byte. Therefore, a script that uses an external input as the pattern argument, an attacker can make it wrongly match a pathname that is the second parameter.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.4.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.7"
+        },
+        {
+          "introduced": "2.6.0",
+          "fixed": "2.6.5"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2019-15845",
+        "https://www.ruby-lang.org/en/news/2019/10/01/nul-injection-file-fnmatch-cve-2019-15845/",
+        "https://www.ruby-lang.org/en/news/2019/10/01/nul-injection-file-fnmatch-cve-2019-15845",
+        "https://github.com/advisories/GHSA-x99v-c5pj-9m7r"
+      ],
+      "published": "2019-10-01",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2019-16201",
+      "ghsa": "26h5-qgg3-p324",
+      "name": "Regular Expression Denial of Service vulnerability of WEBrick's Digest access authentication",
+      "description": "Regular expression denial of service vulnerability of WEBrick’s Digest authentication module was found. An attacker can exploit this vulnerability to cause an effective denial of service against a WEBrick service.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.4.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.7"
+        },
+        {
+          "introduced": "2.6.0",
+          "fixed": "2.6.5"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2019-16201",
+        "https://www.ruby-lang.org/en/news/2019/10/01/webrick-regexp-digestauth-dos-cve-2019-16201/",
+        "https://www.ruby-lang.org/en/news/2019/10/01/webrick-regexp-digestauth-dos-cve-2019-16201",
+        "https://github.com/advisories/GHSA-26h5-qgg3-p324"
+      ],
+      "published": "2019-10-01",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2019-16254",
+      "name": "HTTP response splitting in WEBrick (Additional fix)",
+      "description": "If a program using WEBrick inserts untrusted input into the response header, an attacker can exploit it to insert a newline character to split a header, and inject malicious content to deceive clients.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.4.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.7"
+        },
+        {
+          "introduced": "2.6.0",
+          "fixed": "2.6.5"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2019-16254",
+        "https://www.ruby-lang.org/en/news/2019/10/01/http-response-splitting-in-webrick-cve-2019-16254/"
+      ],
+      "published": "2019-10-01",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2019-16255",
+      "ghsa": "ph7w-p94x-9vvw",
+      "name": "A code injection vulnerability of Shell#[] and Shell#test",
+      "description": "Shell#[] and its alias Shell#test defined in lib/shell.rb allow code injection if the first argument (aka the “command” argument) is untrusted data. An attacker can exploit this to call an arbitrary Ruby method.",
+      "severity": "high",
+      "cvss": 8.1,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.4.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.7"
+        },
+        {
+          "introduced": "2.6.0",
+          "fixed": "2.6.5"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2019-16255",
+        "https://www.ruby-lang.org/en/news/2019/10/01/ruby-2-6-5-released",
+        "https://www.ruby-lang.org/en/news/2019/10/01/ruby-2-5-7-released",
+        "https://www.ruby-lang.org/en/news/2019/10/01/ruby-2-4-8-released",
+        "https://www.ruby-lang.org/en/news/2019/10/01/code-injection-shell-test-cve-2019-16255",
+        "https://seclists.org/bugtraq/2019/Dec/31"
+      ],
+      "published": "2019-10-01",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2018-16395",
+      "ghsa": "mmrq-6999-72v8",
+      "name": "Incorrect equality check in OpenSSL::X509::Name",
+      "description": "The equality check of OpenSSL::X509::Name is not correctly in openssl extension library bundled with Ruby.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.3.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.5"
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2018-16395",
+        "https://www.ruby-lang.org/en/news/2018/10/17/openssl-x509-name-equality-check-does-not-work-correctly-cve-2018-16395/",
+        "https://www.ruby-lang.org/en/news/2018/10/17/openssl-x509-name-equality-check-does-not-work-correctly-cve-2018-16395",
+        "https://github.com/advisories/GHSA-mmrq-6999-72v8"
+      ],
+      "published": "2018-10-17",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2018-16396",
+      "ghsa": "xh4x-ph6p-vmxh",
+      "name": "Tainted flags not always propogated in Array#pack and String#unpack",
+      "description": "In Array#pack and String#unpack with some formats, the tainted flags of the original data are not propagated to the returned string/array.",
+      "severity": "high",
+      "cvss": 8.1,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.3.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.5"
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2018-16396",
+        "https://www.ruby-lang.org/en/news/2018/10/17/not-propagated-taint-flag-in-some-formats-of-pack-cve-2018-16396/",
+        "https://www.ruby-lang.org/en/news/2018/10/17/ruby-2-3-8-released",
+        "https://www.ruby-lang.org/en/news/2018/10/17/ruby-2-4-5-released",
+        "https://www.ruby-lang.org/en/news/2018/10/17/ruby-2-5-2-released",
+        "https://www.ruby-lang.org/en/news/2018/11/06/ruby-2-6-0-preview3-released"
+      ],
+      "published": "2018-10-17",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2017-17742",
+      "ghsa": "7p4c-jf2w-hc3w",
+      "name": "HTTP response splitting in WEBrick",
+      "description": "There is an HTTP response splitting vulnerability in WEBrick bundled with Ruby.",
+      "severity": "medium",
+      "cvss": 5.3,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.10",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.7"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.4"
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2017-17742",
+        "https://www.ruby-lang.org/en/news/2018/03/28/http-response-splitting-in-webrick-cve-2017-17742/",
+        "https://www.ruby-lang.org/en/news/2018/03/28/http-response-splitting-in-webrick-cve-2017-17742",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-2-10-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-3-7-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-4-4-released"
+      ],
+      "published": "2018-03-28",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2018-6914",
+      "ghsa": "wpg3-wgm5-rv8w",
+      "name": "Unintentional file and directory creation with directory traversal in tempfile and tmpdir",
+      "description": "There is an unintentional directory creation vulnerability in tmpdir library bundled with Ruby. And there is also an unintentional file creation vulnerability in tempfile library bundled with Ruby, because it uses tmpdir internally",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.10",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.7"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.4"
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2018-6914",
+        "https://www.ruby-lang.org/en/news/2018/03/28/unintentional-file-and-directory-creation-with-directory-traversal-cve-2018-6914/",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-2-10-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-3-7-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-4-4-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-5-1-released"
+      ],
+      "published": "2018-03-28",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2018-8777",
+      "ghsa": "9j6f-82h4-9mw2",
+      "name": "DoS by large request in WEBrick",
+      "description": "There is a out-of-memory DoS vulnerability with a large request in WEBrick bundled with Ruby",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.10",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.7"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.4"
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2018-8777",
+        "https://www.ruby-lang.org/en/news/2018/03/28/large-request-dos-in-webrick-cve-2018-8777/",
+        "https://www.ruby-lang.org/en/news/2018/03/28/large-request-dos-in-webrick-cve-2018-8777",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-2-10-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-3-7-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-4-4-released"
+      ],
+      "published": "2018-03-28",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2018-8778",
+      "ghsa": "wvhq-ch4h-8pwr",
+      "name": "Buffer under-read in String#unpack",
+      "description": "String#unpack receives format specifiers as its parameter, and can be specified the position of parsing the data by the specifier @. If a big number is passed with @, the number is treated as the negative value, and out-of-buffer read is occurred. So, if a script accepts an external input as the argument of String#unpack, the attacker can read data on heaps.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.10",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.7"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.4"
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2018-8778",
+        "https://www.ruby-lang.org/en/news/2018/03/28/buffer-under-read-unpack-cve-2018-8778/",
+        "https://www.ruby-lang.org/en/news/2018/03/28/buffer-under-read-unpack-cve-2018-8778",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-2-10-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-3-7-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-4-4-released"
+      ],
+      "published": "2018-03-28",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2018-8779",
+      "ghsa": "mwq4-948j-88c5",
+      "name": "Unintentional socket creation by poisoned NUL byte in UNIXServer and UNIXSocket",
+      "description": "There is a unintentional socket creation vulnerability in UNIXServer.open method of socket library bundled with Ruby. And there is also a unintentional socket access vulnerability in UNIXSocket.open method.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.10",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.7"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.4"
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2018-8779",
+        "https://www.ruby-lang.org/en/news/2018/03/28/poisoned-nul-byte-unixsocket-cve-2018-8779/",
+        "https://www.ruby-lang.org/en/news/2018/03/28/poisoned-nul-byte-unixsocket-cve-2018-8779",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-2-10-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-3-7-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-4-4-released"
+      ],
+      "published": "2018-03-28",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2018-8780",
+      "ghsa": "fphx-j9v2-w2cx",
+      "name": "Unintentional directory traversal by poisoned NUL byte in Dir",
+      "description": "There is an unintentional directory traversal in some methods in Dir",
+      "severity": "critical",
+      "cvss": 9.1,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.10",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.7"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.4"
+        },
+        {
+          "introduced": "2.5.0",
+          "fixed": "2.5.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2018-8780",
+        "https://www.ruby-lang.org/en/news/2018/03/28/poisoned-nul-byte-dir-cve-2018-8780/",
+        "https://www.ruby-lang.org/en/news/2018/03/28/poisoned-nul-byte-dir-cve-2018-8780",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-2-10-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-3-7-released",
+        "https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-4-4-released"
+      ],
+      "published": "2018-03-28",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2017-17790",
+      "ghsa": "47cm-jxff-w8wg",
+      "name": "The lazy_initialize function in lib/resolv.rb in Ruby",
+      "description": "The lazy_initialize function in lib/resolv.rb in Ruby through 2.4.3 uses Kernel#open, which might allow Command Injection attacks, as demonstrated by a Resolv::Hosts::new argument beginning with a '|' character, a different vulnerability than CVE-2017-17405. NOTE: situations with untrusted input may be highly unlikely.",
+      "severity": "critical",
+      "cvss": 9.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.5"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.3"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2017-17790",
+        "https://github.com/ruby/ruby/pull/1777",
+        "https://access.redhat.com/errata/RHSA-2018:0378",
+        "https://access.redhat.com/errata/RHSA-2018:0583",
+        "https://access.redhat.com/errata/RHSA-2018:0584",
+        "https://access.redhat.com/errata/RHSA-2018:0585"
+      ],
+      "published": "2017-12-20",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2017-17405",
+      "ghsa": "q23r-c9rf-97q3",
+      "name": "Command injection vulnerability in Net::FTP",
+      "description": "There is a command injection vulnerability in Net::FTP bundled with Ruby.",
+      "severity": "high",
+      "cvss": 8.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.9",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.6"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.3"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2017-17405",
+        "https://www.ruby-lang.org/en/news/2017/12/14/ruby-2-4-3-released",
+        "https://www.ruby-lang.org/en/news/2017/12/14/ruby-2-3-6-released",
+        "https://www.ruby-lang.org/en/news/2017/12/14/ruby-2-2-9-released",
+        "https://www.ruby-lang.org/en/news/2017/12/14/net-ftp-command-injection-cve-2017-17405",
+        "https://www.exploit-db.com/exploits/43381"
+      ],
+      "published": "2017-12-14",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2017-0898",
+      "ghsa": "wvmx-3rv2-5jgf",
+      "name": "Buffer underrun vulnerability in Kernel.sprintf",
+      "description": "There is a buffer underrun vulnerability in the sprintf method of Kernel module.",
+      "severity": "critical",
+      "cvss": 9.1,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.5"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2017-0898",
+        "https://www.ruby-lang.org/en/news/2017/09/14/sprintf-buffer-underrun-cve-2017-0898",
+        "https://hackerone.com/reports/212241",
+        "https://access.redhat.com/errata/RHSA-2017:3485",
+        "https://access.redhat.com/errata/RHSA-2018:0378",
+        "https://access.redhat.com/errata/RHSA-2018:0583"
+      ],
+      "published": "2017-09-14",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2017-10784",
+      "ghsa": "369m-2gv6-mw28",
+      "name": "Escape sequence injection vulnerability in the Basic authentication of WEBrick",
+      "description": "There is an escape sequence injection vulnerability in the Basic authentication of WEBrick bundled by Ruby.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.5"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2017-10784",
+        "https://www.ruby-lang.org/en/news/2017/09/14/webrick-basic-auth-escape-sequence-injection-cve-2017-10784/",
+        "https://www.ruby-lang.org/en/news/2017/09/14/webrick-basic-auth-escape-sequence-injection-cve-2017-10784",
+        "https://github.com/advisories/GHSA-369m-2gv6-mw28"
+      ],
+      "published": "2017-09-14",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2017-14033",
+      "ghsa": "v6rp-3r3v-hf4p",
+      "name": "Buffer underrun vulnerability in OpenSSL ASN1 decode",
+      "description": "There is a buffer underrun vulnerability in OpenSSL bundled by Ruby.",
+      "severity": "medium",
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.5"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2017-14033",
+        "https://www.ruby-lang.org/en/news/2017/09/14/openssl-asn1-buffer-underrun-cve-2017-14033/",
+        "https://www.ruby-lang.org/en/news/2017/09/14/openssl-asn1-buffer-underrun-cve-2017-14033",
+        "https://github.com/advisories/GHSA-v6rp-3r3v-hf4p"
+      ],
+      "published": "2017-09-14",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2017-14064",
+      "ghsa": "954h-8gv7-2q75",
+      "name": "Heap exposure vulnerability in generating JSON",
+      "description": "There is a heap exposure vulnerability in JSON bundled by Ruby.",
+      "severity": "critical",
+      "cvss": 9.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.3.0",
+          "fixed": "2.3.5"
+        },
+        {
+          "introduced": "2.4.0",
+          "fixed": "2.4.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2017-14064",
+        "https://www.ruby-lang.org/en/news/2017/09/14/ruby-2-2-8-released",
+        "https://www.ruby-lang.org/en/news/2017/09/14/ruby-2-3-5-released",
+        "https://www.ruby-lang.org/en/news/2017/09/14/ruby-2-4-2-released",
+        "https://www.ruby-lang.org/en/news/2017/09/14/json-heap-exposure-cve-2017-14064",
+        "https://github.com/ruby/json/commit/8f782fd8e181d9cfe9387ded43a5ca9692266b85"
+      ],
+      "published": "2017-09-14",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2014-6438",
+      "ghsa": "2j3h-55rq-rj48",
+      "name": "DoS Vulnerability associated with URI.decode_www_form_component method",
+      "description": "The URI.decode_www_form_component method in Ruby before 1.9.2-p330 allows remote attackers to cause a denial of service (catastrophic regular expression backtracking, resource consumption, or application crash) via a crafted string.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.3",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2014-6438",
+        "https://www.ruby-lang.org/en/news/2014/08/19/ruby-1-9-2-p330-released",
+        "https://github.com/ruby/www.ruby-lang.org/issues/817",
+        "https://github.com/advisories/GHSA-2j3h-55rq-rj48"
+      ],
+      "published": "2017-09-06",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2017-6181",
+      "ghsa": "5pfp-rwpx-xgfx",
+      "name": "DoS caused by infinite recursion (stack overflow) in parse_char_class()",
+      "description": "The parse_char_class function in regparse.c in the Onigmo (aka Oniguruma-mod) regular expression library, as used in Ruby 2.4.0, allows remote attackers to cause a denial of service (deep recursion and application crash) via a crafted regular expression.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.4.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2017-6181",
+        "https://bugs.ruby-lang.org/issues/13234",
+        "https://github.com/advisories/GHSA-5pfp-rwpx-xgfx"
+      ],
+      "published": "2017-04-03",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2016-2336",
+      "ghsa": "f46g-7w88-2qv4",
+      "name": "Type confusion exists in ole_invoke and ole_query_interface methods of Ruby's WIN32OLE class",
+      "description": "Type confusion exists in two methods of Ruby's WIN32OLE class, ole_invoke and ole_query_interface. Attacker passing different type of object than this assumed by developers can cause arbitrary code execution.",
+      "severity": "critical",
+      "cvss": 9.8,
+      "affected": [
+        {
+          "introduced": "2.2.2",
+          "fixed": "2.3.1"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2016-2336",
+        "https://github.com/ruby/ruby/blob/v2_3_1/ChangeLog",
+        "https://github.com/ruby/ruby/commit/a9721a259665149b1b9ff0beabcf5f8dc0136120",
+        "https://github.com/ruby/ruby/commit/d40ea2afa6ff5a6e5befcf342fb7b6dc58796b20",
+        "https://security.snyk.io/vuln/SNYK-UNMANAGED-RUBY-2370206?utm_source=copilot.com",
+        "https://osv.dev/vulnerability/CVE-2016-2336"
+      ],
+      "published": "2017-01-06",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2016-2337",
+      "ghsa": "f58m-77qc-8gjv",
+      "name": "Type confusion exists in _cancel_eval Ruby's TclTkIp class",
+      "description": "Type confusion exists in _cancel_eval Ruby's TclTkIp class method. Attacker passing different type of object than String as \"retval\" argument can cause arbitrary code execution.",
+      "severity": "critical",
+      "cvss": 9.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.2.8",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2016-2337",
+        "https://lists.debian.org/debian-lts-announce/2018/08/msg00028.html",
+        "https://security.gentoo.org/glsa/201710-18",
+        "https://github.com/advisories/GHSA-f58m-77qc-8gjv"
+      ],
+      "published": "2017-01-06",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2016-2339",
+      "ghsa": "c4w7-m676-pcvp",
+      "name": "Ruby 2.1 has exploitable heap overflow vulnerability",
+      "description": "An exploitable heap overflow vulnerability exists in the Fiddle::Function.new \"initialize\" function functionality of Ruby. In Fiddle::Function.new \"initialize\" heap buffer \"arg_types\" allocation is made based on args array length. Specially constructed object passed as element of args array can increase this array size after mentioned allocation and cause heap overflow.",
+      "severity": "critical",
+      "cvss": 9.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.1.9",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2016-2339",
+        "https://app.opencve.io/cve/CVE-2016-2339",
+        "https://lists.debian.org/debian-lts-announce/2018/07/msg00012.html",
+        "https://web.archive.org/web/20210123144757/https://www.securityfocus.com/bid/91234",
+        "https://www.cybersecurity-help.cz/vulnerabilities/39952/",
+        "https://github.com/advisories/GHSA-c4w7-m676-pcvp"
+      ],
+      "published": "2017-01-06",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2015-7551",
+      "ghsa": "m9xr-x5mq-4fp5",
+      "name": "Unsafe tainted string usage in Fiddle and DL",
+      "description": "There is an unsafe tainted string vulnerability in Fiddle and DL. This issue was originally reported and fixed with CVE-2009-5147 in DL, but reappeared after DL was reimplemented using Fiddle and libffi. And, about DL, CVE-2009-5147 was fixed at Ruby 1.9.1, but not fixed at other branches, then rubies which bundled DL except Ruby 1.9.1 are still vulnerable.",
+      "severity": "high",
+      "cvss": 8.4,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.1.8",
+          "assumed": true
+        },
+        {
+          "introduced": "2.2.0",
+          "fixed": "2.2.4"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2015-7551",
+        "https://www.ruby-lang.org/en/news/2015/12/16/unsafe-tainted-string-usage-in-fiddle-and-dl-cve-2015-7551",
+        "https://github.com/ruby/ruby/commit/339e11a7f178312d937b7c95dd3115ce7236597a",
+        "https://ubuntu.com/security/CVE-2015-7551",
+        "https://access.redhat.com/errata/RHSA-2018:0583",
+        "https://www.oracle.com/security-alerts/bulletinapr2016.html"
+      ],
+      "published": "2015-12-16",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2015-9096",
+      "ghsa": "2h3c-5vqm-gqfh",
+      "name": "SMTP command injection",
+      "description": "Net::SMTP is vulnerable to SMTP command injection via CRLF sequences in a RCPT TO or MAIL FROM command, as demonstrated by CRLF sequences immediately before and after a DATA substring.",
+      "severity": "medium",
+      "cvss": 6.1,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.3.5",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2015-9096",
+        "https://hackerone.com/reports/137631",
+        "https://github.com/ruby/ruby/commit/0827a7e52ba3d957a634b063bf5a391239b9ffee",
+        "https://github.com/ruby/ruby/pull/1648",
+        "https://github.com/ruby/ruby/pull/1647",
+        "https://lists.debian.org/debian-lts-announce/2018/07/msg00012.html"
+      ],
+      "published": "2015-12-09",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2015-1855",
+      "ghsa": "4x8v-74xf-h4g3",
+      "name": "Ruby OpenSSL Hostname Verification",
+      "description": "After reviewing RFC 6125 and RFC 5280, we found multiple violations of matching hostnames and particularly wildcard certificates. Ruby’s OpenSSL extension will now provide a string-based matching algorithm which follows more strict behavior, as recommended by these RFCs. In particular, matching of more than one wildcard per subject/SAN is no-longer allowed. As well, comparison of these values is now case-insensitive.",
+      "severity": "medium",
+      "cvss": 5.9,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.1.6",
+          "assumed": true
+        },
+        {
+          "introduced": "2.2.0",
+          "fixed": "2.2.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2015-1855",
+        "https://www.ruby-lang.org/en/news/2015/04/13/ruby-openssl-hostname-matching-vulnerability",
+        "https://bugs.ruby-lang.org/issues/9644",
+        "https://github.com/advisories/GHSA-4x8v-74xf-h4g3"
+      ],
+      "published": "2015-04-13",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2014-8090",
+      "ghsa": "2x97-vvh4-m4q4",
+      "name": "CVE-2014-8090 ruby: REXML incomplete fix for CVE-2014-8080",
+      "description": "The REXML parser in Ruby 1.9.x before 1.9.3 patchlevel 551, 2.0.x before 2.0.0 patchlevel 598, and 2.1.x before 2.1.5 allows remote attackers to cause a denial of service (CPU and memory consumption) a crafted XML document containing an empty string in an entity that is used in a large number of nested entity references, aka an XML Entity Expansion (XEE) attack.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.1.5",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2014-8090",
+        "https://www.ruby-lang.org/en/news/2014/11/13/rexml-dos-cve-2014-8090",
+        "https://nvd.nist.gov/vuln/detail/cve-2014-8090",
+        "https://github.com/advisories/GHSA-2x97-vvh4-m4q4"
+      ],
+      "published": "2014-11-13",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2014-8080",
+      "ghsa": "ggvr-v7qh-jwjh",
+      "name": "CVE-2014-8080 ruby: REXML billion laughs attack via parameter entity expansion",
+      "description": "The REXML parser in Ruby 1.9.x before 1.9.3-p550, 2.0.x before 2.0.0-p594, and 2.1.x before 2.1.4 allows remote attackers to cause a denial of service (memory consumption) via a crafted XML document, aka an XML Entity Expansion (XEE) attack.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.1.4",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2014-8080",
+        "https://www.ruby-lang.org/en/news/2014/10/27/rexml-dos-cve-2014-8080",
+        "https://github.com/advisories/GHSA-ggvr-v7qh-jwjh",
+        "https://github.com/thesp0nge/dawnscanner/issues/116"
+      ],
+      "published": "2014-10-27",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2014-4975",
+      "ghsa": "gxj7-mcpg-jpr6",
+      "name": "CVE-2014-4975 ruby: off-by-one stack-based buffer overflow in the encodes() function",
+      "description": "Off-by-one error in the encodes function in pack.c in Ruby 1.9.3 and earlier, and 2.x through 2.1.2, when using certain format string specifiers, allows context-dependent attackers to cause a denial of service (segmentation fault) via vectors that trigger a stack-based buffer overflow.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.1.3",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2014-4975",
+        "https://bugs.ruby-lang.org/issues/10019",
+        "https://www.vulnerabilitycenter.com/#!vul=47400",
+        "https://github.com/advisories/GHSA-gxj7-mcpg-jpr6"
+      ],
+      "published": "2014-07-09",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2014-3916",
+      "ghsa": "252h-69rw-g2rp",
+      "name": "CVE-2014-3916 ruby: DoS via long string in str_buf_cat()",
+      "description": "The str_buf_cat function in string.c in Ruby 1.9.3, 2.0.0, and 2.1 allows context-dependent attackers to cause a denial of service (segmentation fault and crash) via a long string.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.1.3",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2014-3916",
+        "https://vulners.com/rubygems/RUBY:RUBY-2014-3916-107478",
+        "https://bugs.ruby-lang.org/issues/9709",
+        "https://github.com/advisories/GHSA-252h-69rw-g2rp"
+      ],
+      "published": "2014-04-07",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2014-2525",
+      "ghsa": "rffm-7xqq-h2v6",
+      "name": "CVE-2014-2525 libyaml: heap-based buffer overflow when parsing URLs",
+      "description": "Heap-based buffer overflow in the yaml_parser_scan_uri_escapes function in LibYAML before 0.1.6 allows context-dependent attackers to execute arbitrary code via a long sequence of percent-encoded characters in a URI in a YAML file.",
+      "severity": "medium",
+      "cvss": 6.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.1.2",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2014-2525",
+        "https://www.ruby-lang.org/en/news/2014/03/29/heap-overflow-in-yaml-uri-escape-parsing-cve-2014-2525",
+        "https://github.com/advisories/GHSA-rffm-7xqq-h2v6"
+      ],
+      "published": "2014-03-26",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2013-4164",
+      "ghsa": "j98q-m2w8-57rc",
+      "name": "CVE-2013-4164 ruby: heap overflow in floating point parsing",
+      "description": "Heap-based buffer overflow in Ruby 1.8, 1.9 before 1.9.3-p484, 2.0 before 2.0.0-p353, 2.1 before 2.1.0 preview2, and trunk before revision 43780 allows context-dependent attackers to cause a denial of service (segmentation fault) and possibly execute arbitrary code via a string that is converted to a floating point value, as demonstrated using (1) the to_f method or (2) JSON.parse.",
+      "severity": "medium",
+      "cvss": 6.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.1.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2013-4164",
+        "https://www.ruby-lang.org/en/news/2013/11/22/heap-overflow-in-floating-point-parsing-cve-2013-4164",
+        "https://github.com/advisories/GHSA-j98q-m2w8-57rc"
+      ],
+      "published": "2013-11-22",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2013-4073",
+      "ghsa": "3gpq-xx45-4rr9",
+      "name": "CVE-2013-4073 ruby: hostname check bypassing vulnerability in SSL client",
+      "description": "The OpenSSL::SSL.verify_certificate_identity function in lib/openssl/ssl.rb in Ruby 1.8 before 1.8.7-p374, 1.9 before 1.9.3-p448, and 2.0 before 2.0.0-p247 does not properly handle a '\\0' character in a domain name in the Subject Alternative Name field of an X.509 certificate, which allows man-in-the-middle attackers to spoof arbitrary SSL servers via a crafted certificate issued by a legitimate Certification Authority, a related issue to CVE-2009-2408.",
+      "severity": "medium",
+      "cvss": 6.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.0.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2013-4073",
+        "https://www.ruby-lang.org/en/news/2013/06/27/hostname-check-bypassing-vulnerability-in-openssl-client-cve-2013-4073",
+        "https://github.com/advisories/GHSA-3gpq-xx45-4rr9"
+      ],
+      "published": "2013-06-27",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2013-2065",
+      "ghsa": "wh77-3w5g-7q6x",
+      "name": "CVE-2013-2065 Ruby: Object taint bypassing in DL and Fiddle",
+      "description": "(1) DL and (2) Fiddle in Ruby 1.9 before 1.9.3 patchlevel 426, and 2.0 before 2.0.0 patchlevel 195, do not perform taint checking for native functions, which allows context-dependent attackers to bypass intended $SAFE level restrictions.",
+      "severity": "medium",
+      "cvss": 6.4,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.0",
+          "assumed": true
+        },
+        {
+          "introduced": "1.9.0",
+          "fixed": "2.0.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2013-2065",
+        "https://www.ruby-lang.org/en/news/2013/05/14/taint-bypass-dl-fiddle-cve-2013-2065",
+        "https://github.com/advisories/GHSA-wh77-3w5g-7q6x"
+      ],
+      "published": "2013-05-14",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2013-1821",
+      "ghsa": "hgg7-cghq-xhf4",
+      "name": "CVE-2013-1821 ruby: entity expansion DoS vulnerability in REXML",
+      "description": "lib/rexml/text.rb in the REXML parser in Ruby before 1.9.3-p392 allows remote attackers to cause a denial of service (memory consumption and crash) via crafted text nodes in an XML document, aka an XML Entity Expansion (XEE) attack.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.0.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2013-1821",
+        "https://www.ruby-lang.org/en/news/2013/02/22/rexml-dos-2013-02-22",
+        "https://github.com/advisories/GHSA-hgg7-cghq-xhf4"
+      ],
+      "published": "2013-02-22",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2012-5371",
+      "ghsa": "phrv-cj28-9h57",
+      "name": "CVE-2012-5371 ruby: Murmur hash-flooding DoS flaw in ruby 1.9 (oCERT-2012-001)",
+      "description": "Ruby (aka CRuby) 1.9 before 1.9.3-p327 and 2.0 before r37575 computes hash values without properly restricting the ability to trigger hash collisions predictably, which allows context-dependent attackers to cause a denial of service (CPU consumption) via crafted input to an application that maintains a hash table, as demonstrated by a universal multicollision attack against a variant of the MurmurHash2 algorithm, a different vulnerability than CVE-2011-4815.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.0.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2012-5371",
+        "https://www.ruby-lang.org/en/news/2012/11/09/ruby19-hashdos-cve-2012-5371",
+        "https://seclists.org/oss-sec/2012/q4/352",
+        "https://github.com/advisories/GHSA-phrv-cj28-9h57"
+      ],
+      "published": "2012-11-23",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2012-4464",
+      "ghsa": "gjcp-rx5c-g849",
+      "name": "Ruby Exception#to_s / NameError#to_s Methods Safe Level Security Bypass",
+      "description": "Ruby 1.9.3 before patchlevel 286 and 2.0 before revision r37068 allows context-dependent attackers to bypass safe-level restrictions and modify untainted strings via the (1) exc_to_s or (2) name_err_to_s API function, which marks the string as tainted, a different vulnerability than CVE-2012-4466. NOTE: this issue might exist because of a CVE-2011-1005 regression.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.4",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2012-4464",
+        "https://www.ruby-lang.org/en/news/2012/10/12/cve-2012-4464-cve-2012-4466/",
+        "https://www.ruby-lang.org/en/news/2012/10/12/cve-2012-4464-cve-2012-4466",
+        "https://github.com/advisories/GHSA-gjcp-rx5c-g849"
+      ],
+      "published": "2012-10-12",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2012-4466",
+      "ghsa": "gm9g-777x-3fp6",
+      "name": "Ruby name_err_mesg_to_str Method Safe Level Security Bypass",
+      "description": "Ruby 1.8.7 before patchlevel 371, 1.9.3 before patchlevel 286, and 2.0 before revision r37068 allows context-dependent attackers to bypass safe-level restrictions and modify untainted strings via the name_err_mesg_to_str API function, which marks the string as tainted, a different vulnerability than CVE-2011-1005.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.4",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2012-4466",
+        "https://www.ruby-lang.org/en/news/2012/10/12/cve-2012-4464-cve-2012-4466",
+        "https://web.archive.org/web/20210120155544/https://svn.ruby-lang.org/cgi-bin/viewvc.cgi?view=revision&revision=37068",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=862614",
+        "https://wiki.mageia.org/en/Support/Advisories/MGASA-2012-0294",
+        "https://github.com/advisories/GHSA-gm9g-777x-3fp6"
+      ],
+      "published": "2012-10-12",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2012-4522",
+      "ghsa": "6mch-f8jc-rpmr",
+      "name": "CVE-2012-4522 ruby: unintentional file creation caused by inserting an illegal NUL character",
+      "description": "The rb_get_path_check function in file.c in Ruby 1.9.3 before patchlevel 286 and Ruby 2.0.0 before r37163 allows context-dependent attackers to create files in unexpected locations or with unexpected names via a NUL byte in a file path.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "2.0.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2012-4522",
+        "https://www.ruby-lang.org/en/news/2012/10/12/poisoned-NUL-byte-vulnerability",
+        "https://github.com/advisories/GHSA-6mch-f8jc-rpmr"
+      ],
+      "published": "2012-10-12",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2012-4481",
+      "ghsa": "gh65-6rxj-m8cc",
+      "name": "Ruby incomplete fix for CVE-2011-1005 for NameError#to_s method when used on objects",
+      "description": "The safe-level feature in Ruby 1.8.7 allows context-dependent attackers to modify strings via the NameError#to_s method when operating on Ruby objects. NOTE: this issue is due to an incomplete fix for CVE-2011-1005.",
+      "severity": "medium",
+      "cvss": 4.3,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.8",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2012-4481",
+        "http://www.openwall.com/lists/oss-security/2012/10/05/2",
+        "https://github.com/advisories/GHSA-gh65-6rxj-m8cc"
+      ],
+      "published": "2012-10-05",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2011-4815",
+      "ghsa": "xpr8-vpc7-7vfc",
+      "name": "CVE-2011-4815 ruby: hash table collisions CPU usage DoS (oCERT-2011-003)",
+      "description": "Ruby (aka CRuby) before 1.8.7-p357 computes hash values without restricting the ability to trigger hash collisions predictably, which allows context-dependent attackers to cause a denial of service (CPU consumption) via crafted input to an application that maintains a hash table.",
+      "severity": "high",
+      "cvss": 7.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.8",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2011-4815",
+        "https://www.ruby-lang.org/en/news/2011/12/28/denial-of-service-attack-was-found-for-rubys-hash-algorithm-cve-2011-4815",
+        "https://ocert.org/advisories/ocert-2011-003.html",
+        "https://github.com/advisories/GHSA-xpr8-vpc7-7vfc"
+      ],
+      "published": "2011-12-28",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2011-2686",
+      "ghsa": "g8g6-3p4h-6388",
+      "name": "Ruby Random Number Generation Local Denial Of Service Vulnerability",
+      "description": "Ruby before 1.8.7-p352 does not reset the random seed upon forking, which makes it easier for context-dependent attackers to predict the values of random numbers by leveraging knowledge of the number sequence obtained in a different child process, a related issue to CVE-2003-0900. NOTE: this issue exists because of a regression during Ruby 1.8.6 development.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "1.8.7",
+          "fixed": "1.8.8",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2011-2686",
+        "https://github.com/ruby/ruby/blob/v1_8_7_352/ChangeLog",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=722415",
+        "https://github.com/advisories/GHSA-g8g6-3p4h-6388"
+      ],
+      "published": "2011-07-02",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2011-2705",
+      "ghsa": "wj5x-c2v9-7wwr",
+      "name": "Ruby Random Number Generation Local Denial Of Service Vulnerability",
+      "description": "The SecureRandom.random_bytes function in lib/securerandom.rb in Ruby before 1.8.7-p352 and 1.9.x before 1.9.2-p290 relies on PID values for initialization, which makes it easier for context-dependent attackers to predict the result string by leveraging knowledge of random strings obtained in an earlier process with the same PID.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.3",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2011-2705",
+        "https://redmine.ruby-lang.org/issues/4579",
+        "https://github.com/ruby/ruby/blob//v1_8_7_352/ChangeLog",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=722415",
+        "https://github.com/advisories/GHSA-wj5x-c2v9-7wwr"
+      ],
+      "published": "2011-07-02",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2011-3009",
+      "ghsa": "mg6g-jwh6-pwjf",
+      "name": "Ruby Properly initialize the random number generator when forking new process",
+      "description": "Ruby before 1.8.6-p114 does not reset the random seed upon forking, which makes it easier for context-dependent attackers to predict the values of random numbers by leveraging knowledge of the number sequence obtained in a different child process, a related issue to CVE-2003-0900.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.7",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2011-3009",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=722415",
+        "https://security.snyk.io/vuln/SNYK-ORACLE6-RUBYLIBS-2462477",
+        "https://github.com/advisories/GHSA-mg6g-jwh6-pwjf"
+      ],
+      "published": "2011-07-02",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2011-0188",
+      "ghsa": "6vch-6cgr-x9c3",
+      "name": "Ruby memory corruption in BigDecimal on 64bit platforms",
+      "description": "The VpMemAlloc function in bigdecimal.c in the BigDecimal class in Ruby 1.9.2-p136 and earlier, as used on Apple Mac OS X before 10.6.7 and other platforms, does not properly allocate memory, which allows context-dependent attackers to execute arbitrary code or cause a denial of service (application crash) via vectors involving creation of a large BigDecimal value within a 64-bit process, related to an \"integer truncation issue.\"",
+      "severity": "medium",
+      "cvss": 6.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.3",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2011-0188",
+        "https://github.com/ruby/ruby/commit/f83651ac30c7c776dee8a6a401c654757cb8d1c2",
+        "https://support.apple.com/en-us/103340",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=682332",
+        "https://github.com/advisories/GHSA-6vch-6cgr-x9c3"
+      ],
+      "published": "2011-03-01",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2011-1004",
+      "ghsa": "45wv-gc6w-fq7m",
+      "name": "CVE-2011-1004 Ruby: Symlink race condition by removing directory trees in fileutils module",
+      "description": "The FileUtils.remove_entry_secure method in Ruby 1.8.6 through 1.8.6-420, 1.8.7 through 1.8.7-330, 1.8.8dev, 1.9.1 through 1.9.1-430, 1.9.2 through 1.9.2-136, and 1.9.3dev allows local users to delete arbitrary files via a symlink attack.",
+      "severity": "medium",
+      "cvss": 6.3,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.3",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2011-1004",
+        "https://www.ruby-lang.org/en/news/2011/02/18/fileutils-is-vulnerable-to-symlink-race-attacks",
+        "https://github.com/advisories/GHSA-45wv-gc6w-fq7m"
+      ],
+      "published": "2011-02-19",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2011-1005",
+      "ghsa": "h2rc-3ppq-6pjg",
+      "name": "CVE-2011-1005 Ruby: Untrusted codes able to modify arbitrary strings",
+      "description": "The safe-level feature in Ruby 1.8.6 through 1.8.6-420, 1.8.7 through 1.8.7-330, and 1.8.8dev allows context-dependent attackers to modify strings via the Exception#to_s method, as demonstrated by changing an intended pathname.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.8",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2011-1005",
+        "https://www.ruby-lang.org/en/news/2011/02/18/exception-methods-can-bypass-safe",
+        "https://github.com/advisories/GHSA-h2rc-3ppq-6pjg"
+      ],
+      "published": "2011-02-18",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2010-2489",
+      "ghsa": "pj28-mx3m-9668",
+      "name": "Ruby on Windows ARGF.inplace_mode Variable Local Overflow",
+      "description": "Buffer overflow in Ruby 1.9.x before 1.9.1-p429 on Windows might allow local users to gain privileges via a crafted ARGF.inplace_mode value that is not properly handled when constructing the filenames of the backup files.",
+      "severity": "high",
+      "cvss": 7.2,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.7",
+          "assumed": true
+        },
+        {
+          "introduced": "1.9.0",
+          "fixed": "1.9.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2010-2489",
+        "https://www.ruby-lang.org/en/news/2010/07/02/ruby-1-9-1-p429-is-released",
+        "https://www.openwall.com/lists/oss-security/2010/07/02/1",
+        "https://www.openwall.com/lists/oss-security/2010/07/02/10",
+        "https://github.com/advisories/GHSA-pj28-mx3m-9668",
+        "https://nvd.nist.gov/vuln/detail/cve-2010-2489"
+      ],
+      "published": "2010-07-02",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2010-0541",
+      "ghsa": "h9r2-943c-qg8v",
+      "name": "CVE-2010-0541 Ruby WEBrick javascript injection flaw",
+      "description": "Cross-site scripting (XSS) vulnerability in the WEBrick HTTP server in Ruby in Apple Mac OS X 10.5.8, and 10.6 before 10.6.4, allows remote attackers to inject arbitrary web script or HTML via a crafted URI that triggers a UTF-7 error page.",
+      "severity": "medium",
+      "cvss": 4.3,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.2",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2010-0541",
+        "https://support.apple.com/en-us/HT4188",
+        "https://github.com/advisories/GHSA-h9r2-943c-qg8v"
+      ],
+      "published": "2010-06-15",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2009-4492",
+      "ghsa": "6mq2-37j5-w6r6",
+      "name": "CVE-2009-4492 ruby WEBrick log escape sequence",
+      "description": "WEBrick 1.3.1 in Ruby 1.8.6 through patchlevel 383, 1.8.7 through patchlevel 248, 1.8.8dev, 1.9.1 through patchlevel 376, and 1.9.2dev writes data to a log file without sanitizing non-printable characters, which might allow remote attackers to modify a window's title, or possibly execute arbitrary commands or overwrite files, via an HTTP request containing an escape sequence for a terminal emulator.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.2",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2009-4492",
+        "http://www.ruby-lang.org/en/news/2010/01/10/webrick-escape-sequence-injection",
+        "https://access.redhat.com/errata/RHSA-2011:0909",
+        "https://github.com/advisories/GHSA-6mq2-37j5-w6r6"
+      ],
+      "published": "2010-01-10",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2009-4124",
+      "ghsa": "9mvm-2xp2-9wmw",
+      "name": "CVE-2009-4124 ruby: Heap-based buffer overflow in the rb_str_justify() function",
+      "description": "Heap-based buffer overflow in the rb_str_justify function in string.c in Ruby 1.9.1 before 1.9.1-p376 allows context-dependent attackers to execute arbitrary code via unspecified vectors involving (1) String#ljust, (2) String#center, or (3) String#rjust.",
+      "severity": "critical",
+      "cvss": 10.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.0",
+          "assumed": true
+        },
+        {
+          "introduced": "1.9.0",
+          "fixed": "1.9.2",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2009-4124",
+        "https://www.ruby-lang.org/en/news/2009/12/07/heap-overflow-in-string",
+        "https://github.com/advisories/GHSA-9mvm-2xp2-9wmw"
+      ],
+      "published": "2009-12-07",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2009-1904",
+      "ghsa": "prwc-wj59-8vwr",
+      "name": "CVE-2009-1904 ruby: DoS vulnerability in BigDecimal",
+      "description": "The BigDecimal library in Ruby 1.8.6 before p369 and 1.8.7 before p173 allows context-dependent attackers to cause a denial of service (application crash) via a string argument that represents a large number, as demonstrated by an attempted conversion to the Float data type.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.8",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2009-1904",
+        "https://www.ruby-lang.org/en/news/2009/06/09/dos-vulnerability-in-bigdecimal",
+        "https://www.ruby-forum.com/t/ruby-1-8-6-pl369-released/169912",
+        "https://github.com/advisories/GHSA-prwc-wj59-8vwr"
+      ],
+      "published": "2009-06-10",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2009-5147",
+      "ghsa": "mmq8-m72q-qgm4",
+      "name": "Ruby DL::dlopen could open a library with tainted library name even if $SAFE > 0",
+      "description": "DL::dlopen could open a library with tainted library name even if $SAFE > 0",
+      "severity": "high",
+      "cvss": 7.3,
+      "affected": [
+        {
+          "introduced": "1.9.1",
+          "fixed": "1.9.2"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2009-5147",
+        "https://www.ruby-lang.org/en/news/2015/12/16/ruby-2-1-8-released",
+        "https://www.ruby-lang.org/en/news/2009/05/12/ruby-1-9-1-p129-released",
+        "https://github.com/ruby/ruby/commit/4600cf725a86ce31266153647ae5aa1197b1215b",
+        "https://github.com/ruby/ruby/commit/7269e3de3cee3bbb6ab77fc708f3a10cab00b65e",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=1248935"
+      ],
+      "published": "2009-05-12",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2009-0642",
+      "ghsa": "4gvm-4mw2-9fpv",
+      "name": "Ruby 'OCSP_basic_verify()' X.509 Certificate Verification Vulnerability",
+      "description": "ext/openssl/ossl_ocsp.c in Ruby 1.8 and 1.9 does not properly check the return value from the OCSP_basic_verify function, which might allow remote attackers to successfully present an invalid X.509 certificate, possibly involving a revoked certificate.",
+      "severity": "medium",
+      "cvss": 6.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.2",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2009-0642",
+        "https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=513528",
+        "https://web.archive.org/web/20111209131753/http://redmine.ruby-lang.org/issues/show/1091",
+        "https://ubuntu.com/security/notices/USN-805-1",
+        "https://exchange.xforce.ibmcloud.com/vulnerabilities/48761",
+        "https://www.invicti.com/web-application-vulnerabilities/ruby-improper-authentication-vulnerability-cve-2009-0642"
+      ],
+      "published": "2009-01-29",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-3790",
+      "ghsa": "96jc-f6m3-pf2w",
+      "name": "CVE-2008-3790 ruby: DoS vulnerability in the REXML module",
+      "description": "The REXML module in Ruby 1.8.6 through 1.8.6-p287, 1.8.7 through 1.8.7-p72, and 1.9 allows context-dependent attackers to cause a denial of service (CPU consumption) via an XML document with recursively nested entities, aka an \"XML entity explosion.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-3790",
+        "https://www.ruby-lang.org/en/news/2008/08/23/dos-vulnerability-in-rexml",
+        "https://groups.google.com/g/comp.lang.ruby/c/GfaeiggfwNE",
+        "https://github.com/advisories/GHSA-96jc-f6m3-pf2w"
+      ],
+      "published": "2008-08-25",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-3443",
+      "ghsa": "v838-v88j-gw93",
+      "name": "Ruby Memory allocation failure in Ruby regex engine (remotely exploitable DoS)",
+      "description": "The regular expression engine (regex.c) in Ruby 1.8.5 and earlier, 1.8.6 through 1.8.6-p286, 1.8.7 through 1.8.7-p71, and 1.9 through r18423 allows remote attackers to cause a denial of service (infinite loop and crash) via multiple long requests to a Ruby socket, related to memory allocation failure, and as demonstrated against Webrick.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-3443",
+        "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-3443",
+        "https://github.com/advisories/GHSA-v838-v88j-gw93"
+      ],
+      "published": "2008-08-14",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-3656",
+      "ghsa": "823x-6r7f-v9x6",
+      "name": "Algorithmic complexity vulnerability in the WEBrick",
+      "description": "Algorithmic complexity vulnerability in the WEBrick::HTTPUtils.split_header_value function in WEBrick::HTTP::DefaultFileHandler in WEBrick in Ruby 1.8.5 and earlier, 1.8.6 through 1.8.6-p286, 1.8.7 through 1.8.7-p71, and 1.9 through r18423 allows context-dependent attackers to cause a denial of service (CPU consumption) via a crafted HTTP request that is processed by a backtracking regular expression.",
+      "severity": "high",
+      "cvss": 7.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-3656",
+        "https://www.ruby-lang.org/en/news/2008/08/08/multiple-vulnerabilities-in-ruby",
+        "https://www.ruby-lang.org/en/news/2008/08/11/ruby-1-8-7-p72-and-1-8-6-p287-released",
+        "https://security.gentoo.org/glsa/200812-17",
+        "https://www.us-cert.gov/cas/techalerts/TA09-133A.html",
+        "https://support.apple.com/en-us/104129"
+      ],
+      "published": "2008-08-12",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-3655",
+      "ghsa": "p524-ppf2-w36w",
+      "name": "Ruby multiple insufficient safe mode restrictions",
+      "description": "Ruby 1.8.5 and earlier, 1.8.6 through 1.8.6-p286, 1.8.7 through 1.8.7-p71, and 1.9 through r18423 does not properly restrict access to critical variables and methods at various safe levels, which allows context-dependent attackers to bypass intended access restrictions via (1) untrace_var, (2) $PROGRAM_NAME, and (3) syslog at safe level 4, and (4) insecure methods at safe levels 1 through 3.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-3655",
+        "https://www.ruby-lang.org/en/news/2008/08/08/multiple-vulnerabilities-in-ruby/",
+        "https://www.ruby-lang.org/en/news/2008/08/08/multiple-vulnerabilities-in-ruby",
+        "https://www.ruby-lang.org/en/news/2008/08/11/ruby-1-8-7-p72-and-1-8-6-p287-released",
+        "https://security.gentoo.org/glsa/200812-17",
+        "https://www.us-cert.gov/cas/techalerts/TA09-133A.html"
+      ],
+      "published": "2008-08-08",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-3657",
+      "ghsa": "5f6v-fgcw-j5px",
+      "name": "Ruby missing \"taintness\" checks in dl module",
+      "description": "The dl module in Ruby 1.8.5 and earlier, 1.8.6 through 1.8.6-p286, 1.8.7 through 1.8.7-p71, and 1.9 through r18423 does not check \"taintness\" of inputs, which allows context-dependent attackers to bypass safe levels and execute dangerous functions by accessing a library using DL.dlopen.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-3657",
+        "https://www.ruby-lang.org/en/news/2008/08/08/multiple-vulnerabilities-in-ruby",
+        "https://www.ruby-lang.org/en/news/2008/08/11/ruby-1-8-7-p72-and-1-8-6-p287-released",
+        "https://security.gentoo.org/glsa/200812-17",
+        "https://www.us-cert.gov/cas/techalerts/TA09-133A.html",
+        "https://support.apple.com/en-us/104129"
+      ],
+      "published": "2008-08-08",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-2376",
+      "ghsa": "f7wf-fwmg-r7g3",
+      "name": "More ruby integer overflows (rb_ary_fill / Array#fill)",
+      "description": "Integer overflow in the rb_ary_fill function in array.c in Ruby before revision 17756 allows context-dependent attackers to cause a denial of service (crash) or possibly have unspecified other impact via a call to the Array#fill method with a start (aka beg) argument greater than ARY_MAX_SIZE. NOTE: this issue exists because of an incomplete fix for other closely related integer overflows.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-2376",
+        "https://web.archive.org/web/20211205152129/https://svn.ruby-lang.org/cgi-bin/viewvc.cgi?revision=17756&view=revision",
+        "https://security.gentoo.org/glsa/200812-17",
+        "https://github.com/advisories/GHSA-f7wf-fwmg-r7g3"
+      ],
+      "published": "2008-06-30",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-2662",
+      "ghsa": "6wwf-x53r-5qqq",
+      "name": "CVE-2008-2662 ruby: Integer overflows in rb_str_buf_append()",
+      "description": "Multiple integer overflows in the rb_str_buf_append function in Ruby 1.8.4 and earlier, 1.8.5 before 1.8.5-p231, 1.8.6 before 1.8.6-p230, 1.8.7 before 1.8.7-p22, and 1.9.0 before 1.9.0-2 allow context-dependent attackers to execute arbitrary code or cause a denial of service via unknown vectors that trigger memory corruption, a different issue than CVE-2008-2663, CVE-2008-2664, and CVE-2008-2725.",
+      "severity": "critical",
+      "cvss": 10.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-2662",
+        "https://rubyonrails.org/2008/6/21/multiple-ruby-security-vulnerabilities",
+        "https://github.com/advisories/GHSA-6wwf-x53r-5qqq",
+        "https://github.com/advisories/GHSA-c4h6-p7gp-39x2"
+      ],
+      "published": "2008-06-20",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-2663",
+      "ghsa": "8rh4-h2wx-5jpx",
+      "name": "CVE-2008-2663 ruby: Integer overflows in rb_ary_store()",
+      "description": "Multiple integer overflows in the rb_ary_store function in Ruby 1.8.4 and earlier, 1.8.5 before 1.8.5-p231, 1.8.6 before 1.8.6-p230, and 1.8.7 before 1.8.7-p22 allow context-dependent attackers to execute arbitrary code or cause a denial of service via unknown vectors, a different issue than CVE-2008-2662, CVE-2008-2664, and CVE-2008-2725.",
+      "severity": "critical",
+      "cvss": 10.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-2663",
+        "https://www.ruby-lang.org/en/news/2008/06/20/arbitrary-code-execution-vulnerabilities",
+        "https://github.com/advisories/GHSA-8rh4-h2wx-5jpx",
+        "https://github.com/advisories/GHSA-c4h6-p7gp-39x2"
+      ],
+      "published": "2008-06-20",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-2664",
+      "ghsa": "c4h6-p7gp-39x2",
+      "name": "CVE-2008-2664 ruby: Unsafe use of alloca in rb_str_format()",
+      "description": "The rb_str_format function in Ruby 1.8.4 and earlier, 1.8.5 before 1.8.5-p231, 1.8.6 before 1.8.6-p230, 1.8.7 before 1.8.7-p22, and 1.9.0 before 1.9.0-2 allows context-dependent attackers to trigger memory corruption via unspecified vectors related to alloca, a different issue than CVE-2008-2662, CVE-2008-2663, and CVE-2008-2725.",
+      "severity": "high",
+      "cvss": 7.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-2664",
+        "https://www.ruby-lang.org/en/news/2008/06/20/arbitrary-code-execution-vulnerabilities",
+        "https://rubyonrails.org/2008/6/21/multiple-ruby-security-vulnerabilities",
+        "https://github.com/advisories/GHSA-c4h6-p7gp-39x2"
+      ],
+      "published": "2008-06-20",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-2725",
+      "ghsa": "924x-9756-qq8p",
+      "name": "CVE-2008-2725 ruby: integer overflow in rb_ary_splice/update/replace() - REALLOC_N",
+      "description": "Integer overflow in the (1) rb_ary_splice function in Ruby 1.8.4 and earlier, 1.8.5 before 1.8.5-p231, 1.8.6 before 1.8.6-p230, and 1.8.7 before 1.8.7-p22; and (2) the rb_ary_replace function in 1.6.x allows context-dependent attackers to trigger memory corruption via unspecified vectors, aka the \"REALLOC_N\" variant, a different issue than CVE-2008-2662, CVE-2008-2663, and CVE-2008-2664.",
+      "severity": "high",
+      "cvss": 7.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-2725",
+        "https://www.ruby-lang.org/en/news/2008/06/20/arbitrary-code-execution-vulnerabilities",
+        "https://rubyonrails.org/2008/6/21/multiple-ruby-security-vulnerabilities",
+        "https://github.com/advisories/GHSA-924x-9756-qq8p",
+        "https://github.com/advisories/GHSA-c4h6-p7gp-39x2"
+      ],
+      "published": "2008-06-20",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-2726",
+      "ghsa": "v2mw-g73g-923h",
+      "name": "CVE-2008-2726 ruby: integer overflow in rb_ary_splice/update/replace() - beg + rlen",
+      "description": "Integer overflow in the (1) rb_ary_splice function in Ruby 1.8.4 and earlier, 1.8.5 before 1.8.5-p231, 1.8.6 before 1.8.6-p230, 1.8.7 before 1.8.7-p22, and 1.9.0 before 1.9.0-2; and (2) the rb_ary_replace function in 1.6.x allows context-dependent attackers to trigger memory corruption, aka the \"beg + rlen\" issue.",
+      "severity": "high",
+      "cvss": 7.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-2726",
+        "https://www.ruby-lang.org/en/news/2008/06/20/arbitrary-code-execution-vulnerabilities",
+        "https://rubyonrails.org/2008/6/21/multiple-ruby-security-vulnerabilities",
+        "https://github.com/advisories/GHSA-v2mw-g73g-923h"
+      ],
+      "published": "2008-06-20",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-1447",
+      "ghsa": "r5r9-27m2-2jg7",
+      "name": "ruby - DNS spoofing vulnerability in resolv.rb",
+      "description": "resolv.rb allow remote attackers to spoof DNS answers. This risk can be reduced by randomness of DNS transaction IDs and source ports, so resolv.rb is fixed to randomize them.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-1447",
+        "https://www.ruby-lang.org/en/news/2008/08/08/multiple-vulnerabilities-in-ruby/",
+        "https://www.cve.org/CVERecord?id=CVE-2008-1447",
+        "https://www.ruby-lang.org/en/news/2008/08/08/multiple-vulnerabilities-in-ruby",
+        "https://github.com/advisories/GHSA-r5r9-27m2-2jg7"
+      ],
+      "published": "2008-05-05",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-3905",
+      "ghsa": "vwcj-mf69-7rfw",
+      "name": "ruby -- DNS spoofing vulnerability in resolv.rb",
+      "description": "resolv.rb in Ruby 1.8.5 and earlier, 1.8.6 before 1.8.6-p287, 1.8.7 before 1.8.7-p72, and 1.9 r18423 and earlier uses sequential transaction IDs and constant source ports for DNS requests, which makes it easier for remote attackers to spoof DNS responses, a different vulnerability than CVE-2008-1447.",
+      "severity": "medium",
+      "cvss": 5.8,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-3905",
+        "https://www.ruby-lang.org/en/news/2008/08/08/multiple-vulnerabilities-in-ruby",
+        "https://www.ruby-lang.org/en/news/2008/08/11/ruby-1-8-7-p72-and-1-8-6-p287-released",
+        "https://www.openwall.com/lists/oss-security/2008/09/03/3",
+        "https://www.openwall.com/lists/oss-security/2008/09/04/9",
+        "https://www.slackware.com/security/viewer.php?l=slackware-security&y=2008&m=slackware-security.371754"
+      ],
+      "published": "2008-05-05",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-1891",
+      "ghsa": "rhf2-x48g-5wr7",
+      "name": "Directory traversal vulnerability in WEBrick",
+      "description": "Directory traversal vulnerability in WEBrick in Ruby 1.8.4 and earlier, 1.8.5 before 1.8.5-p231, 1.8.6 before 1.8.6-p230, 1.8.7 before 1.8.7-p22, and 1.9.0 before 1.9.0-2, when using NTFS or FAT filesystems, allows remote attackers to read arbitrary CGI files via a trailing (1) + (plus), (2) %2b (encoded plus), (3) . (dot), (4) %2e (encoded dot), or (5) %20 (encoded space) character in the URI, possibly related to the WEBrick::HTTPServlet::FileHandler and WEBrick::HTTPServer.new functionality...",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-1891",
+        "https://github.com/ruby/ruby/blob/ruby_1_9_1/ChangeLog",
+        "https://github.com/ruby/ruby/blob/ruby_1_8_7/ChangeLog",
+        "https://github.com/ruby/ruby/blob/ruby_1_8_6/ChangeLog",
+        "https://github.com/ruby/ruby/blob/ruby_1_8_5/ChangeLog",
+        "https://github.com/advisories/GHSA-rhf2-x48g-5wr7"
+      ],
+      "published": "2008-04-15",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2008-1145",
+      "ghsa": "f279-rf2r-m6m5",
+      "name": "Directory traversal vulnerability in WEBrick",
+      "description": "Directory traversal vulnerability in WEBrick when running on systems that support backslash () path separators or case-insensitive file names, allows remote attackers to access arbitrary files via (1) \"..%5c\" (encoded backslash) sequences or (2) filenames that match patterns in the :NondisclosureName option.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.1",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2008-1145",
+        "https://www.exploit-db.com/exploits/5215",
+        "https://github.com/advisories/GHSA-f279-rf2r-m6m5"
+      ],
+      "published": "2008-03-04",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2007-5770",
+      "ghsa": "mf83-c25g-48r6",
+      "name": "Ruby Net::HTTPS library does not validate server certificate CN",
+      "description": "The (1) Net::ftptls, (2) Net::telnets, (3) Net::imap, (4) Net::pop, and (5) Net::smtp libraries in Ruby 1.8.5 and 1.8.6 do not verify that the commonName (CN) field in a server certificate matches the domain name in a request sent over SSL, which makes it easier for remote attackers to intercept SSL transmissions via a man-in-the-middle attack or spoofed web site, different components than CVE-2007-5162.",
+      "severity": "medium",
+      "cvss": 4.3,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.7",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2007-5770",
+        "http://www.cvedetails.com/cve/CVE-2007-5770/",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=362081",
+        "https://ubuntu.com/security/notices/USN-596-1",
+        "https://github.com/advisories/GHSA-mf83-c25g-48r6"
+      ],
+      "published": "2007-10-08",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2007-5162",
+      "ghsa": "26pc-wx8w-v5vj",
+      "name": "Ruby Net::HTTPS library does not validate server certificate CN",
+      "description": "The connect method in lib/net/http.rb in the (1) Net::HTTP and (2) Net::HTTPS libraries in Ruby 1.8.5 and 1.8.6 does not verify that the commonName (CN) field in a server certificate matches the domain name in an HTTPS request, which makes it easier for remote attackers to intercept SSL transmissions via a man-in-the-middle attack or spoofed web site.",
+      "severity": "medium",
+      "cvss": 4.3,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.7",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2007-5162",
+        "https://www.ruby-lang.org/en/news/2007/10/04/net-https-vulnerability/",
+        "https://www.ruby-lang.org/en/news/2007/10/04/net-https-vulnerability",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=313791",
+        "https://github.com/advisories/GHSA-26pc-wx8w-v5vj"
+      ],
+      "published": "2007-09-27",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2006-6303",
+      "ghsa": "fx2r-qhmq-3jjp",
+      "name": "Another DoS Vulnerability in CGI Library",
+      "description": "The read_multipart function in cgi.rb in Ruby before 1.8.5-p2 does not properly detect boundaries in MIME multipart content, which allows remote attackers to cause a denial of service (infinite loop) via crafted HTTP requests, a different issue than CVE-2006-5467.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.6",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2006-6303",
+        "https://jvn.jp/jp/JVN84798830/index.html",
+        "https://ubuntu.com/security/notices/USN-394-1",
+        "https://github.com/advisories/GHSA-fx2r-qhmq-3jjp"
+      ],
+      "published": "2006-12-06",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2006-5467",
+      "ghsa": "cgqx-jwj4-2jc4",
+      "name": "Denial of service vulnerabilities in the Ruby CGI",
+      "description": "The cgi.rb CGI library for Ruby 1.8 allows remote attackers to cause a denial of service (infinite loop and CPU consumption) via an HTTP request with a multipart MIME body that contains an invalid boundary specifier, as demonstrated using a specifier that begins with a \"-\" instead of \"--\" and contains an inconsistent ID.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.9.0",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2006-5467",
+        "https://www.ruby-lang.org/en/news/2006/11/03/CVE-2006-5467",
+        "https://www.ruby-lang.org/en/news/2006/12/04/another-dos-vulnerability-in-cgi-library",
+        "https://cache.ruby-lang.org/pub/ruby/1.8/ruby-1.8.5-cgi-dos-1.patch",
+        "https://bugzilla.redhat.com/show_bug.cgi?id=212237",
+        "https://jvn.jp/en/jp/JVN84798830/index.html"
+      ],
+      "published": "2006-10-27",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2006-3694",
+      "ghsa": "rx2v-jmvm-3c4h",
+      "name": "ruby1.8 vulnerability",
+      "description": "Multiple unspecified vulnerabilities in Ruby before 1.8.5 allow remote attackers to bypass safe level checks via unspecified vectors involving (1) the alias function and (2) directory operations.",
+      "severity": "medium",
+      "cvss": 6.4,
+      "affected": [
+        {
+          "introduced": "1.8.2",
+          "fixed": "1.8.5"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2006-3694",
+        "http://www.ubuntu.com/usn/usn-325-1",
+        "https://exchange.xforce.ibmcloud.com/vulnerabilities/27725",
+        "https://access.redhat.com/errata/RHSA-2006:0604",
+        "https://web.archive.org/web/20111224164224/http://secunia.com/advisories/21009",
+        "https://web.archive.org/web/20130417170234/http://secunia.com/advisories/21233"
+      ],
+      "published": "2006-07-21",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2006-1931",
+      "ghsa": "j98g-25wq-62h9",
+      "name": "Ruby http/xmlrpc server DoS",
+      "description": "The HTTP/XMLRPC server in Ruby before 1.8.2 uses blocking sockets, which allows attackers to cause a denial of service (blocked connections) via a large amount of data.",
+      "severity": "medium",
+      "cvss": 5.0,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.3",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2006-1931",
+        "https://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.2-xmlrpc-dos-1.patch",
+        "https://security.gentoo.org/glsa/200605-11",
+        "https://exchange.xforce.ibmcloud.com/vulnerabilities/26102",
+        "https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=189540",
+        "https://web.archive.org/web/20201208004659/https://usn.ubuntu.com/273-1"
+      ],
+      "published": "2006-04-20",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2005-2337",
+      "ghsa": "w8mr-4m5w-x8wv",
+      "name": "Security Bypass Vulnerability with Ruby",
+      "description": "The Ruby language has a security mechanism (security model) that can restrict operations on untrusted objects. This security model is based on mechanisms called \"object taint\" and \"safe level.\" A vulnerability has been confirmed that allows arbitrary script execution by bypassing the \"safe level\" setting and taint flag protections and execute disallowed code when Ruby processes a program through standard input (stdin).",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.6.9",
+          "assumed": true
+        },
+        {
+          "introduced": "1.7.0",
+          "fixed": "1.8.3"
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2005-2337",
+        "https://web.archive.org/web/20060104024955/https://www.ruby-lang.org/en/20051003.html",
+        "https://jvn.jp/jp/JVN62914675/index.html",
+        "https://ubuntu.com/security/notices/USN-195-1",
+        "https://github.com/advisories/GHSA-w8mr-4m5w-x8wv"
+      ],
+      "published": "2005-10-07",
+      "source": "ruby-advisory-db"
+    },
+    {
+      "cve": "CVE-2005-1992",
+      "ghsa": "vf66-crpm-448h",
+      "name": "Ruby XML-RPC Remote Arbitrary Command Execution",
+      "description": "The XMLRPC server in utils.rb for the ruby library (libruby) 1.8 sets an invalid default value that prevents \"security protection\" using handlers, which allows remote attackers to execute arbitrary commands.",
+      "severity": "high",
+      "cvss": 7.5,
+      "affected": [
+        {
+          "introduced": "0.0.0",
+          "fixed": "1.8.2",
+          "assumed": true
+        }
+      ],
+      "links": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2005-1992",
+        "https://www.ruby-lang.org/en/news/2005/07/01/xmlrpcipimethods-vulnerability",
+        "https://web.archive.org/web/20081120011422/http://www2.ruby-lang.org/patches/ruby-1.8.2-xmlrpc-ipimethods-fix.diff",
+        "https://web.archive.org/web/20080828084436/http://www2.ruby-lang.org/en/20050701.html",
+        "https://web.archive.org/web/20060813155928/https://lists.apple.com/archives/security-announce/2005/Sep/msg00002.html",
+        "https://web.archive.org/web/20120111083642/http://www.securityfocus.com/bid/14016"
+      ],
+      "published": "2005-06-20",
+      "source": "ruby-advisory-db"
+    }
+  ]
+}
