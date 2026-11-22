@@ -47,15 +47,18 @@ class ContentSecurityPolicyScanRuleUnitTest
 
     // Note: This policy does not include sandbox, report-uri, or plugin-types
     private static final String REASONABLE_POLICY =
-            "default-src 'self'; script-src 'self' "
-                    + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
-                    + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                    + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; form-action 'none'; base-uri 'none'";
+            """
+            default-src 'self'; script-src 'self' \
+            storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; \
+            style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com \
+            fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; form-action 'none'; \
+            base-uri 'none'""";
     private static final String REASONABLE_META_POLICY =
-            "default-src 'self'; script-src 'self' "
-                    + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
-                    + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                    + "fonts.gstatic.com; worker-src 'self'; form-action 'none'; base-uri 'none'";
+            """
+            default-src 'self'; script-src 'self' \
+            storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; \
+            style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com \
+            fonts.gstatic.com; worker-src 'self'; form-action 'none'; base-uri 'none'""";
 
     @Override
     protected ContentSecurityPolicyScanRule createScanner() {
@@ -156,7 +159,10 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
-                        "Warnings:\nThis host name is unusual, and likely meant to be a keyword that is missing the required quotes: 'none'.\n"));
+                        """
+                        Warnings:
+                        This host name is unusual, and likely meant to be a keyword that is missing the required quotes: 'none'.
+                        """));
 
         assertThat(
                 alertsRaised.get(0).getEvidence(),
@@ -194,8 +200,9 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given
         HttpMessage msg =
                 createHttpMessage(
-                        "default-src 'self'; form-action 'none'; frame-ancestors 'none', "
-                                + "default-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'");
+                        """
+                        default-src 'self'; form-action 'none'; frame-ancestors 'none', \
+                        default-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'""");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -244,8 +251,11 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
-                        "The following directives either allow wildcard sources (or ancestors), are not "
-                                + "defined, or are overly broadly defined:\nconnect-src"));
+                        """
+                        The following directives either allow wildcard sources (or ancestors), are not \
+                        defined, or are overly broadly defined:
+                        connect-src\
+                        """));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo(
@@ -272,11 +282,10 @@ class ContentSecurityPolicyScanRuleUnitTest
         // meta policy still leaves framing unrestricted at the effective PolicyList layer
         HttpMessage msg = createHttpMessage();
         msg.setResponseBody(
-                "<html><head><meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s"></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
@@ -360,11 +369,10 @@ class ContentSecurityPolicyScanRuleUnitTest
         HttpMessage msg =
                 createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         msg.setResponseBody(
-                "<html><head><meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "\"><meta /></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s"><meta /></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When / Then
         assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
@@ -376,11 +384,10 @@ class ContentSecurityPolicyScanRuleUnitTest
         HttpMessage msg =
                 createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         msg.setResponseBody(
-                "<html><head><meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s"></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
@@ -394,12 +401,10 @@ class ContentSecurityPolicyScanRuleUnitTest
         HttpMessage msg =
                 createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         msg.setResponseBody(
-                "<html><head><meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\""
-                        + REASONABLE_META_POLICY
-                        + "; frame-ancestors *"
-                        + "\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="%s; frame-ancestors *"></head></html>"""
+                        .formatted(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY, REASONABLE_META_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
@@ -464,8 +469,9 @@ class ContentSecurityPolicyScanRuleUnitTest
     void shouldReportParsedPolicyCountForCommaSeparatedCspList() {
         // Given — one header text, two parsed policies, both allow unsafe-inline
         String cspList =
-                "script-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'none', "
-                        + "default-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'";
+                """
+                script-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'none', \
+                default-src 'unsafe-inline'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'""";
         HttpMessage msg = createHttpMessage(cspList);
         // When
         scanHttpResponseReceive(msg);
@@ -519,14 +525,16 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given
         HttpMessage msg =
                 createHttpMessage(
-                        "default-src 'self'; script-src 'unsafe-hashes'"
-                                + " 'sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY=';"
-                                + " form-action 'none'; base-uri 'none'; frame-ancestors 'none'");
+                        """
+                        default-src 'self'; script-src 'unsafe-hashes' \
+                        'sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY='; \
+                        form-action 'none'; base-uri 'none'; frame-ancestors 'none'""");
         msg.getResponseHeader()
                 .addHeader(
                         HttpFieldsNames.CONTENT_SECURITY_POLICY,
-                        "default-src 'self'; script-src 'self'; form-action 'none'; base-uri 'none';"
-                                + " frame-ancestors 'none'");
+                        """
+                        default-src 'self'; script-src 'self'; form-action 'none'; base-uri 'none'; \
+                        frame-ancestors 'none'""");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -634,7 +642,6 @@ class ContentSecurityPolicyScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(4));
-        // Verify the specific alerts
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -656,8 +663,9 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given — 'strict-dynamic' disables 'unsafe-inline' for scripts per CSP3
         HttpMessage msg =
                 createHttpMessage(
-                        "script-src 'strict-dynamic' 'unsafe-inline'; form-action 'none'; base-uri 'none';"
-                                + " frame-ancestors 'none'");
+                        """
+                        script-src 'strict-dynamic' 'unsafe-inline'; form-action 'none'; base-uri 'none'; \
+                        frame-ancestors 'none'""");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -674,7 +682,6 @@ class ContentSecurityPolicyScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(4));
-        // Verify the specific alerts
         assertThat(alertsRaised.get(3).getName(), equalTo("CSP: script-src unsafe-eval"));
         assertThat(alertsRaised.get(3).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(3).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
@@ -763,7 +770,6 @@ class ContentSecurityPolicyScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
-        // Verify the specific alerts
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -787,7 +793,6 @@ class ContentSecurityPolicyScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
-        // Verify the specific alerts
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -809,9 +814,9 @@ class ContentSecurityPolicyScanRuleUnitTest
         HttpMessage msg = createHttpMessage();
         msg.getResponseHeader().addHeader("Content-Security-Policy", "default-src ‘self’ “");
         msg.setResponseBody(
-                "<html><head><meta http-equiv=\""
-                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
-                        + "\" content=\"script-src 'unsafe-inline'\"></head></html>");
+                """
+                <html><head><meta http-equiv="%s" content="script-src 'unsafe-inline'"></head></html>"""
+                        .formatted(HttpFieldsNames.CONTENT_SECURITY_POLICY));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
         scanHttpResponseReceive(msg);
@@ -831,22 +836,29 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
-                is(equalTo("Warnings:\nThe prefetch-src directive has been deprecated\n")));
+                is(
+                        equalTo(
+                                """
+                                Warnings:
+                                The prefetch-src directive has been deprecated
+                                """)));
     }
 
     @ParameterizedTest
     @ValueSource(
             strings = {
                 // No form-action
-                "default-src 'self'; script-src 'self' "
-                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
-                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                        + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; base-uri 'none'",
+                """
+                default-src 'self'; script-src 'self' \
+                storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; \
+                style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com \
+                fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; base-uri 'none'""",
                 // No frame-ancestors
-                "default-src 'self'; script-src 'self' "
-                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
-                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
-                        + "fonts.gstatic.com; worker-src 'self'; form-action 'none'; base-uri 'none'"
+                """
+                default-src 'self'; script-src 'self' \
+                storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; \
+                style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com \
+                fonts.gstatic.com; worker-src 'self'; form-action 'none'; base-uri 'none'"""
             })
     void shouldAlertWhenMissingRelevantDirectiveWithoutFallback(String policy) {
         // Given
@@ -859,8 +871,10 @@ class ContentSecurityPolicyScanRuleUnitTest
                 alertsRaised.get(0).getDescription(),
                 is(
                         equalTo(
-                                "The Content Security Policy fails to define one of the directives that has no "
-                                        + "fallback. Missing/excluding them is the same as allowing anything.")));
+                                """
+                                The Content Security Policy fails to define one of the directives that has no \
+                                fallback. Missing/excluding them is the same as allowing anything.\
+                                """)));
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo("CSP: Failure to Define Directive with No Fallback"));
@@ -892,16 +906,14 @@ class ContentSecurityPolicyScanRuleUnitTest
 
             msg.setResponseBody("<html></html>");
             msg.setResponseHeader(
-                    "HTTP/1.1 200 OK\r\n"
-                            + "Server: Apache-Coyote/1.1\r\n"
-                            + header
-                            + ":"
-                            + cspPolicy
-                            + "\r\n"
-                            + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                            + "Content-Length: "
-                            + msg.getResponseBody().length()
-                            + "\r\n");
+                    """
+                    HTTP/1.1 200 OK\r
+                    Server: Apache-Coyote/1.1\r
+                    %s:%s\r
+                    Content-Type: text/html;charset=ISO-8859-1\r
+                    Content-Length: %d\r
+                    """
+                            .formatted(header, cspPolicy, msg.getResponseBody().length()));
             msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         } catch (HttpMalformedHeaderException e) {
             throw new RuntimeException(e);

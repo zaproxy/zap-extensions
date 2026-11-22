@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -41,6 +42,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 
@@ -168,6 +170,62 @@ class RedirectScriptUnitTest {
         ArgumentCaptor<String> urlCaptor = ArgumentCaptor.captor();
         verify(wd, times(2)).get(urlCaptor.capture());
         assertUrlsHavePrefixAndValidZapid(urlCaptor, "callback-url?zapenable=true&zapid=");
+        verify(api, never()).browserLaunched(any());
+    }
+
+    @Test
+    void shouldNotWriteToLocalStorageOnLaunch() {
+        // Given
+        given(ssutils.getRequester()).willReturn(HttpSender.PROXY_INITIATOR);
+
+        // When
+        script.browserLaunched(ssutils);
+
+        // Then
+        verify(wd, never()).executeScript(contains("setItem"));
+        verify(api).browserLaunched(any());
+    }
+
+    @Test
+    void shouldWaitForPageToBeUsableBeforeExtensionConfigured() {
+        // Given
+        RedirectScript.extensionConfigureTimeout = Duration.ofMillis(500);
+        RedirectScript.extensionConfigurePollInterval = Duration.ofMillis(10);
+        given(ssutils.getRequester()).willReturn(HttpSender.PROXY_INITIATOR);
+        AtomicInteger polls = new AtomicInteger();
+        // The page is not usable at first, as the browser has not loaded the callback page yet.
+        given(wd.executeScript(RedirectScript.EXTENSION_CONFIGURED_SCRIPT))
+                .willAnswer(
+                        invocation -> {
+                            if (polls.incrementAndGet() < 3) {
+                                throw new WebDriverException("localStorage is not usable");
+                            }
+                            return "true";
+                        });
+
+        // When
+        script.browserLaunched(ssutils);
+
+        // Then
+        verify(wd, times(1)).get(anyString());
+        assertThat(polls.get(), is(3));
+        verify(api).browserLaunched(any());
+    }
+
+    @Test
+    void shouldNotInvokeCallbackWhenPageNeverUsable() {
+        // Given
+        RedirectScript.extensionConfigureTimeout = Duration.ofMillis(50);
+        RedirectScript.extensionConfigurePollInterval = Duration.ofMillis(10);
+        given(ssutils.getRequester()).willReturn(HttpSender.PROXY_INITIATOR);
+        given(wd.executeScript(RedirectScript.EXTENSION_CONFIGURED_SCRIPT))
+                .willThrow(new WebDriverException("localStorage is not usable"));
+
+        // When
+        script.browserLaunched(ssutils);
+
+        // Then
+        verify(wd, times(2)).get(anyString());
         verify(api, never()).browserLaunched(any());
     }
 

@@ -154,4 +154,36 @@ class DiceMatcherUnitTest {
         // Then
         assertThat(sim, is(equalTo(0)));
     }
+
+    static Stream<Arguments> bigramSource() {
+        return Stream.of(
+                Arguments.of("ab", "ac", 0),
+                Arguments.of("abc", "abx", 50),
+                Arguments.of("abcd", "abce", 66),
+                Arguments.of("ab", "ab", 100),
+                Arguments.of("hello", "help!", 50),
+                // Characters >= U+8000 set the sign bit of the packed bigram.
+                Arguments.of("\uFFFFab\u8000", "ab\u8000\uFFFF", 66),
+                Arguments.of("\u8000\uFFFF\u8001", "\u8000\uFFFF\u8002", 50));
+    }
+
+    @ParameterizedTest
+    @MethodSource("bigramSource")
+    void shouldGiveCorrectPercentageBasedOnAllBigrams(
+            String stringA, String stringB, int expected) {
+        // Given / When
+        int sim = DiceMatcher.getMatchPercentage(stringA, stringB);
+        // Then
+        assertThat(sim, is(equalTo(expected)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("bigramSource")
+    void shouldBeSymmetric(String stringA, String stringB) {
+        // Given / When
+        int simAb = DiceMatcher.getMatchPercentage(stringA, stringB);
+        int simBa = DiceMatcher.getMatchPercentage(stringB, stringA);
+        // Then
+        assertThat(simAb, is(equalTo(simBa)));
+    }
 }
