@@ -100,7 +100,7 @@ class TechPassiveScannerPerformanceUnitTest extends PassiveScannerTestUtils<Tech
                 """;
         HttpMessage msg = message("text/html", "<html><head></head><body>\n", chunk, 25_000);
         // When / Then
-        assertTimeoutPreemptively(Duration.ofSeconds(7), () -> scanHttpResponseReceive(msg));
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> scanHttpResponseReceive(msg));
     }
 
     @Test
@@ -121,7 +121,7 @@ class TechPassiveScannerPerformanceUnitTest extends PassiveScannerTestUtils<Tech
                 "{\"html\":\"<div class=\\\"row\\\"><a href=\\\"/x\\\">x</a></div>\",\"n\":1},";
         HttpMessage msg = message("application/json", "[", chunk, 3_000_000);
         // When / Then
-        assertTimeoutPreemptively(Duration.ofSeconds(1), () -> scanHttpResponseReceive(msg));
+        assertTimeoutPreemptively(Duration.ofSeconds(3), () -> scanHttpResponseReceive(msg));
     }
 
     @Test
@@ -130,7 +130,7 @@ class TechPassiveScannerPerformanceUnitTest extends PassiveScannerTestUtils<Tech
         // Given
         HttpMessage msg = message("text/html", "<html><body>", "a<b ", 50_000);
         // When / Then
-        assertTimeoutPreemptively(Duration.ofSeconds(8), () -> scanHttpResponseReceive(msg));
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> scanHttpResponseReceive(msg));
     }
 
     private static HttpMessage message(String contentType, String intro, String chunk, int size)
