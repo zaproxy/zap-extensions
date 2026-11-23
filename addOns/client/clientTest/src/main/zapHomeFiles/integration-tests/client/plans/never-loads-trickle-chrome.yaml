@@ -1,0 +1,61 @@
+---
+# The Client Spider with Chrome on a page with a link to a document which keeps trickling in.
+# The spider has to finish in good time, and has to find the canary page, which loads normally and
+# which is linked from the page.
+# Needs Chrome, ZAP to be run in dev mode (for the never loads test app) and the Automation Framework,
+# Graal.js and Client add-ons, for example:
+#   zap.sh -dev -cmd -autorun <ZAP home>/integration-tests/client/plans/never-loads-trickle-chrome.yaml
+env:
+  contexts:
+    - name: "never-loads-trickle-chrome"
+      urls:
+        - "http://localhost:9091/client/never-loads/"
+      includePaths:
+        - "http://localhost:9091/.*"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    continueOnFailure: false
+    progressToStdout: true
+  vars: {}
+jobs:
+  - type: "script"
+    name: "add start timer"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "ECMAScript : Graal.js"
+      name: "never-loads-trickle-chrome-start"
+      inline: |
+        Java.type("org.zaproxy.addon.clienttest.SpiderCheck").start();
+  - type: "script"
+    name: "start timer"
+    parameters:
+      action: "run"
+      type: "standalone"
+      name: "never-loads-trickle-chrome-start"
+      failureLevel: "error"
+  - type: "spiderClient"
+    parameters:
+      context: "never-loads-trickle-chrome"
+      url: "http://localhost:9091/client/never-loads/trickle.html"
+      browserId: "chrome-headless"
+      # Minutes, a spider which waits for a page which never loads is stopped by this.
+      maxDuration: 3
+  - type: "script"
+    name: "add check"
+    parameters:
+      action: "add"
+      type: "standalone"
+      engine: "ECMAScript : Graal.js"
+      name: "never-loads-trickle-chrome-check"
+      inline: |
+        print(Java.type("org.zaproxy.addon.clienttest.SpiderCheck").check(
+            "http://localhost:9091/client/never-loads/canary.html", 150));
+  - type: "script"
+    name: "check"
+    parameters:
+      action: "run"
+      type: "standalone"
+      name: "never-loads-trickle-chrome-check"
+      failureLevel: "error"

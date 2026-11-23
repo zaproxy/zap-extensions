@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - A "full" app section with a simple form-based authenticated app containing injection vulnerabilities.
 - Random pages (/rnd/simple) for testing spider scalability — configurable number of pages and links per page, generated on the fly.
 - Allow other add-ons to plug their own test apps into the dev server (`ExtensionDev.getTestServer()`, `TestProxyServer.addDirectory` / `removeDirectory`).
+- Allow test apps to stream responses, for example ones which trickle in or never finish, with a reusable `StreamPage`.
 
 ### Changed
 - Update minimum ZAP version to 2.17.0.

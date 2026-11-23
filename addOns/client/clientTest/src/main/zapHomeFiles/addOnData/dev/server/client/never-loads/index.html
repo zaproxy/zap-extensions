@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Pages which never finish loading</h1>
+	<p>Each page below hangs in a different way, and links to the <a href="canary.html">canary</a>
+	page, which loads normally. A client spider which copes with a page that never finishes loading
+	still finds the canary page. The hanging responses only end after 10 minutes, or after the number of
+	milliseconds given by the <code>delay</code> parameter (<code>duration</code> for the streamed ones).</p>
+	<ul>
+		<li><a href="document.html">The document never completes</a></li>
+		<li><a href="subresource.html">A script never completes</a></li>
+		<li><a href="trickle.html">A document keeps trickling in</a></li>
+		<li><a href="sse.html">A server-sent events stream never ends</a></li>
+		<li><a href="silent-script.html">A script is started but never finished</a></li>
+	</ul>
+</div>
+</body>
+</html>

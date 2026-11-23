@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+import org.zaproxy.addon.clienttest.neverloads.NeverLoadsDir;
 import org.zaproxy.addon.clienttest.slowload.SlowLoadDir;
 import org.zaproxy.addon.dev.ExtensionDev;
 import org.zaproxy.addon.dev.TestProxyServer;
@@ -38,6 +39,7 @@ public class ExtensionClientTest extends ExtensionAdaptor {
 
     static final String CLIENT_PARENT_PATH = "client";
     static final String SLOW_LOAD_NAME = "slow-load";
+    static final String NEVER_LOADS_NAME = "never-loads";
 
     private final Supplier<Optional<TestProxyServer>> serverSupplier;
     private TestProxyServer server;
@@ -69,6 +71,8 @@ public class ExtensionClientTest extends ExtensionAdaptor {
                             s -> {
                                 s.addDirectory(
                                         CLIENT_PARENT_PATH, new SlowLoadDir(s, SLOW_LOAD_NAME));
+                                s.addDirectory(
+                                        CLIENT_PARENT_PATH, new NeverLoadsDir(s, NEVER_LOADS_NAME));
                                 server = s;
                             });
         }
@@ -78,6 +82,7 @@ public class ExtensionClientTest extends ExtensionAdaptor {
     public synchronized void unload() {
         if (server != null) {
             server.removeDirectory(CLIENT_PARENT_PATH + "/" + SLOW_LOAD_NAME);
+            server.removeDirectory(CLIENT_PARENT_PATH + "/" + NEVER_LOADS_NAME);
             server = null;
         }
     }
