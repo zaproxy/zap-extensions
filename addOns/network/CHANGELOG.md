@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Allow handlers of the HTTP servers to stream responses, for responses that trickle in or are open for a long time. A `ChunkedOutputStream` is provided to send chunked responses.
+
 ### Changed
 - Update dependency.
 

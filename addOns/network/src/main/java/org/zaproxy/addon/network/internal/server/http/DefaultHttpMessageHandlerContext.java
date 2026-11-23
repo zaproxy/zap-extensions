@@ -20,6 +20,8 @@
 package org.zaproxy.addon.network.internal.server.http;
 
 import io.netty.channel.Channel;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Objects;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
@@ -34,6 +36,7 @@ class DefaultHttpMessageHandlerContext implements HttpMessageHandlerContext {
     private boolean excluded;
     private boolean overridden;
     private boolean close;
+    private ResponseStream responseStream;
 
     /**
      * Constructs a {@code DefaultHttpMessageHandlerContext} with default state.
@@ -112,5 +115,22 @@ class DefaultHttpMessageHandlerContext implements HttpMessageHandlerContext {
 
     void setExcluded(boolean excluded) {
         this.excluded = excluded;
+    }
+
+    @Override
+    public OutputStream streamingResponse(HttpMessage msg) throws IOException {
+        if (responseStream != null) {
+            throw new IllegalStateException("The response was already started.");
+        }
+
+        msg.setResponseBody(new byte[0]);
+        ResponseStream.write(channel, msg);
+        responseStream = new ResponseStream(channel);
+        overridden = true;
+        return responseStream;
+    }
+
+    boolean isStreaming() {
+        return responseStream != null;
     }
 }

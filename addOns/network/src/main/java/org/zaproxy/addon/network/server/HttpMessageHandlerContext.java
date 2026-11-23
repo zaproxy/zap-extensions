@@ -19,6 +19,10 @@
  */
 package org.zaproxy.addon.network.server;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import org.parosproxy.paros.network.HttpMessage;
+
 /**
  * The context for message handlers.
  *
@@ -65,4 +69,33 @@ public interface HttpMessageHandlerContext {
      * <p>No other handlers will be notified.
      */
     void close();
+
+    /**
+     * Starts streaming the response of the given message, which is sent to the client as the data
+     * is written to the returned stream, for responses that trickle in or are open for a long time.
+     *
+     * <p>The response header is sent straight away, as it is, and the body of the message is not
+     * sent, its response body is emptied. The data written to the stream is sent as it is, with no
+     * changes.
+     *
+     * <p>The responsibility of the connection state is with the caller, for example, the framing of
+     * the response (see {@link ChunkedOutputStream}) and when to close the connection. Closing the
+     * stream closes the connection, so the context is not needed to do so.
+     *
+     * <p>The message is not forwarded after the handler returns, and no other handlers are
+     * notified, as if {@link #overridden()} was called. Nothing is passed to the listeners of
+     * persistent connections (for example, WebSocket or server-sent events) either.
+     *
+     * <p>The calls to the stream block until the data was written, and fail if the connection was
+     * closed. The handler is blocked for as long as the response is streamed, which is not a
+     * problem for handlers called from the threads of the server, but must not be called from the
+     * event loop of the connection.
+     *
+     * @param msg the message with the response header to send.
+     * @return the stream to write the body to.
+     * @throws IOException if an error occurred while sending the response header.
+     * @throws IllegalStateException if the response was already started.
+     * @since 0.34.0
+     */
+    OutputStream streamingResponse(HttpMessage msg) throws IOException;
 }

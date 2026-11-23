@@ -90,7 +90,7 @@ class ClientSideHandlerUnitTest extends TestUtils {
         given(user.getAuthenticationCredentials()).willReturn(creds);
 
         csh = new ClientSideHandler(user);
-        ctx = new TestHttpMessageHandlerContext();
+        ctx = mock(HttpMessageHandlerContext.class);
         historyProvider = new TestHistoryProvider();
         csh.setHistoryProvider(historyProvider);
         AuthUtils.setHistoryProvider(historyProvider);
@@ -479,29 +479,5 @@ class ClientSideHandlerUnitTest extends TestUtils {
                 is(
                         equalTo(
                                 "authenticity_token=sanitizedtoken1&button=sanitizedtoken2&user[email]=FakeUserName@example.com&user[password]=F4keP4ssw0rd&\n")));
-    }
-
-    class TestHttpMessageHandlerContext implements HttpMessageHandlerContext {
-
-        @Override
-        public boolean isRecursive() {
-            return false;
-        }
-
-        @Override
-        public boolean isExcluded() {
-            return false;
-        }
-
-        @Override
-        public boolean isFromClient() {
-            return false;
-        }
-
-        @Override
-        public void overridden() {}
-
-        @Override
-        public void close() {}
     }
 }
