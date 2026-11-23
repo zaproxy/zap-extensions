@@ -53,8 +53,8 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
 
     // Evil payloads able to generate
     // an XML explicit error as described in
-    // https://owasp.org/www-community/attacks/XPATH_Injection
-    // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+    // https://community.owasp.org/attacks/XPATH_Injection
+    // https://community.owasp.org/vulnerabilities/XML_External_Entity_(XXE)_Processing
     private static final String[] XPATH_PAYLOADS = {"\"'", "<!--", "]]>"};
     // List of XPath errors (need to be improved)
     // Reference W3AF XPath injection plugin

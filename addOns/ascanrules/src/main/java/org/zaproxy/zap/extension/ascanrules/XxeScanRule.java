@@ -43,7 +43,7 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.addon.oast.ExtensionOast;
 
 /**
- * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+ * https://community.owasp.org/vulnerabilities/XML_External_Entity_(XXE)_Processing
  *
  * @author yhawke (2104)
  */
@@ -81,7 +81,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
     }
 
     // Payload built on examples retrieved in:
-    // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+    // https://community.owasp.org/vulnerabilities/XML_External_Entity_(XXE)_Processing
     private static final String ATTACK_ENTITY = "&zapxxe;";
 
     static final String ATTACK_HEADER =
@@ -225,7 +225,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
 
     /**
      * This attack is described in
-     * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing using an
+     * https://community.owasp.org/vulnerabilities/XML_External_Entity_(XXE)_Processing using an
      * external bouncing site, in this case we use the ZAP API as a server for the vulnerability
      * check using a challenge/response model based on a random string
      */
@@ -326,10 +326,10 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
 
     /**
      * Local File Inclusion Attack is described in
-     * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing. The
-     * attack builds a payload for every file listed in LOCAL_FILE_TARGETS with the ATTACK_HEADER
-     * and the ATTACK_BODY. The response returned is pattern matched against LOCAL_FILE_PATTERNS. An
-     * alert is raised when a match is found.
+     * https://community.owasp.org/vulnerabilities/XML_External_Entity_(XXE)_Processing. The attack
+     * builds a payload for every file listed in LOCAL_FILE_TARGETS with the ATTACK_HEADER and the
+     * ATTACK_BODY. The response returned is pattern matched against LOCAL_FILE_PATTERNS. An alert
+     * is raised when a match is found.
      *
      * <p>This situation is very uncommon because it works only in case of a bare XML parser which
      * execute the content and then returns the content almost untouched (maybe because it applies

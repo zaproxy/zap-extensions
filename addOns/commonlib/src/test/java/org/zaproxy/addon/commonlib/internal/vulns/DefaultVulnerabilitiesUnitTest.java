@@ -28,13 +28,15 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
+import java.util.List;
 import java.util.Locale;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
+import org.zaproxy.zap.testutils.UrlTests;
 
 /** Unit test for {@link DefaultVulnerabilities}. */
-class DefaultVulnerabilitiesUnitTest {
+class DefaultVulnerabilitiesUnitTest implements UrlTests {
 
     @Test
     void shouldLoadDefaultVulnerabilities() {
@@ -86,5 +88,20 @@ class DefaultVulnerabilitiesUnitTest {
         DefaultVulnerabilities vulnerabilities = new DefaultVulnerabilities(locale);
         // Then
         assertDefaults(vulnerabilities);
+    }
+
+    @Test
+    void shouldHaveValidReferences() throws Exception {
+        // Given
+        List<String> urls =
+                new DefaultVulnerabilities(Locale.ROOT)
+                        .getAll().stream()
+                                .flatMap(v -> v.getReferences().stream())
+                                .map(String::trim)
+                                .filter(url -> !url.isEmpty())
+                                .distinct()
+                                .toList();
+        // When / Then
+        shouldHaveValidUrls(urls);
     }
 }
