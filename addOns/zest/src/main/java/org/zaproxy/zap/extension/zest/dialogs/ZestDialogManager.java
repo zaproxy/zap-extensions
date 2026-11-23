@@ -646,7 +646,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementAssignDialog == null) {
             clientElementAssignDialog =
                     new ZestClientElementAssignDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 240));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(400, 300));
         } else if (clientElementAssignDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(clientElementAssignDialog);
@@ -666,7 +666,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementClearDialog == null) {
             clientElementClearDialog =
                     new ZestClientElementClearDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 250));
         } else if (clientElementClearDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(clientElementClearDialog);
@@ -686,7 +686,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementClickDialog == null) {
             clientElementClickDialog =
                     new ZestClientElementClickDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 250));
         } else if (clientElementClickDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(clientElementClickDialog);
@@ -706,7 +706,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementMouseOverDialog == null) {
             clientElementMouseOverDialog =
                     new ZestClientElementMouseOverDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 250));
         } else if (clientElementMouseOverDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(clientElementMouseOverDialog);
@@ -726,7 +726,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementScrollDialog == null) {
             clientElementScrollDialog =
                     new ZestClientElementScrollDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 250));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(400, 300));
         } else if (clientElementScrollDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(clientElementScrollDialog);
@@ -746,7 +746,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementScrollToDialog == null) {
             clientElementScrollToDialog =
                     new ZestClientElementScrollToDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 250));
         } else if (clientElementScrollToDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(clientElementScrollToDialog);
@@ -766,7 +766,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementSendKeysDialog == null) {
             clientElementSendKeysDialog =
                     new ZestClientElementSendKeysDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 250));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(350, 300));
         } else if (clientElementSendKeysDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(clientElementSendKeysDialog);
@@ -786,7 +786,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementSubmitDialog == null) {
             clientElementSubmitDialog =
                     new ZestClientElementSubmitDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 250));
         } else if (clientElementSubmitDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(clientElementSubmitDialog);

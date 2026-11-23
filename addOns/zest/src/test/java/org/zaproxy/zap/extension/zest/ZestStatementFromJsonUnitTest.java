@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
@@ -301,5 +302,29 @@ class ZestStatementFromJsonUnitTest {
                         () -> ZestStatementFromJson.createZestStatementFromJson(json));
 
         assertEquals("Element not recognised {\"a\":\"b\",\"b\":\"c\"}", exception.getMessage());
+    }
+
+    @Test
+    void shouldCreateClientElementWithShadowPath() throws Exception {
+        // Given
+        JSONObject json =
+                JSONObject.fromObject(
+                        """
+                        {
+                          "windowHandle" : "windowHandle1",
+                          "type" : "cssSelector",
+                          "element" : "#button",
+                          "shadowPath" : ["#host0", "div > div"],
+                          "waitForMsec" : 5000,
+                          "enabled" : true,
+                          "elementType" : "ZestClientElementClick"
+                        }
+                        """);
+        // When
+        ZestStatement stmt = ZestStatementFromJson.createZestStatementFromJson(json);
+        // Then
+        assertThat(stmt, instanceOf(ZestClientElementClick.class));
+        ZestClientElementClick click = (ZestClientElementClick) stmt;
+        assertThat(click.getShadowPath(), is(equalTo(List.of("#host0", "div > div"))));
     }
 }

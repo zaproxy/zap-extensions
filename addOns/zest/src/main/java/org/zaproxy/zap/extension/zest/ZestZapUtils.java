@@ -60,6 +60,7 @@ import org.zaproxy.zest.core.v1.ZestAssignReplace;
 import org.zaproxy.zest.core.v1.ZestAssignString;
 import org.zaproxy.zest.core.v1.ZestAssignStringDelimiters;
 import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
+import org.zaproxy.zest.core.v1.ZestClientElement;
 import org.zaproxy.zest.core.v1.ZestClientElementAssign;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
@@ -122,6 +123,13 @@ public class ZestZapUtils {
     private static boolean showIndexes = false;
 
     private static JPopupMenu popupMenu;
+
+    private static String clientElementToUiString(ZestClientElement element) {
+        if (element.getShadowPath() == null || element.getShadowPath().isEmpty()) {
+            return element.getElement();
+        }
+        return Constant.messages.getString("zest.element.shadowDom.prefix", element.getElement());
+    }
 
     public static String toUiString(ZestElement za) {
         return toUiString(za, true, 0);
@@ -719,7 +727,7 @@ public class ZestZapUtils {
                                 "zest.element.clientElementAssign",
                                 zcl.getWindowHandle(),
                                 zcl.getType(),
-                                zcl.getElement());
+                                clientElementToUiString(zcl));
             } else {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementAssign.title");
@@ -732,7 +740,7 @@ public class ZestZapUtils {
                                 "zest.element.clientElementClear",
                                 zcl.getWindowHandle(),
                                 zcl.getType(),
-                                zcl.getElement());
+                                clientElementToUiString(zcl));
             } else {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementClear.title");
@@ -745,7 +753,7 @@ public class ZestZapUtils {
                                 "zest.element.clientElementClick",
                                 zcl.getWindowHandle(),
                                 zcl.getType(),
-                                zcl.getElement());
+                                clientElementToUiString(zcl));
             } else {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementClick.title");
@@ -758,7 +766,7 @@ public class ZestZapUtils {
                                 "zest.element.clientElementMouseOver",
                                 zcl.getWindowHandle(),
                                 zcl.getType(),
-                                zcl.getElement());
+                                clientElementToUiString(zcl));
             } else {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementMouseOver.title");
@@ -771,7 +779,7 @@ public class ZestZapUtils {
                                 "zest.element.clientElementScroll",
                                 zcl.getWindowHandle(),
                                 zcl.getType(),
-                                zcl.getElement(),
+                                clientElementToUiString(zcl),
                                 String.valueOf(zcl.getX()),
                                 String.valueOf(zcl.getY()));
             } else {
@@ -786,7 +794,7 @@ public class ZestZapUtils {
                                 "zest.element.clientElementScrollTo",
                                 zcl.getWindowHandle(),
                                 zcl.getType(),
-                                zcl.getElement());
+                                clientElementToUiString(zcl));
             } else {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementScrollTo.title");
@@ -799,7 +807,7 @@ public class ZestZapUtils {
                                 "zest.element.clientElementSendKeys",
                                 zcl.getWindowHandle(),
                                 zcl.getType(),
-                                zcl.getElement(),
+                                clientElementToUiString(zcl),
                                 zcl.getValue());
             } else {
                 return indexStr
@@ -813,7 +821,7 @@ public class ZestZapUtils {
                                 "zest.element.clientElementSubmit",
                                 zcl.getWindowHandle(),
                                 zcl.getType(),
-                                zcl.getElement());
+                                clientElementToUiString(zcl));
             } else {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementSubmit.title");
