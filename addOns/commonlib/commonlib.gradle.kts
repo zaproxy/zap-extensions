@@ -27,6 +27,7 @@ crowdin {
 dependencies {
     api(platform(libs.commonlib.jackson.bom))
     api(libs.commonlib.jackson.databind)
+    api(libs.commonlib.jackson.dataformat.toml)
     api(libs.commonlib.jackson.dataformat.xml)
     api(libs.commonlib.jackson.dataformat.yaml)
     api(libs.commonlib.jackson.datatype.jdk8)
