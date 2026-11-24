@@ -22,17 +22,24 @@ package org.zaproxy.addon.network.internal.server.http;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import io.netty.channel.Channel;
+import io.netty.channel.embedded.EmbeddedChannel;
+import java.io.IOException;
+import java.io.OutputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.network.internal.codec.HttpResponseEncoder;
 
 /** Unit test for {@link DefaultHttpMessageHandlerContext}. */
 class DefaultHttpMessageHandlerContextUnitTest {
@@ -153,5 +160,70 @@ class DefaultHttpMessageHandlerContextUnitTest {
         ctx.close();
         // Then
         assertThat(ctx.isClose(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotBeStreamingByDefault() {
+        assertThat(ctx.isStreaming(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldStartStreamingResponse() throws Exception {
+        // Given
+        EmbeddedChannel embedded = new EmbeddedChannel(HttpResponseEncoder.getInstance());
+        ctx = new DefaultHttpMessageHandlerContext(embedded, recursiveRequestChecker);
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\nContent-Length: 3");
+        msg.setResponseBody("abc");
+        // When
+        OutputStream out = ctx.streamingResponse(msg);
+        // Then
+        assertThat(out, is(notNullValue()));
+        assertThat(ctx.isStreaming(), is(equalTo(true)));
+        assertThat(ctx.isOverridden(), is(equalTo(true)));
+        assertThat(msg.getResponseBody().length(), is(equalTo(0)));
+        out.close();
+    }
+
+    @Test
+    void shouldCloseConnectionWhenStreamIsClosed() throws Exception {
+        // Given
+        EmbeddedChannel embedded = new EmbeddedChannel(HttpResponseEncoder.getInstance());
+        ctx = new DefaultHttpMessageHandlerContext(embedded, recursiveRequestChecker);
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
+        msg.setResponseHeader("HTTP/1.1 200 OK");
+        OutputStream out = ctx.streamingResponse(msg);
+        assertThat(embedded.isActive(), is(equalTo(true)));
+        // When
+        out.close();
+        // Then
+        assertThat(embedded.isActive(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldNotChangeHeaderWhenStreaming() throws Exception {
+        // Given
+        EmbeddedChannel embedded = new EmbeddedChannel(HttpResponseEncoder.getInstance());
+        ctx = new DefaultHttpMessageHandlerContext(embedded, recursiveRequestChecker);
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\nContent-Length: 3");
+        // When
+        ctx.streamingResponse(msg);
+        // Then
+        assertThat(msg.getResponseHeader().getHeader("Transfer-Encoding"), is(nullValue()));
+        assertThat(msg.getResponseHeader().getHeader("Content-Length"), is(equalTo("3")));
+    }
+
+    @Test
+    void shouldNotStartStreamingResponseIfHeaderNotSent() throws Exception {
+        // Given
+        EmbeddedChannel embedded = new EmbeddedChannel(HttpResponseEncoder.getInstance());
+        embedded.close();
+        ctx = new DefaultHttpMessageHandlerContext(embedded, recursiveRequestChecker);
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
+        // When / Then
+        assertThrows(IOException.class, () -> ctx.streamingResponse(msg));
+        assertThat(ctx.isStreaming(), is(equalTo(false)));
+        assertThat(ctx.isOverridden(), is(equalTo(false)));
     }
 }

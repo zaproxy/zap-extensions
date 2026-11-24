@@ -21,9 +21,7 @@ package org.zaproxy.addon.network.internal.server.http;
 
 import io.netty.channel.ChannelHandlerContext;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import org.parosproxy.paros.network.HttpMessage;
@@ -85,14 +83,5 @@ public class MainProxyHandler extends MainServerHandler {
         // No add-on to process the data.
         close(ctx);
         return true;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, Object> getProperties(HttpMessage message) {
-        Object userObject = message.getUserObject();
-        if (!(userObject instanceof Map)) {
-            return Collections.emptyMap();
-        }
-        return (Map<String, Object>) userObject;
     }
 }

@@ -22,6 +22,7 @@ package org.zaproxy.addon.network.internal.server.http;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -42,6 +43,8 @@ import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -68,6 +71,7 @@ import org.zaproxy.addon.network.internal.codec.HttpClientCodec;
 import org.zaproxy.addon.network.internal.codec.HttpRequestDecoder;
 import org.zaproxy.addon.network.internal.codec.HttpResponseEncoder;
 import org.zaproxy.addon.network.internal.server.ServerConfig;
+import org.zaproxy.addon.network.server.ChunkedOutputStream;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
@@ -236,6 +240,94 @@ class MainServerHandlerUnitTest {
         // Then
         assertThat(exceptionsThrown, hasSize(0));
         assertResponse("HTTP/1.1 200 OK from last handler\r\n\r\n");
+    }
+
+    @Test
+    void shouldStreamResponseAsIs() {
+        // Given
+        String request = "GET / HTTP/1.1\r\n\r\n";
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setResponseHeader("HTTP/1.1 200 OK\r\nContent-Length: 6");
+                    msg.setResponseBody("ignored");
+                    try (OutputStream out = ctx.streamingResponse(msg)) {
+                        out.write("Hello".getBytes(StandardCharsets.US_ASCII));
+                        out.write(new byte[0]);
+                        out.write("!".getBytes(StandardCharsets.US_ASCII));
+                    }
+                });
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
+        assertResponse("HTTP/1.1 200 OK\r\nContent-Length: 6\r\n\r\n");
+        assertResponse("Hello");
+        assertResponse("!");
+        assertChannelActive(false);
+        handler1.assertCalled(1);
+        handler2.assertCalled(0);
+    }
+
+    @Test
+    void shouldStreamChunkedResponse() {
+        // Given
+        String request = "GET / HTTP/1.1\r\n\r\n";
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setResponseHeader("HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked");
+                    try (OutputStream out = new ChunkedOutputStream(ctx.streamingResponse(msg))) {
+                        out.write("Hello".getBytes(StandardCharsets.US_ASCII));
+                    }
+                });
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
+        assertResponse("HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
+        assertResponse("5\r\nHello\r\n");
+        assertResponse("0\r\n\r\n");
+        assertChannelActive(false);
+    }
+
+    @Test
+    void shouldLeaveConnectionToHandlerOfStreamedResponse() {
+        // Given
+        String request = "GET / HTTP/1.1\r\n\r\n";
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setResponseHeader("HTTP/1.1 200 OK\r\nContent-Length: 10");
+                    ctx.streamingResponse(msg).write('a');
+                });
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
+        assertResponse("HTTP/1.1 200 OK\r\nContent-Length: 10\r\n\r\n");
+        assertResponse("a");
+        assertChannelActive(true);
+        assertThat(channel.readOutbound(), is(nullValue()));
+    }
+
+    @Test
+    void shouldFailToWriteToEndedStreamedResponse() {
+        // Given
+        String request = "GET / HTTP/1.1\r\n\r\n";
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setResponseHeader("HTTP/1.1 200 OK\r\nContent-Length: 0");
+                    OutputStream out = ctx.streamingResponse(msg);
+                    out.close();
+                    assertThrows(IOException.class, () -> out.write('a'));
+                    assertThrows(IllegalStateException.class, () -> ctx.streamingResponse(msg));
+                });
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
     }
 
     @Test

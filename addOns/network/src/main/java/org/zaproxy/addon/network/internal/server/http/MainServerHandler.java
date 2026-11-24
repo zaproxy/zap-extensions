@@ -96,6 +96,11 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
             return;
         }
 
+        if (handlerContext.isStreaming()) {
+            // The response was sent by the handler, which is responsible for ending it.
+            return;
+        }
+
         writeResponse(ctx, msg);
 
         if (isCloseRequired(msg)) {
@@ -118,7 +123,7 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> getProperties(HttpMessage message) {
+    static Map<String, Object> getProperties(HttpMessage message) {
         Object userObject = message.getUserObject();
         if (!(userObject instanceof Map)) {
             return Collections.emptyMap();
