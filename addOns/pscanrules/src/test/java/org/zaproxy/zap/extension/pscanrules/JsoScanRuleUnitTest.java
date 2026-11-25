@@ -35,6 +35,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -342,12 +344,13 @@ class JsoScanRuleUnitTest extends PassiveScannerTest<JsoScanRule> {
         assertThat(alertsRaised, hasSize(1));
     }
 
-    @Test
-    void shouldNotRaiseAlertGivenBase64JsoMagicBytesAreInsideAnotherValueInBodyOfRequest()
-            throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"aGVsbG8rO0ABdGhlcmU=", "aGVsbG8-rO0ABdGhlcmU", "aGVsbG8_rO0ABdGhlcmU"})
+    void shouldNotRaiseAlertGivenBase64JsoMagicBytesAreInsideAnotherValueInBodyOfRequest(
+            String token) throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
-        String body = "{\"user\":\"bob\",\"token\":\"aGVsbG8rO0ABdGhlcmU=\"}";
+        String body = "{\"user\":\"bob\",\"token\":\"" + token + "\"}";
         msg.setRequestHeader(
                 "POST / HTTP/1.1\r\n"
                         + "Content-Type: application/json\r\n"

@@ -52,7 +52,7 @@ public class JsoScanRule extends PluginPassiveScanner implements CommonPassiveSc
      */
     private static final Pattern JSO_IN_TEXT_PATTERN =
             Pattern.compile(
-                    "(?<![A-Za-z0-9+/])(?:"
+                    "(?<![A-Za-z0-9+/_-])(?:"
                             + JSO_BASE_64_MAGIC_SEQUENCE
                             + "|"
                             + JSO_URI_ENCODED_MAGIC_SEQUENCE
