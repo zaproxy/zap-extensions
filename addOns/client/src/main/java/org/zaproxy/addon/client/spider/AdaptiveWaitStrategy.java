@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client.spider;
 
+import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,6 +61,9 @@ public class AdaptiveWaitStrategy implements ActionWaitStrategy {
     @Override
     public void configure(WebDriverProcess wdp) {
         this.proxyPort = wdp.getProxyPort();
+        // The adaptive wait only applies after the browser calls (navigation, clicks) return, so
+        // they have to be bounded too, otherwise a page that never loads blocks the call.
+        wdp.getWebDriver().manage().timeouts().pageLoadTimeout(Duration.ofMillis(2 * timeoutMs));
     }
 
     @Override

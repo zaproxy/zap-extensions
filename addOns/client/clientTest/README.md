@@ -11,6 +11,18 @@ for page loads, for example with the `none` page load strategy, returns from the
 away. It is still on the initial page (`about:home` or `about:blank`) until the page has loaded, and in
 Firefox `localStorage` is not usable there.
 
+## Never loading pages
+
+`http://localhost:9091/client/never-loads/` has pages which never finish loading, to check that the Client
+Spider copes with them. Each page links to `canary.html`, which loads normally, so a spider which gets
+past the hanging page finds it.
+
+* `document.html` links to `hang`, a document which only responds after 10 minutes.
+* `subresource.html` loads `hang-script`, a script which only responds after 10 minutes.
+* `trickle.html`, `sse.html` and `silent-script.html` are streamed (`StreamPage` of the Dev add-on). They load a document which keeps
+  trickling in, a server-sent events stream which never ends, and a script which starts but is never
+  finished.
+
 ## Launch check
 
 `org.zaproxy.addon.clienttest.LaunchCheck.check(browserId, pageLoadStrategy, slowPageUrl)` launches a
@@ -34,3 +46,8 @@ Framework and Graal.js add-ons, a Firefox browser, and ZAP to be run in dev mode
   initial page.
 * `firefox-callback-normal.yaml` - the control, the same launch with the `normal` strategy, which waits
   for the callback page.
+* `never-loads-<page>-<browser>.yaml` - run the Client Spider on a page of the never loading test app, with
+  `firefox` or `chrome`. `<page>` is `document`, `subresource`, `trickle`, `sse` or `silent-script`.
+  They need ZAP to be run in dev mode and the Automation Framework, Graal.js and Client add-ons. They
+  fail if the spider takes more than 150 seconds, or does not request `canary.html`, a page which loads
+  normally and is only linked from the page which does not load. `SpiderCheck` does the checks.

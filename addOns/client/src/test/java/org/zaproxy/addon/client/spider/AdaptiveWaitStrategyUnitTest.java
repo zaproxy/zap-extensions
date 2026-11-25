@@ -25,7 +25,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -36,6 +38,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.Options;
+import org.openqa.selenium.WebDriver.Timeouts;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
 
 /** Unit test for {@link AdaptiveWaitStrategy}. */
@@ -67,11 +72,32 @@ class AdaptiveWaitStrategyUnitTest {
                         url -> url.startsWith("http://example.com"),
                         ConcurrentHashMap.newKeySet());
 
-        WebDriverProcess wdp = mock();
-        given(wdp.getProxyPort()).willReturn(PROXY_PORT);
+        WebDriverProcess wdp = webDriverProcess(mock());
 
         strategy.configure(wdp);
         scheduler = Executors.newScheduledThreadPool(2);
+    }
+
+    private static WebDriverProcess webDriverProcess(Timeouts timeouts) {
+        WebDriverProcess wdp = mock();
+        given(wdp.getProxyPort()).willReturn(PROXY_PORT);
+        WebDriver wd = mock();
+        given(wdp.getWebDriver()).willReturn(wd);
+        Options webDriverOptions = mock();
+        given(wd.manage()).willReturn(webDriverOptions);
+        given(webDriverOptions.timeouts()).willReturn(timeouts);
+        return wdp;
+    }
+
+    @Test
+    void shouldConfigureWebDriverPageLoadTimeoutAsTwiceTheTimeout() {
+        // Given
+        Timeouts timeouts = mock();
+        WebDriverProcess wdp = webDriverProcess(timeouts);
+        // When
+        strategy.configure(wdp);
+        // Then
+        verify(timeouts).pageLoadTimeout(Duration.ofMillis(2 * TIMEOUT_MS));
     }
 
     @AfterEach
@@ -326,8 +352,7 @@ class AdaptiveWaitStrategyUnitTest {
         AdaptiveWaitStrategy strategy1 =
                 new AdaptiveWaitStrategy(
                         options, url -> url.startsWith("http://example.com"), sharedVisitedUrls);
-        WebDriverProcess wdp = mock();
-        given(wdp.getProxyPort()).willReturn(PROXY_PORT);
+        WebDriverProcess wdp = webDriverProcess(mock());
         strategy1.configure(wdp);
         strategy1.waitAfterPageLoad(IN_SCOPE_URL);
 
@@ -455,8 +480,7 @@ class AdaptiveWaitStrategyUnitTest {
                         options,
                         url -> url.startsWith("http://example.com"),
                         ConcurrentHashMap.newKeySet());
-        WebDriverProcess wdp = mock();
-        given(wdp.getProxyPort()).willReturn(PROXY_PORT);
+        WebDriverProcess wdp = webDriverProcess(mock());
         s.configure(wdp);
         s.waitAfterPageLoad(IN_SCOPE_URL);
 
