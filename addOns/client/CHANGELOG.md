@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Added OWASP Top Ten, WSTG and policy alert tags to the client passive scan rules.
 - No longer write the unused `localzapurl` item to the browser local storage on launch.
 
 ### Fixed

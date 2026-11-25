@@ -27,8 +27,19 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ClientUtils;
 import org.zaproxy.addon.client.internal.ReportedElement;
 import org.zaproxy.addon.client.internal.ReportedObject;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule {
+
+    public InformationInStorageScanRule() {
+        super(
+                List.of(PolicyTag.PENTEST),
+                CommonAlertTag.OWASP_2025_A01_BROKEN_AC,
+                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                CommonAlertTag.WSTG_V42_CLNT_12_BROWSER_STORAGE);
+    }
 
     @Override
     public String getName() {

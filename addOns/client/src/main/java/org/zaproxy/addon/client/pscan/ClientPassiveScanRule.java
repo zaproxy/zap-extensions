@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client.pscan;
 
+import java.util.Map;
 import org.zaproxy.addon.client.internal.ReportedObject;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 
@@ -33,6 +34,11 @@ public interface ClientPassiveScanRule extends ExampleAlertProvider {
     void setEnabled(boolean enabled);
 
     boolean isEnabled();
+
+    /** Returns the tags added to the alerts raised by this rule. */
+    default Map<String, String> getAlertTags() {
+        return Map.of();
+    }
 
     /** Returns a link to the help on the ZAP website * */
     public String getHelpLink();

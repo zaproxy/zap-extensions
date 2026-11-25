@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.websocket.alerts;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -121,6 +122,10 @@ public class WebSocketAlertWrapper {
         return alert.getName();
     }
 
+    public Map<String, String> getTags() {
+        return alert.getTags();
+    }
+
     public String getMessageReadablePayload() {
         try {
             return webSocketMessageDTO.getReadablePayload();
@@ -147,6 +152,7 @@ public class WebSocketAlertWrapper {
         private int pluginId = -1;
         private int risk = Alert.RISK_LOW;
         private int confidence = Alert.CONFIDENCE_MEDIUM;
+        private Map<String, String> tags = Map.of();
 
         private static final String OTHER_INFO_LABEL = "[WebSocket Message] ";
 
@@ -250,26 +256,45 @@ public class WebSocketAlertWrapper {
         }
 
         /**
+         * Sets the alert tags. The tags are copied when the alert is built, so later changes to the
+         * given map do not affect the alerts already built.
+         */
+        public WebSocketAlertBuilder setTags(Map<String, String> tags) {
+            this.tags = tags != null ? tags : Map.of();
+            return this;
+        }
+
+        /**
          * @throws IllegalStateException If Plugin ID, Alert Source or Name have not been set.
          */
         public WebSocketAlertWrapper build() {
 
             if (pluginId != -1 && source != null && !name.isEmpty()) {
 
-                Alert alert = new Alert(pluginId, risk, confidence, name);
-                alert.setSource(source);
-                alert.setDetail(
-                        description,
-                        uri,
-                        param,
-                        attack,
-                        otherInfo,
-                        solution,
-                        reference,
-                        evidence,
-                        cweId,
-                        wascId,
-                        handshakeMessage);
+                Alert alert =
+                        Alert.builder()
+                                .setPluginId(pluginId)
+                                .setRisk(risk)
+                                .setConfidence(confidence)
+                                .setName(name)
+                                .setSource(source)
+                                .setDescription(description)
+                                .setUri(uri)
+                                .setParam(param)
+                                .setAttack(attack)
+                                .setOtherInfo(otherInfo)
+                                .setSolution(solution)
+                                .setReference(reference)
+                                .setEvidence(evidence)
+                                .setCweId(cweId)
+                                .setWascId(wascId)
+                                .setMessage(handshakeMessage)
+                                .setHistoryRef(
+                                        handshakeMessage != null
+                                                ? handshakeMessage.getHistoryRef()
+                                                : null)
+                                .setTags(tags)
+                                .build();
                 return new WebSocketAlertWrapper(webSocketMessageDTO, alert);
             }
             StringBuilder exceptionMsg =

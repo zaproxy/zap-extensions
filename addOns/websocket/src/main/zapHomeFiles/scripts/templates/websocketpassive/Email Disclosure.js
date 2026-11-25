@@ -11,6 +11,8 @@ var WebSocketPassiveScript = Java.type(
 var ScanRuleMetadata = Java.type(
   "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
 );
+var CommonAlertTag = Java.type("org.zaproxy.addon.commonlib.CommonAlertTag");
+var PolicyTag = Java.type("org.zaproxy.addon.commonlib.PolicyTag");
 
 function getMetadata() {
   return ScanRuleMetadata.fromYaml(`
@@ -23,6 +25,14 @@ risk: info
 confidence: high
 cweId: 359
 wascId: 13
+alertTags:
+  ${CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getTag()}: ${CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getValue()}
+  ${CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()}: ${CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue()}
+  ${CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()}: ${CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue()}
+  ${CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()}: ${CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getValue()}
+  ${CommonAlertTag.WSTG_V42_CLNT_10_WEBSOCKETS.getTag()}: ${CommonAlertTag.WSTG_V42_CLNT_10_WEBSOCKETS.getValue()}
+  ${PolicyTag.PENTEST.getTag()}: ""
+  ${PolicyTag.QA_STD.getTag()}: ""
 status: beta
 codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Email%20Disclosure.js
 helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110004

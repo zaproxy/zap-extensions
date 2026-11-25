@@ -14,6 +14,8 @@ var WebSocketPassiveScript = Java.type(
 var ScanRuleMetadata = Java.type(
   "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
 );
+var CommonAlertTag = Java.type("org.zaproxy.addon.commonlib.CommonAlertTag");
+var PolicyTag = Java.type("org.zaproxy.addon.commonlib.PolicyTag");
 
 function getMetadata() {
   return ScanRuleMetadata.fromYaml(`
@@ -33,6 +35,15 @@ risk: medium
 confidence: medium
 cweId: 209
 wascId: 13
+alertTags:
+  ${CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getTag()}: ${CommonAlertTag.OWASP_2025_A02_SEC_MISCONFIG.getValue()}
+  ${CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()}: ${CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue()}
+  ${CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()}: ${CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue()}
+  ${CommonAlertTag.WSTG_V42_ERRH_01_ERR.getTag()}: ${CommonAlertTag.WSTG_V42_ERRH_01_ERR.getValue()}
+  ${CommonAlertTag.WSTG_V42_ERRH_02_STACK.getTag()}: ${CommonAlertTag.WSTG_V42_ERRH_02_STACK.getValue()}
+  ${CommonAlertTag.WSTG_V42_CLNT_10_WEBSOCKETS.getTag()}: ${CommonAlertTag.WSTG_V42_CLNT_10_WEBSOCKETS.getValue()}
+  ${PolicyTag.PENTEST.getTag()}: ""
+  ${PolicyTag.QA_STD.getTag()}: ""
 status: beta
 codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Application%20Error%20Scanner.js
 helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110001
