@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Log when authenticating in existing browsers in Browser and Client Script Based Authentication.
 
 ### Fixed
 - Detect authentication, session management, and verification requests from the Client Spider (Issue 9523).
