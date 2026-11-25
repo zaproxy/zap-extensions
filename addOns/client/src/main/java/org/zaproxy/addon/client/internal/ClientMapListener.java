@@ -64,4 +64,30 @@ public interface ClientMapListener {
      */
     default void componentStateChanged(
             ClientSideComponent component, int depth, int siblings, int source) {}
+
+    /**
+     * Called when a node is inserted into the map, after the insertion.
+     *
+     * @param parent the parent of the inserted node.
+     * @param node the inserted node.
+     * @param index the index of the node in the children of the parent, at the time of insertion.
+     */
+    default void nodeInserted(ClientNode parent, ClientNode node, int index) {}
+
+    /**
+     * Called when a node was changed, for example, a component was added.
+     *
+     * @param node the node that was changed.
+     */
+    default void nodeChanged(ClientNode node) {}
+
+    /**
+     * Called when a node (and its children) was removed from the map.
+     *
+     * @param node the node that was removed.
+     */
+    default void nodeRemoved(ClientNode node) {}
+
+    /** Called when all the nodes were removed from the map. */
+    default void mapCleared() {}
 }

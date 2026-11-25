@@ -68,7 +68,7 @@ public class ClientMapPanel extends AbstractPanel {
     }
 
     public void setClientMap(ClientMap clientMap) {
-        clientTree = new JTree(clientMap);
+        clientTree = new JTree(new ClientMapTreeModel(clientMap));
         clientTree.setShowsRootHandles(true);
         clientTree.setName(CLIENT_TREE_NAME);
         clientTree.setToggleClickCount(1);
@@ -85,7 +85,9 @@ public class ClientMapPanel extends AbstractPanel {
 
         clientTree.addTreeSelectionListener(
                 e -> {
-                    ClientNode node = (ClientNode) clientTree.getLastSelectedPathComponent();
+                    ClientNode node =
+                            ClientMapTreeModel.toClientNode(
+                                    clientTree.getLastSelectedPathComponent());
                     if (node == null) {
                         return;
                     }
@@ -104,20 +106,17 @@ public class ClientMapPanel extends AbstractPanel {
         return Stream.ofNullable(clientTree.getSelectionPaths())
                 .flatMap(Stream::of)
                 .map(TreePath::getLastPathComponent)
-                .map(ClientNode.class::cast)
+                .map(ClientMapTreeModel::toClientNode)
                 .toList();
     }
 
     public void deleteNodes(List<ClientNode> nodes) {
-        for (ClientNode node : nodes) {
-            if (!node.isRoot()) {
-                clientMap.removeNodeFromParent(node);
-            }
-        }
+        clientMap.deleteNodes(nodes);
     }
 
     public ClientNode getSelectedNode() {
-        return (ClientNode) clientTree.getSelectionPath().getLastPathComponent();
+        return ClientMapTreeModel.toClientNode(
+                clientTree.getSelectionPath().getLastPathComponent());
     }
 
     public ExtensionClientIntegration getExtension() {
