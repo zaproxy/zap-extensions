@@ -364,6 +364,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 AuthenticationDiagnostics diags,
                 SessionManagementMethod sessionManagementMethod,
                 User user) {
+            LOGGER.info("Authenticating user: {} in existing browser.", user.getName());
             if (handler != null) {
                 handler.resetAuthMsg();
             }
