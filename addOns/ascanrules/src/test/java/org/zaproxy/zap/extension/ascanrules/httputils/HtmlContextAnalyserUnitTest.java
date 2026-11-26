@@ -249,4 +249,123 @@ class HtmlContextAnalyserUnitTest extends TestUtils {
         assertThat(ctx2.getTagAttribute(), is(equalTo("name")));
         assertThat(ctx2.getSurroundingQuote(), is(equalTo("\"")));
     }
+
+    @Test
+    void shouldParseEvalWithHtmlEscapingContext() throws Exception {
+        // Given - Case 1: eval() with HTML escaping (Firing Range scenario)
+        // This tests whether HtmlContextAnalyser can parse HTML where user input
+        // is placed inside eval() with HTML entity escaping applied in the template.
+        // The payload ";alert(1);" is injected, resulting in:
+        // <script>eval(';alert(1);'.replace(/</g, '&lt;')...)</script>
+        String payload = ";alert(1);";
+        msg = new HttpMessage();
+        msg.setRequestHeader("GET /test?q=" + payload + " HTTP/1.1");
+        msg.setResponseBody(
+                "<html>\n"
+                        + "  <body>\n"
+                        + "    <script>eval('"
+                        + payload
+                        + "'.replace(/</g, '&lt;')\n"
+                        + "                              .replace(/&/g, '&amp;')\n"
+                        + "                              .replace(/>/g, '&gt;'));\n"
+                        + "    </script>\n"
+                        + "  </body>\n"
+                        + "</html>");
+
+        // When
+        HtmlContextAnalyser analyser = new HtmlContextAnalyser(msg);
+        List<HtmlContext> contexts = analyser.getHtmlContexts(payload, null, 0);
+
+        // Then - Verify the parser can find the payload in the script context
+        // The payload should be detected inside the script tag
+        assertThat(contexts, hasSize(1));
+        HtmlContext ctx = contexts.get(0);
+        assertThat(ctx.getParentTag(), is(equalTo("script")));
+        // The target should be found in the innerHTML/text content of the script tag
+        assertThat(ctx.isInScriptAttribute(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldParseEvalEscapeScriptBreakingContext() throws Exception {
+        // Given - Case 2: eval(escape()) with script-breaking payload (Firing Range scenario)
+        // This tests whether HtmlContextAnalyser correctly parses HTML when a payload
+        // breaks out of a script tag using </script>. The critical question is:
+        // Does the HTML parser treat </script> inside a string literal as an HTML boundary?
+        // According to HTML spec, it should - HTML parsing happens BEFORE JS execution.
+        //
+        // Input: </script><scrIpt>alert(1);</scRipt><script>
+        // Results in: <script>eval(escape('</script><scrIpt>alert(1);</scRipt><script>'));</script>
+        //
+        // Expected parser behavior (per HTML spec):
+        // 1. <script>eval(escape('</script> - First script element (broken/incomplete)
+        // 2. <scrIpt>alert(1);</scRipt> - Second script element (EXECUTABLE XSS)
+        // 3. <script>'));</script> - Third script element (syntax error but parsed)
+        String payload = "</script><scrIpt>alert(1);</scRipt><script>";
+        msg = new HttpMessage();
+        msg.setRequestHeader("GET /test?q=" + payload + " HTTP/1.1");
+        msg.setResponseBody(
+                "<html>\n"
+                        + "  <body>\n"
+                        + "    <script>\n"
+                        + "      eval(escape('"
+                        + payload
+                        + "'));\n"
+                        + "    </script>\n"
+                        + "  </body>\n"
+                        + "</html>");
+
+        // When
+        HtmlContextAnalyser analyser = new HtmlContextAnalyser(msg);
+
+        // Search for the malicious payload that actually executes
+        String maliciousPayload = "alert(1);";
+        List<HtmlContext> contexts = analyser.getHtmlContexts(maliciousPayload, null, 0);
+
+        // Then - Verify the parser detects the standalone malicious script element
+        // If the HTML parser correctly fragments the response, we should find
+        // "alert(1);" inside its own script element (case-insensitive "scrIpt")
+        assertThat(contexts, hasSize(1));
+        HtmlContext ctx = contexts.get(0);
+        assertThat(ctx.getParentTag().toLowerCase(), is(equalTo("script")));
+
+        // Verify this is detected as script content, not an attribute
+        assertThat(ctx.isInScriptAttribute(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldDetectMultipleScriptElementsAfterScriptBreaking() throws Exception {
+        // Given - Verify that Jericho HTML parser creates multiple script elements
+        // when </script> appears in the middle of a string literal
+        String payload = "</script><scrIpt>alert(1);</scRipt><script>";
+        msg = new HttpMessage();
+        msg.setRequestHeader("GET /test?q=" + payload + " HTTP/1.1");
+        msg.setResponseBody(
+                "<html>\n"
+                        + "  <body>\n"
+                        + "    <script>\n"
+                        + "      eval(escape('"
+                        + payload
+                        + "'));\n"
+                        + "    </script>\n"
+                        + "  </body>\n"
+                        + "</html>");
+
+        // When - Parse the HTML using Jericho (same parser HtmlContextAnalyser uses)
+        Source src = new Source(msg.getResponseBody().toString());
+        src.fullSequentialParse();
+        List<Element> scriptElements = src.getAllElements("script");
+
+        // Then - We expect to see multiple script elements due to the </script> tag
+        // breaking out of the original script context
+        // Expected: 3 script elements total
+        // 1. <script>eval(escape('</script> - broken/incomplete
+        // 2. <scrIpt>alert(1);</scRipt> - injected malicious script
+        // 3. <script>'));</script> - broken/incomplete
+        assertThat(scriptElements.size(), is(equalTo(3)));
+
+        // Verify the middle element contains our malicious payload
+        Element maliciousScript = scriptElements.get(1);
+        String scriptContent = maliciousScript.getContent().toString();
+        assertThat(scriptContent, is(equalTo("alert(1);")));
+    }
 }
