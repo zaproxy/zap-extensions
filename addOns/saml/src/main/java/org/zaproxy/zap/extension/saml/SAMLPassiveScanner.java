@@ -19,9 +19,11 @@
  */
 package org.zaproxy.zap.extension.saml;
 
+import java.util.List;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -48,15 +50,19 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(SAMLInspectionResult samlInspectionResult) {
-        newAlert()
+        HtmlParameter evidence = samlInspectionResult.getEvidence();
+        createAlert(evidence.getName(), evidence.getValue()).raise();
+    }
+
+    private AlertBuilder createAlert(String param, String evidence) {
+        return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(DESCRIPTION)
                 .setOtherInfo(OTHER_INFO)
                 .setReference(REFS)
-                .setParam(samlInspectionResult.getEvidence().getName())
-                .setEvidence(samlInspectionResult.getEvidence().getValue())
-                .raise();
+                .setParam(param)
+                .setEvidence(evidence);
     }
 
     @Override
@@ -67,5 +73,10 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("SAMLResponse", "PHNhbWxwOlJlc3BvbnNl").build());
     }
 }

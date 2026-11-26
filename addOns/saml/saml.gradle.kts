@@ -22,4 +22,6 @@ crowdin {
 
 dependencies {
     implementation(libs.saml.jaxbRuntime)
+
+    testImplementation(project(":testutils"))
 }
