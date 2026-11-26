@@ -253,6 +253,9 @@ public class HtmlContextAnalyser {
 
     public List<HtmlContext> getHtmlContexts(
             String target, HtmlContext targetContext, int ignoreFlags, boolean ignoreSafeParents) {
+        if (target.isEmpty()) {
+            throw new IllegalArgumentException("The target parameter cannot be an empty value.");
+        }
         List<HtmlContext> contexts = new ArrayList<>();
 
         int offset = 0;
