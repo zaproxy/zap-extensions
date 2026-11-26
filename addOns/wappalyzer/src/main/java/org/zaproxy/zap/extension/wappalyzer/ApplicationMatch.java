@@ -44,7 +44,7 @@ public class ApplicationMatch {
     }
 
     public String getVersion() {
-        return String.join(Constant.messages.getString("wappalyzer.version.delimiter"), versions);
+        return String.join(Constant.messages.getString("techdetect.version.delimiter"), versions);
     }
 
     public Set<String> getVersions() {
