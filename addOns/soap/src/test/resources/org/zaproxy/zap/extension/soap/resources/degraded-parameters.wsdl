@@ -50,6 +50,20 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
+
+            <xs:element name="badAttrRefOuter" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="innerField" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+                <xs:attribute xmlns:data="http://example.org/data" ref="data:missingAttr"/>
+                <xs:attribute name="attrSiblingField" type="xs:string"/>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="prohibitedAttrOuter" type="tns:ProhibitedAttrType" minOccurs="0" maxOccurs="1"/>
+
+            <xs:element name="multiProhibitedAttrOuter" type="tns:MultiProhibitedAttrType" minOccurs="0" maxOccurs="1"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -57,6 +71,24 @@
       <xs:simpleType name="SimpleBase">
         <xs:restriction base="xs:string"/>
       </xs:simpleType>
+
+      <xs:complexType name="ProhibitedAttrType">
+        <xs:sequence>
+          <xs:element name="field" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="normalAttr" type="xs:string"/>
+        <xs:attribute name="prohibitedAttr" type="xs:string" use="prohibited"/>
+      </xs:complexType>
+
+      <xs:complexType name="MultiProhibitedAttrType">
+        <xs:sequence>
+          <xs:element name="field" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="attr1" type="xs:string"/>
+        <xs:attribute name="prohibitedAttr1" type="xs:string" use="prohibited"/>
+        <xs:attribute name="attr2" type="xs:string"/>
+        <xs:attribute name="prohibitedAttr2" type="xs:string" use="prohibited"/>
+      </xs:complexType>
 
       <!--
         Intentionally-invalid XSD construct for degradation-path tests:

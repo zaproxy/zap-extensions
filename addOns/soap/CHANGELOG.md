@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- WSDL attribute references are now resolved robustly, with proper XSD compliance for prohibited attributes, correct value precedence, and graceful handling of unresolvable references.
 
 ## [32] - 2026-08-12
 ### Added
