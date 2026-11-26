@@ -96,6 +96,21 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
     static final String NGINX_HELP_URL =
             "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/nginx-known-vulnerabilities/";
 
+    static final String RUBY_KNOWN_VULNERABILITIES_RESOURCE =
+            "/org/zaproxy/zap/extension/pscanrules/resources/ruby-known-vulnerabilities.json";
+
+    static final String RUBY_HELP_URL =
+            "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/ruby-known-vulnerabilities/";
+
+    /** The header whose whole value is the version of Ruby, e.g. {@code X-Ruby-Version: 3.2.0}. */
+    static final String RUBY_VERSION_HEADER = "X-Ruby-Version";
+
+    /**
+     * The value of a header which is just a version, bounded as the values are attacker controlled.
+     */
+    private static final Pattern VERSION_ONLY =
+            Pattern.compile("^\\s*(\\d{1,6}(?:\\.\\d{1,6}){0,2})\\s*$");
+
     /**
      * A parenthesised comment right after a version, e.g. {@code (Ubuntu)} in {@code Apache/2.4.58
      * (Ubuntu)}, bounded as the header values are attacker controlled.
@@ -173,7 +188,23 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                         "(?<![\\w-])nginx/(\\d{1,6}(?:\\.\\d{1,6}){0,2})",
                         Pattern.CASE_INSENSITIVE),
                 NGINX_KNOWN_VULNERABILITIES_RESOURCE,
-                NGINX_HELP_URL);
+                NGINX_HELP_URL),
+        /**
+         * Ruby. Matches a {@code Ruby/<version>} token, as in the {@code Server} header of WEBrick,
+         * {@code WEBrick/1.8.1 (Ruby/3.2.0)}, and the whole value of the {@code X-Ruby-Version}
+         * header, which is just the version. {@code JRuby/9.4.5.0} (which has its own version
+         * numbers) and names such as {@code mod_ruby/1.3} do not match.
+         */
+        RUBY(
+                7,
+                8,
+                "ruby",
+                Tech.RUBY,
+                Pattern.compile(
+                        "(?<![\\w-])Ruby/(\\d{1,6}(?:\\.\\d{1,6}){0,2})", Pattern.CASE_INSENSITIVE),
+                RUBY_KNOWN_VULNERABILITIES_RESOURCE,
+                RUBY_HELP_URL,
+                RUBY_VERSION_HEADER);
 
         private final int alertRef;
         private final int incompleteAlertRef;
@@ -182,6 +213,7 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
         private final Pattern versionPattern;
         private final String knownVulnerabilitiesResource;
         private final String helpUrl;
+        private final String versionHeader;
 
         Technology(
                 int alertRef,
@@ -191,6 +223,31 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                 Pattern versionPattern,
                 String knownVulnerabilitiesResource,
                 String helpUrl) {
+            this(
+                    alertRef,
+                    incompleteAlertRef,
+                    messageKey,
+                    tech,
+                    versionPattern,
+                    knownVulnerabilitiesResource,
+                    helpUrl,
+                    null);
+        }
+
+        /**
+         * Constructs a technology which also has a header whose whole value is the version, e.g.
+         * {@code X-Ruby-Version: 3.2.0}.
+         */
+        Technology(
+                int alertRef,
+                int incompleteAlertRef,
+                String messageKey,
+                Tech tech,
+                Pattern versionPattern,
+                String knownVulnerabilitiesResource,
+                String helpUrl,
+                String versionHeader) {
+            this.versionHeader = versionHeader;
             this.alertRef = alertRef;
             this.incompleteAlertRef = incompleteAlertRef;
             this.messageKey = messageKey;
@@ -508,6 +565,14 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
 
     private static Stream<DetectedVersion> getVersions(Technology tech, HttpHeaderField field) {
         String value = field.getValue();
+        if (tech.versionHeader != null && tech.versionHeader.equalsIgnoreCase(field.getName())) {
+            Matcher version = VERSION_ONLY.matcher(value);
+            return version.matches()
+                    ? Stream.of(
+                            new DetectedVersion(
+                                    tech, field.getName(), version.group(1), value.trim()))
+                    : Stream.empty();
+        }
         return tech.versionPattern
                 .matcher(value)
                 .results()
@@ -674,6 +739,19 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                                 "https://mailman.nginx.org/pipermail/nginx-announce/2021/000300.html"),
                         "2021-06-01",
                         NginxAdvisories.SOURCE_GENERATED);
+        Vulnerability rubyExample =
+                new Vulnerability(
+                        "CVE-2021-31810",
+                        null,
+                        "Trusting FTP PASV responses vulnerability in Net::FTP",
+                        "",
+                        "medium",
+                        5.8,
+                        null,
+                        List.of(new VersionRange("3.0.0", "3.0.2", false)),
+                        List.of("https://nvd.nist.gov/vuln/detail/CVE-2021-31810"),
+                        "2021-07-07",
+                        RubyAdvisories.SOURCE_GENERATED);
         return List.of(
                 exampleAlert(
                         new DetectedVersion(Technology.PHP, "X-Powered-By", "8.1.2", "PHP/8.1.2"),
@@ -692,7 +770,13 @@ public class ServerSideVersionScanRule extends PluginPassiveScanner
                         nginxExample),
                 exampleAlert(
                         new DetectedVersion(Technology.NGINX, "Server", "1.20", "nginx/1.20"),
-                        nginxExample));
+                        nginxExample),
+                exampleAlert(
+                        new DetectedVersion(Technology.RUBY, "Server", "3.2.0", "Ruby/3.2.0"),
+                        rubyExample),
+                exampleAlert(
+                        new DetectedVersion(Technology.RUBY, "X-Ruby-Version", "3.2", "3.2"),
+                        rubyExample));
     }
 
     /** An example alert of the technology, carrying the tags of all the technologies. */

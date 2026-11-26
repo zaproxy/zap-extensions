@@ -9,4 +9,5 @@
     <mapID target="pscanrules.apacheknownvulnerabilities" url="contents/apache-known-vulnerabilities.html" />
     <mapID target="pscanrules.nginxknownvulnerabilities" url="contents/nginx-known-vulnerabilities.html" />
     <mapID target="pscanrules.phpknownvulnerabilities" url="contents/php-known-vulnerabilities.html" />
+    <mapID target="pscanrules.rubyknownvulnerabilities" url="contents/ruby-known-vulnerabilities.html" />
 </map>

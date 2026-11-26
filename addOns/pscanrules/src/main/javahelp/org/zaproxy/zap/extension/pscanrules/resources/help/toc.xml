@@ -10,6 +10,7 @@
 				<tocitem text="Apache HTTP Server Known Vulnerabilities" target="pscanrules.apacheknownvulnerabilities"/>
 				<tocitem text="nginx Known Vulnerabilities" target="pscanrules.nginxknownvulnerabilities"/>
 				<tocitem text="PHP Known Vulnerabilities" target="pscanrules.phpknownvulnerabilities"/>
+				<tocitem text="Ruby Known Vulnerabilities" target="pscanrules.rubyknownvulnerabilities"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

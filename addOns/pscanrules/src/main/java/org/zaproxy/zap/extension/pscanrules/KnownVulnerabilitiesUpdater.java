@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.util.Separators;
 import com.fasterxml.jackson.core.util.Separators.Spacing;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -90,6 +91,7 @@ final class KnownVulnerabilitiesUpdater {
     static final String HELP_TAG_VULNERABILITIES = "vulnerabilities";
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory());
     private static final Duration TIMEOUT = Duration.ofSeconds(60);
     private static final String GITHUB_TOKEN_ENV = "GITHUB_TOKEN";
 
@@ -99,11 +101,11 @@ final class KnownVulnerabilitiesUpdater {
 
     /**
      * Runs one of two commands: {@code update <technology> <json file>} regenerates the known
-     * vulnerabilities file of the technology ({@code php}, {@code apache} or {@code nginx}) from
-     * its advisories, and {@code help <help source dir> <help output dir> <json file> <page file
-     * name>...} fills in the vulnerabilities in each help page with one of the given file names
-     * under the source directory, writing the pages to the same relative paths under the output
-     * directory, as done when the add-on is built.
+     * vulnerabilities file of the technology ({@code php}, {@code apache}, {@code nginx} or {@code
+     * ruby}) from its advisories, and {@code help <help source dir> <help output dir> <json file>
+     * <page file name>...} fills in the vulnerabilities in each help page with one of the given
+     * file names under the source directory, writing the pages to the same relative paths under the
+     * output directory, as done when the add-on is built.
      *
      * @param args the command and its arguments
      * @throws Exception if the advisories cannot be fetched or the files cannot be read or written
@@ -178,6 +180,9 @@ final class KnownVulnerabilitiesUpdater {
             case NGINX -> {
                 return fetchNginx(client);
             }
+            case RUBY -> {
+                return fetchRuby(client, System.getenv(GITHUB_TOKEN_ENV));
+            }
         }
         throw new IllegalArgumentException("Unsupported technology: " + tech);
     }
@@ -208,6 +213,37 @@ final class KnownVulnerabilitiesUpdater {
                 Thread.sleep(CVE_API_DELAY.toMillis());
             }
             NginxAdvisories.toVulnerability(advisory, record).ifPresent(generated::add);
+        }
+        return generated;
+    }
+
+    /**
+     * Fetches the Ruby advisories, one YAML file each in the ruby advisory database. An advisory
+     * which cannot be understood fails the update, so that changes to the format are noticed.
+     */
+    private static List<Vulnerability> fetchRuby(HttpClient client, String token)
+            throws IOException, InterruptedException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Accept", "application/vnd.github+json");
+        headers.put("X-GitHub-Api-Version", "2022-11-28");
+        if (token != null && !token.isBlank()) {
+            headers.put("Authorization", "Bearer " + token);
+        }
+        List<String> urls = new ArrayList<>();
+        MAPPER.readTree(get(client, RubyAdvisories.API_URL, headers).body())
+                .forEach(
+                        file -> {
+                            if (file.path("name")
+                                    .asText("")
+                                    .endsWith(RubyAdvisories.ADVISORY_FILE_SUFFIX)) {
+                                urls.add(file.path("download_url").asText());
+                            }
+                        });
+        System.out.printf("Fetching %d advisories.%n", urls.size());
+        List<Vulnerability> generated = new ArrayList<>();
+        for (String url : urls) {
+            RubyAdvisories.toVulnerability(YAML_MAPPER.readTree(get(client, url, Map.of()).body()))
+                    .ifPresent(generated::add);
         }
         return generated;
     }
