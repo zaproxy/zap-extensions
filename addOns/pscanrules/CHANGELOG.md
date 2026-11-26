@@ -13,6 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update dependency.
 - Updated alert reference links aligning with recent OWASP website changes.
 
+### Fixed
+- Loosely Scoped Cookie scan rule no longer fails when the response also sets an invalid cookie or a cookie with the same name and no domain.
+
 ## [79] - 2026-11-18
 ### Added
 - The Server Side Technology Version with Known Vulnerabilities scan rule now also detects nginx versions with known vulnerabilities.
