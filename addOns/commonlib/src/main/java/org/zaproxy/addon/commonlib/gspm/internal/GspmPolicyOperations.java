@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.zaproxy.addon.commonlib.gspm.GspmPhase;
 import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRule;
@@ -44,9 +45,11 @@ import org.zaproxy.addon.commonlib.gspm.GspmRuleSet;
 /**
  * The operations to change the GSPM policies, used by the API.
  *
- * <p>The operations that are specific to a tool only affect its rules. The default threshold and
- * strength of the rules of a tool are held by the {@code all.<tool>} rule set (as done when
- * importing legacy policies), and the ones of the policy by its catch-all rule set.
+ * <p>The operations that are specific to a tool only affect its rules, and the ones specific to a
+ * {@link GspmPhase} affect the rules of every tool in that phase. The default threshold and
+ * strength of the rules of a phase are held by its {@link GspmRuleSet#phaseKey(GspmPhase) phase}
+ * rule set (as done when importing legacy policies), and the ones of the policy by its catch-all
+ * rule set.
  *
  * <p>The changes are done while holding the lock of the policy, the same one held when the policy
  * is applied to a scan, so that a scan does not see a partial change.
@@ -60,14 +63,10 @@ public final class GspmPolicyOperations {
 
     private GspmPolicyOperations() {}
 
-    private static String toolKey(String tool) {
-        return GspmRuleSet.ALL_CATEGORY + "." + tool;
-    }
-
     /**
      * Adds a policy.
      *
-     * @param tool the tool the defaults are for, {@code null} for all the rules of the policy.
+     * @param phase the phase the defaults are for, {@code null} for all the rules of the policy.
      * @param threshold the default threshold, {@code null} or {@code DEFAULT} to use MEDIUM.
      * @param strength the default strength, {@code null} or {@code DEFAULT} to use MEDIUM.
      * @throws IllegalStateException if a policy with the name already exists, the message being the
@@ -77,7 +76,7 @@ public final class GspmPolicyOperations {
     public static void addPolicy(
             GspmRegistry registry,
             String name,
-            String tool,
+            GspmPhase phase,
             AlertThreshold threshold,
             AttackStrength strength) {
         if (name == null || name.isBlank()) {
@@ -92,7 +91,7 @@ public final class GspmPolicyOperations {
         GspmPolicy policy = new GspmPolicy(name);
         setDefaults(
                 policy,
-                tool,
+                phase,
                 Objects.requireNonNullElse(nullIfDefault(threshold), AlertThreshold.MEDIUM),
                 Objects.requireNonNullElse(nullIfDefault(strength), AttackStrength.MEDIUM));
         addAndSave(registry, policy);
@@ -101,14 +100,14 @@ public final class GspmPolicyOperations {
     /**
      * Updates the defaults of a policy.
      *
-     * @param tool the tool the defaults are for, {@code null} for all the rules of the policy.
+     * @param phase the phase the defaults are for, {@code null} for all the rules of the policy.
      * @param threshold the default threshold, {@code null} or {@code DEFAULT} to leave unchanged.
      * @param strength the default strength, {@code null} or {@code DEFAULT} to leave unchanged.
      */
     static void updatePolicy(
             GspmRegistry registry,
             String name,
-            String tool,
+            GspmPhase phase,
             AlertThreshold threshold,
             AttackStrength strength) {
         change(
@@ -116,12 +115,12 @@ public final class GspmPolicyOperations {
                 name,
                 policy ->
                         setDefaults(
-                                policy, tool, nullIfDefault(threshold), nullIfDefault(strength)));
+                                policy, phase, nullIfDefault(threshold), nullIfDefault(strength)));
     }
 
     private static void setDefaults(
-            GspmPolicy policy, String tool, AlertThreshold threshold, AttackStrength strength) {
-        if (tool == null) {
+            GspmPolicy policy, GspmPhase phase, AlertThreshold threshold, AttackStrength strength) {
+        if (phase == null) {
             if (threshold != null) {
                 policy.setDefaultThreshold(threshold);
             }
@@ -130,7 +129,7 @@ public final class GspmPolicyOperations {
             }
             return;
         }
-        GspmRuleSet ruleSet = policy.findOrCreateCategoryRuleSet(toolKey(tool));
+        GspmRuleSet ruleSet = policy.findOrCreateCategoryRuleSet(GspmRuleSet.phaseKey(phase));
         if (threshold != null) {
             ruleSet.setThresholdEnum(threshold);
         }
@@ -140,36 +139,36 @@ public final class GspmPolicyOperations {
     }
 
     /**
-     * Gets the default threshold of the rules of the tool (or of the policy, if {@code null}), the
-     * one of the policy if the tool has none.
+     * Gets the default threshold of the rules of the phase (or of the policy, if {@code null}), the
+     * one of the policy if the phase has none.
      *
      * @return the threshold, {@code null} if not defined.
      */
-    static AlertThreshold getDefaultThreshold(GspmRegistry registry, String name, String tool) {
+    static AlertThreshold getDefaultThreshold(GspmRegistry registry, String name, GspmPhase phase) {
         GspmPolicy policy = getPolicy(registry, name);
         synchronized (policy) {
-            if (tool == null) {
+            if (phase == null) {
                 return policy.getDefaultThreshold().orElse(null);
             }
-            return policy.getCategoryThreshold(toolKey(tool))
+            return policy.getCategoryThreshold(GspmRuleSet.phaseKey(phase))
                     .or(policy::getDefaultThreshold)
                     .orElse(null);
         }
     }
 
     /**
-     * Gets the default strength of the rules of the tool (or of the policy, if {@code null}), the
-     * one of the policy if the tool has none.
+     * Gets the default strength of the rules of the phase (or of the policy, if {@code null}), the
+     * one of the policy if the phase has none.
      *
      * @return the strength, {@code null} if not defined.
      */
-    static AttackStrength getDefaultStrength(GspmRegistry registry, String name, String tool) {
+    static AttackStrength getDefaultStrength(GspmRegistry registry, String name, GspmPhase phase) {
         GspmPolicy policy = getPolicy(registry, name);
         synchronized (policy) {
-            if (tool == null) {
+            if (phase == null) {
                 return policy.getDefaultStrength().orElse(null);
             }
-            return policy.getCategoryStrength(toolKey(tool))
+            return policy.getCategoryStrength(GspmRuleSet.phaseKey(phase))
                     .or(policy::getDefaultStrength)
                     .orElse(null);
         }
@@ -439,17 +438,19 @@ public final class GspmPolicyOperations {
     }
 
     /**
-     * Sets the threshold of all the rules of the category, overriding the per rule thresholds.
+     * Sets the threshold of all the rules of the category, of every tool in the phase, overriding
+     * the per rule thresholds.
      *
-     * @param categoryKey the key of the category, without the one of the tool.
+     * @param categoryKey the key of the category, without the one of the phase, e.g. {@code
+     *     browser}.
      */
     static void setCategoryThreshold(
             GspmRegistry registry,
             String policyName,
-            String tool,
+            GspmPhase phase,
             String categoryKey,
             AlertThreshold threshold) {
-        String key = categoryKey(tool, categoryKey);
+        String key = categoryKey(phase, categoryKey);
         change(
                 registry,
                 policyName,
@@ -457,24 +458,26 @@ public final class GspmPolicyOperations {
                     policy.findOrCreateCategoryRuleSet(key)
                             .setThresholdEnum(nullIfDefault(threshold));
                     clearSubcategories(policy, key, rs -> rs.setThreshold(null));
-                    for (GspmRule rule : categoryRules(registry, policyName, tool, key)) {
+                    for (GspmRule rule : categoryRules(registry, policy, key)) {
                         policy.clearRuleThreshold(rule.getId());
                     }
                 });
     }
 
     /**
-     * Sets the strength of all the rules of the category, overriding the per rule strengths.
+     * Sets the strength of all the rules of the category, of every tool in the phase, overriding
+     * the per rule strengths.
      *
-     * @param categoryKey the key of the category, without the one of the tool.
+     * @param categoryKey the key of the category, without the one of the phase, e.g. {@code
+     *     browser}.
      */
     static void setCategoryStrength(
             GspmRegistry registry,
             String policyName,
-            String tool,
+            GspmPhase phase,
             String categoryKey,
             AttackStrength strength) {
-        String key = categoryKey(tool, categoryKey);
+        String key = categoryKey(phase, categoryKey);
         change(
                 registry,
                 policyName,
@@ -482,7 +485,7 @@ public final class GspmPolicyOperations {
                     policy.findOrCreateCategoryRuleSet(key)
                             .setStrengthEnum(nullIfDefault(strength));
                     clearSubcategories(policy, key, rs -> rs.setStrength(null));
-                    for (GspmRule rule : categoryRules(registry, policyName, tool, key)) {
+                    for (GspmRule rule : categoryRules(registry, policy, key)) {
                         policy.clearRuleStrength(rule.getId());
                     }
                 });
@@ -492,7 +495,8 @@ public final class GspmPolicyOperations {
      * Clears the setting of the rule sets of the subcategories of the category, as they would take
      * precedence, removing the ones left with no settings.
      *
-     * @param key the full key of the category, as returned by {@link #categoryKey(String, String)}.
+     * @param key the full key of the category, as returned by {@link #categoryKey(GspmPhase,
+     *     String)}.
      * @param clear clears the setting of the rule set.
      */
     private static void clearSubcategories(
@@ -517,19 +521,27 @@ public final class GspmPolicyOperations {
     /**
      * Enables the rules of the tool in the given categories, disabling all the others of the tool.
      * The rules that are already enabled are not changed, so they keep their thresholds.
+     *
+     * @param categoryKeys the keys of the categories, without the one of the phase, e.g. {@code
+     *     browser}.
      */
     static void setEnabledCategories(
             GspmRegistry registry,
             String policyName,
             String tool,
             Collection<String> categoryKeys) {
-        List<String> keys = categoryKeys.stream().map(k -> categoryKey(tool, k)).toList();
         change(
                 registry,
                 policyName,
                 policy -> {
                     for (GspmRule rule : registry.getRulesByTool(tool, policyName)) {
-                        rule.setEnabled(keys.stream().anyMatch(k -> isInCategory(rule, k)));
+                        rule.setEnabled(
+                                categoryKeys.stream()
+                                        .anyMatch(
+                                                k ->
+                                                        isInCategory(
+                                                                rule,
+                                                                categoryKey(rule.getPhase(), k))));
                     }
                 });
     }
@@ -538,20 +550,27 @@ public final class GspmPolicyOperations {
      * Tells whether or not the rule is in the category, that is the category of the rule is the
      * given one or one of its descendants.
      *
-     * @param key the full key of the category, as returned by {@link #categoryKey(String, String)}.
+     * @param key the full key of the category, as returned by {@link #categoryKey(GspmPhase,
+     *     String)}.
      */
     static boolean isInCategory(GspmRule rule, String key) {
         String ruleKey = GspmRuleSet.ruleCategoryKey(rule);
         return ruleKey.equals(key) || ruleKey.startsWith(key + ".");
     }
 
-    static String categoryKey(String tool, String categoryKey) {
-        return toolKey(tool) + "." + categoryKey;
+    /**
+     * Returns the full key of the category of the phase, e.g. {@code phase.active.browser}.
+     *
+     * @param categoryKey the key of the category, without the one of the phase, e.g. {@code
+     *     browser}.
+     */
+    static String categoryKey(GspmPhase phase, String categoryKey) {
+        return GspmRuleSet.phaseKey(phase) + "." + categoryKey;
     }
 
     private static List<GspmRule> categoryRules(
-            GspmRegistry registry, String policyName, String tool, String key) {
-        return registry.getRulesByTool(tool, policyName).stream()
+            GspmRegistry registry, GspmPolicy policy, String key) {
+        return registry.getAllRulesForPolicy(policy).stream()
                 .filter(r -> isInCategory(r, key))
                 .toList();
     }

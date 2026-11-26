@@ -39,6 +39,7 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.gui.ActiveScanPolicyJobDialog;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.gspm.GspmPhase;
 import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.internal.GspmActiveScanRegistrar;
@@ -227,7 +228,7 @@ public class ActiveScanPolicyJob extends AutomationJob {
 
         try {
             GspmPolicyOperations.addPolicy(
-                    registry, policyName, GspmActiveScanRegistrar.TOOL, threshold, strength);
+                    registry, policyName, GspmPhase.ACTIVE, threshold, strength);
         } catch (IllegalStateException e) {
             progress.warn(
                     Constant.messages.getString(

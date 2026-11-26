@@ -88,7 +88,8 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     @Test
     void shouldAddPolicyWithDefaults() {
         // When
-        GspmPolicyOperations.addPolicy(registry, "New", "ascan", AlertThreshold.HIGH, null);
+        GspmPolicyOperations.addPolicy(
+                registry, "New", GspmPhase.ACTIVE, AlertThreshold.HIGH, null);
         // Then
         GspmPolicy policy = registry.getPolicy("New");
         assertThat(threshold("New", INJECTION_RULE), is(AlertThreshold.HIGH));
@@ -99,29 +100,34 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     @Test
     void shouldNotAddExistingOrIllegalPolicy() {
         // Given
-        GspmPolicyOperations.addPolicy(registry, "New", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "New", GspmPhase.ACTIVE, null, null);
         // When / Then
         assertThrows(
                 IllegalStateException.class,
-                () -> GspmPolicyOperations.addPolicy(registry, "New", "ascan", null, null));
+                () ->
+                        GspmPolicyOperations.addPolicy(
+                                registry, "New", GspmPhase.ACTIVE, null, null));
         assertThrows(
                 IllegalArgumentException.class,
-                () -> GspmPolicyOperations.addPolicy(registry, "a/b", "ascan", null, null));
+                () ->
+                        GspmPolicyOperations.addPolicy(
+                                registry, "a/b", GspmPhase.ACTIVE, null, null));
         assertThrows(
                 IllegalArgumentException.class,
-                () -> GspmPolicyOperations.addPolicy(registry, null, "ascan", null, null));
+                () -> GspmPolicyOperations.addPolicy(registry, null, GspmPhase.ACTIVE, null, null));
         assertThrows(
                 IllegalArgumentException.class,
-                () -> GspmPolicyOperations.addPolicy(registry, " ", "ascan", null, null));
+                () -> GspmPolicyOperations.addPolicy(registry, " ", GspmPhase.ACTIVE, null, null));
     }
 
     @Test
     void shouldUpdateOnlyGivenDefaults() {
         // Given
         GspmPolicyOperations.addPolicy(
-                registry, "P", "ascan", AlertThreshold.LOW, AttackStrength.HIGH);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.LOW, AttackStrength.HIGH);
         // When
-        GspmPolicyOperations.updatePolicy(registry, "P", "ascan", null, AttackStrength.LOW);
+        GspmPolicyOperations.updatePolicy(
+                registry, "P", GspmPhase.ACTIVE, null, AttackStrength.LOW);
         // Then
         assertThat(threshold("P", SERVER_RULE), is(AlertThreshold.LOW));
         assertThat(strength("P", SERVER_RULE), is(AttackStrength.LOW));
@@ -130,7 +136,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     @Test
     void shouldRemovePolicyAndFile() {
         // Given
-        GspmPolicyOperations.addPolicy(registry, "P", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "P", GspmPhase.ACTIVE, null, null);
         File file = registry.getPolicy("P").getFile();
         // When
         GspmPolicyOperations.removePolicy(registry, "P");
@@ -161,7 +167,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
         File legacyFile = new File(Constant.getPoliciesDir(), "P.policy");
         Files.writeString(
                 legacyFile.toPath(), "<configuration><policy>Other</policy></configuration>");
-        GspmPolicyOperations.addPolicy(registry, "P", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "P", GspmPhase.ACTIVE, null, null);
         // When
         GspmPolicyOperations.removePolicy(registry, "P");
         // Then
@@ -176,7 +182,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
         Files.writeString(
                 legacyFile.toPath(), "<configuration><policy>Bar</policy></configuration>");
         // As after a restart, the source of the migration is not known.
-        GspmPolicyOperations.addPolicy(registry, "Bar", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "Bar", GspmPhase.ACTIVE, null, null);
         // When
         GspmPolicyOperations.removePolicy(registry, "Bar");
         // Then
@@ -189,8 +195,8 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
         File legacyFile = new File(Constant.getPoliciesDir(), "foo.policy");
         Files.writeString(
                 legacyFile.toPath(), "<configuration><policy>Bar</policy></configuration>");
-        GspmPolicyOperations.addPolicy(registry, "foo", "ascan", null, null);
-        GspmPolicyOperations.addPolicy(registry, "Bar", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "foo", GspmPhase.ACTIVE, null, null);
+        GspmPolicyOperations.addPolicy(registry, "Bar", GspmPhase.ACTIVE, null, null);
         // When
         GspmPolicyOperations.removePolicy(registry, "Bar");
         // Then
@@ -200,7 +206,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     @Test
     void shouldConfigureRulesAndReturnUnknownOnes() {
         // Given
-        GspmPolicyOperations.addPolicy(registry, "P", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "P", GspmPhase.ACTIVE, null, null);
         // When
         List<Integer> unknown =
                 GspmPolicyOperations.configureRules(
@@ -226,7 +232,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldNotEnableRuleWithNoStrengthWhenConfiguringStrength() {
         // Given
         registry.registerRule(new TestRule(500, "pscan", GspmPhase.PASSIVE, "misc", null));
-        GspmPolicyOperations.addPolicy(registry, "P", "pscan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "P", GspmPhase.PASSIVE, null, null);
         GspmPolicyOperations.setRulesEnabled(registry, "P", "pscan", List.of(500), false);
         // When
         GspmPolicyOperations.configureRules(
@@ -243,8 +249,8 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     /** A policy as migrated from a legacy one, the rules with the same settings share them. */
     private void addMigratedPolicy(String name) {
         GspmPolicy policy = new GspmPolicy(name);
-        policy.findOrCreateCategoryRuleSet("all.ascan").setThresholdEnum(AlertThreshold.LOW);
-        policy.findOrCreateCategoryRuleSet("all.ascan").setStrengthEnum(AttackStrength.MEDIUM);
+        policy.findOrCreateCategoryRuleSet("phase.active").setThresholdEnum(AlertThreshold.LOW);
+        policy.findOrCreateCategoryRuleSet("phase.active").setStrengthEnum(AttackStrength.MEDIUM);
         GspmRuleSet off = new GspmRuleSet();
         off.addRule(new GspmRuleRef(INJECTION_RULE, "r"));
         off.addRule(new GspmRuleRef(INJECTION_RULE_2, "r"));
@@ -260,7 +266,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
         addMigratedPolicy("M");
         // When
         GspmPolicyOperations.setCategoryThreshold(
-                registry, "M", "ascan", "inject", AlertThreshold.HIGH);
+                registry, "M", GspmPhase.ACTIVE, "inject", AlertThreshold.HIGH);
         // Then
         assertThat(threshold("M", INJECTION_RULE), is(AlertThreshold.HIGH));
         assertThat(threshold("M", INJECTION_RULE_2), is(AlertThreshold.HIGH));
@@ -274,7 +280,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
         registry.getPolicy("M").getRuleSets().get(1).setStrengthEnum(AttackStrength.LOW);
         // When
         GspmPolicyOperations.setCategoryStrength(
-                registry, "M", "ascan", "inject", AttackStrength.INSANE);
+                registry, "M", GspmPhase.ACTIVE, "inject", AttackStrength.INSANE);
         // Then
         assertThat(strength("M", INJECTION_RULE), is(AttackStrength.INSANE));
         assertThat(strength("M", SERVER_RULE), is(AttackStrength.LOW));
@@ -320,7 +326,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldKeepThresholdsOfRulesOfEnabledCategories() {
         // Given
         GspmPolicyOperations.addPolicy(
-                registry, "C", "ascan", AlertThreshold.LOW, AttackStrength.MEDIUM);
+                registry, "C", GspmPhase.ACTIVE, AlertThreshold.LOW, AttackStrength.MEDIUM);
         GspmPolicyOperations.setRuleThreshold(
                 registry, "C", "ascan", SERVER_RULE, AlertThreshold.HIGH);
         GspmPolicyOperations.setRuleThreshold(
@@ -348,7 +354,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     @Test
     void shouldKeepPolicyRegisteredIfItsFileCanNotBeDeleted() throws Exception {
         // Given
-        GspmPolicyOperations.addPolicy(registry, "D", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "D", GspmPhase.ACTIVE, null, null);
         File file = registry.getPolicy("D").getFile();
         // A directory with content, which can not be deleted as a file.
         assertThat(file.delete(), is(true));
@@ -365,7 +371,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldKeepPolicyRegisteredIfItsLegacyFileCanNotBeDeletedAndAllowToRetry()
             throws Exception {
         // Given
-        GspmPolicyOperations.addPolicy(registry, "L", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "L", GspmPhase.ACTIVE, null, null);
         File legacy = new File(Constant.getPoliciesDir(), "L.policy");
         assertThat(legacy.mkdir(), is(true));
         registry.getPolicy("L").setLegacyFile(legacy);
@@ -389,7 +395,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldUseMediumIfDefaultGivenAsDefaultsOfNewPolicy() {
         // When
         GspmPolicyOperations.addPolicy(
-                registry, "P", "ascan", AlertThreshold.DEFAULT, AttackStrength.DEFAULT);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.DEFAULT, AttackStrength.DEFAULT);
         // Then
         assertThat(threshold("P", INJECTION_RULE), is(AlertThreshold.MEDIUM));
         assertThat(strength("P", INJECTION_RULE), is(AttackStrength.MEDIUM));
@@ -399,10 +405,10 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldNotChangeDefaultsOfPolicyIfDefaultGiven() {
         // Given
         GspmPolicyOperations.addPolicy(
-                registry, "P", "ascan", AlertThreshold.LOW, AttackStrength.HIGH);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.LOW, AttackStrength.HIGH);
         // When
         GspmPolicyOperations.updatePolicy(
-                registry, "P", "ascan", AlertThreshold.DEFAULT, AttackStrength.DEFAULT);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.DEFAULT, AttackStrength.DEFAULT);
         // Then
         assertThat(threshold("P", INJECTION_RULE), is(AlertThreshold.LOW));
         assertThat(strength("P", INJECTION_RULE), is(AttackStrength.HIGH));
@@ -415,11 +421,14 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
         hierarchy.registerRule(
                 new TestRule(1, "t", GspmPhase.ACTIVE, "a.b", AttackStrength.MEDIUM));
         hierarchy.registerRule(new TestRule(2, "t", GspmPhase.ACTIVE, "a", AttackStrength.MEDIUM));
-        GspmPolicyOperations.addPolicy(hierarchy, "H", "t", AlertThreshold.LOW, null);
-        GspmPolicyOperations.setCategoryThreshold(hierarchy, "H", "t", "a.b", AlertThreshold.HIGH);
-        GspmPolicyOperations.setCategoryStrength(hierarchy, "H", "t", "a.b", AttackStrength.LOW);
+        GspmPolicyOperations.addPolicy(hierarchy, "H", GspmPhase.ACTIVE, AlertThreshold.LOW, null);
+        GspmPolicyOperations.setCategoryThreshold(
+                hierarchy, "H", GspmPhase.ACTIVE, "a.b", AlertThreshold.HIGH);
+        GspmPolicyOperations.setCategoryStrength(
+                hierarchy, "H", GspmPhase.ACTIVE, "a.b", AttackStrength.LOW);
         // When
-        GspmPolicyOperations.setCategoryThreshold(hierarchy, "H", "t", "a", AlertThreshold.OFF);
+        GspmPolicyOperations.setCategoryThreshold(
+                hierarchy, "H", GspmPhase.ACTIVE, "a", AlertThreshold.OFF);
         // Then
         assertThat(thresholdOf(hierarchy, "H", 1), is(AlertThreshold.OFF));
         assertThat(thresholdOf(hierarchy, "H", 2), is(AlertThreshold.OFF));
@@ -432,18 +441,19 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
                         .getAttackStrength(),
                 is(AttackStrength.LOW));
         // When
-        GspmPolicyOperations.setCategoryStrength(hierarchy, "H", "t", "a", AttackStrength.HIGH);
+        GspmPolicyOperations.setCategoryStrength(
+                hierarchy, "H", GspmPhase.ACTIVE, "a", AttackStrength.HIGH);
         // Then
         assertThat(
                 hierarchy.getPolicy("H").getRuleSets().stream()
-                        .noneMatch(rs -> "all.t.a.b".equals(rs.getCategory())),
+                        .noneMatch(rs -> "phase.active.a.b".equals(rs.getCategory())),
                 is(true));
     }
 
     @Test
     void shouldUndoChangesIfTheyFail() {
         // Given
-        GspmPolicyOperations.addPolicy(registry, "P", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "P", GspmPhase.ACTIVE, null, null);
         // When
         assertThrows(
                 IllegalArgumentException.class,
@@ -463,11 +473,12 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
         hierarchy.registerRule(new TestRule(2, "t", GspmPhase.ACTIVE, "a", AttackStrength.MEDIUM));
         hierarchy.registerRule(new TestRule(3, "t", GspmPhase.ACTIVE, "ab", AttackStrength.MEDIUM));
         hierarchy.registerRule(new TestRule(4, "t", GspmPhase.ACTIVE, "c", AttackStrength.MEDIUM));
-        GspmPolicyOperations.addPolicy(hierarchy, "H", "t", AlertThreshold.LOW, null);
+        GspmPolicyOperations.addPolicy(hierarchy, "H", GspmPhase.ACTIVE, AlertThreshold.LOW, null);
         GspmPolicyOperations.setRuleThreshold(hierarchy, "H", "t", 1, AlertThreshold.HIGH);
         GspmPolicyOperations.setRuleThreshold(hierarchy, "H", "t", 3, AlertThreshold.HIGH);
         // When
-        GspmPolicyOperations.setCategoryThreshold(hierarchy, "H", "t", "a", AlertThreshold.MEDIUM);
+        GspmPolicyOperations.setCategoryThreshold(
+                hierarchy, "H", GspmPhase.ACTIVE, "a", AlertThreshold.MEDIUM);
         // Then
         assertThat(thresholdOf(hierarchy, "H", 1), is(AlertThreshold.MEDIUM));
         assertThat(thresholdOf(hierarchy, "H", 2), is(AlertThreshold.MEDIUM));
@@ -523,12 +534,12 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
         // When
         assertThrows(
                 UncheckedIOException.class,
-                () -> GspmPolicyOperations.addPolicy(registry, "F", "ascan", null, null));
+                () -> GspmPolicyOperations.addPolicy(registry, "F", GspmPhase.ACTIVE, null, null));
         // Then
         assertThat(registry.getPolicy("F") == null, is(true));
         // When
         unblock(blocker);
-        GspmPolicyOperations.addPolicy(registry, "F", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "F", GspmPhase.ACTIVE, null, null);
         // Then
         assertThat(registry.getPolicy("F") != null, is(true));
     }
@@ -587,7 +598,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> GspmPolicyOperations.removePolicy(registry, "Unknown"));
-        GspmPolicyOperations.addPolicy(registry, "P", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "P", GspmPhase.ACTIVE, null, null);
         assertThrows(
                 IllegalArgumentException.class,
                 () ->
@@ -599,7 +610,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldSetAndClearRuleThresholdAndStrength() {
         // Given
         GspmPolicyOperations.addPolicy(
-                registry, "P", "ascan", AlertThreshold.MEDIUM, AttackStrength.MEDIUM);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.MEDIUM, AttackStrength.MEDIUM);
         // When
         GspmPolicyOperations.setRuleThreshold(
                 registry, "P", "ascan", SERVER_RULE, AlertThreshold.HIGH);
@@ -623,7 +634,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldDisableAndEnableAllRulesOfTheToolOnly() {
         // Given
         GspmPolicyOperations.addPolicy(
-                registry, "P", "ascan", AlertThreshold.LOW, AttackStrength.MEDIUM);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.LOW, AttackStrength.MEDIUM);
         registry.registerRule(otherToolRule(300));
         GspmPolicy policy = registry.getPolicy("P");
         policy.setDefaultThreshold(AlertThreshold.HIGH);
@@ -650,7 +661,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldDisableAndEnableGivenRules() {
         // Given
         GspmPolicyOperations.addPolicy(
-                registry, "P", "ascan", AlertThreshold.LOW, AttackStrength.MEDIUM);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.LOW, AttackStrength.MEDIUM);
         // When
         GspmPolicyOperations.setRulesEnabled(
                 registry, "P", "ascan", List.of(INJECTION_RULE, SERVER_RULE), false);
@@ -665,14 +676,14 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldSetCategoryThresholdOverridingRuleOverrides() {
         // Given
         GspmPolicyOperations.addPolicy(
-                registry, "P", "ascan", AlertThreshold.MEDIUM, AttackStrength.MEDIUM);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.MEDIUM, AttackStrength.MEDIUM);
         GspmPolicyOperations.setRuleThreshold(
                 registry, "P", "ascan", INJECTION_RULE, AlertThreshold.OFF);
         // When
         GspmPolicyOperations.setCategoryThreshold(
-                registry, "P", "ascan", "inject", AlertThreshold.HIGH);
+                registry, "P", GspmPhase.ACTIVE, "inject", AlertThreshold.HIGH);
         GspmPolicyOperations.setCategoryStrength(
-                registry, "P", "ascan", "inject", AttackStrength.INSANE);
+                registry, "P", GspmPhase.ACTIVE, "inject", AttackStrength.INSANE);
         // Then
         assertThat(threshold("P", INJECTION_RULE), is(AlertThreshold.HIGH));
         assertThat(threshold("P", INJECTION_RULE_2), is(AlertThreshold.HIGH));
@@ -684,7 +695,7 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldEnableOnlyGivenCategories() {
         // Given
         GspmPolicyOperations.addPolicy(
-                registry, "P", "ascan", AlertThreshold.LOW, AttackStrength.MEDIUM);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.LOW, AttackStrength.MEDIUM);
         // When
         GspmPolicyOperations.setEnabledCategories(registry, "P", "ascan", List.of("server"));
         // Then
@@ -697,17 +708,18 @@ class GspmPolicyOperationsUnitTest extends TestUtils {
     void shouldGetDefaultThresholdAndStrength() {
         // Given
         GspmPolicyOperations.addPolicy(
-                registry, "P", "ascan", AlertThreshold.HIGH, AttackStrength.LOW);
+                registry, "P", GspmPhase.ACTIVE, AlertThreshold.HIGH, AttackStrength.LOW);
         registry.addPolicy(new GspmPolicy("Empty"));
         // When / Then
         assertThat(
-                GspmPolicyOperations.getDefaultThreshold(registry, "P", "ascan"),
+                GspmPolicyOperations.getDefaultThreshold(registry, "P", GspmPhase.ACTIVE),
                 is(AlertThreshold.HIGH));
         assertThat(
-                GspmPolicyOperations.getDefaultStrength(registry, "P", "ascan"),
+                GspmPolicyOperations.getDefaultStrength(registry, "P", GspmPhase.ACTIVE),
                 is(AttackStrength.LOW));
         assertThat(
-                GspmPolicyOperations.getDefaultThreshold(registry, "Empty", "ascan") == null,
+                GspmPolicyOperations.getDefaultThreshold(registry, "Empty", GspmPhase.ACTIVE)
+                        == null,
                 is(true));
     }
 

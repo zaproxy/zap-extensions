@@ -30,6 +30,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.zaproxy.addon.commonlib.gspm.GspmPhase;
 import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRule;
@@ -69,6 +70,7 @@ public class GlobalScanPolicyApi extends ApiImplementor {
 
     private static final String PARAM_POLICY_NAME = "policyName";
     private static final String PARAM_TOOL = "tool";
+    private static final String PARAM_PHASE = "phase";
     private static final String PARAM_PATH = "path";
     private static final String PARAM_RULE_IDS = "ruleIds";
     private static final String PARAM_RULE_ID = "ruleId";
@@ -84,7 +86,7 @@ public class GlobalScanPolicyApi extends ApiImplementor {
 
         addApiView(new ApiView(VIEW_POLICY_NAMES));
 
-        String[] defaults = {PARAM_TOOL, PARAM_ALERT_THRESHOLD, PARAM_ATTACK_STRENGTH};
+        String[] defaults = {PARAM_PHASE, PARAM_ALERT_THRESHOLD, PARAM_ATTACK_STRENGTH};
         addApiAction(new ApiAction(ACTION_ADD_POLICY, new String[] {PARAM_POLICY_NAME}, defaults));
         addApiAction(
                 new ApiAction(ACTION_UPDATE_POLICY, new String[] {PARAM_POLICY_NAME}, defaults));
@@ -118,13 +120,19 @@ public class GlobalScanPolicyApi extends ApiImplementor {
                 new ApiAction(
                         ACTION_SET_CATEGORY_THRESHOLD,
                         new String[] {
-                            PARAM_POLICY_NAME, PARAM_TOOL, PARAM_CATEGORY_KEY, PARAM_ALERT_THRESHOLD
+                            PARAM_POLICY_NAME,
+                            PARAM_PHASE,
+                            PARAM_CATEGORY_KEY,
+                            PARAM_ALERT_THRESHOLD
                         }));
         addApiAction(
                 new ApiAction(
                         ACTION_SET_CATEGORY_STRENGTH,
                         new String[] {
-                            PARAM_POLICY_NAME, PARAM_TOOL, PARAM_CATEGORY_KEY, PARAM_ATTACK_STRENGTH
+                            PARAM_POLICY_NAME,
+                            PARAM_PHASE,
+                            PARAM_CATEGORY_KEY,
+                            PARAM_ATTACK_STRENGTH
                         }));
     }
 
@@ -188,21 +196,21 @@ public class GlobalScanPolicyApi extends ApiImplementor {
                     setEnabledCategories(params);
                     break;
                 case ACTION_SET_CATEGORY_THRESHOLD:
-                    String thresholdTool = getTool(params, true);
+                    GspmPhase thresholdPhase = getPhase(params, true);
                     GspmPolicyOperations.setCategoryThreshold(
                             registry,
                             getPolicyName(params),
-                            thresholdTool,
-                            getCategoryKey(params, thresholdTool),
+                            thresholdPhase,
+                            getCategoryKey(params, thresholdPhase),
                             getThreshold(params, PARAM_ALERT_THRESHOLD));
                     break;
                 case ACTION_SET_CATEGORY_STRENGTH:
-                    String strengthTool = getTool(params, true);
+                    GspmPhase strengthPhase = getPhase(params, true);
                     GspmPolicyOperations.setCategoryStrength(
                             registry,
                             getPolicyName(params),
-                            strengthTool,
-                            getCategoryKey(params, strengthTool),
+                            strengthPhase,
+                            getCategoryKey(params, strengthPhase),
                             getStrength(params, PARAM_ATTACK_STRENGTH));
                     break;
                 case ACTION_SET_RULE_THRESHOLD:
@@ -243,7 +251,7 @@ public class GlobalScanPolicyApi extends ApiImplementor {
             GspmPolicyOperations.addPolicy(
                     registry,
                     name,
-                    getTool(params, false),
+                    getPhase(params, false),
                     getDefaultThreshold(params),
                     getDefaultStrength(params));
         } catch (IllegalStateException e) {
@@ -263,7 +271,7 @@ public class GlobalScanPolicyApi extends ApiImplementor {
         AttackStrength strength = getDefaultStrength(params);
         if (threshold != null || strength != null) {
             GspmPolicyOperations.updatePolicy(
-                    registry, name, getTool(params, false), threshold, strength);
+                    registry, name, getPhase(params, false), threshold, strength);
         }
     }
 
@@ -328,7 +336,9 @@ public class GlobalScanPolicyApi extends ApiImplementor {
         String tool = getTool(params, true);
         List<String> categoryKeys = new ArrayList<>();
         for (String key : getParam(params, PARAM_CATEGORY_KEYS, "").split(",")) {
-            categoryKeys.add(verifyCategoryKey(tool, key.trim(), PARAM_CATEGORY_KEYS));
+            categoryKeys.add(
+                    verifyCategoryKey(
+                            registry.getRulesByTool(tool), key.trim(), PARAM_CATEGORY_KEYS));
         }
         GspmPolicyOperations.setEnabledCategories(registry, policyName, tool, categoryKeys);
     }
@@ -355,6 +365,21 @@ public class GlobalScanPolicyApi extends ApiImplementor {
         return tool;
     }
 
+    private GspmPhase getPhase(JSONObject params, boolean required) throws ApiException {
+        String phase = getParam(params, PARAM_PHASE, "");
+        if (StringUtils.isBlank(phase)) {
+            if (required) {
+                throw new ApiException(ApiException.Type.MISSING_PARAMETER, PARAM_PHASE);
+            }
+            return null;
+        }
+        try {
+            return GspmPhase.valueOf(phase.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_PHASE);
+        }
+    }
+
     /** Gets the rules of the tool, or all of them if {@code null}. */
     private List<GspmRule> getRules(String tool) {
         return tool != null ? registry.getRulesByTool(tool) : registry.getAllRules();
@@ -368,20 +393,31 @@ public class GlobalScanPolicyApi extends ApiImplementor {
         return id;
     }
 
-    private String getCategoryKey(JSONObject params, String tool) throws ApiException {
+    private String getCategoryKey(JSONObject params, GspmPhase phase) throws ApiException {
         return verifyCategoryKey(
-                tool, getParam(params, PARAM_CATEGORY_KEY, "").trim(), PARAM_CATEGORY_KEY);
+                registry.getAllRules().stream().filter(r -> r.getPhase() == phase).toList(),
+                getParam(params, PARAM_CATEGORY_KEY, "").trim(),
+                PARAM_CATEGORY_KEY);
     }
 
-    private String verifyCategoryKey(String tool, String categoryKey, String paramName)
-            throws ApiException {
+    /**
+     * Verifies that at least one of the given rules is in the category.
+     *
+     * @param categoryKey the key of the category, without the one of the phase.
+     */
+    private static String verifyCategoryKey(
+            List<GspmRule> rules, String categoryKey, String paramName) throws ApiException {
         if (StringUtils.isBlank(categoryKey)) {
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, paramName);
         }
-        String key = GspmPolicyOperations.categoryKey(tool, categoryKey);
         boolean exists =
-                registry.getRulesByTool(tool).stream()
-                        .anyMatch(r -> GspmPolicyOperations.isInCategory(r, key));
+                rules.stream()
+                        .anyMatch(
+                                r ->
+                                        GspmPolicyOperations.isInCategory(
+                                                r,
+                                                GspmPolicyOperations.categoryKey(
+                                                        r.getPhase(), categoryKey)));
         if (!exists) {
             throw new ApiException(ApiException.Type.DOES_NOT_EXIST, categoryKey);
         }
