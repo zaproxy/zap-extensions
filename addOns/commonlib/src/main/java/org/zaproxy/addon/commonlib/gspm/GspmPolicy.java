@@ -591,21 +591,15 @@ public class GspmPolicy {
 
     /**
      * Returns a specificity score used to order category-scoped rule sets so more specific ones win
-     * under last-match semantics: catch-all ({@code null}/{@code "all"}) is least specific, {@link
-     * GspmRuleSet#PHASE_PREFIX}-scoped keys (e.g. {@code "phase.passive"}) are more specific than
-     * the catch-all but less specific than any tool/category key (regardless of their own string
-     * length, which has no relation to {@link GspmRuleSet#ruleCategoryKey(GspmRule)}'s tool-first
-     * hierarchy), and tool/category keys fall back to string length, since {@code ruleCategoryKey}
-     * nests more specific segments onto longer strings.
+     * under last-match semantics: the catch-all ({@code null}/{@code "all"}) is least specific,
+     * then each further segment of a {@link GspmRuleSet#ruleCategoryKey(GspmRule) category key}
+     * makes it more specific, e.g. {@code "phase.active"} → 1, {@code "phase.active.browser"} → 2.
      */
     private static int specificity(String categoryKey) {
         if (categoryKey == null || GspmRuleSet.ALL_CATEGORY.equalsIgnoreCase(categoryKey)) {
             return 0;
         }
-        if (categoryKey.startsWith(GspmRuleSet.PHASE_PREFIX)) {
-            return 1;
-        }
-        return categoryKey.length() + 1;
+        return (int) categoryKey.chars().filter(c -> c == '.').count();
     }
 
     /**

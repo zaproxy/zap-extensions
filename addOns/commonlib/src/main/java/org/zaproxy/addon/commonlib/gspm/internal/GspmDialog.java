@@ -28,7 +28,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -51,7 +50,6 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.view.AbstractParamDialog;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.zaproxy.addon.commonlib.gspm.GspmCategory;
 import org.zaproxy.addon.commonlib.gspm.GspmPhase;
 import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
@@ -72,10 +70,10 @@ import org.zaproxy.zap.utils.ZapHtmlLabel;
  * "Active"/"Passive" top level, see {@link GspmPhase}) show every rule under that phase, regardless
  * of which tool contributed it, and support setting a phase-wide default via {@link
  * GspmRuleSet#PHASE_PREFIX}-scoped rule sets (see {@link GspmRuleSet#matches(GspmRule)}); category
- * nodes (owned by exactly one tool, but a tool may contribute several sibling categories under the
- * same phase) show rules for that specific category and support setting policy defaults scoped to
- * it, same as before. More specific rule sets win under last-match semantics regardless of which
- * node created them.
+ * nodes, nested as deep as the rules' own category hierarchies (shared by every tool using the same
+ * category ids, see {@link GspmCategoryTree}), show rules for that specific category and support
+ * setting policy defaults scoped to it. More specific rule sets win under last-match semantics
+ * regardless of which node created them.
  *
  * @since 1.45.0
  */
@@ -250,7 +248,6 @@ public class GspmDialog extends AbstractParamDialog {
                             Constant.messages.getString("commonlib.gspm.dialog.tree.summary"),
                             policy,
                             this::getEffectiveRules,
-                            registry::getToolDisplayName,
                             newPolicy);
             addParamPanel(null, summaryPanel, false);
 
@@ -271,66 +268,25 @@ public class GspmDialog extends AbstractParamDialog {
             panels.add(allPanel);
         }
 
-        // Group rules by phase (fixed, tool-independent top level, e.g. "Active"/"Passive"), then
-        // by tool, then by category id → display name. Each rule self-reports its phase (see
-        // GspmRule#getPhase()); several tools may share a phase, each still contributing its own
-        // category siblings.
-        LinkedHashMap<GspmPhase, LinkedHashMap<String, LinkedHashMap<String, String>>> byPhase =
-                new LinkedHashMap<>();
-        for (GspmRule rule : effectiveRules) {
-            GspmCategory cat = rule.getCategories().get(0);
-            byPhase.computeIfAbsent(rule.getPhase(), p -> new LinkedHashMap<>())
-                    .computeIfAbsent(rule.getTool(), k -> new LinkedHashMap<>())
-                    .putIfAbsent(cat.id(), cat.displayName());
-        }
-
-        for (var phaseEntry : byPhase.entrySet()) {
-            GspmPhase phase = phaseEntry.getKey();
-            String phaseDisplay = phase.getDisplayName();
-            String phaseKey = GspmRuleSet.phaseKey(phase);
-
-            List<GspmRule> phaseRules =
+        // Phase nodes (fixed, tool-independent top level, e.g. "Active"/"Passive") are an
+        // aggregate view across every tool sharing that phase; under them, category nodes nest as
+        // deep as the rules' own category hierarchies, shared by every tool using the same
+        // category ids — see GspmCategoryTree. Every node supports setting policy defaults scoped
+        // to its key; see GspmRuleSet#matches(GspmRule).
+        for (GspmCategoryTree.Node node :
+                GspmCategoryTree.build(effectiveRules, registry::getToolDisplayName)) {
+            List<GspmRule> nodeRules =
                     effectiveRules.stream()
-                            .filter(r -> r.getPhase() == phase)
+                            .filter(r -> GspmCategoryTree.belongsTo(r, node.key()))
                             .collect(Collectors.toList());
-
-            // Category nodes nest one level further under the phase node, wherever that phase
-            // node itself lives (see phaseParent above).
-            String[] categoryParent = new String[phaseParent.length + 1];
-            System.arraycopy(phaseParent, 0, categoryParent, 0, phaseParent.length);
-            categoryParent[phaseParent.length] = phaseDisplay;
-
-            // Phase nodes are an aggregate view across every tool sharing that phase, and also
-            // support setting policy defaults for the whole phase — see
-            // GspmRuleSet#PHASE_PREFIX/#matches(GspmRule).
-            GspmRulesPanel phasePanel = new GspmRulesPanel(phaseDisplay, phaseKey, phaseRules);
-            addParamPanel(phaseParent, phasePanel, true);
-            panels.add(phasePanel);
-
-            for (var toolEntry : phaseEntry.getValue().entrySet()) {
-                String toolKey = toolEntry.getKey();
-                String toolCatKey = GspmRuleSet.ALL_CATEGORY + "." + toolKey;
-
-                for (var catEntry : toolEntry.getValue().entrySet()) {
-                    String catDisplay = catEntry.getValue();
-                    String catFullKey = toolCatKey + "." + catEntry.getKey();
-
-                    List<GspmRule> catRules =
-                            effectiveRules.stream()
-                                    .filter(
-                                            r -> {
-                                                String rk = GspmRuleSet.ruleCategoryKey(r);
-                                                return rk.equals(catFullKey)
-                                                        || rk.startsWith(catFullKey + ".");
-                                            })
-                                    .collect(Collectors.toList());
-
-                    GspmRulesPanel catPanel =
-                            new GspmRulesPanel(catDisplay, catFullKey, catRules, phase);
-                    addParamPanel(categoryParent, catPanel, true);
-                    panels.add(catPanel);
-                }
+            String[] parent = new String[phaseParent.length + node.path().size()];
+            System.arraycopy(phaseParent, 0, parent, 0, phaseParent.length);
+            for (int i = 0; i < node.path().size(); i++) {
+                parent[phaseParent.length + i] = node.path().get(i);
             }
+            GspmRulesPanel panel = new GspmRulesPanel(node.displayName(), node.key(), nodeRules);
+            addParamPanel(parent, panel, true);
+            panels.add(panel);
         }
 
         expandRoot();
@@ -366,7 +322,6 @@ public class GspmDialog extends AbstractParamDialog {
         private static final long serialVersionUID = 1L;
 
         private final String categoryKey;
-        private final GspmPhase phase;
         private GspmRuleTableModel tableModel;
         private JTable table;
         private JComboBox<String> policyThresholdCombo;
@@ -376,22 +331,7 @@ public class GspmDialog extends AbstractParamDialog {
         private boolean updatingCombos = false;
 
         GspmRulesPanel(String displayName, String categoryKey, List<GspmRule> initialRules) {
-            this(displayName, categoryKey, initialRules, null);
-        }
-
-        /**
-         * @param phase the phase to fall back to, between the tool-level default and the
-         *     policy-wide catch-all, when resolving this category's effective threshold/strength
-         *     (see {@link #parentKey(String)}); {@code null} for the root "All Rules" panel and the
-         *     phase panels themselves, which don't need an extra fallback step.
-         */
-        GspmRulesPanel(
-                String displayName,
-                String categoryKey,
-                List<GspmRule> initialRules,
-                GspmPhase phase) {
             this.categoryKey = categoryKey;
-            this.phase = phase;
             setName(displayName);
             setLayout(new BorderLayout(0, 2));
             tableModel = new GspmRuleTableModel(registry::getToolDisplayName);
@@ -442,30 +382,10 @@ public class GspmDialog extends AbstractParamDialog {
         public void onShow() {
             // Refresh rules from registry so edits in other panels are reflected
             List<GspmRule> fresh = getEffectiveRules();
-            List<GspmRule> filtered;
-            if (GspmRuleSet.ALL_CATEGORY.equals(categoryKey)) {
-                filtered = fresh;
-            } else if (categoryKey.startsWith(GspmRuleSet.PHASE_PREFIX)) {
-                GspmPhase phase =
-                        GspmPhase.valueOf(
-                                categoryKey
-                                        .substring(GspmRuleSet.PHASE_PREFIX.length())
-                                        .toUpperCase(Locale.ROOT));
-                filtered =
-                        fresh.stream()
-                                .filter(r -> r.getPhase() == phase)
-                                .collect(Collectors.toList());
-            } else {
-                filtered =
-                        fresh.stream()
-                                .filter(
-                                        r -> {
-                                            String rk = GspmRuleSet.ruleCategoryKey(r);
-                                            return rk.equals(categoryKey)
-                                                    || rk.startsWith(categoryKey + ".");
-                                        })
-                                .collect(Collectors.toList());
-            }
+            List<GspmRule> filtered =
+                    fresh.stream()
+                            .filter(r -> GspmCategoryTree.belongsTo(r, categoryKey))
+                            .collect(Collectors.toList());
             tableModel.setRules(filtered);
             updateCombos();
         }
@@ -614,7 +534,7 @@ public class GspmDialog extends AbstractParamDialog {
                 if (t.isPresent()) {
                     return t.get();
                 }
-                k = parentKey(k);
+                k = GspmCategoryTree.parentKey(k);
             }
             return AlertThreshold.MEDIUM;
         }
@@ -626,34 +546,9 @@ public class GspmDialog extends AbstractParamDialog {
                 if (s.isPresent()) {
                     return s.get();
                 }
-                k = parentKey(k);
+                k = GspmCategoryTree.parentKey(k);
             }
             return AttackStrength.MEDIUM;
-        }
-
-        /**
-         * Returns the next, less-specific key to check when resolving an effective
-         * threshold/strength, e.g. {@code "all.pscan.xss"} → {@code "all.pscan"} → ({@link
-         * #phase}-scoped key, if any) → {@code "all"} → {@code null}. Category nodes are children
-         * of a phase (see {@link GspmDialog#buildPanels()}), so the phase-wide default must be
-         * consulted before falling all the way back to the policy-wide catch-all.
-         */
-        private String parentKey(String key) {
-            if (key == null || GspmRuleSet.ALL_CATEGORY.equals(key)) {
-                return null;
-            }
-            if (key.startsWith(GspmRuleSet.PHASE_PREFIX)) {
-                return GspmRuleSet.ALL_CATEGORY;
-            }
-            int dot = key.lastIndexOf('.');
-            if (dot <= 0) {
-                return GspmRuleSet.ALL_CATEGORY;
-            }
-            String parent = key.substring(0, dot);
-            if (phase != null && GspmRuleSet.ALL_CATEGORY.equals(parent)) {
-                return GspmRuleSet.phaseKey(phase);
-            }
-            return parent;
         }
 
         private JTable buildTable() {

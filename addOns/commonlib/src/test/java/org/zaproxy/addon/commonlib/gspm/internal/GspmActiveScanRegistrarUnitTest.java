@@ -43,6 +43,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
+import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
@@ -102,6 +103,13 @@ class GspmActiveScanRegistrarUnitTest extends TestUtils {
         // Registers the tool and sets scanRuleRegistrar's registry; plugins is empty at this
         // point, so this registers zero rules.
         scanRuleRegistrar.registerRulesWithGspm(registry);
+    }
+
+    @Test
+    void shouldUseStableBrowserCategoryKey() {
+        // Other add-ons (e.g. PTK) use this id to share the "Client Browser" node, so it must not
+        // change.
+        assertThat(GspmActiveScanRegistrar.categoryKey(Category.BROWSER), is("browser"));
     }
 
     @Test
@@ -252,8 +260,8 @@ class GspmActiveScanRegistrarUnitTest extends TestUtils {
         }
         scanRuleRegistrar.registerRulesWithGspm(registry);
         GspmPolicy policy = new GspmPolicy("Custom");
-        policy.findOrCreateCategoryRuleSet("all.ascan").setThresholdEnum(AlertThreshold.HIGH);
-        policy.findOrCreateCategoryRuleSet("all.ascan").setStrengthEnum(AttackStrength.LOW);
+        policy.findOrCreateCategoryRuleSet("phase.active").setThresholdEnum(AlertThreshold.HIGH);
+        policy.findOrCreateCategoryRuleSet("phase.active").setStrengthEnum(AttackStrength.LOW);
         policy.setRuleThreshold(200, "Overridden", AlertThreshold.LOW);
         policy.setRuleStrength(200, "Overridden", AttackStrength.INSANE);
         policy.setRuleThreshold(300, "Disabled", AlertThreshold.OFF);
@@ -342,8 +350,8 @@ class GspmActiveScanRegistrarUnitTest extends TestUtils {
     void shouldProvideDefaultsOfPolicy() {
         // Given
         GspmPolicy policy = new GspmPolicy("Custom");
-        policy.findOrCreateCategoryRuleSet("all.ascan").setThresholdEnum(AlertThreshold.HIGH);
-        policy.findOrCreateCategoryRuleSet("all.ascan").setStrengthEnum(AttackStrength.LOW);
+        policy.findOrCreateCategoryRuleSet("phase.active").setThresholdEnum(AlertThreshold.HIGH);
+        policy.findOrCreateCategoryRuleSet("phase.active").setStrengthEnum(AttackStrength.LOW);
         registry.addPolicy(policy);
         // When / Then
         assertThat(

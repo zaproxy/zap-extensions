@@ -20,6 +20,7 @@
 package org.zaproxy.addon.commonlib.gspm;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -233,7 +234,7 @@ class GspmPolicyUnitTest extends TestUtils {
         GspmRuleSet catchAll = new GspmRuleSet();
         policy.addRuleSet(catchAll);
         GspmRuleSet category = new GspmRuleSet();
-        category.setCategory("all.ascan");
+        category.setCategory("phase.active");
         policy.addRuleSet(category);
         GspmRuleSet tagOnly = new GspmRuleSet();
         tagOnly.setTags(List.of("FOO"));
@@ -330,17 +331,57 @@ class GspmPolicyUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldOrderCategoryKeysBySpecificity() {
+        // Given — inserted most specific first, to check ordering doesn't depend on insertion
+        GspmPolicy policy = new GspmPolicy("P");
+        policy.findOrCreateCategoryRuleSet("phase.passive.browser.sast")
+                .setThresholdEnum(AlertThreshold.HIGH);
+        policy.findOrCreateCategoryRuleSet("phase.passive.browser")
+                .setThresholdEnum(AlertThreshold.LOW);
+        policy.findOrCreateCategoryRuleSet(GspmRuleSet.phaseKey(GspmPhase.PASSIVE))
+                .setThresholdEnum(AlertThreshold.OFF);
+
+        // When
+        List<String> categories =
+                policy.getRuleSets().stream().map(GspmRuleSet::getCategory).toList();
+
+        // Then
+        assertThat(
+                categories,
+                contains("phase.passive", "phase.passive.browser", "phase.passive.browser.sast"));
+        GspmCategory clientBrowser = new GspmCategory("browser", "Client Browser");
+        assertThat(
+                policy.getEffectiveThreshold(
+                                testRuleWithCategories(
+                                        "ptk-sast",
+                                        1,
+                                        clientBrowser,
+                                        new GspmCategory("sast", "SAST")))
+                        .get(),
+                is(AlertThreshold.HIGH));
+        assertThat(
+                policy.getEffectiveThreshold(testRuleWithCategories("client", 2, clientBrowser))
+                        .get(),
+                is(AlertThreshold.LOW));
+        assertThat(
+                policy.getEffectiveThreshold(testRule("pscan", 3)).get(), is(AlertThreshold.OFF));
+    }
+
+    @Test
     void shouldLetMoreSpecificCategoryOverridePhaseDefault() {
         GspmPolicy policy = new GspmPolicy("P");
         policy.findOrCreateCategoryRuleSet(GspmRuleSet.PHASE_PREFIX + "PASSIVE")
                 .setThresholdEnum(AlertThreshold.HIGH);
-        policy.findOrCreateCategoryRuleSet("all.pscan").setThresholdEnum(AlertThreshold.LOW);
+        policy.findOrCreateCategoryRuleSet("phase.passive.websocket")
+                .setThresholdEnum(AlertThreshold.LOW);
         GspmRule pscanRule = testRule("pscan", 10020);
-        GspmRule wspscanRule = testRule("wspscan", 110001);
-        // The more specific "all.pscan" override wins for pscan rules...
-        assertThat(policy.getEffectiveThreshold(pscanRule).get(), is(AlertThreshold.LOW));
-        // ...but wspscan rules still fall back to the broader phase-level default.
-        assertThat(policy.getEffectiveThreshold(wspscanRule).get(), is(AlertThreshold.HIGH));
+        GspmRule wspscanRule =
+                testRuleWithCategories(
+                        "wspscan", 110001, new GspmCategory("websocket", "WebSocket"));
+        // The more specific "phase.passive.websocket" override wins for its rules...
+        assertThat(policy.getEffectiveThreshold(wspscanRule).get(), is(AlertThreshold.LOW));
+        // ...but the other rules still fall back to the broader phase-level default.
+        assertThat(policy.getEffectiveThreshold(pscanRule).get(), is(AlertThreshold.HIGH));
     }
 
     @Test
@@ -362,7 +403,8 @@ class GspmPolicyUnitTest extends TestUtils {
         GspmPolicy original = new GspmPolicy("My Policy");
         original.setDefaultThreshold(AlertThreshold.HIGH);
         original.setDefaultStrength(AttackStrength.LOW);
-        original.findOrCreateCategoryRuleSet("all.ascan").setThresholdEnum(AlertThreshold.MEDIUM);
+        original.findOrCreateCategoryRuleSet("phase.active")
+                .setThresholdEnum(AlertThreshold.MEDIUM);
         original.setRuleThreshold(10020, "Content-Security-Policy", AlertThreshold.LOW);
 
         // When
@@ -374,7 +416,7 @@ class GspmPolicyUnitTest extends TestUtils {
         assertThat(loaded.getFileName(), is("My Policy"));
         assertThat(loaded.getDefaultThreshold().get(), is(AlertThreshold.HIGH));
         assertThat(loaded.getDefaultStrength().get(), is(AttackStrength.LOW));
-        GspmRuleSet ascanRuleSet = loaded.findOrCreateCategoryRuleSet("all.ascan");
+        GspmRuleSet ascanRuleSet = loaded.findOrCreateCategoryRuleSet("phase.active");
         assertThat(ascanRuleSet.getThresholdEnum(), is(AlertThreshold.MEDIUM));
         GspmRule rule = testRule("pscan", 10020);
         assertThat(loaded.getEffectiveThreshold(rule).get(), is(AlertThreshold.LOW));
@@ -747,7 +789,8 @@ class GspmPolicyUnitTest extends TestUtils {
             // Given
             GspmPolicy policy = new GspmPolicy("P");
             policy.setDefaultThreshold(AlertThreshold.HIGH);
-            policy.findOrCreateCategoryRuleSet("all.ascan").setThresholdEnum(AlertThreshold.MEDIUM);
+            policy.findOrCreateCategoryRuleSet("phase.active")
+                    .setThresholdEnum(AlertThreshold.MEDIUM);
             policy.setRuleThreshold(10020, "rule", AlertThreshold.LOW);
 
             // When
@@ -810,29 +853,29 @@ class GspmPolicyUnitTest extends TestUtils {
             policy.setDefaultThreshold(AlertThreshold.HIGH);
 
             // When
-            policy.findOrCreateCategoryRuleSet("all.ascan");
-            policy.findOrCreateCategoryRuleSet("all.ascan.inject");
+            policy.findOrCreateCategoryRuleSet("phase.active");
+            policy.findOrCreateCategoryRuleSet("phase.active.inject");
 
             // Then
             List<GspmRuleSet> rs = policy.getRuleSets();
             assertThat(rs.get(0).isCatchAll(), is(true));
-            assertThat(rs.get(1).getCategory(), is("all.ascan"));
-            assertThat(rs.get(2).getCategory(), is("all.ascan.inject"));
+            assertThat(rs.get(1).getCategory(), is("phase.active"));
+            assertThat(rs.get(2).getCategory(), is("phase.active.inject"));
         }
 
         @Test
         void shouldInsertShorterCategoryBeforeLongerEvenWhenAddedLater() {
             // Given
             GspmPolicy policy = new GspmPolicy("P");
-            policy.findOrCreateCategoryRuleSet("all.ascan.inject");
+            policy.findOrCreateCategoryRuleSet("phase.active.inject");
 
             // When
-            policy.findOrCreateCategoryRuleSet("all.ascan");
+            policy.findOrCreateCategoryRuleSet("phase.active");
 
             // Then
             List<GspmRuleSet> rs = policy.getRuleSets();
-            assertThat(rs.get(0).getCategory(), is("all.ascan"));
-            assertThat(rs.get(1).getCategory(), is("all.ascan.inject"));
+            assertThat(rs.get(0).getCategory(), is("phase.active"));
+            assertThat(rs.get(1).getCategory(), is("phase.active.inject"));
         }
 
         @Test
@@ -842,11 +885,11 @@ class GspmPolicyUnitTest extends TestUtils {
             policy.setRuleThreshold(10020, "test-rule", AlertThreshold.OFF);
 
             // When
-            policy.findOrCreateCategoryRuleSet("all.pscan");
+            policy.findOrCreateCategoryRuleSet("phase.passive");
 
             // Then
             List<GspmRuleSet> rs = policy.getRuleSets();
-            assertThat(rs.get(0).getCategory(), is("all.pscan"));
+            assertThat(rs.get(0).getCategory(), is("phase.passive"));
             assertThat(rs.get(rs.size() - 1).isPerRule(10020), is(true));
         }
 
@@ -881,11 +924,11 @@ class GspmPolicyUnitTest extends TestUtils {
         void shouldReturnExistingCategoryRuleSetWithoutCreatingDuplicate() {
             // Given
             GspmPolicy policy = new GspmPolicy("P");
-            GspmRuleSet first = policy.findOrCreateCategoryRuleSet("all.ascan");
+            GspmRuleSet first = policy.findOrCreateCategoryRuleSet("phase.active");
             first.setThresholdEnum(AlertThreshold.HIGH);
 
             // When
-            GspmRuleSet second = policy.findOrCreateCategoryRuleSet("all.ascan");
+            GspmRuleSet second = policy.findOrCreateCategoryRuleSet("phase.active");
 
             // Then
             assertThat(second, is(first));
@@ -898,18 +941,18 @@ class GspmPolicyUnitTest extends TestUtils {
             GspmPolicy policy = new GspmPolicy("P");
 
             // Then
-            assertThat(policy.hasCategoryRuleSet("all.ascan"), is(false));
+            assertThat(policy.hasCategoryRuleSet("phase.active"), is(false));
             assertThat(policy.hasCategoryRuleSet(null), is(false));
 
             // When
-            policy.findOrCreateCategoryRuleSet("all.ascan");
+            policy.findOrCreateCategoryRuleSet("phase.active");
             policy.setDefaultThreshold(AlertThreshold.HIGH);
 
             // Then
-            assertThat(policy.hasCategoryRuleSet("all.ascan"), is(true));
+            assertThat(policy.hasCategoryRuleSet("phase.active"), is(true));
             assertThat(policy.hasCategoryRuleSet(GspmRuleSet.ALL_CATEGORY), is(true));
             assertThat(policy.hasCategoryRuleSet(null), is(true));
-            assertThat(policy.hasCategoryRuleSet("all.pscan"), is(false));
+            assertThat(policy.hasCategoryRuleSet("phase.passive"), is(false));
         }
     }
 
@@ -1211,6 +1254,16 @@ class GspmPolicyUnitTest extends TestUtils {
     }
 
     private static GspmRule testRuleWithTags(String tool, int id, Map<String, String> tags) {
+        return testRule(tool, id, tags, Collections.emptyList());
+    }
+
+    private static GspmRule testRuleWithCategories(
+            String tool, int id, GspmCategory... categories) {
+        return testRule(tool, id, Collections.emptyMap(), List.of(categories));
+    }
+
+    private static GspmRule testRule(
+            String tool, int id, Map<String, String> tags, List<GspmCategory> categories) {
         return new GspmRule() {
             @Override
             public int getId() {
@@ -1229,12 +1282,12 @@ class GspmPolicyUnitTest extends TestUtils {
 
             @Override
             public GspmPhase getPhase() {
-                return GspmPhase.PASSIVE;
+                return "ascan".equals(tool) ? GspmPhase.ACTIVE : GspmPhase.PASSIVE;
             }
 
             @Override
             public List<GspmCategory> getCategories() {
-                return Collections.emptyList();
+                return categories;
             }
 
             @Override

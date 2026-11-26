@@ -60,7 +60,7 @@ class GspmEnabledRulesTableModelUnitTest extends TestUtils {
         // in the policy at all.
         GspmPolicy policy = new GspmPolicy("API");
         GspmRuleSet ascanOff = new GspmRuleSet();
-        ascanOff.setCategory("all.ascan");
+        ascanOff.setCategory("phase.active");
         ascanOff.setThresholdEnum(AlertThreshold.OFF);
         policy.addRuleSet(ascanOff);
         GspmRuleSet reEnabled = new GspmRuleSet();
@@ -83,7 +83,7 @@ class GspmEnabledRulesTableModelUnitTest extends TestUtils {
         // Given
         GspmPolicy policy = new GspmPolicy("API");
         GspmRuleSet ascanOff = new GspmRuleSet();
-        ascanOff.setCategory("all.ascan");
+        ascanOff.setCategory("phase.active");
         ascanOff.setThresholdEnum(AlertThreshold.OFF);
         policy.addRuleSet(ascanOff);
         GspmRuleSet reEnabled = new GspmRuleSet();
@@ -146,7 +146,7 @@ class GspmEnabledRulesTableModelUnitTest extends TestUtils {
 
         @Override
         public GspmPhase getPhase() {
-            return GspmPhase.ACTIVE;
+            return "pscan".equals(tool) ? GspmPhase.PASSIVE : GspmPhase.ACTIVE;
         }
 
         @Override

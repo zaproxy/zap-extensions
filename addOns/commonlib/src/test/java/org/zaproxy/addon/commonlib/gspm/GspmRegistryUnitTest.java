@@ -743,7 +743,8 @@ class GspmRegistryUnitTest extends TestUtils {
             GspmRule rule = rule("pscan", 10020);
             registry.registerRule(rule);
             GspmPolicy policy = new GspmPolicy("P");
-            policy.findOrCreateCategoryRuleSet("all.pscan").setThresholdEnum(AlertThreshold.OFF);
+            policy.findOrCreateCategoryRuleSet("phase.passive")
+                    .setThresholdEnum(AlertThreshold.OFF);
             registry.addPolicy(policy);
             registry.setCurrentPolicy("P");
 
@@ -867,7 +868,7 @@ class GspmRegistryUnitTest extends TestUtils {
 
         @Override
         public GspmPhase getPhase() {
-            return GspmPhase.PASSIVE;
+            return "ascan".equals(tool) ? GspmPhase.ACTIVE : GspmPhase.PASSIVE;
         }
 
         @Override
@@ -940,7 +941,7 @@ class GspmRegistryUnitTest extends TestUtils {
             // Then
             GspmPolicy policy = registry.getPolicy("My Policy");
             assertThat(policy, is(notNullValue()));
-            GspmRuleSet ascanRuleSet = policy.findOrCreateCategoryRuleSet("all.ascan");
+            GspmRuleSet ascanRuleSet = policy.findOrCreateCategoryRuleSet("phase.active");
             assertThat(ascanRuleSet.getThresholdEnum(), is(AlertThreshold.MEDIUM));
             assertThat(ascanRuleSet.getStrengthEnum(), is(AttackStrength.HIGH));
         }
@@ -1090,7 +1091,7 @@ class GspmRegistryUnitTest extends TestUtils {
 
             // Then
             GspmRuleSet ascanRuleSet =
-                    registry.getPolicy("Locked Policy").findOrCreateCategoryRuleSet("all.ascan");
+                    registry.getPolicy("Locked Policy").findOrCreateCategoryRuleSet("phase.active");
             assertThat(ascanRuleSet.getThresholdEnum(), is(AlertThreshold.OFF));
             // strength still taken from <scanner><strength>
             assertThat(ascanRuleSet.getStrengthEnum(), is(AttackStrength.HIGH));

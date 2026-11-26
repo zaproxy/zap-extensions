@@ -130,9 +130,9 @@ public class GspmRuleSetDialog extends StandardFieldsDialog {
                 ruleSet != null && ruleSet.getCategory() != null
                         ? ruleSet.getCategory()
                         : GspmRuleSet.ALL_CATEGORY;
-        // Keep a stored category selectable even if no loaded rule offers it (e.g. a tool-wide
-        // "all.ascan" scope, or a category whose add-on isn't installed), otherwise saving would
-        // silently broaden it to the catch-all.
+        // Keep a stored category selectable even if no loaded rule offers it (e.g. a category
+        // whose add-on isn't installed), otherwise saving would silently broaden it to the
+        // catch-all.
         Map<String, String> options = new LinkedHashMap<>(categoryOptions);
         options.putIfAbsent(currentCategory, currentCategory);
         // Display names aren't unique across tools, so disambiguate clashing labels with the key

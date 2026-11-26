@@ -176,13 +176,13 @@ public class GspmActiveScanRegistrar {
 
     static AlertThreshold getDefaultThreshold(GspmRegistry registry, String name) {
         return hasPolicy(registry, name)
-                ? GspmPolicyOperations.getDefaultThreshold(registry, name, TOOL)
+                ? GspmPolicyOperations.getDefaultThreshold(registry, name, GspmPhase.ACTIVE)
                 : null;
     }
 
     static AttackStrength getDefaultStrength(GspmRegistry registry, String name) {
         return hasPolicy(registry, name)
-                ? GspmPolicyOperations.getDefaultStrength(registry, name, TOOL)
+                ? GspmPolicyOperations.getDefaultStrength(registry, name, GspmPhase.ACTIVE)
                 : null;
     }
 

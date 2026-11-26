@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.UnaryOperator;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -57,20 +56,8 @@ public class GspmRuleSetTableModel extends AbstractTableModel {
     static final int COL_STRENGTH = 3;
     static final int COL_COUNT = 4;
 
-    private final UnaryOperator<String> toolDisplayNames;
     private List<GspmRuleSet> ruleSets = new ArrayList<>();
     private Map<String, String> i18nToEnum;
-
-    GspmRuleSetTableModel() {
-        this(UnaryOperator.identity());
-    }
-
-    /**
-     * @param toolDisplayNames maps a tool id (e.g. {@code ascan}) to its display name.
-     */
-    GspmRuleSetTableModel(UnaryOperator<String> toolDisplayNames) {
-        this.toolDisplayNames = toolDisplayNames;
-    }
 
     /** Replaces the displayed rule sets and fires a full table-data-changed event. */
     public void setRuleSets(List<GspmRuleSet> newRuleSets) {
@@ -126,8 +113,8 @@ public class GspmRuleSetTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         GspmRuleSet rs = ruleSets.get(row);
         return switch (col) {
-            case COL_NAME -> displayName(rs, toolDisplayNames);
-            case COL_MATCH -> matchSummary(rs, toolDisplayNames);
+            case COL_NAME -> displayName(rs);
+            case COL_MATCH -> matchSummary(rs);
             case COL_THRESHOLD ->
                     rs.getThreshold() == null
                             ? noOverrideLabel()
@@ -220,11 +207,6 @@ public class GspmRuleSetTableModel extends AbstractTableModel {
      * never set a name) stay legible in this table.
      */
     static String displayName(GspmRuleSet rs) {
-        return displayName(rs, UnaryOperator.identity());
-    }
-
-    /** As {@link #displayName(GspmRuleSet)}, using {@code toolDisplayNames} for tool scopes. */
-    static String displayName(GspmRuleSet rs, UnaryOperator<String> toolDisplayNames) {
         if (rs.getName() != null && !rs.getName().isBlank()) {
             return rs.getName();
         }
@@ -237,25 +219,11 @@ public class GspmRuleSetTableModel extends AbstractTableModel {
         if (category == null || category.equalsIgnoreCase(GspmRuleSet.ALL_CATEGORY)) {
             return Constant.messages.getString("commonlib.gspm.ruleset.name.catchall");
         }
-        if (category.startsWith(GspmRuleSet.PHASE_PREFIX)) {
+        if (GspmRuleSet.isPhaseOnlyKey(category)) {
             return Constant.messages.getString(
                     "commonlib.gspm.ruleset.name.phase", phaseDisplayName(category));
         }
-        if (isToolScope(category)) {
-            return Constant.messages.getString(
-                    "commonlib.gspm.ruleset.name.tool", toolDisplayNames.apply(toolId(category)));
-        }
         return Constant.messages.getString("commonlib.gspm.ruleset.name.category", category);
-    }
-
-    /** Returns {@code true} for a tool-wide scope key such as {@code all.ascan}. */
-    private static boolean isToolScope(String category) {
-        String prefix = GspmRuleSet.ALL_CATEGORY + ".";
-        return category.startsWith(prefix) && category.indexOf('.', prefix.length()) < 0;
-    }
-
-    private static String toolId(String toolScope) {
-        return toolScope.substring(GspmRuleSet.ALL_CATEGORY.length() + 1);
     }
 
     /**
@@ -285,11 +253,6 @@ public class GspmRuleSetTableModel extends AbstractTableModel {
 
     /** Returns a short, read-only summary of what {@code rs} matches. */
     static String matchSummary(GspmRuleSet rs) {
-        return matchSummary(rs, UnaryOperator.identity());
-    }
-
-    /** As {@link #matchSummary(GspmRuleSet)}, using {@code toolDisplayNames} for tool scopes. */
-    static String matchSummary(GspmRuleSet rs, UnaryOperator<String> toolDisplayNames) {
         List<GspmRuleRef> rules = rs.getRules();
         if (rules != null && !rules.isEmpty()) {
             return rules.size() == 1
@@ -302,17 +265,12 @@ public class GspmRuleSetTableModel extends AbstractTableModel {
         String category = rs.getCategory();
         if (category != null && !category.equalsIgnoreCase(GspmRuleSet.ALL_CATEGORY)) {
             criteria.add(
-                    category.startsWith(GspmRuleSet.PHASE_PREFIX)
+                    GspmRuleSet.isPhaseOnlyKey(category)
                             ? Constant.messages.getString(
                                     "commonlib.gspm.dialog.rulesets.match.phase",
                                     phaseDisplayName(category))
-                            : isToolScope(category)
-                                    ? Constant.messages.getString(
-                                            "commonlib.gspm.dialog.rulesets.match.tool",
-                                            toolDisplayNames.apply(toolId(category)))
-                                    : Constant.messages.getString(
-                                            "commonlib.gspm.dialog.rulesets.match.category",
-                                            category));
+                            : Constant.messages.getString(
+                                    "commonlib.gspm.dialog.rulesets.match.category", category));
         }
         List<String> tags = rs.getTags();
         if (tags != null && !tags.isEmpty()) {

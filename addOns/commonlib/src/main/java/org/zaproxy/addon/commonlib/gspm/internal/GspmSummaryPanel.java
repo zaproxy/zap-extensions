@@ -28,7 +28,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -84,7 +83,6 @@ class GspmSummaryPanel extends AbstractParamPanel {
             String displayName,
             GspmPolicy policy,
             Supplier<List<GspmRule>> rulesSupplier,
-            UnaryOperator<String> toolDisplayNames,
             boolean newPolicy) {
         this.policy = policy;
         this.newPolicy = newPolicy;
@@ -106,7 +104,7 @@ class GspmSummaryPanel extends AbstractParamPanel {
         north.add(notePanel, BorderLayout.SOUTH);
         add(north, BorderLayout.NORTH);
 
-        tableModel = new GspmEnabledRulesTableModel(policy, toolDisplayNames);
+        tableModel = new GspmEnabledRulesTableModel(policy);
         table = buildTable();
         add(new JScrollPane(table), BorderLayout.CENTER);
     }

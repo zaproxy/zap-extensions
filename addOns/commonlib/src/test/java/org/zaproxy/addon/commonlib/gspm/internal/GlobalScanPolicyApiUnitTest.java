@@ -98,7 +98,7 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
         registry.registerRule(rule(INJECTION_RULE_2, Category.INJECTION));
         registry.registerRule(rule(SERVER_RULE, Category.SERVER));
         GspmPolicyOperations.addPolicy(
-                registry, POLICY, "ascan", AlertThreshold.LOW, AttackStrength.MEDIUM);
+                registry, POLICY, GspmPhase.ACTIVE, AlertThreshold.LOW, AttackStrength.MEDIUM);
         api = new GlobalScanPolicyApi(registry);
     }
 
@@ -166,10 +166,10 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
         // Then
         assertThat(response, is(equalTo(ApiResponseElement.OK)));
         assertThat(
-                GspmPolicyOperations.getDefaultThreshold(registry, "New", "ascan"),
+                GspmPolicyOperations.getDefaultThreshold(registry, "New", GspmPhase.ACTIVE),
                 is(equalTo(AlertThreshold.HIGH)));
         assertThat(
-                GspmPolicyOperations.getDefaultStrength(registry, "New", "ascan"),
+                GspmPolicyOperations.getDefaultStrength(registry, "New", GspmPhase.ACTIVE),
                 is(equalTo(AttackStrength.LOW)));
     }
 
@@ -202,20 +202,20 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
         // When
         api.handleApiAction(
                 "updatePolicy",
-                params("policyName", POLICY, "tool", "ascan", "attackStrength", "high"));
+                params("policyName", POLICY, "phase", "active", "attackStrength", "high"));
         // Then
         assertThat(
-                GspmPolicyOperations.getDefaultThreshold(registry, POLICY, "ascan"),
+                GspmPolicyOperations.getDefaultThreshold(registry, POLICY, GspmPhase.ACTIVE),
                 is(equalTo(AlertThreshold.LOW)));
         assertThat(
-                GspmPolicyOperations.getDefaultStrength(registry, POLICY, "ascan"),
+                GspmPolicyOperations.getDefaultStrength(registry, POLICY, GspmPhase.ACTIVE),
                 is(equalTo(AttackStrength.HIGH)));
     }
 
     @Test
     void shouldRemovePolicy() throws Exception {
         // Given
-        GspmPolicyOperations.addPolicy(registry, "Other", "ascan", null, null);
+        GspmPolicyOperations.addPolicy(registry, "Other", GspmPhase.ACTIVE, null, null);
         // When
         api.handleApiAction("removePolicy", params("policyName", "Other"));
         // Then
@@ -257,7 +257,7 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
         // Then
         assertThat(registry.getPolicy("Imported") != null, is(true));
         assertThat(
-                GspmPolicyOperations.getDefaultThreshold(registry, "Imported", "ascan"),
+                GspmPolicyOperations.getDefaultThreshold(registry, "Imported", GspmPhase.ACTIVE),
                 is(equalTo(AlertThreshold.HIGH)));
         // When / Then
         assertType(
@@ -370,8 +370,8 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
                 params(
                         "policyName",
                         POLICY,
-                        "tool",
-                        "ascan",
+                        "phase",
+                        "active",
                         "categoryKey",
                         "inject",
                         "alertThreshold",
@@ -381,8 +381,8 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
                 params(
                         "policyName",
                         POLICY,
-                        "tool",
-                        "ascan",
+                        "phase",
+                        "active",
                         "categoryKey",
                         "inject",
                         "attackStrength",
@@ -398,8 +398,8 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
                 params(
                         "policyName",
                         POLICY,
-                        "tool",
-                        "ascan",
+                        "phase",
+                        "active",
                         "categoryKey",
                         "",
                         "alertThreshold",
@@ -410,11 +410,27 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
                 params(
                         "policyName",
                         POLICY,
-                        "tool",
-                        "ascan",
+                        "phase",
+                        "active",
                         "categoryKey",
                         "unknown",
                         "attackStrength",
+                        "High"));
+        assertType(
+                ApiException.Type.MISSING_PARAMETER,
+                "setCategoryThreshold",
+                params("policyName", POLICY, "categoryKey", "inject", "alertThreshold", "High"));
+        assertType(
+                ApiException.Type.ILLEGAL_PARAMETER,
+                "setCategoryThreshold",
+                params(
+                        "policyName",
+                        POLICY,
+                        "phase",
+                        "notaphase",
+                        "categoryKey",
+                        "inject",
+                        "alertThreshold",
                         "High"));
     }
 
@@ -503,32 +519,32 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldSetDefaultsOfToolOrOfAllRules() throws Exception {
+    void shouldSetDefaultsOfPhaseOrOfAllRules() throws Exception {
         // When
         api.handleApiAction(
                 "addPolicy",
-                params("policyName", "ForTool", "tool", "ascan", "alertThreshold", "high"));
+                params("policyName", "ForPhase", "phase", "active", "alertThreshold", "high"));
         api.handleApiAction("addPolicy", params("policyName", "ForAll", "alertThreshold", "high"));
         // Then
         assertThat(
-                GspmPolicyOperations.getDefaultThreshold(registry, "ForTool", "ascan"),
+                GspmPolicyOperations.getDefaultThreshold(registry, "ForPhase", GspmPhase.ACTIVE),
                 is(equalTo(AlertThreshold.HIGH)));
         assertThat(
-                GspmPolicyOperations.getDefaultThreshold(registry, "ForTool", null) == null,
+                GspmPolicyOperations.getDefaultThreshold(registry, "ForPhase", null) == null,
                 is(true));
         assertThat(
                 GspmPolicyOperations.getDefaultThreshold(registry, "ForAll", null),
                 is(equalTo(AlertThreshold.HIGH)));
         assertThat(
-                GspmPolicyOperations.getDefaultThreshold(registry, "ForAll", "ascan"),
+                GspmPolicyOperations.getDefaultThreshold(registry, "ForAll", GspmPhase.ACTIVE),
                 is(equalTo(AlertThreshold.HIGH)));
         // When
         api.handleApiAction(
                 "updatePolicy",
-                params("policyName", "ForTool", "tool", "ascan", "attackStrength", "low"));
+                params("policyName", "ForPhase", "phase", "active", "attackStrength", "low"));
         // Then
         assertThat(
-                GspmPolicyOperations.getDefaultStrength(registry, "ForTool", "ascan"),
+                GspmPolicyOperations.getDefaultStrength(registry, "ForPhase", GspmPhase.ACTIVE),
                 is(equalTo(AttackStrength.LOW)));
     }
 
@@ -620,7 +636,7 @@ class GlobalScanPolicyApiUnitTest extends TestUtils {
 
         @Override
         public GspmPhase getPhase() {
-            return GspmPhase.ACTIVE;
+            return "pscan".equals(tool) ? GspmPhase.PASSIVE : GspmPhase.ACTIVE;
         }
 
         @Override
