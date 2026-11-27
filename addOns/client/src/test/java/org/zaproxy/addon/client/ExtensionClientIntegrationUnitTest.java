@@ -114,6 +114,8 @@ class ExtensionClientIntegrationUnitTest extends TestUtils {
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
         when(extensionLoader.getExtension(ExtensionPassiveScan2.class))
                 .thenReturn(mock(ExtensionPassiveScan2.class));
+        when(extensionLoader.getExtension(ExtensionCommonlib.class))
+                .thenReturn(mock(ExtensionCommonlib.class));
         FirefoxProfileManager fpm = mock(FirefoxProfileManager.class);
         when(extSel.getProfileManager(Browser.FIREFOX)).thenReturn(fpm);
         Path path = Files.createTempDirectory("zap-browser-test");
