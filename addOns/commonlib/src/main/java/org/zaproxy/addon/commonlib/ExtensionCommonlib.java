@@ -19,7 +19,11 @@
  */
 package org.zaproxy.addon.commonlib;
 
+import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
@@ -28,14 +32,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRuleSource;
 import org.zaproxy.addon.commonlib.gspm.internal.GlobalScanPolicyApi;
 import org.zaproxy.addon.commonlib.gspm.internal.GspmActiveScanRegistrar;
+import org.zaproxy.addon.commonlib.gspm.internal.GspmDefaultPolicy;
+import org.zaproxy.addon.commonlib.gspm.internal.GspmDefaultPolicyComboBox;
+import org.zaproxy.addon.commonlib.gspm.internal.GspmParam;
 import org.zaproxy.addon.commonlib.gspm.internal.GspmPolicyManagerDialog;
 import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
 import org.zaproxy.addon.commonlib.ui.GenerateFixPromptMenu;
@@ -57,6 +66,8 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     private GspmPolicyManagerDialog gspmPolicyManagerDialog;
     private ZapMenuItem menuItemGspm;
     private JButton gspmButton;
+    private GspmDefaultPolicy gspmDefaultPolicy;
+    private GspmDefaultPolicyComboBox gspmDefaultPolicyComboBox;
 
     @SuppressWarnings("removal")
     private org.zaproxy.zap.model.ValueGenerator valueGeneratorImpl;
@@ -132,6 +143,12 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         CommonlibParam commonlibParam = new CommonlibParam();
         extensionHook.addOptionsParamSet(commonlibParam);
+        GspmParam gspmParam = new GspmParam();
+        extensionHook.addOptionsParamSet(gspmParam);
+        gspmAscanRegistrar.setGspmParam(gspmParam);
+        gspmDefaultPolicy =
+                new GspmDefaultPolicy(gspmRegistry, gspmParam, ExtensionCommonlib::getScannerParam);
+        extensionHook.addOptionsChangedListener(o -> gspmDefaultPolicy.optionsChanged());
 
         if (hasView()) {
             extensionHook.getHookView().addStatusPanel(getProgressPanel());
@@ -140,8 +157,14 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
             extensionHook.getHookMenu().addPopupMenuItem(new SitesTreeInfoMenu());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuTreeTools());
             if (Constant.isDevMode()) {
-                extensionHook.getHookMenu().addAnalyseMenuItem(getMenuItemGspm());
-                extensionHook.getHookView().addMainToolBarComponent(getGspmButton());
+                if (!GspmActiveScanRegistrar.isSupportedByCore()) {
+                    // Otherwise the core's Scan Policy Manager menu item and button show it.
+                    extensionHook.getHookMenu().addAnalyseMenuItem(getMenuItemGspm());
+                    extensionHook.getHookView().addMainToolBarComponent(getGspmButton());
+                }
+                gspmDefaultPolicyComboBox =
+                        new GspmDefaultPolicyComboBox(gspmRegistry, gspmDefaultPolicy::setName);
+                extensionHook.getHookView().addMainToolBarComponent(gspmDefaultPolicyComboBox);
             }
         }
         if (Constant.isDevMode()) {
@@ -156,6 +179,10 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     public void postInit() {
         if (Constant.isDevMode()) {
             gspmRegistry.loadPolicies(Constant.getPoliciesDir());
+            gspmDefaultPolicy.start();
+            if (gspmDefaultPolicyComboBox != null) {
+                EventQueue.invokeLater(this::moveDefaultPolicyComboBoxToStart);
+            }
         }
         // Registered in all modes, to keep the active scan rules in sync with GSPM. The core only
         // uses the policies provided in dev mode, and only if there are any.
@@ -216,6 +243,68 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
         return Constant.isDevMode() && gspmAscanRegistrar.isRegisteredWithCore();
     }
 
+    /**
+     * Moves the default policy combo box to the start of the main tool bar, the core only adds the
+     * components at the end.
+     */
+    private void moveDefaultPolicyComboBoxToStart() {
+        Container toolBar = gspmDefaultPolicyComboBox.getParent();
+        if (toolBar == null || toolBar.getComponentZOrder(gspmDefaultPolicyComboBox) == 0) {
+            return;
+        }
+        toolBar.remove(gspmDefaultPolicyComboBox);
+        toolBar.add(gspmDefaultPolicyComboBox, 0);
+        toolBar.revalidate();
+        toolBar.repaint();
+    }
+
+    private static ScannerParam getScannerParam() {
+        return Model.getSingleton().getOptionsParam().getParamSet(ScannerParam.class);
+    }
+
+    /**
+     * Tells whether or not the passive scan rules are configured by the Global Scan Policy Manager,
+     * with its default policy. Their settings should not be changed directly, they would be
+     * overridden when the policy is applied again.
+     *
+     * <p><strong>Note:</strong> Not part of the public API, it might change at any time.
+     *
+     * @return {@code true} if configured by the GSPM, {@code false} otherwise.
+     * @since 1.46.0
+     */
+    public boolean isGspmControllingPassiveScanRules() {
+        return gspmDefaultPolicy != null && gspmDefaultPolicy.isStarted();
+    }
+
+    /**
+     * Shows the Global Scan Policy Manager, owned by the given window, e.g. a modal dialog it is
+     * shown from.
+     *
+     * <p><strong>Note:</strong> Not part of the public API, it might change at any time.
+     *
+     * @param owner the owner of the dialog, {@code null} for the main window.
+     * @since 1.46.0
+     */
+    public void showGspmPolicyManagerDialog(Window owner) {
+        if (!hasView()) {
+            return;
+        }
+        if (owner == null || owner == getView().getMainFrame()) {
+            showGspmPolicyManagerDialog();
+            return;
+        }
+        GspmPolicyManagerDialog dialog = new GspmPolicyManagerDialog(owner, gspmRegistry);
+        // Not reused, the owner might not be.
+        dialog.addComponentListener(
+                new ComponentAdapter() {
+                    @Override
+                    public void componentHidden(ComponentEvent e) {
+                        dialog.dispose();
+                    }
+                });
+        dialog.setVisible(true);
+    }
+
     private ZapMenuItem getMenuItemGspm() {
         if (menuItemGspm == null) {
             menuItemGspm = new ZapMenuItem("commonlib.gspm.menu.analyse");
@@ -260,6 +349,12 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     @Override
     public void unload() {
         gspmAscanRegistrar.unregisterFromCore();
+        if (gspmDefaultPolicy != null) {
+            gspmDefaultPolicy.stop();
+        }
+        if (gspmDefaultPolicyComboBox != null) {
+            gspmDefaultPolicyComboBox.unload();
+        }
         if (hasView()) {
             getView().setOutputPanel(null);
             if (gspmPolicyManagerDialog != null) {

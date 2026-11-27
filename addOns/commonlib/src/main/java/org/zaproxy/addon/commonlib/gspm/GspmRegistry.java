@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -236,10 +237,16 @@ public class GspmRegistry {
      */
     public void addPolicy(GspmPolicy policy) {
         Objects.requireNonNull(policy, "policy must not be null");
+        GspmPolicy replaced;
         synchronized (policies) {
             ensureUniqueFileName(policy);
-            policies.put(policy.getName(), policy);
+            replaced = policies.put(policy.getName(), policy);
         }
+        if (replaced != null && replaced != policy) {
+            replaced.setSaveListener(null);
+        }
+        policy.setSaveListener(this::notifyPolicySaved);
+        notifyListeners(l -> l.policyAdded(policy), "added policy " + policy.getName());
     }
 
     /**
@@ -278,9 +285,18 @@ public class GspmRegistry {
      */
     public void removePolicy(String policyName) {
         Objects.requireNonNull(policyName, "policyName must not be null");
-        policies.remove(policyName);
-        if (policyName.equals(currentPolicyName)) {
+        GspmPolicy removed = policies.remove(policyName);
+        if (removed == null) {
+            return;
+        }
+        removed.setSaveListener(null);
+        boolean wasCurrent = policyName.equals(currentPolicyName);
+        if (wasCurrent) {
             currentPolicyName = null;
+        }
+        notifyListeners(l -> l.policyRemoved(policyName), "removed policy " + policyName);
+        if (wasCurrent) {
+            notifyListeners(l -> l.currentPolicyChanged(null), "current policy cleared");
         }
     }
 
@@ -326,8 +342,15 @@ public class GspmRegistry {
             ensureUniqueFileName(policy);
             policies.put(newName, policy);
         }
-        if (oldName.equals(currentPolicyName)) {
+        boolean wasCurrent = oldName.equals(currentPolicyName);
+        if (wasCurrent) {
             currentPolicyName = newName;
+        }
+        notifyListeners(
+                l -> l.policyRenamed(oldName, newName),
+                "renamed policy " + oldName + " to " + newName);
+        if (wasCurrent) {
+            notifyListeners(l -> l.currentPolicyChanged(newName), "current policy " + newName);
         }
     }
 
@@ -348,12 +371,35 @@ public class GspmRegistry {
         if (!policies.containsKey(policyName)) {
             throw new IllegalArgumentException("Unknown policy: " + policyName);
         }
+        if (policyName.equals(currentPolicyName)) {
+            return;
+        }
         this.currentPolicyName = policyName;
+        notifyListeners(l -> l.currentPolicyChanged(policyName), "current policy " + policyName);
     }
 
     /** Clears the current policy so that rule queries return underlying rule values. */
     public void clearCurrentPolicy() {
+        if (currentPolicyName == null) {
+            return;
+        }
         this.currentPolicyName = null;
+        notifyListeners(l -> l.currentPolicyChanged(null), "current policy cleared");
+    }
+
+    /**
+     * Returns the view of the given rule with the configuration of the given policy applied, as the
+     * rules returned by {@link #getRulesByTool(String, String)}.
+     *
+     * @param rule the rule, not a view of a policy.
+     * @param policy the policy.
+     * @return the view, changes to it are written to the policy.
+     * @since 1.46.0
+     */
+    public static GspmRule getRuleForPolicy(GspmRule rule, GspmPolicy policy) {
+        return new PolicyRuleView(
+                Objects.requireNonNull(rule, "rule must not be null"),
+                Objects.requireNonNull(policy, "policy must not be null"));
     }
 
     /** Returns the name of the current policy, or {@code null} if none is set. */
@@ -369,6 +415,21 @@ public class GspmRegistry {
     /** Removes a previously added listener. */
     public void removeListener(RegistryListener listener) {
         listeners.remove(listener);
+    }
+
+    private void notifyPolicySaved(GspmPolicy policy) {
+        notifyListeners(l -> l.policySaved(policy), "saved policy " + policy.getName());
+    }
+
+    private void notifyListeners(Consumer<RegistryListener> event, String description) {
+        listeners.forEach(
+                l -> {
+                    try {
+                        event.accept(l);
+                    } catch (Exception e) {
+                        LOGGER.error("Failed to notify {}", description, e);
+                    }
+                });
     }
 
     private void notifyRegistered(GspmRule rule) {
@@ -576,7 +637,13 @@ public class GspmRegistry {
         }
     }
 
-    /** Listener for changes to the registry. */
+    /**
+     * Listener for changes to the registry.
+     *
+     * <p>The listeners are notified on the thread that made the change, possibly while the policy
+     * involved is locked (e.g. when saved), so they should not block, for example, waiting on the
+     * EDT.
+     */
     public interface RegistryListener {
 
         /** Called after a rule has been registered. */
@@ -584,5 +651,42 @@ public class GspmRegistry {
 
         /** Called after a rule has been unregistered. */
         void ruleUnregistered(GspmRule rule);
+
+        /**
+         * Called after a policy has been added, or has replaced one with the same name.
+         *
+         * @since 1.46.0
+         */
+        default void policyAdded(GspmPolicy policy) {}
+
+        /**
+         * Called after a policy has been removed.
+         *
+         * @since 1.46.0
+         */
+        default void policyRemoved(String policyName) {}
+
+        /**
+         * Called after a policy has been renamed.
+         *
+         * @since 1.46.0
+         */
+        default void policyRenamed(String oldName, String newName) {}
+
+        /**
+         * Called after a registered policy has been saved.
+         *
+         * @since 1.46.0
+         */
+        default void policySaved(GspmPolicy policy) {}
+
+        /**
+         * Called after the current policy has been changed, set or cleared, including when it is
+         * renamed or removed.
+         *
+         * @param policyName the name of the current policy, {@code null} if cleared.
+         * @since 1.46.0
+         */
+        default void currentPolicyChanged(String policyName) {}
     }
 }
