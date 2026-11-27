@@ -30,20 +30,25 @@ import java.util.Locale;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.panels.TableFilterPanel;
 
@@ -55,6 +60,17 @@ public class PolicyPassiveScanPanel extends AbstractParamPanel {
     private PolicyPassiveScanTableModel passiveScanTableModel = null;
     private JComboBox<String> applyToThreshold = null;
     private JComboBox<String> applyToThresholdTarget = null;
+
+    /** The components to configure the rules, hidden if configured by the GSPM. */
+    private transient List<JComponent> rulesComponents;
+
+    private JPanel gspmPanel;
+
+    /**
+     * If the rules are configured by the Global Scan Policy Manager, when the panel was
+     * initialised, in which case they are not edited here.
+     */
+    private boolean gspmControlled;
 
     public PolicyPassiveScanPanel() {
         this.setLayout(new GridBagLayout());
@@ -92,17 +108,30 @@ public class PolicyPassiveScanPanel extends AbstractParamPanel {
                 });
         applyToPanel.add(applyThresholdButton, LayoutHelper.getGBC(5, 0, 1, 0.0));
         applyToPanel.add(new JLabel(""), LayoutHelper.getGBC(6, 0, 1, 1.0)); // Spacer
+        rulesComponents = List.of(applyToPanel, passiveScannersFilterPanel, getTableScrollPane());
+
+        this.add(
+                getGspmPanel(),
+                LayoutHelper.getGBC(
+                        0,
+                        0,
+                        3,
+                        1.0D,
+                        1.0D,
+                        GridBagConstraints.BOTH,
+                        GridBagConstraints.NORTHWEST,
+                        new Insets(0, 0, 0, 0)));
 
         this.add(
                 applyToPanel,
                 LayoutHelper.getGBC(
-                        0, 0, 3, 0.0D, 0.0D, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
+                        0, 1, 3, 0.0D, 0.0D, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
 
         this.add(
                 passiveScannersFilterPanel,
                 LayoutHelper.getGBC(
                         0,
-                        1,
+                        2,
                         1,
                         1.0D,
                         0.0D,
@@ -114,7 +143,7 @@ public class PolicyPassiveScanPanel extends AbstractParamPanel {
                 getTableScrollPane(),
                 LayoutHelper.getGBC(
                         0,
-                        2,
+                        3,
                         1,
                         1.0,
                         1.0,
@@ -208,17 +237,92 @@ public class PolicyPassiveScanPanel extends AbstractParamPanel {
     @Override
     public void initParam(Object obj) {
         this.getPassiveScanTableModel().reset();
+
+        ExtensionCommonlib extCommonlib = getExtensionCommonlib();
+        gspmControlled = extCommonlib != null && extCommonlib.isGspmControllingPassiveScanRules();
+        getGspmPanel().setVisible(gspmControlled);
+        rulesComponents.forEach(c -> c.setVisible(!gspmControlled));
     }
 
     @Override
     public void saveParam(Object obj) throws Exception {
+        if (gspmControlled) {
+            return;
+        }
         this.getPassiveScanTableModel().persistChanges();
     }
 
     @Override
     public void reset() {
+        if (gspmControlled) {
+            return;
+        }
         this.getPassiveScanTableModel().applyThresholdToAll(AlertThreshold.MEDIUM);
         this.getPassiveScanTableModel().persistChanges();
+    }
+
+    /**
+     * Gets the panel shown instead of the rules when they are configured by the Global Scan Policy
+     * Manager, with a note and a button to show it.
+     */
+    private JPanel getGspmPanel() {
+        if (gspmPanel == null) {
+            gspmPanel = new JPanel(new GridBagLayout());
+            ZapLabel note =
+                    new ZapLabel(Constant.messages.getString("pscan.options.policy.gspm.note"));
+            note.setLineWrap(true);
+            note.setWrapStyleWord(true);
+            gspmPanel.add(
+                    note,
+                    LayoutHelper.getGBC(
+                            0,
+                            0,
+                            1,
+                            1.0D,
+                            0.0D,
+                            GridBagConstraints.HORIZONTAL,
+                            GridBagConstraints.NORTHWEST,
+                            new Insets(2, 2, 2, 2)));
+            JButton button =
+                    new JButton(Constant.messages.getString("pscan.options.policy.gspm.button"));
+            button.addActionListener(
+                    e -> {
+                        ExtensionCommonlib extCommonlib = getExtensionCommonlib();
+                        if (extCommonlib != null) {
+                            extCommonlib.showGspmPolicyManagerDialog(
+                                    SwingUtilities.getWindowAncestor(this));
+                        }
+                    });
+            gspmPanel.add(
+                    button,
+                    LayoutHelper.getGBC(
+                            0,
+                            1,
+                            1,
+                            0.0D,
+                            0.0D,
+                            GridBagConstraints.NONE,
+                            GridBagConstraints.NORTHWEST,
+                            new Insets(6, 2, 2, 2)));
+            // Keeps the note and button at the top.
+            gspmPanel.add(
+                    new JLabel(),
+                    LayoutHelper.getGBC(
+                            0,
+                            2,
+                            1,
+                            1.0D,
+                            1.0D,
+                            GridBagConstraints.BOTH,
+                            GridBagConstraints.NORTHWEST,
+                            new Insets(0, 0, 0, 0)));
+            gspmPanel.setVisible(false);
+        }
+        return gspmPanel;
+    }
+
+    private static ExtensionCommonlib getExtensionCommonlib() {
+        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionCommonlib.class);
     }
 
     private JScrollPane getTableScrollPane() {
