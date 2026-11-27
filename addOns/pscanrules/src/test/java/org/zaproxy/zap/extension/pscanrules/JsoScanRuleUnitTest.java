@@ -35,6 +35,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -270,6 +272,121 @@ class JsoScanRuleUnitTest extends PassiveScannerTest<JsoScanRule> {
 
         // When
         scanHttpRequestSend(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInFormParameterOfRequest()
+            throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        String jso =
+                URLEncoder.encode(
+                        Base64.getEncoder().encodeToString(createJso()),
+                        StandardCharsets.UTF_8.name());
+        String body = "user=bob&session=" + jso;
+        msg.setRequestHeader(
+                "POST / HTTP/1.1\r\n"
+                        + "Content-Type: application/x-www-form-urlencoded\r\n"
+                        + "Content-Length: "
+                        + body.length()
+                        + "\r\n");
+        msg.setRequestBody(body);
+
+        // When
+        scanHttpRequestSend(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldRaiseAlertGivenUriEncodedJsoMagicBytesAreDetectedInFormParameterOfRequest()
+            throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        String body = "user=bob&session=" + createUriEncodedJso();
+        msg.setRequestHeader(
+                "POST / HTTP/1.1\r\n"
+                        + "Content-Type: application/x-www-form-urlencoded\r\n"
+                        + "Content-Length: "
+                        + body.length()
+                        + "\r\n");
+        msg.setRequestBody(body);
+
+        // When
+        scanHttpRequestSend(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInJsonBodyOfRequest() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        String jso = Base64.getEncoder().encodeToString(createJso());
+        String body = "{\"user\":\"bob\",\"session\":\"" + jso + "\"}";
+        msg.setRequestHeader(
+                "POST / HTTP/1.1\r\n"
+                        + "Content-Type: application/json\r\n"
+                        + "Content-Length: "
+                        + body.length()
+                        + "\r\n");
+        msg.setRequestBody(body);
+
+        // When
+        scanHttpRequestSend(msg);
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"aGVsbG8rO0ABdGhlcmU=", "aGVsbG8-rO0ABdGhlcmU", "aGVsbG8_rO0ABdGhlcmU"})
+    void shouldNotRaiseAlertGivenBase64JsoMagicBytesAreInsideAnotherValueInBodyOfRequest(
+            String token) throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        String body = "{\"user\":\"bob\",\"token\":\"" + token + "\"}";
+        msg.setRequestHeader(
+                "POST / HTTP/1.1\r\n"
+                        + "Content-Type: application/json\r\n"
+                        + "Content-Length: "
+                        + body.length()
+                        + "\r\n");
+        msg.setRequestBody(body);
+
+        // When
+        scanHttpRequestSend(msg);
+
+        // Then
+        assertThat(alertsRaised, empty());
+    }
+
+    @Test
+    void shouldRaiseAlertGivenBase64JsoMagicBytesAreDetectedInHtmlBodyOfResponse()
+            throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        String jso = Base64.getEncoder().encodeToString(createJso());
+        String body =
+                "<form><input type=\"hidden\" name=\"javax.faces.ViewState\" value=\""
+                        + jso
+                        + "\"></form>";
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Content-Type: text/html\r\n"
+                        + "Content-Length: "
+                        + body.length()
+                        + "\r\n");
+        msg.setResponseBody(body);
+
+        // When
+        scanHttpResponseReceive(msg);
 
         // Then
         assertThat(alertsRaised, hasSize(1));

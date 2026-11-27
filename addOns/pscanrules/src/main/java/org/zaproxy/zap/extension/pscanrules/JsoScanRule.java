@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -44,6 +45,19 @@ public class JsoScanRule extends PluginPassiveScanner implements CommonPassiveSc
     private static final byte[] JSO_BYTE_MAGIC_SEQUENCE = {(byte) 0xac, (byte) 0xed, 0x00, 0x05};
     private static final String JSO_BASE_64_MAGIC_SEQUENCE = "rO0AB";
     private static final String JSO_URI_ENCODED_MAGIC_SEQUENCE = "%C2%AC%C3%AD%00%05";
+
+    /**
+     * Matches the Base64 or URI encoded magic sequence at the start of a value anywhere in a text
+     * body (e.g. a form parameter or a JSON string), not inside another Base64 value.
+     */
+    private static final Pattern JSO_IN_TEXT_PATTERN =
+            Pattern.compile(
+                    "(?<![A-Za-z0-9+/_-])(?:"
+                            + JSO_BASE_64_MAGIC_SEQUENCE
+                            + "|"
+                            + JSO_URI_ENCODED_MAGIC_SEQUENCE
+                            + ")");
+
     private static final Map<String, String> ALERT_TAGS;
 
     static {
@@ -98,7 +112,7 @@ public class JsoScanRule extends PluginPassiveScanner implements CommonPassiveSc
     private void checkJsoInBody(HttpBody body) {
         byte[] startOfBody = Arrays.copyOfRange(body.getBytes(), 0, JSO_BYTE_MAGIC_SEQUENCE.length);
         if (Arrays.equals(JSO_BYTE_MAGIC_SEQUENCE, startOfBody)
-                || hasJsoBase64MagicSequence(body.toString())) {
+                || JSO_IN_TEXT_PATTERN.matcher(body.toString()).find()) {
             createAlert("").raise();
         }
     }
