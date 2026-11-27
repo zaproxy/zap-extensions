@@ -17,6 +17,8 @@ var WebSocketPassiveScript = Java.type(
 var ScanRuleMetadata = Java.type(
   "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
 );
+var CommonAlertTag = Java.type("org.zaproxy.addon.commonlib.CommonAlertTag");
+var PolicyTag = Java.type("org.zaproxy.addon.commonlib.PolicyTag");
 
 function getMetadata() {
   return ScanRuleMetadata.fromYaml(`
@@ -30,6 +32,13 @@ risk: high
 confidence: high
 cweId: 359
 wascId: 13
+alertTags:
+  ${CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getTag()}: ${CommonAlertTag.OWASP_2025_A06_INSECURE_DESIGN.getValue()}
+  ${CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()}: ${CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue()}
+  ${CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()}: ${CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue()}
+  ${CommonAlertTag.WSTG_V42_CLNT_10_WEBSOCKETS.getTag()}: ${CommonAlertTag.WSTG_V42_CLNT_10_WEBSOCKETS.getValue()}
+  ${PolicyTag.PENTEST.getTag()}: ""
+  ${PolicyTag.QA_STD.getTag()}: ""
 status: beta
 codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/PII%20Disclosure.js
 helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110005

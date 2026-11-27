@@ -31,6 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.quality.Strictness;
@@ -133,6 +134,9 @@ class WebSocketPassiveScriptScanRuleUnitTest extends WebSocketTestUtils {
                                 confidence: high
                                 cweId: 209
                                 wascId: 13
+                                alertTags:
+                                  tag1: value1
+                                  tag2: ""
                                 """));
 
         // When
@@ -149,5 +153,43 @@ class WebSocketPassiveScriptScanRuleUnitTest extends WebSocketTestUtils {
         assertThat(alert.getCweId(), is(209));
         assertThat(alert.getWascId(), is(13));
         assertThat(alert.getEvidence(), is("evidence"));
+        assertThat(
+                alert.getTags(),
+                is(
+                        Map.of(
+                                "tag1",
+                                "value1",
+                                "tag2",
+                                "",
+                                "CWE-209",
+                                "https://cwe.mitre.org/data/definitions/209.html")));
+    }
+
+    @Test
+    void shouldNotShareTagsBetweenAlertsOrWithMetadata() {
+        // Given
+        WebSocketAlertThread alertThread = mock(WebSocketAlertThread.class);
+        when(alertThread.getAlertSource()).thenReturn(Alert.Source.PASSIVE);
+        WebSocketAlertRaiser raiser1 = new WebSocketAlertRaiser(alertThread, 1, null);
+        WebSocketAlertRaiser raiser2 = new WebSocketAlertRaiser(alertThread, 1, null);
+        when(helper.newAlert()).thenReturn(raiser1, raiser2);
+        ScanRuleMetadata metadata =
+                ScanRuleMetadata.fromYaml(
+                        """
+                        id: 1
+                        name: Test Rule
+                        alertTags:
+                          tag1: value1
+                        """);
+        rule = new WebSocketPassiveScriptScanRule(script, metadata);
+        Alert alert1 = rule.newAlertFromMetadata(helper).build().getAlert();
+        Alert alert2 = rule.newAlertFromMetadata(helper).build().getAlert();
+
+        // When
+        alert1.getTags().put("tag2", "value2");
+
+        // Then
+        assertThat(alert2.getTags(), is(Map.of("tag1", "value1")));
+        assertThat(metadata.getAlertTags(), is(Map.of("tag1", "value1")));
     }
 }

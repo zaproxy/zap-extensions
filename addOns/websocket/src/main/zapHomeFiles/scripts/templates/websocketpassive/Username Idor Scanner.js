@@ -16,6 +16,8 @@ var WebSocketPassiveScript = Java.type(
 var ScanRuleMetadata = Java.type(
   "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata",
 );
+var CommonAlertTag = Java.type("org.zaproxy.addon.commonlib.CommonAlertTag");
+var PolicyTag = Java.type("org.zaproxy.addon.commonlib.PolicyTag");
 
 function getMetadata() {
   return ScanRuleMetadata.fromYaml(`
@@ -37,6 +39,13 @@ risk: info
 confidence: high
 cweId: 284
 wascId: 2
+alertTags:
+  ${CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getTag()}: ${CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getValue()}
+  ${CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()}: ${CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue()}
+  ${CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()}: ${CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getValue()}
+  ${CommonAlertTag.WSTG_V42_ATHZ_04_IDOR.getTag()}: ${CommonAlertTag.WSTG_V42_ATHZ_04_IDOR.getValue()}
+  ${CommonAlertTag.WSTG_V42_CLNT_10_WEBSOCKETS.getTag()}: ${CommonAlertTag.WSTG_V42_CLNT_10_WEBSOCKETS.getValue()}
+  ${PolicyTag.PENTEST.getTag()}: ""
 status: beta
 codeLink: https://github.com/zaproxy/zap-extensions/tree/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Username%20Idor%20Scanner.js
 helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-110007

@@ -49,7 +49,8 @@ final class WebSocketScriptMetadataUtils {
                 .setDescription(metadata.getDescription())
                 .setSolution(metadata.getSolution())
                 .setCweId(metadata.getCweId())
-                .setWascId(metadata.getWascId());
+                .setWascId(metadata.getWascId())
+                .setTags(metadata.getAlertTags());
         if (metadata.getReferences() != null) {
             alert.setReference(String.join("\n", metadata.getReferences()));
         }

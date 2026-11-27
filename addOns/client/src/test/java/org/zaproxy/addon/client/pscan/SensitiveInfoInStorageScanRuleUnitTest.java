@@ -19,8 +19,11 @@
  */
 package org.zaproxy.addon.client.pscan;
 
+import static java.util.Map.entry;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +33,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +44,8 @@ import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ReportedEvent;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link SensitiveInfoInStorageScanRule}. */
@@ -158,5 +164,45 @@ class SensitiveInfoInStorageScanRuleUnitTest extends TestUtils {
                                 + "', text='"
                                 + text
                                 + "', timestamp=1, count=0}"));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(
+                tags,
+                is(
+                        equalTo(
+                                Map.ofEntries(
+                                        entry(
+                                                CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getTag(),
+                                                CommonAlertTag.OWASP_2025_A01_BROKEN_AC.getValue()),
+                                        entry(
+                                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag(),
+                                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue()),
+                                        entry(
+                                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag(),
+                                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED
+                                                        .getValue()),
+                                        entry(
+                                                CommonAlertTag.WSTG_V42_CLNT_12_BROWSER_STORAGE
+                                                        .getTag(),
+                                                CommonAlertTag.WSTG_V42_CLNT_12_BROWSER_STORAGE
+                                                        .getValue()),
+                                        entry(PolicyTag.PENTEST.getTag(), ""),
+                                        entry(PolicyTag.QA_STD.getTag(), "")))));
+    }
+
+    @Test
+    void shouldAddTagsToAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        alerts.forEach(
+                alert ->
+                        rule.getAlertTags()
+                                .forEach((k, v) -> assertThat(alert.getTags(), hasEntry(k, v))));
     }
 }

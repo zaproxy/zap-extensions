@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Added OWASP Top Ten, WSTG and policy alert tags to the passive scan scripts, and include them in the alerts raised.
 
 
 ## [38] - 2026-08-07
