@@ -20,25 +20,41 @@
 package org.zaproxy.addon.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.quality.Strictness;
@@ -56,7 +72,14 @@ import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.gspm.GspmCategory;
+import org.zaproxy.addon.commonlib.gspm.GspmPhase;
+import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
+import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
+import org.zaproxy.addon.commonlib.gspm.GspmRule;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.ascan.PolicyManager;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -64,6 +87,9 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ActiveScanPolicyJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
+    @TempDir Path zapHomeDir;
+
+    private String zapHome;
     private ExtensionActiveScan extAScan;
     private static AbstractPlugin plugin;
 
@@ -88,6 +114,8 @@ class ActiveScanPolicyJobUnitTest {
     @BeforeEach
     void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
+        zapHome = Constant.getZapHome();
+        Constant.setZapHome(zapHomeDir.toString());
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -98,6 +126,13 @@ class ActiveScanPolicyJobUnitTest {
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
+    }
+
+    @AfterEach
+    void restoreZapHome() {
+        if (zapHome != null) {
+            Constant.setZapHome(zapHome);
+        }
     }
 
     @Test
@@ -160,6 +195,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
 
         // Then
@@ -180,6 +216,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
         ScanPolicy policy = job.getScanPolicy(progress);
 
@@ -204,6 +241,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
         ScanPolicy policy = job.getScanPolicy(progress);
 
@@ -227,6 +265,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
         ScanPolicy policy = job.getScanPolicy(progress);
 
@@ -263,6 +302,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
         ScanPolicy policy = job.getScanPolicy(progress);
 
@@ -306,6 +346,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
         ScanPolicy policy = job.getScanPolicy(progress);
 
@@ -348,6 +389,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
         job.getScanPolicy(progress);
 
@@ -380,6 +422,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
 
         // Then
@@ -409,6 +452,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
 
         // Then
@@ -438,6 +482,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
 
         // Then
@@ -468,6 +513,7 @@ class ActiveScanPolicyJobUnitTest {
 
         // When
         job.setJobData(data);
+        job.getData().getParameters().setName("Test");
         job.verifyParameters(progress);
 
         // Then
@@ -475,5 +521,433 @@ class ActiveScanPolicyJobUnitTest {
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.ascan.threshold!")));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldAddPolicyAndRuleSettingsToGlobalScanPolicyInDevMode() throws Exception {
+        // Given
+        Constant.setDevMode(true);
+        try {
+            GspmRegistry registry = registryWithRules(50000, 50001);
+            ActiveScanPolicyJob job = policyJob("Test", "high", "low", ruleDefn(50000));
+            job.setGspmRegistrySupplier(() -> registry);
+            AutomationProgress progress = new AutomationProgress();
+            // When
+            job.runJob(null, progress);
+            // Then
+            assertThat(progress.hasWarnings(), is(equalTo(false)));
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            assertThat(registry.getPolicy("Test"), is(notNullValue()));
+            GspmRule configured = rule(registry, "Test", 50000);
+            assertThat(configured.getAlertThreshold(), is(equalTo(AlertThreshold.HIGH)));
+            assertThat(configured.getAttackStrength(), is(equalTo(AttackStrength.INSANE)));
+            assertThat(configured.isEnabled(), is(equalTo(true)));
+            GspmRule other = rule(registry, "Test", 50001);
+            assertThat(other.getAlertThreshold(), is(equalTo(AlertThreshold.LOW)));
+            assertThat(other.getAttackStrength(), is(equalTo(AttackStrength.HIGH)));
+            verify(extAScan, never()).getPolicyManager();
+        } finally {
+            Constant.setDevMode(false);
+        }
+    }
+
+    @Test
+    void shouldEnableRuleWithStrengthIfDefaultThresholdIsOffInGlobalScanPolicy() throws Exception {
+        // Given
+        Constant.setDevMode(true);
+        try {
+            GspmRegistry registry = registryWithRules(50000, 50001);
+            LinkedHashMap<String, Object> rule = ruleDefn(50000);
+            rule.remove("threshold");
+            ActiveScanPolicyJob job = policyJob("Test", "high", "off", rule);
+            job.setGspmRegistrySupplier(() -> registry);
+            // When
+            job.runJob(null, new AutomationProgress());
+            // Then
+            assertThat(rule(registry, "Test", 50000).isEnabled(), is(equalTo(true)));
+            assertThat(rule(registry, "Test", 50001).isEnabled(), is(equalTo(false)));
+        } finally {
+            Constant.setDevMode(false);
+        }
+    }
+
+    @Test
+    void shouldAddPolicyWithDefaultsAndNoRulesToGlobalScanPolicyIfNoPolicyDefinition()
+            throws Exception {
+        // Given
+        Constant.setDevMode(true);
+        try {
+            GspmRegistry registry = registryWithRules(50000);
+            ActiveScanPolicyJob job = new ActiveScanPolicyJob();
+            LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+            data.put("parameters", new LinkedHashMap<>(Map.of("name", "Test")));
+            job.setJobData(data);
+            AutomationProgress progress = new AutomationProgress();
+            job.verifyParameters(progress);
+            job.setGspmRegistrySupplier(() -> registry);
+            // When
+            job.runJob(null, progress);
+            // Then
+            assertThat(progress.hasWarnings(), is(equalTo(false)));
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            GspmRule rule = rule(registry, "Test", 50000);
+            assertThat(rule.getAlertThreshold(), is(equalTo(AlertThreshold.MEDIUM)));
+            assertThat(rule.getAttackStrength(), is(equalTo(AttackStrength.MEDIUM)));
+        } finally {
+            Constant.setDevMode(false);
+        }
+    }
+
+    @Test
+    void shouldWarnIfPolicyAlreadyExistsInGlobalScanPolicy() throws Exception {
+        // Given
+        Constant.setDevMode(true);
+        try {
+            GspmRegistry registry = registryWithRules(50000);
+            registry.addPolicy(new GspmPolicy("Test"));
+            ActiveScanPolicyJob job = policyJob("Test", "high", "low", ruleDefn(50000));
+            job.setGspmRegistrySupplier(() -> registry);
+            AutomationProgress progress = new AutomationProgress();
+            // When
+            job.runJob(null, progress);
+            // Then
+            assertThat(progress.hasWarnings(), is(equalTo(true)));
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            assertThat(registry.getPolicy("Test").getRuleSets().isEmpty(), is(equalTo(true)));
+        } finally {
+            Constant.setDevMode(false);
+        }
+    }
+
+    @Test
+    void shouldWarnOnUnknownRuleInGlobalScanPolicy() throws Exception {
+        // Given
+        Constant.setDevMode(true);
+        try {
+            GspmRegistry registry = registryWithRules(50001);
+            ActiveScanPolicyJob job = policyJob("Test", "high", "low", ruleDefn(50000));
+            job.setGspmRegistrySupplier(() -> registry);
+            AutomationProgress progress = new AutomationProgress();
+            // When
+            job.runJob(null, progress);
+            // Then
+            assertThat(progress.hasWarnings(), is(equalTo(true)));
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+        } finally {
+            Constant.setDevMode(false);
+        }
+    }
+
+    @Test
+    void shouldErrorAndNotAddPolicyIfNameNotValid() throws Exception {
+        // Given
+        useAutomationMessages();
+        GspmRegistry registry = registryWithRules(50000);
+        ActiveScanPolicyJob job = policyJob("a/b", "high", "low", ruleDefn(50000));
+        job.setGspmRegistrySupplier(() -> registry);
+        AutomationProgress progress = new AutomationProgress();
+        // When
+        job.verifyParameters(progress);
+        // A plan with errors is not run, or is run with new progress.
+        job.runJob(null, new AutomationProgress());
+        // Then
+        assertThat(
+                progress.getErrors(),
+                is(
+                        equalTo(
+                                List.of(
+                                        "Job activeScan-policy scan policy name a/b is not valid,"
+                                                + " it contains characters that are not"
+                                                + " allowed"))));
+        assertThat(registry.getPolicy("a/b"), is(nullValue()));
+        verify(extAScan, never()).getPolicyManager();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Test<>", "Test/ww"})
+    void shouldErrorWhenRunIfNameSetWithoutVerifyingNotValid(String name) throws Exception {
+        // Given
+        useAutomationMessages();
+        GspmRegistry registry = registryWithRules(50000);
+        ActiveScanPolicyJob job = new ActiveScanPolicyJob();
+        // As done by the job's dialog.
+        job.getData().getParameters().setName(name);
+        job.setGspmRegistrySupplier(() -> registry);
+        AutomationProgress progress = new AutomationProgress();
+        // When
+        job.runJob(null, progress);
+        // Then
+        assertThat(
+                progress.getErrors(),
+                is(
+                        equalTo(
+                                List.of(
+                                        "Job activeScan-policy scan policy name "
+                                                + name
+                                                + " is not valid, it contains characters that are"
+                                                + " not allowed"))));
+        assertThat(registry.getAllPolicies(), is(empty()));
+        verify(extAScan, never()).getPolicyManager();
+    }
+
+    @Test
+    void shouldErrorWhenRunIfNameNotSet() throws Exception {
+        // Given
+        useAutomationMessages();
+        ActiveScanPolicyJob job = new ActiveScanPolicyJob();
+        AutomationProgress progress = new AutomationProgress();
+        // When
+        job.runJob(null, progress);
+        // Then
+        assertThat(
+                progress.getErrors(),
+                is(equalTo(List.of("Job activeScan-policy no scan policy name specified"))));
+        verify(extAScan, never()).getPolicyManager();
+    }
+
+    @Test
+    void shouldReportErrorsCreatingPolicyInGlobalScanPolicy() throws Exception {
+        // Given
+        useAutomationMessages();
+        GspmRegistry registry = spy(registryWithRules(50000));
+        doThrow(new UncheckedIOException("failure", new IOException()))
+                .when(registry)
+                .addPolicy(any());
+        ActiveScanPolicyJob job = policyJob("Test", "high", "low", ruleDefn(50000));
+        job.setGspmRegistrySupplier(() -> registry);
+        AutomationProgress progress = new AutomationProgress();
+        // When
+        job.runJob(null, progress);
+        // Then
+        assertThat(
+                progress.getErrors(),
+                is(
+                        equalTo(
+                                List.of(
+                                        "Job activeScan-policy failed to create scan policy Test:"
+                                                + " failure"))));
+    }
+
+    @Test
+    void shouldReportErrorsConfiguringRuleInGlobalScanPolicy() throws Exception {
+        // Given
+        useAutomationMessages();
+        Constant.setDevMode(true);
+        try {
+            GspmRegistry registry = spy(registryWithRules(50000));
+            doThrow(new IllegalStateException("failure"))
+                    .when(registry)
+                    .getRulesByTool(anyString(), anyString());
+            ActiveScanPolicyJob job = policyJob("Test", "high", "low", ruleDefn(50000));
+            job.setGspmRegistrySupplier(() -> registry);
+            AutomationProgress progress = new AutomationProgress();
+            // When
+            job.runJob(null, progress);
+            // Then
+            assertThat(progress.getErrors().size(), is(equalTo(1)));
+            assertThat(
+                    progress.getErrors().get(0),
+                    is(
+                            equalTo(
+                                    "Job activeScan-policy failed to configure the rules of"
+                                            + " scan policy Test: failure")));
+        } finally {
+            Constant.setDevMode(false);
+        }
+    }
+
+    @Test
+    void shouldErrorAndNotAddPolicyIfNoName() throws Exception {
+        // Given
+        useAutomationMessages();
+        GspmRegistry registry = registryWithRules(50000);
+        ActiveScanPolicyJob job = new ActiveScanPolicyJob();
+        LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+        data.put("parameters", new LinkedHashMap<>());
+        job.setJobData(data);
+        job.setGspmRegistrySupplier(() -> registry);
+        AutomationProgress progress = new AutomationProgress();
+        // When
+        job.verifyParameters(progress);
+        // A plan with errors is not run, or is run with new progress.
+        job.runJob(null, new AutomationProgress());
+        // Then
+        assertThat(
+                progress.getErrors(),
+                is(equalTo(List.of("Job activeScan-policy no scan policy name specified"))));
+        assertThat(registry.getAllPolicies(), is(empty()));
+        verify(extAScan, never()).getPolicyManager();
+    }
+
+    @Test
+    void shouldSavePolicyWithPolicyManagerIfGlobalScanPolicyManagerDoesNotProvidePolicies()
+            throws Exception {
+        // Given
+        Constant.setDevMode(true);
+        try {
+            PolicyManager policyManager = mock(PolicyManager.class);
+            given(policyManager.getAllPolicyNames()).willReturn(List.of());
+            given(extAScan.getPolicyManager()).willReturn(policyManager);
+            ActiveScanPolicyJob job = policyJob("Test", "high", "low", ruleDefn(50000));
+            job.setGspmRegistrySupplier(() -> null);
+            AutomationProgress progress = new AutomationProgress();
+            // When
+            job.runJob(null, progress);
+            // Then
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+            verify(policyManager).savePolicy(any(ScanPolicy.class));
+        } finally {
+            Constant.setDevMode(false);
+        }
+    }
+
+    @Test
+    void shouldUseGlobalScanPolicyIfItProvidesThePolicies() throws Exception {
+        // Given
+        GspmRegistry registry = registryWithRules(50000);
+        mockCommonlib(registry, true);
+        ActiveScanPolicyJob job = policyJob("Test", "high", "low", ruleDefn(50000));
+        AutomationProgress progress = new AutomationProgress();
+        // When
+        job.runJob(null, progress);
+        // Then
+        assertThat(registry.getPolicy("Test"), is(notNullValue()));
+        verify(extAScan, never()).getPolicyManager();
+    }
+
+    @Test
+    void shouldSavePolicyWithPolicyManagerIfGlobalScanPolicyDoesNotProvideThePolicies()
+            throws Exception {
+        // Given
+        PolicyManager policyManager = mock(PolicyManager.class);
+        given(policyManager.getAllPolicyNames()).willReturn(List.of());
+        given(extAScan.getPolicyManager()).willReturn(policyManager);
+        GspmRegistry registry = registryWithRules(50000);
+        mockCommonlib(registry, false);
+        ActiveScanPolicyJob job = policyJob("Test", "high", "low", ruleDefn(50000));
+        AutomationProgress progress = new AutomationProgress();
+        // When
+        job.runJob(null, progress);
+        // Then
+        verify(policyManager).savePolicy(any(ScanPolicy.class));
+        assertThat(registry.getPolicy("Test"), is(nullValue()));
+    }
+
+    private static void mockCommonlib(GspmRegistry registry, boolean providingPolicies) {
+        ExtensionCommonlib extCommonlib =
+                mock(ExtensionCommonlib.class, withSettings().strictness(Strictness.LENIENT));
+        given(extCommonlib.getGspmRegistry()).willReturn(registry);
+        given(extCommonlib.isGspmProvidingActiveScanPolicies()).willReturn(providingPolicies);
+        given(Control.getSingleton().getExtensionLoader().getExtension(ExtensionCommonlib.class))
+                .willReturn(extCommonlib);
+    }
+
+    private GspmRegistry registryWithRules(int... ruleIds) throws Exception {
+        Files.createDirectories(Constant.getPoliciesDir().toPath());
+        GspmRegistry registry = new GspmRegistry();
+        for (int id : ruleIds) {
+            registry.registerRule(new TestRule(id));
+        }
+        return registry;
+    }
+
+    private static GspmRule rule(GspmRegistry registry, String policy, int id) {
+        return registry.getRulesByTool("ascan", policy).stream()
+                .filter(r -> r.getId() == id)
+                .findFirst()
+                .get();
+    }
+
+    private static final class TestRule implements GspmRule {
+
+        private final int id;
+
+        TestRule(int id) {
+            this.id = id;
+        }
+
+        @Override
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public String getName() {
+            return "Rule " + id;
+        }
+
+        @Override
+        public String getTool() {
+            return "ascan";
+        }
+
+        @Override
+        public GspmPhase getPhase() {
+            return GspmPhase.ACTIVE;
+        }
+
+        @Override
+        public List<GspmCategory> getCategories() {
+            return List.of(new GspmCategory("server", "Server"));
+        }
+
+        @Override
+        public Map<String, String> getAlertTags() {
+            return Map.of();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {}
+
+        @Override
+        public AlertThreshold getAlertThreshold() {
+            return AlertThreshold.MEDIUM;
+        }
+
+        @Override
+        public void setAlertThreshold(AlertThreshold threshold) {}
+
+        @Override
+        public AttackStrength getAttackStrength() {
+            return AttackStrength.MEDIUM;
+        }
+
+        @Override
+        public void setAttackStrength(AttackStrength strength) {}
+    }
+
+    private static void useAutomationMessages() {
+        Constant.messages.addMessageBundle(
+                "automation",
+                ResourceBundle.getBundle(
+                        "org.zaproxy.addon.automation.resources.Messages", Locale.ENGLISH));
+    }
+
+    private static LinkedHashMap<String, Object> ruleDefn(int id) {
+        LinkedHashMap<String, Object> ruleDefn = new LinkedHashMap<>();
+        ruleDefn.put("id", id);
+        ruleDefn.put("strength", "insane");
+        ruleDefn.put("threshold", "high");
+        return ruleDefn;
+    }
+
+    private static ActiveScanPolicyJob policyJob(
+            String name, String strength, String threshold, LinkedHashMap<String, Object> rule) {
+        ActiveScanPolicyJob job = new ActiveScanPolicyJob();
+        LinkedHashMap<String, Object> policyDefn = new LinkedHashMap<>();
+        policyDefn.put("defaultStrength", strength);
+        policyDefn.put("defaultThreshold", threshold);
+        policyDefn.put("rules", new ArrayList<>(List.of(rule)));
+        LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+        data.put("parameters", new LinkedHashMap<>(Map.of("name", name)));
+        data.put("policyDefinition", policyDefn);
+        job.setJobData(data);
+        job.verifyParameters(new AutomationProgress());
+        return job;
     }
 }

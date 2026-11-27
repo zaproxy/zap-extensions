@@ -28,11 +28,9 @@ import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -49,8 +47,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.zaproxy.addon.commonlib.gspm.GspmCategory;
-import org.zaproxy.addon.commonlib.gspm.GspmPhase;
 import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRule;
 import org.zaproxy.addon.commonlib.gspm.GspmRuleSet;
@@ -105,7 +101,7 @@ class GspmRuleSetsPanel extends AbstractParamPanel {
                                 + "</html>"),
                 BorderLayout.NORTH);
 
-        tableModel = new GspmRuleSetTableModel(toolDisplayNames);
+        tableModel = new GspmRuleSetTableModel();
         tableModel.setRuleSets(policy.getRuleSets());
         table = buildTable();
         add(new JScrollPane(table), BorderLayout.CENTER);
@@ -324,57 +320,18 @@ class GspmRuleSetsPanel extends AbstractParamPanel {
      * each phase (e.g. "Active") followed by its categories (e.g. "Active / Client Browser"). Used
      * to populate {@link GspmRuleSetDialog}'s category pulldown.
      *
-     * <p>Phases are emitted in {@link GspmPhase#values()} declaration order rather than whatever
-     * order they happen to appear in {@code rulesSupplier}'s list, so this can't disagree with the
-     * tree even if the underlying rule collection's iteration order isn't stable across calls;
-     * tools/categories within a phase still follow first-seen order, same as {@code
-     * GspmDialog#buildPanels()}, which this otherwise replicates rather than shares — keep the two
-     * in sync if that method's grouping ever changes.
+     * <p>The phase/category entries come from {@link GspmCategoryTree}, the same hierarchy {@code
+     * GspmDialog#buildPanels()} uses, so the two can't disagree; nested categories are labelled
+     * with their full path, e.g. "Active / Client Browser / DAST".
      */
     private LinkedHashMap<String, String> availableCategoryOptions() {
-        LinkedHashMap<GspmPhase, LinkedHashMap<String, LinkedHashMap<String, String>>> byPhase =
-                new LinkedHashMap<>();
-        for (GspmRule rule : rulesSupplier.get()) {
-            GspmCategory cat = rule.getCategories().get(0);
-            byPhase.computeIfAbsent(rule.getPhase(), p -> new LinkedHashMap<>())
-                    .computeIfAbsent(rule.getTool(), k -> new LinkedHashMap<>())
-                    .putIfAbsent(cat.id(), cat.displayName());
-        }
-
         LinkedHashMap<String, String> options = new LinkedHashMap<>();
         options.put(
                 GspmRuleSet.ALL_CATEGORY,
                 Constant.messages.getString("commonlib.gspm.ruleset.dialog.category.all"));
-        for (GspmPhase phase : GspmPhase.values()) {
-            LinkedHashMap<String, LinkedHashMap<String, String>> tools = byPhase.get(phase);
-            if (tools == null) {
-                continue;
-            }
-            String phaseDisplay = phase.getDisplayName();
-            options.put(GspmRuleSet.phaseKey(phase), phaseDisplay);
-
-            for (var toolEntry : tools.entrySet()) {
-                String toolCatKey = GspmRuleSet.ALL_CATEGORY + "." + toolEntry.getKey();
-                for (var catEntry : toolEntry.getValue().entrySet()) {
-                    options.put(
-                            toolCatKey + "." + catEntry.getKey(),
-                            phaseDisplay + " / " + catEntry.getValue());
-                }
-            }
-        }
-
-        // Tool-wide scopes (e.g. "all.ascan", as created when importing a legacy policy), listed
-        // last and labelled by tool so it's clear which tools exist.
-        Set<String> toolIds = new LinkedHashSet<>();
-        for (var tools : byPhase.values()) {
-            toolIds.addAll(tools.keySet());
-        }
-        for (String toolId : toolIds) {
-            options.put(
-                    GspmRuleSet.ALL_CATEGORY + "." + toolId,
-                    Constant.messages.getString(
-                            "commonlib.gspm.ruleset.dialog.category.tool",
-                            toolDisplayNames.apply(toolId)));
+        for (GspmCategoryTree.Node node :
+                GspmCategoryTree.build(rulesSupplier.get(), toolDisplayNames)) {
+            options.put(node.key(), node.label());
         }
         return options;
     }
@@ -391,7 +348,7 @@ class GspmRuleSetsPanel extends AbstractParamPanel {
                         MessageFormat.format(
                                 Constant.messages.getString(
                                         "commonlib.gspm.dialog.rulesets.delete.message"),
-                                GspmRuleSetTableModel.displayName(rs, toolDisplayNames)),
+                                GspmRuleSetTableModel.displayName(rs)),
                         Constant.messages.getString("commonlib.gspm.dialog.rulesets.delete.title"),
                         JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {

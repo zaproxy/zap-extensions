@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.clienttest.slowload;
+package org.zaproxy.addon.dev;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -26,12 +26,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-/** Unit test for {@link SlowLoadPage}. */
-class SlowLoadPageUnitTest {
+/** Unit test for {@link DevUtils}. */
+class DevUtilsUnitTest {
 
     @Test
-    void shouldUseDefaultDelayWithoutQuery() {
-        assertThat(SlowLoadPage.getDelay(null), is(SlowLoadPage.DEFAULT_DELAY_MS));
+    void shouldGetDefaultLongParamWithoutQuery() {
+        assertThat(DevUtils.getLongParam(null, "delay", 3000, 30000), is(3000L));
     }
 
     @ParameterizedTest
@@ -44,9 +44,10 @@ class SlowLoadPageUnitTest {
         "delay=-5,0",
         "delay=abc,3000",
         "other=1,3000",
-        "delay=,3000"
+        "delay=,3000",
+        "mydelay=5,3000"
     })
-    void shouldGetDelayFromQuery(String query, long expected) {
-        assertThat(SlowLoadPage.getDelay(query), is(expected));
+    void shouldGetLongParamFromQuery(String query, long expected) {
+        assertThat(DevUtils.getLongParam(query, "delay", 3000, 30000), is(expected));
     }
 }

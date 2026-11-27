@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [1.45.0] - 2026-11-26
+### Added
+- Initial Global Scan Policy Manager API.
+
 ### Changed
 - Update dependencies.
 - Maintenance changes.
@@ -298,6 +304,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.45.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.45.0
 [1.44.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.44.0
 [1.43.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.43.0
 [1.42.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.42.0

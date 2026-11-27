@@ -29,6 +29,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.zaproxy.addon.commonlib.gspm.GspmPhase;
 import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRuleRef;
 import org.zaproxy.addon.commonlib.gspm.GspmRuleSet;
@@ -37,9 +38,10 @@ import org.zaproxy.zap.utils.XmlUtils;
 /**
  * Converts a legacy {@code .policy} XML file to a {@link GspmPolicy}.
  *
- * <p>The {@code locked} flag is treated as active-scan-only: when {@code true}, only the {@code
- * all.ascan} category rule set is set to {@link AlertThreshold#OFF} rather than the global
- * catch-all, leaving passive scan rules unaffected.
+ * <p>The policy's default threshold and strength are set on the {@code phase.active} rule set, so
+ * they apply to the rules of every active tool. The {@code locked} flag is treated as active-only:
+ * when {@code true}, only the {@code phase.active} rule set is set to {@link AlertThreshold#OFF}
+ * rather than the global catch-all, leaving passive scan rules unaffected.
  *
  * @since 1.45.0
  */
@@ -85,8 +87,8 @@ public class GspmLegacyImporter {
             }
         }
 
-        // locked=true means only explicitly listed active scan rules are active; scope OFF to
-        // all.ascan so passive rules are unaffected.
+        // locked=true means only explicitly listed active scan rules are active; scope OFF to the
+        // active phase so passive rules are unaffected.
         boolean locked = "true".equalsIgnoreCase(getChildText(root, "locked"));
         AlertThreshold catchAllThreshold = locked ? AlertThreshold.OFF : defaultThreshold;
 
@@ -98,7 +100,7 @@ public class GspmLegacyImporter {
             policy.setFileName(sourceName.substring(0, sourceName.length() - ".policy".length()));
         }
         GspmRuleSet ascanDefault =
-                policy.findOrCreateCategoryRuleSet(GspmRuleSet.ALL_CATEGORY + ".ascan");
+                policy.findOrCreateCategoryRuleSet(GspmRuleSet.phaseKey(GspmPhase.ACTIVE));
         ascanDefault.setThresholdEnum(catchAllThreshold);
         ascanDefault.setStrengthEnum(defaultStrength);
 

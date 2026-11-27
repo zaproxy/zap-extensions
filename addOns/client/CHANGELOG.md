@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Added OWASP Top Ten, WSTG and policy alert tags to the client passive scan rules.
+- Set the browser page load timeout, when using the adaptive wait strategy, to twice the adaptive timeout, so that pages which never finish loading no longer delay the spider.
 - No longer write the unused `localzapurl` item to the browser local storage on launch.
 
 ### Fixed

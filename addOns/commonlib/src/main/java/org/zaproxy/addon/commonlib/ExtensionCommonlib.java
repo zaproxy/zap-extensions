@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.commonlib;
 
+import java.awt.EventQueue;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRuleSource;
+import org.zaproxy.addon.commonlib.gspm.internal.GlobalScanPolicyApi;
 import org.zaproxy.addon.commonlib.gspm.internal.GspmActiveScanRegistrar;
 import org.zaproxy.addon.commonlib.gspm.internal.GspmPolicyManagerDialog;
 import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
@@ -137,10 +139,13 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
             extensionHook.getHookMenu().addPopupMenuItem(new GenerateFixPromptMenu(commonlibParam));
             extensionHook.getHookMenu().addPopupMenuItem(new SitesTreeInfoMenu());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuTreeTools());
-            if (Constant.isDevBuild()) {
+            if (Constant.isDevMode()) {
                 extensionHook.getHookMenu().addAnalyseMenuItem(getMenuItemGspm());
                 extensionHook.getHookView().addMainToolBarComponent(getGspmButton());
             }
+        }
+        if (Constant.isDevMode()) {
+            extensionHook.addApiImplementor(new GlobalScanPolicyApi(gspmRegistry));
         }
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
         extensionHook.addAddOnInstallationStatusListener(
@@ -149,10 +154,18 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
 
     @Override
     public void postInit() {
-        if (Constant.isDevBuild()) {
+        if (Constant.isDevMode()) {
             gspmRegistry.loadPolicies(Constant.getPoliciesDir());
         }
-        gspmAscanRegistrar.registerWithCore(gspmRegistry);
+        // Registered in all modes, to keep the active scan rules in sync with GSPM. The core only
+        // uses the policies provided in dev mode, and only if there are any.
+        gspmAscanRegistrar.registerWithCore(
+                gspmRegistry,
+                () -> {
+                    if (hasView()) {
+                        EventQueue.invokeLater(this::showGspmPolicyManagerDialog);
+                    }
+                });
     }
 
     /**
@@ -188,6 +201,19 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
      */
     public GspmRegistry getGspmRegistry() {
         return gspmRegistry;
+    }
+
+    /**
+     * Tells whether or not the active scan policies are provided by the Global Scan Policy Manager,
+     * that is, ZAP is in dev mode and the core supports it.
+     *
+     * <p><strong>Note:</strong> Not part of the public API, it might change at any time.
+     *
+     * @return {@code true} if the active scan policies are provided by GSPM, {@code false}
+     *     otherwise.
+     */
+    public boolean isGspmProvidingActiveScanPolicies() {
+        return Constant.isDevMode() && gspmAscanRegistrar.isRegisteredWithCore();
     }
 
     private ZapMenuItem getMenuItemGspm() {

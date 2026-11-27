@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 
@@ -51,31 +49,37 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 @Setter
 public class GspmRuleSet {
 
-    private static final Logger LOGGER = LogManager.getLogger(GspmRuleSet.class);
-
     /**
-     * The category id/key representing "all rules" (the catch-all root), e.g. as a rule set's
-     * {@link #category}, or as the root segment of a {@link #ruleCategoryKey(GspmRule) category
-     * key} such as {@code "all.ascan"}.
+     * The category key representing "all rules" (the catch-all root), e.g. as a rule set's {@link
+     * #category}.
      */
     public static final String ALL_CATEGORY = "all";
 
     /**
-     * Prefix for a {@link #category} value that scopes a rule set to a whole {@link GspmPhase}
-     * instead of a tool/category key, e.g. {@code "phase.passive"} matches every rule whose {@link
-     * GspmRule#getPhase()} is {@link GspmPhase#PASSIVE}, regardless of tool. Kept as a separate
-     * namespace from {@link #ruleCategoryKey(GspmRule)} (which stays tool-first, unaware of phase)
-     * so existing tool/category keys are unaffected; see {@link #matches(GspmRule)}.
+     * Prefix of every other category key: each {@link #ruleCategoryKey(GspmRule) rule's category
+     * key} starts with its {@link #phaseKey(GspmPhase) phase key}, e.g. {@code "phase.passive"}
+     * matches every rule whose {@link GspmRule#getPhase()} is {@link GspmPhase#PASSIVE}, regardless
+     * of tool; see {@link #matches(GspmRule)}.
      */
     public static final String PHASE_PREFIX = "phase.";
 
     /**
-     * Returns the {@link #PHASE_PREFIX}-scoped category key for {@code phase}, e.g. {@code
-     * "phase.passive"}, lowercase to match the convention used by every other category key (see
-     * {@link #ruleCategoryKey(GspmRule)}).
+     * Returns the category key for {@code phase}, e.g. {@code "phase.passive"}, lowercase to match
+     * the convention used by every other category key (see {@link #ruleCategoryKey(GspmRule)}).
      */
     public static String phaseKey(GspmPhase phase) {
         return PHASE_PREFIX + phase.name().toLowerCase(Locale.ROOT);
+    }
+
+    /**
+     * Tells whether or not {@code categoryKey} is the key of a whole phase (e.g. {@code
+     * "phase.passive"}), as opposed to one of a category within a phase (e.g. {@code
+     * "phase.passive.websocket"}) or not phase-scoped at all.
+     */
+    public static boolean isPhaseOnlyKey(String categoryKey) {
+        return categoryKey != null
+                && categoryKey.startsWith(PHASE_PREFIX)
+                && categoryKey.indexOf('.', PHASE_PREFIX.length()) < 0;
     }
 
     private String name;
@@ -233,44 +237,34 @@ public class GspmRuleSet {
         }
         boolean categoryMatches = true;
         if (category != null && !category.equalsIgnoreCase(ALL_CATEGORY)) {
-            if (category.startsWith(PHASE_PREFIX)) {
-                categoryMatches = matchesPhase(rule);
-            } else {
-                String ruleKey = ruleCategoryKey(rule);
-                categoryMatches = ruleKey.equals(category) || ruleKey.startsWith(category + ".");
-            }
+            categoryMatches = matchesCategory(rule);
         }
         boolean statusMatches = status == null || status.equalsIgnoreCase(rule.getStatus().name());
         return tagsMatch && categoryMatches && statusMatches;
     }
 
     /**
-     * Returns {@code true} if {@code rule}'s phase matches this rule set's {@link #category}, which
-     * must already be confirmed to have the {@link #PHASE_PREFIX}. {@link #category} is a plain
-     * string deserialized from user-editable policy YAML, so an unrecognized phase name (e.g. from
-     * a hand-edited or version-skewed file) is treated as a non-match rather than thrown, to avoid
-     * breaking threshold/strength resolution for every other rule set.
+     * Returns {@code true} if this rule set's {@link #category} is the {@link
+     * #ruleCategoryKey(GspmRule) category key} of {@code rule} or one of its ancestors, e.g. {@code
+     * "phase.active"} or {@code "phase.active.browser"} for a rule with the key {@code
+     * "phase.active.browser.dast"}. Compared ignoring case. {@link #category} is a plain string
+     * deserialized from user-editable policy YAML, so an unrecognized key (e.g. from a hand-edited
+     * or version-skewed file) just doesn't match any rule.
      */
-    private boolean matchesPhase(GspmRule rule) {
-        try {
-            GspmPhase phase =
-                    GspmPhase.valueOf(
-                            category.substring(PHASE_PREFIX.length()).toUpperCase(Locale.ROOT));
-            return rule.getPhase() == phase;
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn("GSPM: ignoring rule set with unrecognised phase category '{}'", category);
-            return false;
-        }
+    private boolean matchesCategory(GspmRule rule) {
+        String ruleKey = ruleCategoryKey(rule);
+        int len = category.length();
+        return ruleKey.regionMatches(true, 0, category, 0, len)
+                && (ruleKey.length() == len || ruleKey.charAt(len) == '.');
     }
 
     /**
-     * Returns a stable, non-i18n category key for the given rule, e.g. {@code "all.ascan"} or
-     * {@code "all.ascan.server-side"}. The key is built from the tool key followed by the category
-     * id segments.
+     * Returns a stable, non-i18n category key for the given rule, e.g. {@code
+     * "phase.active.browser"}: its {@link #phaseKey(GspmPhase) phase key} followed by its category
+     * ids. Rules of different tools that share a phase and category ids share the key.
      */
     public static String ruleCategoryKey(GspmRule rule) {
-        StringBuilder sb = new StringBuilder(ALL_CATEGORY);
-        sb.append('.').append(rule.getTool());
+        StringBuilder sb = new StringBuilder(phaseKey(rule.getPhase()));
         for (GspmCategory cat : rule.getCategories()) {
             sb.append('.').append(cat.id());
         }

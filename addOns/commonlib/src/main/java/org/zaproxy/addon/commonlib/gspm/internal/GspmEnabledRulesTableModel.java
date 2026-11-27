@@ -22,7 +22,6 @@ package org.zaproxy.addon.commonlib.gspm.internal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.UnaryOperator;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
@@ -53,15 +52,9 @@ public class GspmEnabledRulesTableModel extends AbstractTableModel {
     static final int COL_COUNT = 4;
 
     private final GspmPolicy policy;
-    private final UnaryOperator<String> toolDisplayNames;
     private List<GspmRule> rules = new ArrayList<>();
 
     GspmEnabledRulesTableModel(GspmPolicy policy) {
-        this(policy, UnaryOperator.identity());
-    }
-
-    GspmEnabledRulesTableModel(GspmPolicy policy, UnaryOperator<String> toolDisplayNames) {
-        this.toolDisplayNames = toolDisplayNames;
         this.policy = policy;
     }
 
@@ -141,7 +134,7 @@ public class GspmEnabledRulesTableModel extends AbstractTableModel {
         GspmRuleSet rs =
                 policy.getEffectiveThresholdRuleSet(rule).orElseGet(policy::findCatchAllRuleSet);
         return rs != null
-                ? GspmRuleSetTableModel.displayName(rs, toolDisplayNames)
+                ? GspmRuleSetTableModel.displayName(rs)
                 : Constant.messages.getString("commonlib.gspm.ruleset.name.policydefault");
     }
 }

@@ -56,4 +56,32 @@ public class DevUtils {
         }
         return null;
     }
+
+    /**
+     * Gets a number from the given query.
+     *
+     * @param query the query of a request, might be {@code null}.
+     * @param name the name of the parameter.
+     * @param defaultValue the value if the parameter is not in the query or is not a number.
+     * @param maxValue the maximum value, the minimum is 0.
+     * @return the value of the parameter, between 0 and {@code maxValue}.
+     */
+    public static long getLongParam(String query, String name, long defaultValue, long maxValue) {
+        if (query == null) {
+            return defaultValue;
+        }
+        String prefix = name + "=";
+        for (String param : query.split("&")) {
+            if (param.startsWith(prefix)) {
+                try {
+                    return Math.max(
+                            0,
+                            Math.min(Long.parseLong(param.substring(prefix.length())), maxValue));
+                } catch (NumberFormatException e) {
+                    return defaultValue;
+                }
+            }
+        }
+        return defaultValue;
+    }
 }

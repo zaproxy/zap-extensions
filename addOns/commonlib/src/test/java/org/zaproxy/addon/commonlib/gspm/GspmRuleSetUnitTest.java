@@ -72,17 +72,17 @@ class GspmRuleSetUnitTest {
         void categoryMatchesExactKey() {
             // Given
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan");
+            rs.setCategory("phase.active");
 
-            // When / Then — tool=ascan, no hierarchy → key = "all.ascan"
+            // When / Then — ascan is active, no categories → key = "phase.active"
             assertThat(rs.matches(rule("ascan", 1)), is(true));
         }
 
         @Test
-        void categoryDoesNotMatchDifferentTool() {
+        void categoryDoesNotMatchOtherPhase() {
             // Given
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan");
+            rs.setCategory("phase.active");
 
             // When / Then
             assertThat(rs.matches(rule("pscan", 1)), is(false));
@@ -92,8 +92,8 @@ class GspmRuleSetUnitTest {
         void categoryMatchesChildKey() {
             // Given
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan");
-            // categories=[GspmCategory("inject",...)] → category key = "all.ascan.inject"
+            rs.setCategory("phase.active");
+            // categories=[GspmCategory("inject",...)] → category key = "phase.active.inject"
             GspmRule child =
                     ruleWithCategories(
                             "ascan", 1, List.of(new GspmCategory("inject", "Injection")));
@@ -106,9 +106,9 @@ class GspmRuleSetUnitTest {
         void categoryMatchesDeepChildKey() {
             // Given
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan");
+            rs.setCategory("phase.active");
             // categories=[GspmCategory("inject"),GspmCategory("sqli")] → key =
-            // "all.ascan.inject.sqli"
+            // "phase.active.inject.sqli"
             GspmRule deepChild =
                     ruleWithCategories(
                             "ascan",
@@ -125,19 +125,21 @@ class GspmRuleSetUnitTest {
         void categoryDoesNotMatchParentKey() {
             // Given — more-specific category should NOT match a rule whose key is the parent
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan.inject");
+            rs.setCategory("phase.active.inject");
 
-            // When / Then — tool=ascan, no hierarchy → key = "all.ascan"
+            // When / Then — ascan is active, no categories → key = "phase.active"
             assertThat(rs.matches(rule("ascan", 1)), is(false));
         }
 
         @Test
         void categoryDoesNotMatchSiblingWithSharedPrefixButNoDotSeparator() {
-            // Given — verifies the dot is appended before startsWith check
+            // Given — verifies the dot is checked after the prefix
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan");
-            // tool "ascanext" → key = "all.ascanext" (shares "all.ascan" prefix but no dot after)
-            GspmRule sibling = rule("ascanext", 1);
+            rs.setCategory("phase.active.in");
+            // key = "phase.active.inject" (shares "phase.active.in" prefix but no dot after)
+            GspmRule sibling =
+                    ruleWithCategories(
+                            "ascan", 1, List.of(new GspmCategory("inject", "Injection")));
 
             // When / Then
             assertThat(rs.matches(sibling), is(false));
@@ -185,6 +187,85 @@ class GspmRuleSetUnitTest {
         }
 
         @Test
+        void categoryMatchesRulesOfAnyToolWithThatCategoryInThatPhase() {
+            // Given
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory("phase.active.browser");
+
+            // When / Then
+            assertThat(
+                    rs.matches(
+                            ruleWithPhaseAndCategories("ptk-dast", 1, GspmPhase.ACTIVE, CB, DAST)),
+                    is(true));
+            assertThat(
+                    rs.matches(
+                            ruleWithPhaseAndCategories("ptk-iast", 2, GspmPhase.ACTIVE, CB, IAST)),
+                    is(true));
+            assertThat(
+                    rs.matches(ruleWithPhaseAndCategories("ascan", 3, GspmPhase.ACTIVE, CB)),
+                    is(true));
+        }
+
+        @Test
+        void categoryDoesNotMatchOtherPhaseOrCategory() {
+            // Given
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory("phase.active.browser");
+
+            // When / Then
+            assertThat(
+                    rs.matches(
+                            ruleWithPhaseAndCategories("ptk-sast", 1, GspmPhase.PASSIVE, CB, SAST)),
+                    is(false));
+            assertThat(
+                    rs.matches(
+                            ruleWithPhaseAndCategories(
+                                    "ascan", 2, GspmPhase.ACTIVE, new GspmCategory("xss", "XSS"))),
+                    is(false));
+            assertThat(rs.matches(ruleWithPhase("ascan", 3, GspmPhase.ACTIVE)), is(false));
+        }
+
+        @Test
+        void nestedCategoryMatchesOnlyRulesWithThoseLeadingCategories() {
+            // Given
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory("phase.active.browser.dast");
+
+            // When / Then
+            assertThat(
+                    rs.matches(
+                            ruleWithPhaseAndCategories("ptk-dast", 1, GspmPhase.ACTIVE, CB, DAST)),
+                    is(true));
+            assertThat(
+                    rs.matches(
+                            ruleWithPhaseAndCategories("ptk-iast", 2, GspmPhase.ACTIVE, CB, IAST)),
+                    is(false));
+            assertThat(
+                    rs.matches(ruleWithPhaseAndCategories("other", 3, GspmPhase.ACTIVE, CB)),
+                    is(false));
+        }
+
+        @Test
+        void toolFirstCategoryKeyDoesNotMatch() {
+            // Given — the old "all.<tool>" form, e.g. from a hand-edited .policy2 file
+            GspmRuleSet rs = new GspmRuleSet();
+            rs.setCategory("all.ascan");
+
+            // When / Then
+            assertThat(rs.matches(rule("ascan", 1)), is(false));
+        }
+
+        @Test
+        void phaseOnlyKeyIsTheKeyOfAWholePhase() {
+            // When / Then
+            assertThat(GspmRuleSet.isPhaseOnlyKey("phase.active.browser"), is(false));
+            assertThat(
+                    GspmRuleSet.isPhaseOnlyKey(GspmRuleSet.phaseKey(GspmPhase.ACTIVE)), is(true));
+            assertThat(GspmRuleSet.isPhaseOnlyKey("all"), is(false));
+            assertThat(GspmRuleSet.isPhaseOnlyKey(null), is(false));
+        }
+
+        @Test
         void phaseKeyIsLowercaseToMatchOtherCategoryKeys() {
             // When / Then
             assertThat(
@@ -229,7 +310,7 @@ class GspmRuleSetUnitTest {
         void statusAndCategoryBothMustMatch() {
             // Given
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan");
+            rs.setCategory("phase.active");
             rs.setStatus("alpha");
             GspmRule matching = ruleWithStatus("ascan", 1, AddOn.Status.alpha);
             GspmRule wrongStatus = ruleWithStatus("ascan", 2, AddOn.Status.release);
@@ -245,7 +326,7 @@ class GspmRuleSetUnitTest {
         void categoryStatusAndTagsAllMustMatch() {
             // Given
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan");
+            rs.setCategory("phase.active");
             rs.setStatus("alpha");
             rs.setTags(List.of("POLICY_API"));
 
@@ -295,7 +376,7 @@ class GspmRuleSetUnitTest {
         void explicitRuleIdMatchesRegardlessOfOtherCriteria() {
             // Given — rules is an exception: it ignores category/status/tags entirely
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.pscan");
+            rs.setCategory("phase.passive");
             rs.setStatus("alpha");
             rs.setTags(List.of("POLICY_API"));
             rs.addRule(new GspmRuleRef(42, "Test Rule"));
@@ -332,7 +413,7 @@ class GspmRuleSetUnitTest {
             GspmRule r = rule("pscan", 1);
 
             // When / Then
-            assertThat(GspmRuleSet.ruleCategoryKey(r), is("all.pscan"));
+            assertThat(GspmRuleSet.ruleCategoryKey(r), is("phase.passive"));
         }
 
         @Test
@@ -343,7 +424,7 @@ class GspmRuleSetUnitTest {
                             "ascan", 1, List.of(new GspmCategory("inject", "Injection")));
 
             // When / Then
-            assertThat(GspmRuleSet.ruleCategoryKey(r), is("all.ascan.inject"));
+            assertThat(GspmRuleSet.ruleCategoryKey(r), is("phase.active.inject"));
         }
 
         @Test
@@ -358,7 +439,7 @@ class GspmRuleSetUnitTest {
                                     new GspmCategory("sqli", "SQLi")));
 
             // When / Then
-            assertThat(GspmRuleSet.ruleCategoryKey(r), is("all.ascan.inject.sqli"));
+            assertThat(GspmRuleSet.ruleCategoryKey(r), is("phase.active.inject.sqli"));
         }
     }
 
@@ -380,7 +461,7 @@ class GspmRuleSetUnitTest {
         @Test
         void categoryScopeDoesNotNeedOne() {
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan");
+            rs.setCategory("phase.active");
             assertThat(rs.needsDefaultName(), is(false));
         }
 
@@ -428,7 +509,7 @@ class GspmRuleSetUnitTest {
             // Not ambiguous — falls through to the "Category: X" display, which isn't wrong, just
             // silent about the extra rules constraint.
             GspmRuleSet rs = new GspmRuleSet();
-            rs.setCategory("all.ascan");
+            rs.setCategory("phase.active");
             rs.addRule(new GspmRuleRef(1, "Rule 1"));
             rs.addRule(new GspmRuleRef(2, "Rule 2"));
             assertThat(rs.needsDefaultName(), is(false));
@@ -466,13 +547,23 @@ class GspmRuleSetUnitTest {
         return ((StubRule) rule(tool, id)).withPhase(phase);
     }
 
+    private static final GspmCategory CB = new GspmCategory("browser", "Client Browser");
+    private static final GspmCategory DAST = new GspmCategory("dast", "DAST");
+    private static final GspmCategory IAST = new GspmCategory("iast", "IAST");
+    private static final GspmCategory SAST = new GspmCategory("sast", "SAST");
+
+    private static GspmRule ruleWithPhaseAndCategories(
+            String tool, int id, GspmPhase phase, GspmCategory... categories) {
+        return ((StubRule) ruleWithCategories(tool, id, List.of(categories))).withPhase(phase);
+    }
+
     private static class StubRule implements GspmRule {
         private final String tool;
         private final int id;
         private final List<GspmCategory> categories;
         private final Map<String, String> alertTags;
         private final AddOn.Status status;
-        private GspmPhase phase = GspmPhase.PASSIVE;
+        private GspmPhase phase;
 
         StubRule(
                 String tool,
@@ -482,6 +573,7 @@ class GspmRuleSetUnitTest {
                 AddOn.Status status) {
             this.tool = tool;
             this.id = id;
+            this.phase = tool.startsWith("ascan") ? GspmPhase.ACTIVE : GspmPhase.PASSIVE;
             this.categories = categories;
             this.alertTags = alertTags;
             this.status = status;

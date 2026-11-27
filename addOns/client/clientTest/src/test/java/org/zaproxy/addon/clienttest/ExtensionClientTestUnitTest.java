@@ -46,6 +46,16 @@ class ExtensionClientTestUnitTest {
     }
 
     @Test
+    void shouldPlugNeverLoads() {
+        // Given
+        ExtensionClientTest extension = new ExtensionClientTest(() -> Optional.of(server));
+        // When
+        extension.optionsLoaded();
+        // Then
+        assertThat(server.removeDirectory("client/never-loads"), is(true));
+    }
+
+    @Test
     void shouldUnplugSlowLoad() {
         // Given
         ExtensionClientTest extension = new ExtensionClientTest(() -> Optional.of(server));
@@ -54,6 +64,7 @@ class ExtensionClientTestUnitTest {
         extension.unload();
         // Then
         assertThat(server.removeDirectory("client/slow-load"), is(false));
+        assertThat(server.removeDirectory("client/never-loads"), is(false));
     }
 
     @Test

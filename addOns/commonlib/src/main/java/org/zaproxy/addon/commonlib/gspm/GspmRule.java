@@ -46,7 +46,7 @@ public interface GspmRule {
      * Returns the key identifying the source tool for this rule.
      *
      * <p>Conventional values: {@code "ascan"}, {@code "pscan"}, {@code "wspscan"}, {@code
-     * "client"}, {@code "ptk"}.
+     * "client"}, {@code "ptk-dast"}, {@code "ptk-iast"}, {@code "ptk-sast"}.
      */
     String getTool();
 
@@ -60,6 +60,15 @@ public interface GspmRule {
     /**
      * Returns the category hierarchy for this rule as {@link GspmCategory} entries, from broadest
      * to most specific. Does not include the rule name itself. Must not be null or empty.
+     *
+     * <p>Each level is shown as a nested node in the GSPM dialog's tree, under the rule's {@link
+     * #getPhase() phase}, and is configured with the category key of the phase followed by the
+     * category ids (see {@link GspmRuleSet#ruleCategoryKey(GspmRule)}), e.g. {@code
+     * "phase.active.browser"}. Category ids are shared by all the tools of a phase: rules of
+     * different tools with the same ids (e.g. the active scan rules and the PTK DAST/IAST rules,
+     * all under {@code "browser"}) are in the same node and configured together, so a tool should
+     * only reuse another tool's id when that is intended. Category ids must not contain {@code
+     * '.'}, which separates the segments of category keys.
      */
     List<GspmCategory> getCategories();
 

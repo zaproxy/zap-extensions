@@ -131,7 +131,7 @@ class GspmRuleSetTableModelUnitTest extends TestUtils {
     void shouldCombineCategoryTagsAndStatusInMatchSummary() {
         // Given
         GspmRuleSet rs = new GspmRuleSet();
-        rs.setCategory("all.ascan");
+        rs.setCategory("phase.active");
         rs.setTags(List.of("OWASP"));
         rs.setStatus("release");
 
@@ -139,34 +139,20 @@ class GspmRuleSetTableModelUnitTest extends TestUtils {
         String summary = GspmRuleSetTableModel.matchSummary(rs);
 
         // Then
-        assertThat(summary, is("Tool: ascan; Tags: OWASP; Status: Release"));
+        assertThat(summary, is("Phase: Active; Tags: OWASP; Status: Release"));
     }
 
     @Test
-    void shouldShowToolScopeAsToolButToolCategoryAsCategory() {
+    void shouldShowPhaseScopeAsPhaseButPhaseCategoryAsCategory() {
         // Given
-        GspmRuleSet tool = new GspmRuleSet();
-        tool.setCategory("all.ascan");
+        GspmRuleSet phase = new GspmRuleSet();
+        phase.setCategory("phase.active");
         GspmRuleSet category = new GspmRuleSet();
-        category.setCategory("all.ascan.injection");
+        category.setCategory("phase.active.inject");
 
         // When / Then
-        assertThat(GspmRuleSetTableModel.displayName(tool), is("Tool: ascan"));
+        assertThat(GspmRuleSetTableModel.displayName(phase), is("Phase: Active"));
         assertThat(
-                GspmRuleSetTableModel.displayName(category), is("Category: all.ascan.injection"));
-    }
-
-    @Test
-    void shouldUseToolDisplayNameForToolScope() {
-        // Given
-        GspmRuleSet rs = new GspmRuleSet();
-        rs.setCategory("all.ascan");
-        GspmRuleSetTableModel model =
-                new GspmRuleSetTableModel(id -> "ascan".equals(id) ? "HTTP Active" : id);
-        model.setRuleSets(List.of(rs));
-
-        // When / Then
-        assertThat(model.getValueAt(0, GspmRuleSetTableModel.COL_NAME), is("Tool: HTTP Active"));
-        assertThat(model.getValueAt(0, GspmRuleSetTableModel.COL_MATCH), is("Tool: HTTP Active"));
+                GspmRuleSetTableModel.displayName(category), is("Category: phase.active.inject"));
     }
 }

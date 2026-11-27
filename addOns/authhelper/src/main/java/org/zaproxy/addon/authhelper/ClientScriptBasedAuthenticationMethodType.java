@@ -357,6 +357,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                 + ". Received: "
                                 + credentials.getClass());
             }
+            LOGGER.info("Authenticating user: {} in existing browser.", user.getName());
             GenericAuthenticationCredentials cred = (GenericAuthenticationCredentials) credentials;
 
             ScriptWrapper script = getScript();

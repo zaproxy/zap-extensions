@@ -55,6 +55,14 @@ for example <code>private final Set<String> tokens = state(new HashSet<>());</co
 (there is also a version for maps), or <code>onReset(Runnable)</code> for state that is not a collection or a map.
 State that is not registered is not reset.
 
+<H2>Streaming Responses</H2>
+Pages can stream their responses, for responses which trickle in, are held open, or never finish.
+A <code>StreamPage</code> writes a chunked response, a chunk at a time, for a limited time.
+The time between the chunks and how long the response is open for can be changed per request with the
+<code>interval</code> and <code>duration</code> parameters, in milliseconds.
+For example it can be used for a document which trickles in, a server-sent events stream (<code>text/event-stream</code>),
+or a response which is held open without sending anything.
+
 <H2>Test Add-Ons</H2>
 Test apps should live in a <em>test add-on</em> next to the add-on they test, not in the dev add-on.
 To create one, add the directory <code>&lt;add-on&gt;Test</code> inside the directory of the add-on to test, for example <code>addOns/llm/llmTest</code>, 
