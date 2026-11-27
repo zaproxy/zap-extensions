@@ -542,6 +542,47 @@ class OpenApiUnitTest extends AbstractServerTest {
     }
 
     @Test
+    void shouldImportDefinitionWithEncodedPathAndQueryParameters()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/OpenApiYaml/";
+        String defnName = "defn.yaml";
+
+        this.nano.addHandler(
+                new DefnServerHandler(test, defnName, "OpenApi_defn_encoded_parameters.yaml"));
+        this.nano.addHandler(
+                new NanoServerHandler("/path") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse("OK");
+                    }
+                });
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+        assertThat(converter.getErrorMessages(), is(empty()));
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        RequesterListener listener =
+                (message, initiator) -> {
+                    accessedUrls.put(
+                            message.getRequestHeader().getMethod()
+                                    + " "
+                                    + message.getRequestHeader().getURI().toString(),
+                            message.getRequestBody().toString());
+                };
+        requestor.addListener(listener);
+        requestor.run(converter.getRequestModels(null));
+
+        String baseUrl = "http://" + "localhost:" + nano.getListeningPort();
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET " + baseUrl + "/path/a%20b%2Fc?queryParam=x%20y%2Fz"));
+    }
+
+    @Test
     void shouldGenerateAcceptHeaders() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";

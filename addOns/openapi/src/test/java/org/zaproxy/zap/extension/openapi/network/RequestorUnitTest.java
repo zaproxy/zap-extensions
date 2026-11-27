@@ -129,6 +129,34 @@ class RequestorUnitTest extends AbstractServerTest {
         assertThat(messages.get(3), is(equalTo("GET /final Final")));
     }
 
+    @Test
+    void shouldUseUriAlreadyEncoded() {
+        // Given
+        String path = "/path/a%20b%2Fc?query=x%20y%2Fz";
+        String baseUrl = "http://localhost:" + nano.getListeningPort();
+        this.nano.addHandler(
+                new NanoServerHandler("/path") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse("OK");
+                    }
+                });
+
+        List<String> requestedUris = new ArrayList<>();
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        requestor.addListener(
+                (msg, initiator) -> requestedUris.add(msg.getRequestHeader().getURI().toString()));
+
+        // When
+        List<String> errors =
+                requestor.run(Arrays.asList(requestModel(RequestMethod.GET, baseUrl + path)));
+
+        // Then
+        assertThat(errors, is(empty()));
+        assertThat(requestedUris, hasSize(1));
+        assertThat(requestedUris.get(0), is(equalTo(baseUrl + path)));
+    }
+
     private static RequestModel requestModel(RequestMethod method, String url) {
         RequestModel request = new RequestModel();
         request.setMethod(method);
