@@ -385,6 +385,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40045/">40045</a>.
 
 <H2 id="id-40042">Spring Actuators</H2>
 This rule attempts to identify if the Spring Actuators are enabled. Tests for the default /actuator/health route in the application.
+An alert is only raised if the response contains a health status: any status with the Spring Boot actuator media type, or one of the default statuses (UP, DOWN, OUT_OF_SERVICE, or UNKNOWN) with a plain JSON media type.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
 <br>
