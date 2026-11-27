@@ -8,7 +8,16 @@
 
 To get around setting up authentication, some resources are protected by "hiding" the specific location and not linking the location into the main web site or other public places. However, this approach is nothing more than "Security Through Obscurity". It's important to understand that even though a resource is unknown to an attacker, it still remains accessible directly through a specific URL. The specific URL could be discovered through a Brute Force probing for common file and directory locations (/admin for example), error messages, referrer logs, or documentation such as help files. These resources, whether they are content- or functionality-driven, should be adequately protected.</desc>
 	<solution>Phase: Architecture and Design
-Use an authentication framework or library such as the OWASP ESAPI Authentication feature.</solution>
+Enforce a deny-by-default access policy so that all sensitive resources, APIs, and administrative interfaces require authentication before access is granted. Do not rely on "security through obscurity" such as hiding URLs or omitting links from public pages.
+Use a well-vetted, standardized authentication framework, library, or identity provider (such as framework-native authentication, OAuth 2.0, or OpenID Connect) rather than building custom authentication mechanisms.
+
+Phase: Implementation
+Perform authentication checks consistently on the server side for every request to protected content or functionality.
+Require strong authentication mechanisms, including multi-factor authentication (MFA), for administrative tools and high-risk operations.
+
+Phase: Operation
+Protect authentication endpoints against brute-force and credential-stuffing attacks using rate limiting, account lockout policies, or similar anti-automation controls, and enforce strong password policies.</solution>
+
 	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/287.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
