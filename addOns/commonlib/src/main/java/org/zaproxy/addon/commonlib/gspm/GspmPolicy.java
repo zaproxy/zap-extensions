@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.Setter;
 import org.parosproxy.paros.Constant;
@@ -88,6 +89,9 @@ public class GspmPolicy {
      * (otherwise it would be migrated again), {@code null} if not migrated.
      */
     @JsonIgnore @Getter @Setter private File legacyFile;
+
+    /** Notified after this policy is saved, set by the registry the policy is added to. */
+    @JsonIgnore private Consumer<GspmPolicy> saveListener;
 
     /**
      * Creates a new policy with the given name.
@@ -481,6 +485,19 @@ public class GspmPolicy {
         File target = new File(path.toString(), getFileName() + EXTENSION);
         YAML_MAPPER.writerWithDefaultPrettyPrinter().writeValue(target, this);
         this.file = target;
+        Consumer<GspmPolicy> listener = saveListener;
+        if (listener != null) {
+            listener.accept(this);
+        }
+    }
+
+    /**
+     * Sets the listener notified after this policy is saved.
+     *
+     * @param saveListener the listener, or {@code null} to remove it.
+     */
+    void setSaveListener(Consumer<GspmPolicy> saveListener) {
+        this.saveListener = saveListener;
     }
 
     /**

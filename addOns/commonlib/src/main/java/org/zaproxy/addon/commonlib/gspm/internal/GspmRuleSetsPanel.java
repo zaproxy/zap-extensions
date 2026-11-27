@@ -75,6 +75,7 @@ class GspmRuleSetsPanel extends AbstractParamPanel {
 
     private final GspmPolicy policy;
     private final Supplier<List<GspmRule>> rulesSupplier;
+    private Runnable changeListener = () -> {};
     private final UnaryOperator<String> toolDisplayNames;
     private final GspmRuleSetTableModel tableModel;
     private final JTable table;
@@ -102,11 +103,22 @@ class GspmRuleSetsPanel extends AbstractParamPanel {
                 BorderLayout.NORTH);
 
         tableModel = new GspmRuleSetTableModel();
+        tableModel.addTableModelListener(e -> changeListener.run());
         tableModel.setRuleSets(policy.getRuleSets());
         table = buildTable();
         add(new JScrollPane(table), BorderLayout.CENTER);
         add(buildButtonsPanel(), BorderLayout.EAST);
         updateButtonState();
+    }
+
+    /**
+     * Sets the listener notified when the rule sets might have changed, e.g. after one was added.
+     * It might also be notified when nothing changed.
+     *
+     * @param changeListener the listener, must not be {@code null}.
+     */
+    void setChangeListener(Runnable changeListener) {
+        this.changeListener = changeListener;
     }
 
     @Override
@@ -127,7 +139,7 @@ class GspmRuleSetsPanel extends AbstractParamPanel {
     @Override
     public void onHide() {
         // Commit any in-progress cell edit before switching away, for the same reason as
-        // GspmDialog.GspmRulesPanel#onHide().
+        // GspmRulesPanel#onHide().
         if (table.isEditing()) {
             table.getCellEditor().stopCellEditing();
         }

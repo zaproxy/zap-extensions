@@ -19,7 +19,7 @@
  */
 package org.zaproxy.addon.commonlib.gspm.internal;
 
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -70,7 +70,7 @@ public class GspmPolicyManagerDialog extends StandardFieldsDialog {
     private JTable policyTable;
     private SingleColumnTableModel tableModel;
 
-    public GspmPolicyManagerDialog(Frame owner, GspmRegistry registry) {
+    public GspmPolicyManagerDialog(Window owner, GspmRegistry registry) {
         super(
                 owner,
                 "commonlib.gspm.policymanager.title",

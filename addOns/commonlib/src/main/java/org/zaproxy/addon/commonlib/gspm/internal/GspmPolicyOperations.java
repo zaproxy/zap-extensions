@@ -145,7 +145,14 @@ public final class GspmPolicyOperations {
      * @return the threshold, {@code null} if not defined.
      */
     static AlertThreshold getDefaultThreshold(GspmRegistry registry, String name, GspmPhase phase) {
-        GspmPolicy policy = getPolicy(registry, name);
+        return getDefaultThreshold(getPolicy(registry, name), phase);
+    }
+
+    /**
+     * Same as {@link #getDefaultThreshold(GspmRegistry, String, GspmPhase)}, for the given policy,
+     * which does not need to be in the registry.
+     */
+    static AlertThreshold getDefaultThreshold(GspmPolicy policy, GspmPhase phase) {
         synchronized (policy) {
             if (phase == null) {
                 return policy.getDefaultThreshold().orElse(null);
@@ -163,7 +170,14 @@ public final class GspmPolicyOperations {
      * @return the strength, {@code null} if not defined.
      */
     static AttackStrength getDefaultStrength(GspmRegistry registry, String name, GspmPhase phase) {
-        GspmPolicy policy = getPolicy(registry, name);
+        return getDefaultStrength(getPolicy(registry, name), phase);
+    }
+
+    /**
+     * Same as {@link #getDefaultStrength(GspmRegistry, String, GspmPhase)}, for the given policy,
+     * which does not need to be in the registry.
+     */
+    static AttackStrength getDefaultStrength(GspmPolicy policy, GspmPhase phase) {
         synchronized (policy) {
             if (phase == null) {
                 return policy.getDefaultStrength().orElse(null);
