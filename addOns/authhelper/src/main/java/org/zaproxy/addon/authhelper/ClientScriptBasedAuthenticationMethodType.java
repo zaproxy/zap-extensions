@@ -504,19 +504,14 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                     AuthUtils.checkLoginLinkVerification(
                             getHttpSender(), user, authMsg.getRequestHeader().getURI().toString());
 
-                    if (this.isAuthenticated(authMsg, user, true)) {
-                        diags.recordStep(
-                                authMsg,
-                                Constant.messages.getString(
-                                        "authhelper.auth.method.diags.steps.authenticated"));
+                    if (diags.recordVerification(
+                            authMsg, () -> this.isAuthenticated(authMsg, user, true))) {
                         // Let the user know it worked
                         AuthenticationHelper.notifyOutputAuthSuccessful(authMsg);
                         user.getAuthenticationState().setLastAuthFailure("");
                     } else {
-                        diags.recordStep(
-                                authMsg,
-                                Constant.messages.getString(
-                                        "authhelper.auth.method.diags.steps.unauthenticated"));
+                        user.getAuthenticationState()
+                                .setLastAuthFailure(AuthUtils.VERIFICATION_FAILED);
                         // Let the user know it failed
                         AuthenticationHelper.notifyOutputAuthFailure(authMsg);
                     }

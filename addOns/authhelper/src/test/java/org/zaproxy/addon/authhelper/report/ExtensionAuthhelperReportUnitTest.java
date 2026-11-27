@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -80,8 +81,11 @@ import org.zaproxy.zap.authentication.ManualAuthenticationMethodType.ManualAuthe
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
+import org.zaproxy.zap.extension.users.ContextUserAuthManager;
+import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionAuthhelperReportUnitTest extends TestUtils {
@@ -943,6 +947,30 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReportFailingOAuth2CaseWithFailedVerification() {
+        // Given
+        String site = "http://localhost:8000";
+        String tokenHost = "http://localhost:8180";
+        InMemoryStats stats = new InMemoryStats();
+        stats.counterInc(tokenHost, AuthenticationHelper.AUTH_SUCCESS_STATS, 2);
+        stats.counterInc(site, AuthenticationMethod.AUTH_STATE_LOGGED_IN_STATS, 1);
+        User user = new User(0, "user");
+        user.setAuthenticationCredentials(
+                new OAuth2AuthenticationMethodType()
+                        .createAuthenticationMethod(0)
+                        .createAuthenticationCredentials());
+        user.getAuthenticationState().setLastAuthFailure(AuthUtils.VERIFICATION_FAILED);
+
+        // When
+        AuthReportData ard = handleOAuth2Report(site, tokenHost, stats, user);
+
+        // Then
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(false)));
+        assertThat(ard.getFailureDetails(), contains(FailureDetail.VERIF_FAILED));
+    }
+
+    @Test
     void shouldReportPassingOAuth2CaseWithFewerFailuresThanSuccesses() {
         // Given
         String site = "http://localhost:8000";
@@ -1089,6 +1117,11 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
 
     private static AuthReportData handleOAuth2Report(
             String site, String tokenHost, InMemoryStats stats) {
+        return handleOAuth2Report(site, tokenHost, stats, null);
+    }
+
+    private static AuthReportData handleOAuth2Report(
+            String site, String tokenHost, InMemoryStats stats, User user) {
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
                 new ExtensionAuthhelperReport.AuthReportDataHandler();
         ReportData reportData = new ReportData("auth-report-test");
@@ -1107,6 +1140,19 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                 mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
         given(extStats.getInMemoryStats()).willReturn(stats);
+        if (user != null) {
+            ExtensionUserManagement extUsers =
+                    mock(
+                            ExtensionUserManagement.class,
+                            withSettings().strictness(Strictness.LENIENT));
+            ContextUserAuthManager userAuthManager =
+                    mock(
+                            ContextUserAuthManager.class,
+                            withSettings().strictness(Strictness.LENIENT));
+            given(userAuthManager.getUsers()).willReturn(List.of(user));
+            given(extUsers.getContextUserAuthManager(anyInt())).willReturn(userAuthManager);
+            given(extensionLoader.getExtension(ExtensionUserManagement.class)).willReturn(extUsers);
+        }
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
 
         dataHandler.handle(reportData);
