@@ -27,15 +27,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientUtils;
 import org.zaproxy.addon.client.internal.graph.ClientGraphVertex;
 import org.zaproxy.zap.ZAP;
@@ -43,10 +40,8 @@ import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventPublisher;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.model.Target;
-import org.zaproxy.zap.utils.ThreadUtils;
 
-@SuppressWarnings("serial")
-public class ClientMap extends SortedTreeModel implements EventPublisher {
+public class ClientMap implements EventPublisher {
 
     public static final String MAP_NODE_ADDED_EVENT = "client.mapNode.added";
     public static final String MAP_COMPONENT_ADDED_EVENT = "client.mapComponent.added";
@@ -55,8 +50,9 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     public static final String URL_KEY = "url";
     public static final String MESSAGE_UUID_KEY = "client.message.uuid";
 
-    private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(ClientMap.class);
+    private static final Comparator<ClientNode> COMPARATOR = new ClientNodeStringComparator();
+
     private ClientNode root;
     private Consumer<ReportedObject> reportedObjectConsumer;
     private final List<ClientMapListener> listeners = new CopyOnWriteArrayList<>();
@@ -64,12 +60,10 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
             new DirectedMultigraph<>(DefaultEdge.class);
 
     public ClientMap(ClientNode root) {
-        super(root);
         this.root = root;
         ZAP.getEventBus().registerPublisher(this, MAP_NODE_ADDED_EVENT, MAP_COMPONENT_ADDED_EVENT);
     }
 
-    @Override
     public ClientNode getRoot() {
         return root;
     }
@@ -175,25 +169,28 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                             new ClientNode(
                                     new ClientSideDetails(nodeName, nodeUrl, false, false), false);
                 }
-                this.insertNodeInto(child, parent);
-                this.nodeStructureChanged(parent);
+                int index = insertSorted(child, parent);
+                ClientNode insertedParent = parent;
+                ClientNode inserted = child;
+                listeners.forEach(l -> l.nodeInserted(insertedParent, inserted, index));
             }
             parent = child;
         }
         return child;
     }
 
-    public void deleteNodes(List<ClientNode> nodes) {
+    public synchronized void deleteNodes(List<ClientNode> nodes) {
         for (ClientNode node : nodes) {
-            if (!node.isRoot()) {
-                removeNodeFromParent(node);
+            if (!node.isRoot() && node.getParent() != null) {
+                node.removeFromParent();
+                listeners.forEach(l -> l.nodeRemoved(node));
             }
         }
     }
 
-    public void clear() {
+    public synchronized void clear() {
         root.removeAllChildren();
-        this.nodeStructureChanged(root);
+        listeners.forEach(ClientMapListener::mapCleared);
         synchronized (graph) {
             graph.removeAllVertices(new HashSet<>(graph.vertexSet()));
         }
@@ -205,10 +202,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     }
 
     private void notifyNodeChanged(ClientNode node) {
-        if (!View.isInitialised()) {
-            return;
-        }
-        ThreadUtils.invokeAndWaitHandled(() -> nodeChanged(node));
+        listeners.forEach(l -> l.nodeChanged(node));
     }
 
     public void addComponent(String url, ClientSideComponent component) {
@@ -420,6 +414,34 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         }
     }
 
+    private int insertSorted(ClientNode child, ClientNode parent) {
+        int index = findIndexFor(child, parent);
+        parent.insert(child, index);
+        return index;
+    }
+
+    private static int findIndexFor(ClientNode child, ClientNode parent) {
+        int childCount = parent.getChildCount();
+        if (childCount == 0) {
+            return 0;
+        }
+        if (childCount == 1) {
+            return COMPARATOR.compare(child, parent.getChildAt(0)) <= 0 ? 0 : 1;
+        }
+        return findIndexFor(child, parent, 0, childCount - 1);
+    }
+
+    private static int findIndexFor(ClientNode child, ClientNode parent, int idx1, int idx2) {
+        if (idx1 == idx2) {
+            return COMPARATOR.compare(child, parent.getChildAt(idx1)) <= 0 ? idx1 : idx1 + 1;
+        }
+        int half = (idx1 + idx2) / 2;
+        if (COMPARATOR.compare(child, parent.getChildAt(half)) <= 0) {
+            return findIndexFor(child, parent, idx1, half);
+        }
+        return findIndexFor(child, parent, half + 1, idx2);
+    }
+
     private void notifyReportedObjectConsumer(ReportedObject reportObject) {
         if (isApiUrl(reportObject.getUrl())) {
             return;
@@ -432,65 +454,6 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
 
     private static boolean isApiUrl(String url) {
         return url != null && (url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S));
-    }
-}
-
-/**
- * Based on example code from: <a
- * href="http://www.java2s.com/Code/Java/Swing-JFC/AtreemodelusingtheSortTreeModelwithaFilehierarchyasinput.htm">Sorted
- * Tree Example</a>
- */
-@SuppressWarnings("serial")
-class SortedTreeModel extends DefaultTreeModel {
-
-    private static final long serialVersionUID = 4130060741120936997L;
-    private Comparator<ClientNode> comparator;
-
-    public SortedTreeModel(TreeNode node, ClientNodeStringComparator siteNodeStringComparator) {
-        super(node);
-        this.comparator = siteNodeStringComparator;
-    }
-
-    public SortedTreeModel(TreeNode node) {
-        this(node, new ClientNodeStringComparator());
-    }
-
-    public SortedTreeModel(
-            TreeNode node, boolean asksAllowsChildren, Comparator<ClientNode> aComparator) {
-        super(node, asksAllowsChildren);
-        this.comparator = aComparator;
-    }
-
-    public void insertNodeInto(ClientNode child, ClientNode parent) {
-        int index = findIndexFor(child, parent);
-        super.insertNodeInto(child, parent, index);
-    }
-
-    public void insertNodeInto(ClientNode child, ClientNode parent, int i) {
-        // The index is useless in this model, so just ignore it.
-        insertNodeInto(child, parent);
-    }
-
-    private int findIndexFor(ClientNode child, ClientNode parent) {
-        int childCount = parent.getChildCount();
-        if (childCount == 0) {
-            return 0;
-        }
-        if (childCount == 1) {
-            return comparator.compare(child, parent.getChildAt(0)) <= 0 ? 0 : 1;
-        }
-        return findIndexFor(child, parent, 0, childCount - 1);
-    }
-
-    private int findIndexFor(ClientNode child, ClientNode parent, int idx1, int idx2) {
-        if (idx1 == idx2) {
-            return comparator.compare(child, parent.getChildAt(idx1)) <= 0 ? idx1 : idx1 + 1;
-        }
-        int half = (idx1 + idx2) / 2;
-        if (comparator.compare(child, parent.getChildAt(half)) <= 0) {
-            return findIndexFor(child, parent, idx1, half);
-        }
-        return findIndexFor(child, parent, half + 1, idx2);
     }
 }
 

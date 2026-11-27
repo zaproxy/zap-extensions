@@ -136,6 +136,38 @@ class ClientMapUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldNotifyNodeInsertedWithParentAndIndex() {
+        // Given / When
+        map.getOrAddNode(BBB_URL, false, false);
+        map.getOrAddNode(AAA_URL, false, false);
+        // Then
+        verify(listener).nodeInserted(root, root.getChildAt(1), 0);
+        verify(listener).nodeInserted(root, root.getChildAt(0), 0);
+    }
+
+    @Test
+    void shouldNotifyNodeRemovedWhenDeleting() {
+        // Given
+        map.getOrAddNode(AAA_URL, false, false);
+        ClientNode node = root.getChildAt(0);
+        // When
+        map.deleteNodes(java.util.List.of(node));
+        // Then
+        verify(listener).nodeRemoved(node);
+        assertThat(root.getChildCount(), is(0));
+    }
+
+    @Test
+    void shouldNotifyMapClearedWhenClearing() {
+        // Given
+        map.getOrAddNode(AAA_URL, false, false);
+        // When
+        map.clear();
+        // Then
+        verify(listener).mapCleared();
+    }
+
+    @Test
     void shouldFailIfGettingNullUrl() {
         // Given / When
         IllegalArgumentException e =

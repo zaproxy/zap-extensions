@@ -76,10 +76,7 @@ public class ClientMapTreeCellRenderer extends DefaultTreeCellRenderer {
             boolean hasFocus) {
 
         component.removeAll();
-        ClientNode node = null;
-        if (value instanceof ClientNode) {
-            node = (ClientNode) value;
-        }
+        ClientNode node = ClientMapTreeModel.toClientNode(value);
 
         if (node != null) {
             setPreferredSize(null); // clears the preferred size, making the node visible

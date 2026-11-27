@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Wait for the browser to load the ZAP callback page when configuring the browser extension on launch, instead of failing if the page is not usable yet, for example in Firefox when the page load strategy is `none`.
+- Fix concurrency issue with the Client Map tree which could lead to exceptions in the GUI.
 
 
 ## [0.35.0] - 2026-11-18
