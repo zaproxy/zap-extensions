@@ -33,6 +33,18 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
 
+<H2 id="id-40050">Java Deserialization of Untrusted Data</H2>
+This rule looks for Base64 encoded Java serialized objects (values starting with <code>rO0AB</code>) in the request,
+and replaces each one with a serialized object that only makes the server resolve an OAST host name when it is
+deserialized. The object does not contain any gadget chain, so it does not run any code on the server.
+An alert is raised when the OAST service receives the DNS interaction.
+<ul>
+    <li>Requires an Active Scan OAST service to be selected in the OAST options, otherwise the rule is skipped.</li>
+</ul>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/JavaDeserializationScanRule.java">JavaDeserializationScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40050/">40050</a>.
+
 <H2 id="id-100044">Suspicious Input Transformation</H2>
 This is an active script scan rule. It detects various types of suspicious input transformations that may indicate
 potential security vulnerabilities such as template injection, expression evaluation, quote consumption, and issues
