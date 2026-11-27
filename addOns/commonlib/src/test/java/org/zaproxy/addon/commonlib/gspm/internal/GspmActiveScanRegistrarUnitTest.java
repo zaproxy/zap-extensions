@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -49,6 +50,8 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.gspm.GspmCategory;
+import org.zaproxy.addon.commonlib.gspm.GspmPhase;
 import org.zaproxy.addon.commonlib.gspm.GspmPolicy;
 import org.zaproxy.addon.commonlib.gspm.GspmRegistry;
 import org.zaproxy.addon.commonlib.gspm.GspmRule;
@@ -394,6 +397,50 @@ class GspmActiveScanRegistrarUnitTest extends TestUtils {
         verify(enabledRule).setAttackStrength(AttackStrength.LOW);
         verify(offRule).setAlertThreshold(AlertThreshold.OFF);
         verify(offRule).setEnabled(false);
+    }
+
+    @Test
+    void shouldApplyPolicyNotInRegistry() {
+        // Given
+        Plugin rule = pluginWithId(100, "Rule A");
+        when(rule.getAttackStrength()).thenReturn(AttackStrength.MEDIUM);
+        plugins.add(rule);
+        scanRuleRegistrar.registerRulesWithGspm(registry);
+        GspmPolicy policy = new GspmPolicy("Working Copy");
+        policy.setRuleThreshold(100, "Rule A", AlertThreshold.HIGH);
+        PluginFactory factory = mock(PluginFactory.class);
+        when(factory.getPlugin(100)).thenReturn(rule);
+        // When
+        GspmActiveScanRegistrar.applyPolicy(registry, policy, factory);
+        // Then
+        verify(rule).setAlertThreshold(AlertThreshold.HIGH);
+        verify(rule).setEnabled(true);
+        assertThat(registry.getPolicy("Working Copy"), is(nullValue()));
+    }
+
+    @Test
+    void shouldNotApplyRulesOfOtherToolsToPlugins() {
+        // Given
+        GspmRule otherToolRule = mock(GspmRule.class);
+        lenient().when(otherToolRule.getId()).thenReturn(200000);
+        lenient().when(otherToolRule.getName()).thenReturn("Other");
+        lenient().when(otherToolRule.getTool()).thenReturn("ptk-dast");
+        lenient().when(otherToolRule.getPhase()).thenReturn(GspmPhase.ACTIVE);
+        lenient()
+                .when(otherToolRule.getCategories())
+                .thenReturn(List.of(new GspmCategory("browser", "Client Browser")));
+        lenient().when(otherToolRule.getAlertThreshold()).thenReturn(AlertThreshold.MEDIUM);
+        registry.registerRule(otherToolRule);
+        GspmPolicy policy = new GspmPolicy("Custom");
+        policy.setRuleThreshold(200000, "Other", AlertThreshold.HIGH);
+        Plugin plugin = pluginWithId(200000, "Plugin");
+        PluginFactory factory = mock(PluginFactory.class);
+        lenient().when(factory.getPlugin(200000)).thenReturn(plugin);
+        // When
+        GspmActiveScanRegistrar.applyPolicy(registry, policy, factory);
+        // Then
+        verify(plugin, never()).setAlertThreshold(any());
+        verify(plugin, never()).setEnabled(anyBoolean());
     }
 
     private static Plugin pluginWithId(int id, String name) {

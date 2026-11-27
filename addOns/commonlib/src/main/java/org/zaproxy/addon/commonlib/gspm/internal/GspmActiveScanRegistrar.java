@@ -52,6 +52,7 @@ import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.AddOnInstallationStatusListener;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.PolicyManager;
+import org.zaproxy.zap.extension.ascan.ScanPolicy;
 
 /**
  * Registers active scan rules with the GSPM registry.
@@ -70,6 +71,8 @@ public class GspmActiveScanRegistrar {
             "org.zaproxy.zap.extension.ascan.PluggableScanPolicyManager";
     private static final String REGISTER_METHOD = "registerPluggableScanPolicyManager";
     private static final String UNREGISTER_METHOD = "unregisterPluggableScanPolicyManager";
+    private static final String SCAN_POLICY_EDITOR_CLASS =
+            "org.zaproxy.zap.extension.ascan.ScanPolicyEditor";
 
     /** The ID of the tool of the active scan rules. */
     public static final String TOOL = "ascan";
@@ -83,6 +86,7 @@ public class GspmActiveScanRegistrar {
                     this::getRulesForAddOn);
 
     private PolicyManager policyManager;
+    private GspmParam gspmParam;
     private Object registeredProxy;
 
     /**
@@ -91,6 +95,31 @@ public class GspmActiveScanRegistrar {
      */
     public AddOnInstallationStatusListener getInstallationStatusListener() {
         return scanRuleRegistrar;
+    }
+
+    /**
+     * Sets where the state of the Policy tab of the active scan dialog is kept between ZAP
+     * sessions.
+     *
+     * @param gspmParam the param, might be {@code null}.
+     */
+    public void setGspmParam(GspmParam gspmParam) {
+        this.gspmParam = gspmParam;
+    }
+
+    /**
+     * Tells whether or not the core supports the scan policies provided by add-ons, that is, it has
+     * {@code PluggableScanPolicyManager} (ZAP 2.18.0 or later).
+     *
+     * @return {@code true} if supported, {@code false} otherwise.
+     */
+    public static boolean isSupportedByCore() {
+        try {
+            Class.forName(PLUGABLE_POLICY_MANAGER_CLASS);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     /**
@@ -152,6 +181,9 @@ public class GspmActiveScanRegistrar {
                                             policyManagerDisplayer.run();
                                         }
                                         break;
+                                    case "createScanPolicyEditor":
+                                        return createScanPolicyEditor(
+                                                new GspmScanPolicyEditor(gspmRegistry, gspmParam));
                                     default:
                                         return handleOther(p, method, args);
                                 }
@@ -164,6 +196,29 @@ public class GspmActiveScanRegistrar {
             LOGGER.debug(
                     "GSPM: PluggableScanPolicyManager not available in this zaproxy version", e);
         }
+    }
+
+    /**
+     * Creates a proxy of the core's {@code ScanPolicyEditor} forwarding to the given editor.
+     *
+     * @throws ClassNotFoundException if the core does not have the interface.
+     */
+    static Object createScanPolicyEditor(GspmScanPolicyEditor editor)
+            throws ClassNotFoundException {
+        Class<?> ifaceClass = Class.forName(SCAN_POLICY_EDITOR_CLASS);
+        return Proxy.newProxyInstance(
+                ifaceClass.getClassLoader(),
+                new Class<?>[] {ifaceClass},
+                (p, method, args) ->
+                        switch (method.getName()) {
+                            case "getPanel" -> editor.getPanel();
+                            case "setScanPolicy" -> {
+                                editor.setScanPolicy((ScanPolicy) args[0]);
+                                yield null;
+                            }
+                            case "getScanPolicy" -> editor.getScanPolicy();
+                            default -> handleOther(p, method, args);
+                        });
     }
 
     public boolean isRegisteredWithCore() {
@@ -214,13 +269,27 @@ public class GspmActiveScanRegistrar {
         if (policy == null) {
             return false;
         }
+        applyPolicy(registry, policy, pluginFactory);
+        return true;
+    }
+
+    /**
+     * Applies the given policy to the given factory, as {@link #applyPolicy(GspmRegistry, String,
+     * PluginFactory)}. The policy does not need to be in the registry, e.g. a working copy.
+     */
+    static void applyPolicy(GspmRegistry registry, GspmPolicy policy, PluginFactory pluginFactory) {
         // Holds the lock of the policy, so that it's not changed while being applied.
         synchronized (policy) {
             // Rules with the policy's default are left to inherit it, so changes to the defaults of
             // the policy (e.g. by the Automation Framework) apply to them.
-            AlertThreshold defaultThreshold = getDefaultThreshold(registry, name);
-            AttackStrength defaultStrength = getDefaultStrength(registry, name);
-            for (GspmRule rule : registry.getRulesByTool(TOOL, name)) {
+            AlertThreshold defaultThreshold =
+                    GspmPolicyOperations.getDefaultThreshold(policy, GspmPhase.ACTIVE);
+            AttackStrength defaultStrength =
+                    GspmPolicyOperations.getDefaultStrength(policy, GspmPhase.ACTIVE);
+            for (GspmRule rule : registry.getAllRulesForPolicy(policy)) {
+                if (!TOOL.equals(rule.getTool())) {
+                    continue;
+                }
                 Plugin plugin = pluginFactory.getPlugin(rule.getId());
                 if (plugin == null) {
                     continue;
@@ -238,7 +307,6 @@ public class GspmActiveScanRegistrar {
                 }
             }
         }
-        return true;
     }
 
     /**

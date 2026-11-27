@@ -1127,9 +1127,125 @@ class GspmRegistryUnitTest extends TestUtils {
         }
     }
 
+    @Nested
+    class PolicyEvents {
+
+        private RecordingListener listener;
+
+        @BeforeEach
+        void setUp() {
+            listener = new RecordingListener();
+            registry.addListener(listener);
+        }
+
+        @Test
+        void shouldNotifyPolicyAddedRemovedAndRenamed() {
+            GspmPolicy policy = new GspmPolicy("A");
+
+            registry.addPolicy(policy);
+            registry.renamePolicy(policy, "B");
+            registry.removePolicy("B");
+            registry.removePolicy("B");
+
+            assertThat(listener.events, contains("added A", "renamed A B", "removed B"));
+        }
+
+        @Test
+        void shouldNotifyCurrentPolicyRenamedAndRemoved() {
+            GspmPolicy policy = new GspmPolicy("A");
+            registry.addPolicy(policy);
+            registry.setCurrentPolicy("A");
+            listener.events.clear();
+
+            registry.renamePolicy(policy, "B");
+            registry.removePolicy("B");
+
+            assertThat(
+                    listener.events,
+                    contains("renamed A B", "current B", "removed B", "current null"));
+        }
+
+        @Test
+        void shouldNotifyCurrentPolicyChangesOnlyIfChanged() {
+            registry.addPolicy(new GspmPolicy("A"));
+            listener.events.clear();
+
+            registry.setCurrentPolicy("A");
+            registry.setCurrentPolicy("A");
+            registry.clearCurrentPolicy();
+            registry.clearCurrentPolicy();
+
+            assertThat(listener.events, contains("current A", "current null"));
+        }
+
+        @Test
+        void shouldNotifyRegisteredPolicySaved(@TempDir Path dir) throws Exception {
+            GspmPolicy policy = new GspmPolicy("A");
+            registry.addPolicy(policy);
+            listener.events.clear();
+
+            policy.save(dir);
+
+            assertThat(listener.events, contains("saved A"));
+        }
+
+        @Test
+        void shouldNotNotifyRemovedPolicySaved(@TempDir Path dir) throws Exception {
+            GspmPolicy policy = new GspmPolicy("A");
+            registry.addPolicy(policy);
+            registry.removePolicy("A");
+            listener.events.clear();
+
+            policy.save(dir);
+
+            assertThat(listener.events, is(empty()));
+        }
+    }
+
+    @Nested
+    class RuleForPolicy {
+
+        @Test
+        void shouldProvideViewOfRuleForPolicy() {
+            GspmRule rule = rule("pscan", 1);
+            GspmPolicy policy = new GspmPolicy("P");
+
+            GspmRegistry.getRuleForPolicy(rule, policy).setAlertThreshold(AlertThreshold.HIGH);
+
+            assertThat(rule.getAlertThreshold(), is(AlertThreshold.MEDIUM));
+            assertThat(policy.getEffectiveThreshold(rule).get(), is(AlertThreshold.HIGH));
+        }
+    }
+
     private static class RecordingListener implements RegistryListener {
         final List<GspmRule> registered = new ArrayList<>();
         final List<GspmRule> unregistered = new ArrayList<>();
+        final List<String> events = new ArrayList<>();
+
+        @Override
+        public void policyAdded(GspmPolicy policy) {
+            events.add("added " + policy.getName());
+        }
+
+        @Override
+        public void policyRemoved(String policyName) {
+            events.add("removed " + policyName);
+        }
+
+        @Override
+        public void policyRenamed(String oldName, String newName) {
+            events.add("renamed " + oldName + " " + newName);
+        }
+
+        @Override
+        public void policySaved(GspmPolicy policy) {
+            events.add("saved " + policy.getName());
+        }
+
+        @Override
+        public void currentPolicyChanged(String policyName) {
+            events.add("current " + policyName);
+        }
 
         @Override
         public void ruleRegistered(GspmRule rule) {

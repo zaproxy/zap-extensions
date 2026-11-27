@@ -5,7 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Added
+- Global Scan Policy Manager (dev mode only):
+  - The Policy tab of the active scan dialog, with ZAP 2.18.0 or later.
+  - A default policy, chosen in the main toolbar, used by the passive scan rules and by default for
+    active scans.
+  - Policy events in the registry listener.
 
 ## [1.45.0] - 2026-11-26
 ### Added
