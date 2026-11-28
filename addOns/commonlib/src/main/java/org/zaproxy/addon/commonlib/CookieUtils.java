@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -161,13 +162,27 @@ public final class CookieUtils {
         if (matcher.find()) {
             // Found a line that matches
             String match = matcher.group();
-            int end = match.indexOf(name) + name.length();
             if (name.isBlank()) {
-                end = match.indexOf(';');
+                int end = match.indexOf(';');
                 if (end == NOT_FOUND) {
                     return match;
                 }
+                return match.substring(0, end);
             }
+            int colonIdx = match.indexOf(':');
+            int nameIdx =
+                    (colonIdx != NOT_FOUND)
+                            ? match.indexOf(name, colonIdx + 1)
+                            : match.indexOf(name);
+            if (nameIdx == NOT_FOUND) {
+                String matchLower = match.toLowerCase(Locale.ROOT);
+                String nameLower = name.toLowerCase(Locale.ROOT);
+                nameIdx =
+                        (colonIdx != NOT_FOUND)
+                                ? matchLower.indexOf(nameLower, colonIdx + 1)
+                                : matchLower.indexOf(nameLower);
+            }
+            int end = (nameIdx != NOT_FOUND) ? nameIdx + name.length() : match.length();
             return match.substring(0, end);
         }
         return null;
